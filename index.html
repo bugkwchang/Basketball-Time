@@ -649,7 +649,7 @@
               <button type="button" class="ap-card" data-ap-act="recover">
                 <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--ok-green);"><span>醫療恢復</span><span>1 AP</span></div>
                 <div style="font-size:13.5px; font-weight:900;">🧊 冰浴理療與傷病康復</div>
-                <div style="font-size:11px; color:var(--ink-soft);">狀態回滿 100% 並治癒輕微拉傷</div>
+                <div style="font-size:11px; color:var(--ink-soft);">狀態回復 +28%（傷癒康復 +18% 並解除拉傷）</div>
               </button>
               <button type="button" class="ap-card" data-ap-act="social">
                 <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:#1D4ED8;"><span>商業社交</span><span>1 AP</span></div>
@@ -2157,7 +2157,7 @@
       Season.seasonTotals.ast += ast; Season.seasonTotals.stl += stl; Season.seasonTotals.blk += blk;
       Season.seasonTotals.mvps = (Season.seasonTotals.mvps || 0) + (userIsMvp ? 1 : 0);
 
-      recordRivalryAndHistory(g, { pts: pPts, oreb: Math.floor(pReb * 0.3), dreb: Math.ceil(pReb * 0.7), ast: pAst }, us > os);
+      recordRivalryAndHistory(g, { pts, oreb: Math.floor(reb * 0.3), dreb: Math.ceil(reb * 0.7), ast }, us > os);
       if (!g.stage) stepOtherTeamsLOD0(g);
       Season.currentRoundIdx += 1;
       advancePlayoffBracketIfNeeded(g);
@@ -3041,8 +3041,8 @@
         r.tx = 0.21; r.ty = 0.62; u.tx = 0.16; u.ty = 0.60;
         const sa = [[0.34,0.48],[0.14,0.12],[0.26,0.24],[0.24,0.86]];
         const sh = [[0.28,0.48],[0.15,0.18],[0.22,0.28],[0.20,0.80]];
-        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai][0]; p.ty = sa[ai][1]; ai++; } });
-        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi][0]; p.ty = sh[hi][1]; hi++; } }); Match.ballHolder = r;
+        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai % sa.length][0]; p.ty = sa[ai % sa.length][1]; ai++; } });
+        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi % sh.length][0]; p.ty = sh[hi % sh.length][1]; hi++; } }); Match.ballHolder = r;
       } else if (scenarioId === "OFF_FASTBREAK") {
         u.tx = 0.64; u.ty = 0.42; const wing = home5.find(p => !p.isUser); if (wing) { wing.tx = 0.70; wing.ty = 0.72; }
         let si = 0; home5.forEach(p => { if (!p.isUser && p !== wing) { p.tx = 0.34 + si * 0.08; p.ty = 0.26 + si * 0.24; si++; } });
@@ -3050,8 +3050,8 @@
       } else if (scenarioId === "DEF_ONBALL_ISO") {
         r.tx = 0.34; r.ty = 0.48; u.tx = 0.27; u.ty = 0.48;
         const sa = [[0.14,0.12],[0.16,0.86],[0.32,0.22],[0.24,0.66]], sh = [[0.15,0.22],[0.18,0.76],[0.26,0.28],[0.19,0.60]];
-        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai][0]; p.ty = sa[ai][1]; ai++; } });
-        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi][0]; p.ty = sh[hi][1]; hi++; } }); Match.ballHolder = r;
+        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai % sa.length][0]; p.ty = sa[ai % sa.length][1]; ai++; } });
+        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi % sh.length][0]; p.ty = sh[hi % sh.length][1]; hi++; } }); Match.ballHolder = r;
       } else if (scenarioId === "DEF_FASTBREAK") {
         r.tx = 0.24; r.ty = 0.48; u.tx = 0.34; u.ty = 0.44;
         let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = 0.46 + ai * 0.06; p.ty = 0.22 + ai * 0.18; ai++; } });
@@ -3103,26 +3103,26 @@
         r.tx = 0.38; r.ty = 0.46; u.tx = 0.32; u.ty = 0.46;
         const sa = [[0.31,0.52],[0.12,0.12],[0.12,0.88],[0.26,0.78]];
         const sh = [[0.22,0.52],[0.16,0.18],[0.16,0.82],[0.24,0.72]];
-        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai][0]; p.ty = sa[ai][1]; ai++; } });
-        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi][0]; p.ty = sh[hi][1]; hi++; } }); Match.ballHolder = r;
+        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai % sa.length][0]; p.ty = sa[ai % sa.length][1]; ai++; } });
+        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi % sh.length][0]; p.ty = sh[hi % sh.length][1]; hi++; } }); Match.ballHolder = r;
       } else if (scenarioId === "DEF_CORNER_CLOSEOUT") {
         const s = away5.find(p => p !== r) || r; s.tx = 0.11; s.ty = 0.90; u.tx = 0.18; u.ty = 0.76;
         const sa = [[0.36,0.48],[0.14,0.14],[0.24,0.44],[0.22,0.62]];
         const sh = [[0.30,0.48],[0.16,0.20],[0.20,0.44],[0.18,0.58]];
-        let ai = 0; away5.forEach(p => { if (p !== s) { p.tx = sa[ai][0]; p.ty = sa[ai][1]; ai++; } });
-        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi][0]; p.ty = sh[hi][1]; hi++; } }); Match.ballHolder = s;
+        let ai = 0; away5.forEach(p => { if (p !== s) { p.tx = sa[ai % sa.length][0]; p.ty = sa[ai % sa.length][1]; ai++; } });
+        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi % sh.length][0]; p.ty = sh[hi % sh.length][1]; hi++; } }); Match.ballHolder = s;
       } else if (scenarioId === "DEF_INBOUND_DENY") {
         r.tx = 0.22; r.ty = 0.04; u.tx = 0.24; u.ty = 0.18;
         const sa = [[0.28,0.24],[0.18,0.46],[0.18,0.68],[0.36,0.50]];
         const sh = [[0.22,0.34],[0.15,0.46],[0.15,0.66],[0.30,0.50]];
-        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai][0]; p.ty = sa[ai][1]; ai++; } });
-        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi][0]; p.ty = sh[hi][1]; hi++; } }); Match.ballHolder = r;
+        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai % sa.length][0]; p.ty = sa[ai % sa.length][1]; ai++; } });
+        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi % sh.length][0]; p.ty = sh[hi % sh.length][1]; hi++; } }); Match.ballHolder = r;
       } else if (scenarioId === "DEF_LAST_SHOT") {
         r.tx = 0.36; r.ty = 0.50; u.tx = 0.30; u.ty = 0.50;
         const sa = [[0.12,0.12],[0.12,0.88],[0.20,0.34],[0.20,0.66]];
         const sh = [[0.16,0.18],[0.16,0.82],[0.18,0.38],[0.18,0.62]];
-        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai][0]; p.ty = sa[ai][1]; ai++; } });
-        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi][0]; p.ty = sh[hi][1]; hi++; } }); Match.ballHolder = r;
+        let ai = 0; away5.forEach(p => { if (p !== r) { p.tx = sa[ai % sa.length][0]; p.ty = sa[ai % sa.length][1]; ai++; } });
+        let hi = 0; home5.forEach(p => { if (!p.isUser) { p.tx = sh[hi % sh.length][0]; p.ty = sh[hi % sh.length][1]; hi++; } }); Match.ballHolder = r;
       } else {
         const right = Match.possessionSide === "HOME";
         home5.forEach((p, i) => { p.tx = right ? (0.58 + (i % 3) * 0.11 + (Math.random() - 0.5) * 0.06) : (0.14 + (i % 3) * 0.09); p.ty = 0.16 + i * 0.17; });
@@ -4783,6 +4783,81 @@
       b.innerHTML = `<div style="font-size:14px; font-weight:900; margin-bottom:2px;">${title}</div><div>${detail}</div>`;
     }
 
+    const FLAG_DISPLAY_MAP = {
+      allstar_snub_revenge: "🔥 落選復仇者",
+      alpha_dog: "🐺 逆境領袖",
+      ankle_history: "🩹 傷病歷練",
+      beat_rival_1v1: "⚔️ 單挑勝宿敵",
+      comeback_story: "🌟 逆轉傳奇",
+      community_icon: "🤝 公益楷模",
+      cool_headed: "🧊 冰血冷靜",
+      country_first: "🌏 為國死戰",
+      crafty_veteran: "🧠 地板流大師",
+      deadline_blockbuster: "🚨 壓哨重磅交易",
+      euro_craft: "🎯 歐陸技術流",
+      euro_king: "👑 歐冠之王",
+      euro_scout_impressed: "🔭 歐陸球探盛讚",
+      euro_silencer: "🤫 魔鬼客場消音器",
+      euro_tactician: "📋 歐洲戰術通",
+      euro_trained: "🇪🇺 歐陸特訓出身",
+      fearless_return: "🦅 戰勝心魔",
+      fiba_floater_master: "🏀 國際拋投大師",
+      fiba_veteran: "🌍 世界盃老將",
+      film_student: "📽️ 錄影帶學霸",
+      franchise_loyal: "🛡️ 一人一城忠魂",
+      giant_slayer: "⚡ 巨人殺手",
+      growth_spurt_1: "🌱 青春期猛長",
+      gym_rat: "🏋️ 深夜苦練狂",
+      high_iq_prospect: "🎓 高球商新星",
+      hoop_lineage: "🏀 籃球世家",
+      iron_body: "💪 鋼鐵之軀",
+      iron_man: "🦾 帶傷硬漢",
+      iron_will: "🔥 鋼鐵意志",
+      late_growth_spurt: "📈 晚熟抽高潛質",
+      locker_unifier: "🤝 更衣室黏合劑",
+      lottery_buzz: "⭐ 樂透選秀大熱",
+      mamba_dawn: "🌅 凌晨五點苦練",
+      march_leader: "🎓 三月瘋領袖",
+      media_darling: "📺 媒體寵兒",
+      media_killer: "🎙️ 霸氣回擊名宿",
+      mental_fortress: "🧘 心靈堡壘",
+      mentor_blessed: "✨ 傳奇親傳",
+      mentor_bond: "🤝 師徒情深",
+      midseason_mover: "✈️ 季中轉會新星",
+      national_captain: "🏅 國家隊精神領袖",
+      national_hero: "🏆 國家英雄",
+      national_team_vet: "🌏 國手資歷",
+      nba_buyout_ready: "🇺🇸 NBA 買斷就緒",
+      nba_franchise_face: "👑 球隊門面",
+      ncaa_rival_duel: "🔥 大學宿敵對決",
+      nil_star: "💵 大學商業寵兒",
+      opt_out_clause: "📝 跳出條款在手",
+      overseas_ready: "🌍 放眼歐美",
+      rival_declared: "⚔️ 宿敵宣戰",
+      rival_respect: "🍜 英雄惜英雄",
+      shoe_deal: "👟 球鞋代言人",
+      signature_shoe: "👟 簽名戰靴巨星",
+      street_cred: "🏙️ 街頭傳說",
+      street_transfer: "🏀 街球轉學奇兵",
+      supermax_alpha: "💰 超級頂薪王牌",
+      tactical_mind: "📋 戰術大腦",
+      team_leader: "⭐ 更衣室老大",
+      ten_thousand_shots: "🎯 萬球特訓",
+      track_crossover: "⚡ 田徑跨界天賦",
+      track_freak: "💨 田徑級爆發力",
+      true_captain: "🛡️ 鐵血隊長",
+      underdog_grit: "🔥 草根逆襲",
+      underdog_spirit: "💪 不屈黑馬",
+      untouchable: "🔒 球隊非賣品"
+    };
+
+    function formatCareerFlagsHtml(flags) {
+      if (!Array.isArray(flags) || !flags.length) return "尚無生涯稱號";
+      const labels = flags.map(f => FLAG_DISPLAY_MAP[f]).filter(Boolean);
+      if (!labels.length) return "尚無生涯稱號";
+      return labels.slice(-6).map(lbl => `<span class="tag" style="margin:1px 3px 1px 0;">${lbl}</span>`).join("");
+    }
+
     function renderPhase3TrainPanel() {
       ensureCareerPlayerObj();
       const p = Season.player;
@@ -4836,7 +4911,7 @@
       }
       document.getElementById("trainRivalBox").innerHTML = `
         <div style="font-size:12px; font-weight:900; color:var(--crimson);">🔥 頭號宿敵：${topRival.ace}（${topRival.name}）</div>
-        <div style="font-size:11.5px; margin-top:3px;">宿敵火藥味：<strong>${p.rivalHeat} / 100</strong> ｜ 經歷標記：${p.flags.length ? p.flags.join(", ") : "無"}</div>
+        <div style="font-size:11.5px; margin-top:4px; line-height:1.7;">宿敵火藥味：<strong>${p.rivalHeat} / 100</strong> ｜ 生涯稱號：${formatCareerFlagsHtml(p.flags)}</div>
       `;
     }
 
@@ -5061,7 +5136,7 @@
         condition: p.condition,
         reputation: p.reputation,
         coachTrust: typeof p.coachTrust === "number" ? p.coachTrust : 35,
-        rivalHeat: Math.max(p.rivalHeat || 0, (nextG && ensureCareerHistory().rivalries[nextG.oppAce] ? ensureCareerHistory().rivalries[nextG.oppAce].heat : 0)),
+        rivalHeat: Math.max(p.rivalHeat || 0, (() => { const ng = Season.schedule && Season.schedule[Math.min(Season.currentRoundIdx, Math.max(0, Season.schedule.length - 1))]; return (ng && ensureCareerHistory().rivalries[ng.oppAce]) ? ensureCareerHistory().rivalries[ng.oppAce].heat : 0; })()),
         careerYear: Season.careerYear || 1,
         leagueId: Season.leagueId,
         ovr: curOvr,
