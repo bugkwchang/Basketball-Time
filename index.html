@@ -1317,21 +1317,134 @@
       ].map(p => generateNpcProfile(p));
     }
 
+    // ---------- 賽程生成設定（各聯賽場次與強度曲線參數） ----------
+    const SCHEDULE_CONFIG = {
+      defaultGamesByLeague: {
+        hs_nationals: 12,
+        ncaa_madness: 14,
+        asia_pro: 22,
+        euro_elite: 20,
+        nba_prime: 28,
+        fiba_world: 10
+      },
+      earlyRatio: 0.30,   // 前 30%：熱身與磨合期（偏輕鬆）
+      midRatio: 0.40,     // 中 40%：拉鋸混戰期（混合＋季中焦點戰）
+      maxHomeAwayStreak: 2
+    };
+
+    function generateBalancedHomeAway(total) {
+      // 以「成對配組」確保主客場差值 <= 1 且數學上絕對不會出現超過 2 連主或 2 連客
+      const seq = [];
+      const pairs = Math.floor(total / 2);
+      for (let i = 0; i < pairs; i++) {
+        let homeFirst;
+        if (i === pairs - 1 && total % 2 === 1) {
+          // 奇數場次時，倒數第二場排客場，讓最後一場主場不會形成 3 連主
+          homeFirst = true;
+        } else if (i === pairs - 1 && total % 2 === 0) {
+          // 偶數場次時，盡量讓例行賽最終戰坐鎮主場
+          homeFirst = false;
+        } else {
+          homeFirst = Math.random() < 0.5;
+        }
+        seq.push(homeFirst, !homeFirst);
+      }
+      if (total % 2 === 1) seq.push(true);
+      return seq;
+    }
+
     function generateSchedule(league) {
-      const teams = league.teams;
+      const teams = Array.isArray(league.teams) ? league.teams : [];
       const userTeam = teams.find(t => t.isUserTeam) || teams[0];
       const others = teams.filter(t => t.id !== userTeam.id);
+      if (others.length === 0) return [];
+
+      const total = league.seasonGames
+        || SCHEDULE_CONFIG.defaultGamesByLeague[league.id]
+        || 12;
+
+      // 1. 依 OVR 與宿敵標籤將對手分層（由弱到強排序）
+      const sorted = [...others].sort((a, b) => (a.ovr || 70) - (b.ovr || 70));
+      const n = sorted.length;
+      const easyCut = Math.max(1, Math.floor(n / 3));
+      const hardStart = Math.max(easyCut + 1, n - Math.max(2, Math.ceil(n / 3)));
+
+      const tierEasy = sorted.slice(0, easyCut);
+      const tierMid  = sorted.slice(easyCut, hardStart);
+      const tierHard = sorted.slice(hardStart);
+      const topBosses = sorted.slice(-Math.min(2, n)); // 最強 2 隊（收官與焦點戰）
+
+      // 若隊伍數偏少導致 tierMid 為空，補入中間隊伍
+      const safeMid = tierMid.length > 0 ? tierMid : sorted.slice(0, Math.max(1, n - 1));
+      const safeHard = tierHard.length > 0 ? tierHard : sorted.slice(-1);
+
+      // 2. 計算三階段場次切點
+      const earlyEnd = Math.max(1, Math.round(total * SCHEDULE_CONFIG.earlyRatio));
+      const midEnd = Math.max(earlyEnd + 1, Math.round(total * (SCHEDULE_CONFIG.earlyRatio + SCHEDULE_CONFIG.midRatio)));
+      const midMarqueeIdx = Math.floor((earlyEnd + midEnd) / 2);
+
+      // 3. 追蹤每隊已交手次數，確保全聯盟對手均勻輪到且不連打同一隊
+      const meetCount = Object.fromEntries(others.map(t => [t.id, 0]));
+      const pickFromPool = (pool, prevOppId) => {
+        const candidates = pool.filter(t => t.id !== prevOppId);
+        const usable = candidates.length > 0 ? candidates : others.filter(t => t.id !== prevOppId);
+        const finalPool = usable.length > 0 ? usable : others;
+
+        // 優先從交手次數最少的候選中隨機挑選，保持對戰多樣性
+        let minC = Infinity;
+        for (const t of finalPool) minC = Math.min(minC, meetCount[t.id] || 0);
+        const leastMet = finalPool.filter(t => (meetCount[t.id] || 0) === minC);
+        const chosen = leastMet[Math.floor(Math.random() * leastMet.length)];
+        meetCount[chosen.id] = (meetCount[chosen.id] || 0) + 1;
+        return chosen;
+      };
+
+      const homeAwayPlan = generateBalancedHomeAway(total);
       const rounds = [];
-      const total = league.seasonGames || 7;
+      let prevOppId = null;
+
       for (let r = 0; r < total; r++) {
-        const opp = others[r % others.length];
-        const isHome = r % 2 === 0;
+        let pool;
+        let phaseTag;
+        let isMarquee = false;
+
+        if (r < earlyEnd) {
+          // 前 30%：熱身期（約 70% 較輕鬆對手、30% 中段對手）
+          phaseTag = "WARMUP";
+          pool = (r % 3 === 2) ? safeMid : tierEasy;
+        } else if (r < midEnd) {
+          // 中 40%：混戰期，並在季中安排焦點宿敵戰
+          phaseTag = "MID";
+          if (r === midMarqueeIdx) {
+            pool = topBosses;
+            isMarquee = true;
+          } else {
+            const mod = (r - earlyEnd) % 3;
+            pool = mod === 0 ? safeMid : (mod === 1 ? safeHard : [...tierEasy, ...safeMid]);
+          }
+        } else {
+          // 後 30%：衝刺期（強隊密集出現，最後 2 戰鎖定頂級強權／宿敵）
+          phaseTag = "CLIMAX";
+          if (r >= total - 2) {
+            pool = topBosses;
+            isMarquee = true;
+          } else {
+            pool = ((r - midEnd) % 3 === 1) ? safeMid : safeHard;
+          }
+        }
+
+        const opp = pickFromPool(pool, prevOppId);
+        prevOppId = opp.id;
+
         rounds.push({
           round: r + 1,
           oppId: opp.id,
           oppName: opp.name,
           oppAce: opp.ace,
-          isHome,
+          oppOvr: opp.ovr || 70,
+          isHome: homeAwayPlan[r],
+          phaseTag,
+          isMarquee,
           played: false,
           userScore: 0,
           oppScore: 0
@@ -2007,6 +2120,161 @@
       if (mode === "NONE") { dock.classList.remove("active"); bp.style.display = "none"; qp.style.display = "none"; comm.classList.remove("compact"); }
       else if (mode === "BULLET") { comm.classList.add("compact"); dock.classList.add("active"); bp.style.display = "block"; qp.style.display = "none"; }
       else if (mode === "QTE") { comm.classList.add("compact"); dock.classList.add("active"); bp.style.display = "none"; qp.style.display = "flex"; }
+      // 選項或 QTE 面板開關會改變 .stage-shell 高度，立即於下一幀同步 Canvas 解析度防止球場拉扁變形
+      requestAnimationFrame(() => {
+        resizeCanvas();
+        if (mode === "QTE") resizeQteCanvas();
+      });
+    }
+
+    // ---------- MID-MATCH AUTO-CHECKPOINT (防重整重開比賽) ----------
+    const MATCH_CP_LS_KEY = "BasketballTime_ActiveMatch_v1";
+    let _lastCpSaveMs = 0;
+
+    function buildMatchSnapshot() {
+      if (!Season || !Match || Match.phase === "IDLE" || Match.phase === "ENDED") return null;
+      if (!Array.isArray(Match.homeTeam) || Match.homeTeam.length === 0) return null;
+      return {
+        version: 1,
+        savedAt: Date.now(),
+        leagueId: Season.leagueId,
+        roundIdx: Season.currentRoundIdx,
+        homeName: Match.homeName,
+        awayName: Match.awayName,
+        quarter: Match.quarter,
+        timeLeftSec: Match.timeLeftSec,
+        homeScore: Match.homeScore,
+        awayScore: Match.awayScore,
+        qScoresHome: [...Match.qScoresHome],
+        qScoresAway: [...Match.qScoresAway],
+        homeTeam: JSON.parse(JSON.stringify(Match.homeTeam)),
+        awayTeam: JSON.parse(JSON.stringify(Match.awayTeam)),
+        benchReason: Match.benchReason,
+        totalGameSec: Match.totalGameSec,
+        tension: Match.tension,
+        cooldownSec: Match.cooldownSec,
+        userSubCooldownSec: Match.userSubCooldownSec,
+        rivalHardTriggersThisQ: Match.rivalHardTriggersThisQ,
+        makeStreak: Match.makeStreak,
+        missStreak: Match.missStreak,
+        perfectStreak: Match.perfectStreak,
+        perfectsTotal: Match.perfectsTotal,
+        isZone: Match.isZone,
+        zonePossessionsLeft: Match.zonePossessionsLeft,
+        isGrit: Match.isGrit,
+        recentActionIds: [...(Match.recentActionIds || [])],
+        commHistory: (Match.commHistory || []).slice(0, 60),
+        possessionSide: Match.possessionSide,
+        ball: { ...(Match.ball || { x: 0.5, y: 0.5 }) }
+      };
+    }
+
+    function saveMatchCheckpoint(force = false) {
+      const now = Date.now();
+      if (!force && now - _lastCpSaveMs < 1500) return;
+      const snap = buildMatchSnapshot();
+      if (!snap) return;
+      _lastCpSaveMs = now;
+      Season.activeMatch = snap;
+      // 1) 同步寫入 localStorage（確保手機/瀏覽器瞬間重整或關閉分頁前一定落盤）
+      try { localStorage.setItem(MATCH_CP_LS_KEY, JSON.stringify(snap)); } catch (_) {}
+      // 2) 非同步同步寫入 IndexedDB 生涯存檔
+      SaveManager.save(Season);
+    }
+
+    function clearMatchCheckpoint() {
+      if (Season && Season.activeMatch) delete Season.activeMatch;
+      try { localStorage.removeItem(MATCH_CP_LS_KEY); } catch (_) {}
+    }
+
+    function getValidMatchCheckpoint() {
+      if (!Season || !Array.isArray(Season.schedule)) return null;
+      let lsSnap = null;
+      try {
+        const raw = localStorage.getItem(MATCH_CP_LS_KEY);
+        if (raw) lsSnap = JSON.parse(raw);
+      } catch (_) {}
+      const idbSnap = Season.activeMatch || null;
+      // 取較新的一份中斷點
+      let snap = null;
+      if (lsSnap && idbSnap) snap = (lsSnap.savedAt || 0) >= (idbSnap.savedAt || 0) ? lsSnap : idbSnap;
+      else snap = lsSnap || idbSnap;
+
+      if (!snap || snap.leagueId !== Season.leagueId || snap.roundIdx !== Season.currentRoundIdx) return null;
+      const curG = Season.schedule[Season.currentRoundIdx];
+      if (!curG || curG.played) return null;
+      if (!Array.isArray(snap.homeTeam) || !Array.isArray(snap.awayTeam) || snap.homeTeam.length < 5) return null;
+      return snap;
+    }
+
+    function restoreMatchFromCheckpoint(snap) {
+      const league = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
+      Match.league = league;
+      Match.homeName = snap.homeName;
+      Match.awayName = snap.awayName;
+      Match.homeTeam = snap.homeTeam;
+      Match.awayTeam = snap.awayTeam;
+      Match.userPlayer = Match.homeTeam.find(p => p.isUser) || Match.homeTeam[1];
+      Match.rivalPlayer = Match.awayTeam.find(p => p.isRival) || Match.awayTeam[2];
+      Match.quarter = snap.quarter;
+      Match.timeLeftSec = snap.timeLeftSec;
+      Match.homeScore = snap.homeScore;
+      Match.awayScore = snap.awayScore;
+      Match.qScoresHome = Array.isArray(snap.qScoresHome) ? snap.qScoresHome : [0,0,0,0];
+      Match.qScoresAway = Array.isArray(snap.qScoresAway) ? snap.qScoresAway : [0,0,0,0];
+      Match.benchReason = snap.benchReason || "";
+      Match.totalGameSec = snap.totalGameSec || 0;
+      Match.tension = snap.tension || 26;
+      Match.cooldownSec = Math.max(0.8, snap.cooldownSec || 1.2);
+      Match.userSubCooldownSec = snap.userSubCooldownSec || 60;
+      Match.rivalHardTriggersThisQ = snap.rivalHardTriggersThisQ || 0;
+      Match.makeStreak = snap.makeStreak || 0;
+      Match.missStreak = snap.missStreak || 0;
+      Match.perfectStreak = snap.perfectStreak || 0;
+      Match.perfectsTotal = snap.perfectsTotal || 0;
+      Match.isZone = Boolean(snap.isZone);
+      Match.zonePossessionsLeft = snap.zonePossessionsLeft || 0;
+      Match.isGrit = Boolean(snap.isGrit);
+      Match.recentActionIds = Array.isArray(snap.recentActionIds) ? snap.recentActionIds : [];
+      Match.commHistory = Array.isArray(snap.commHistory) ? snap.commHistory : [];
+      Match.possessionSide = snap.possessionSide || "HOME";
+      Match.ballHolder = activeLineup(Match.possessionSide === "HOME" ? Match.homeTeam : Match.awayTeam)[0] || Match.userPlayer;
+      Match.ball = snap.ball || { x: 0.5, y: 0.5 };
+      Match.shotAnim = null;
+      Match.activeScenario = null;
+      Match.pendingPostCutIn = null;
+      Match.activeCutIn = null;
+      Match.resultSplash = null;
+      Match.qte = null;
+      Match.fastSimming = false;
+      Match.simAccumulator = 0;
+
+      // 重建旁述 DOM
+      const pbpEl = document.getElementById("pbpLog");
+      pbpEl.innerHTML = "";
+      const recentLogs = Match.commHistory.slice(0, 30);
+      for (const item of recentLogs) {
+        const row = document.createElement("div");
+        row.className = "pbp-row";
+        row.innerHTML = `<span class="pbp-time">[${item.ts}]</span><span style="${item.hl ? "font-weight:900; color:#FEF08A;" : ""}">${item.msg}</span>`;
+        pbpEl.appendChild(row);
+      }
+      if (recentLogs[0]) document.getElementById("commHeadline").textContent = recentLogs[0].msg;
+
+      document.getElementById("viewCreate").classList.remove("active");
+      document.getElementById("viewHub").classList.remove("active");
+      document.getElementById("viewMatch").classList.add("active");
+      const fbtn = document.getElementById("btnFastSimMatch"); if (fbtn) fbtn.disabled = false;
+      setDockMode("NONE");
+      resizeCanvas();
+
+      // 恢復後先進入暫停介面，避免玩家一重整就被對手偷襲
+      Match.phase = "PLAYING";
+      updateHUD();
+      openPauseCenter(false);
+      const qLbl = Match.quarter > 4 ? `OT${Match.quarter - 4}` : `Q${Match.quarter}`;
+      document.getElementById("bsHeaderSub").textContent = `🔄 已恢復中斷前的比賽進度（${qLbl} ${formatClock(Match.timeLeftSec)}）· 點擊繼續作戰`;
+      showToast(`🔄 已自動恢復比賽：${Match.homeName} ${Match.homeScore} - ${Match.awayScore} ${Match.awayName}`);
     }
 
     function launchSeasonMatch() {
@@ -2063,6 +2331,7 @@
       SoundFX.whistle();
       broadcast(`第 ${g.round} 輪大戰打響！${Match.homeName} 正面對決 ${Match.awayName}！`, true);
       updateHUD();
+      saveMatchCheckpoint(true);
     }
 
     function getLiveContext(shotZone = "MID", possession = "OFFENSE") {
@@ -2456,6 +2725,7 @@
         triggerPopup(`Q${Match.quarter} START`, "#FACC15");
         manageTeamSubstitutions(Match.homeTeam, true); manageTeamSubstitutions(Match.awayTeam, false);
         updateHUD();
+        saveMatchCheckpoint(true);
       } else if (Match.homeScore === Match.awayScore) {
         Match.quarter += 1; Match.timeLeftSec = Match.league.otMinutes * 60; Match.cooldownSec = 0;
         [...Match.homeTeam, ...Match.awayTeam].forEach(p => p.stamina = Math.min(p.maxStaminaCap, p.stamina + 8));
@@ -2502,6 +2772,7 @@
             const perf = u.pts * 1.2 + (u.oreb + u.dreb) * 1.2 + u.ast * 1.4 + u.stl * 2 + u.blk * 2 - u.tov * 1.5;
             evaluatePostMatchTrust(perf, Match.homeScore > Match.awayScore);
           }
+          clearMatchCheckpoint();
           SaveManager.save(Season);
         }
         openPauseCenter(true);
@@ -2854,7 +3125,11 @@
 
     // ---------- PAUSE & FINAL CENTER ----------
     function openPauseCenter(isFinal = false) {
-      if (!isFinal && Match.phase !== "PAUSED_MENU" && Match.phase !== "ENDED") { phaseBeforePause = Match.phase; Match.phase = "PAUSED_MENU"; }
+      if (!isFinal && Match.phase !== "PAUSED_MENU" && Match.phase !== "ENDED") {
+        phaseBeforePause = Match.phase;
+        Match.phase = "PAUSED_MENU";
+        saveMatchCheckpoint(true);
+      }
       const won = Match.homeScore > Match.awayScore;
       document.getElementById("bsHeaderSub").textContent = isFinal ? (won ? "🏆 VICTORY · 已寫入賽季戰績與 IndexedDB" : "💀 FINAL · 已寫入賽季戰績與 IndexedDB") : "⏸ 比賽暫停中 · 全隊數據與旁述記錄";
       document.getElementById("bsHeaderScore").textContent = `${Match.homeName} ${Match.homeScore} - ${Match.awayScore} ${Match.awayName}`;
@@ -2990,9 +3265,14 @@
 
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
-      if (rect.width < 10) return;
-      canvas.width = Math.max(560, Math.floor(rect.width * dpr));
-      canvas.height = Math.max(300, Math.floor(rect.height * dpr));
+      if (rect.width < 10 || rect.height < 10) return;
+      // 嚴格保持 backing buffer 與實際 CSS 容器寬高比 1:1，避免高度縮小時被 minHeight 300 硬撐導致變形
+      const nextW = Math.max(1, Math.round(rect.width * dpr));
+      const nextH = Math.max(1, Math.round(rect.height * dpr));
+      if (canvas.width !== nextW || canvas.height !== nextH) {
+        canvas.width = nextW;
+        canvas.height = nextH;
+      }
     }
 
     function drawCourt(w, h, dt) {
@@ -4086,6 +4366,7 @@
       });
 
       document.getElementById("btnResetCareer").addEventListener("click", async () => {
+        clearMatchCheckpoint();
         await SaveManager.clear();
         createNewCareer("hs_nationals", [], 1, null);
         openCareerCreation();
@@ -4147,6 +4428,30 @@
         else if (e.code === "Escape" && Match.phase !== "IDLE") { if (Match.phase === "PAUSED_MENU") closePauseCenter(); else openPauseCenter(Match.phase === "ENDED"); }
       });
       window.addEventListener("resize", () => { if (Match.phase !== "IDLE") { resizeCanvas(); if (Match.phase === "QTE") resizeQteCanvas(); } });
+      if (typeof ResizeObserver !== "undefined") {
+        const stageShell = document.querySelector(".stage-shell");
+        if (stageShell) {
+          new ResizeObserver(() => {
+            if (Match.phase !== "IDLE") resizeCanvas();
+          }).observe(stageShell);
+        }
+      }
+      // 比賽中切換分頁、鎖屏或重整時立即保存中斷點，並於未完賽時提醒防誤觸
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden" && Match.phase !== "IDLE" && Match.phase !== "ENDED") {
+          saveMatchCheckpoint(true);
+        }
+      });
+      window.addEventListener("pagehide", () => {
+        if (Match.phase !== "IDLE" && Match.phase !== "ENDED") saveMatchCheckpoint(true);
+      });
+      window.addEventListener("beforeunload", (e) => {
+        if (Match.phase !== "IDLE" && Match.phase !== "ENDED") {
+          saveMatchCheckpoint(true);
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
     }
 
     async function bootGame() {
@@ -4192,6 +4497,10 @@
         Season = saved;
         document.getElementById("idbStatusTag").textContent = "IndexedDB 已載入生涯存檔";
         renderHub();
+        const cp = getValidMatchCheckpoint();
+        if (cp) {
+          restoreMatchFromCheckpoint(cp);
+        }
       } else {
         createNewCareer("hs_nationals");
         openCareerCreation();
