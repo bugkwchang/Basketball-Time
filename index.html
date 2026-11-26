@@ -2923,7 +2923,16 @@
         }
         return s;
       };
-      const picked = pool.map(a => ({ a, s: scoreActionFit(a) })).sort((x, y) => y.s - x.s).slice(0, 3).map(x => x.a);
+      let picked = pool.map(a => ({ a, s: scoreActionFit(a) })).sort((x, y) => y.s - x.s).slice(0, 3).map(x => x.a);
+      // 強制保底至少三選一：若情境池不足 3 張，自動從同攻守端補齊不重複動作
+      if (picked.length < 3) {
+        const pickedIds = new Set(picked.map(x => x.id));
+        const fallback = DB.actions.actions.filter(a => !pickedIds.has(a.id) && ((side === "DEFENSE") === (a.zone === "DEFENSE")));
+        for (const fb of fallback) {
+          picked.push(fb);
+          if (picked.length >= 3) break;
+        }
+      }
       const zoneLabelMap = { THREE: "三分", MID: "中投", PAINT: "禁區", PASS: "組織", DEFENSE: "防守" };
 
       // 4. 計算每張卡的成功率、風險階級、Grit 意志加成與風險／報酬文案
@@ -2982,11 +2991,11 @@
         const trustWin = riskLevel === "HIGH" ? (isCoachPlay ? 3 : 2) : (a.zone === "PASS" || side === "DEFENSE" ? 2 : 1);
         const trustFail = riskLevel === "HIGH" ? (gritVal >= 80 || Match.isGrit ? -1 : -2) : 0;
         const rewardTxt = side === "DEFENSE"
-          ? `守成並轉守為攻｜信任+${trustWin}`
-          : (a.statType === "ASSIST" ? `隊友得分+助攻｜信任+${trustWin}` : `+${a.pts || 2}分${a.statType === "AND1" ? "/2+1" : ""}｜信任+${trustWin}`);
+          ? `🛡️守成 🤝+${trustWin}`
+          : (a.statType === "ASSIST" ? `🎯助攻 🤝+${trustWin}` : `🏀+${a.pts || 2}分${a.statType === "AND1" ? "+1" : ""} 🤝+${trustWin}`);
         const riskTxt = riskLevel === "HIGH"
-          ? `失手易被反擊｜信任${trustFail}`
-          : (riskLevel === "MID" ? "失手交出球權" : "失誤風險低・不扣信任");
+          ? `⚡反擊 🤝${trustFail}`
+          : (riskLevel === "MID" ? "失手換球權" : "低失誤風險");
 
         // 依動作屬性自然指派新版 QTE（保留縮圈，並加入二段時機 DOUBLE_RING 與方向判斷 DIRECTION_SNAP）
         let assignedQte = a.qteType;
@@ -3013,7 +3022,7 @@
           qteType: "RING_TIMING", cutinId: "zone_awakening", rate: 95,
           feel: { text: "絕對支配", tone: "#FACC15" },
           riskLevel: "LOW", gritBonusPct: 0, isCoachPlay: false, trustWin: 3, trustFail: 0,
-          rewardTxt: "+3分・全場震懾｜信任+3", riskTxt: "極低失手風險",
+          rewardTxt: "🔥+3分 🤝+3", riskTxt: "極低風險",
           perfectRate: 99, pts: 3, statType: "SHOT", qteWidthMul: 1.55, isZoneCard: true, zoneTag: "ZONE"
         });
       }
@@ -3025,25 +3034,26 @@
       if (stamina < 45) sitTags.push("⚡低體力");
       if (Match.isGrit) sitTags.push("🔥極限意志");
 
+      const noiseBand = getJudgmentNoiseBand(Season.careerYear, eqSet, stamina);
       document.getElementById("bulletBanner").textContent = `${triggerTag} · ${scenario.label}`;
-      document.getElementById("bulletSub").textContent = `${scenario.ballHolder === "USER" ? "🏀 你持球" : (side === "OFFENSE" ? "🏃 無球走位" : "🛡️ 防守站位")} ｜ 📋 信任 ${trust}(${trustProf.label})${sitTags.length ? " · " + sitTags.join(" ") : ""}`;
+      document.getElementById("bulletSub").textContent = `${scenario.ballHolder === "USER" ? "🏀 你持球" : (side === "OFFENSE" ? "🏃 無球走位" : "🛡️ 防守站位")} ｜ 👁️ 判斷誤差 ±${noiseBand}% ｜ 📋 信任 ${trust}(${trustProf.label})${sitTags.length ? " · " + sitTags.join(" ") : ""}`;
 
-      const riskLabelMap = { LOW: ["low", "穩健"], MID: ["mid", "中風險"], HIGH: ["high", "高風險"] };
+      const riskLabelMap = { LOW: ["low", "🟢 穩健"], MID: ["mid", "🟡 中險"], HIGH: ["high", "🔥 高險"] };
       const grid = document.getElementById("bulletCardGrid");
       grid.innerHTML = cards.map((c, idx) => {
-        const [rCls, rTxt] = riskLabelMap[c.riskLevel] || ["mid", "中風險"];
+        const [rCls, rTxt] = riskLabelMap[c.riskLevel] || ["mid", "🟡 中險"];
         return `
         <button type="button" class="action-card ${c.isZoneCard ? "zone-card" : ""}" data-card-idx="${idx}">
           <div class="ac-top">
             <span>${c.isCoachPlay ? "📋欽點 · " : ""}${c.zoneTag}${c.pts ? ` · +${c.pts}分` : ""}</span>
-            <span style="color:${c.isZoneCard ? "#FACC15" : c.feel.tone};">${c.feel.text} (~${c.rate}%)</span>
+            <span style="color:${c.isZoneCard ? "#FACC15" : c.feel.tone};">${c.feel.text}</span>
           </div>
           <div class="ac-title">${c.name}</div>
           <div class="ac-meta">
             <span class="risk-pill ${rCls}">${rTxt}</span>
-            ${c.gritBonusPct > 0 ? `<span class="grit-pill">⚡意志+${c.gritBonusPct}%</span>` : ""}
+            ${c.gritBonusPct > 0 ? `<span class="grit-pill">⚡ 意志加持</span>` : ""}
           </div>
-          <div class="ac-rr">報：${c.rewardTxt}<br/>險：${c.riskTxt}</div>
+          <div class="ac-rr">🎁 ${c.rewardTxt} ｜ ⚠️ ${c.riskTxt}</div>
         </button>`;
       }).join("");
       grid._cards = cards;
@@ -3069,6 +3079,34 @@
       qteCanvas.height = Math.max(110, Math.floor((r.height || 118) * dpr));
     }
 
+    const QTE_PREP_GUIDE = {
+      SHOT_ARC:       { title: "🎯 弧線出手判定",   tip: "橘球滑過金色最高點時，點擊畫面或按 SPACE 出手！" },
+      RING_TIMING:    { title: "💥 縮圈精準鎖定",   tip: "白色外圈縮小到與金色圓環重疊瞬間，點擊鎖定！" },
+      DOUBLE_RING:    { title: "⚡ 二段時機縮圈",   tip: "連續鎖定 2 次：① 起跳假動作 → ② 加速縮圈終結！" },
+      DIRECTION_SNAP: { title: "🧭 三路方向判斷",   tip: "開始後看準金色亮起的方向，立刻點擊按鈕或按 ← ↑ →！" },
+      MASH_CLASH:     { title: "💪 極限角力連打",   tip: "開始後快速連點按鈕或連按 SPACE，將能量推過金線！" },
+      DUAL_SNAP:      { title: "⚡ 雙點快速鎖定",   tip: "開始後依序快速點擊 ① → ② 紅點（或按 SPACE）！" }
+    };
+
+    function beginActiveQTE() {
+      const q = Match.qte;
+      if (!q || !q.awaitingStart) return;
+      q.awaitingStart = false;
+      q.readyAt = performance.now() + 120;
+      const btn = document.getElementById("btnQteAction");
+      const dirRow = document.getElementById("qteDirRow");
+      document.getElementById("qteSub").textContent = q.activeSub || "立即執行判定！";
+      if (q.type === "DIRECTION_SNAP") {
+        btn.style.display = "none";
+        if (dirRow) dirRow.classList.add("active");
+      } else {
+        btn.style.display = "block";
+        btn.textContent = q.activeBtnText || "💥 鎖定 (SPACE)";
+        if (dirRow) dirRow.classList.remove("active");
+      }
+      SoundFX.tap();
+    }
+
     function startQTE() {
       Match.phase = "QTE"; setDockMode("QTE"); resizeQteCanvas();
       const card = Match.selectedAction, wMul = card.qteWidthMul || 1, now = performance.now();
@@ -3076,50 +3114,70 @@
       document.getElementById("qteTitle").textContent = card.name;
       const btn = document.getElementById("btnQteAction");
       const dirRow = document.getElementById("qteDirRow");
-      btn.style.display = "block";
-      if (dirRow) dirRow.classList.remove("active");
 
       if (card.qteType === "SHOT_ARC") {
         const span = Math.min(0.18, Math.max(0.055, 0.095 * wMul));
-        Match.qte = { type: "SHOT_ARC", pos: 0.02, dir: 1, speed: (Match.isGrit ? 1.65 : (Match.isZone ? 1.25 : 1.52)) * tierMul, perfStart: 0.5 - span / 2, perfEnd: 0.5 + span / 2, goodStart: 0.5 - span * 1.30, goodEnd: 0.5 + span * 1.30, readyAt: now + 150 };
-        document.getElementById("qteSub").textContent = "金色最高點精準鎖定（速度隨聯賽提升）"; btn.textContent = "🏀 出手 (SPACE)";
+        Match.qte = {
+          type: "SHOT_ARC", pos: 0.02, dir: 1,
+          speed: (Match.isGrit ? 1.65 : (Match.isZone ? 1.25 : 1.52)) * tierMul,
+          perfStart: 0.5 - span / 2, perfEnd: 0.5 + span / 2,
+          goodStart: 0.5 - span * 1.30, goodEnd: 0.5 + span * 1.30,
+          activeSub: "金色最高點精準鎖定", activeBtnText: "🏀 出手 (SPACE)"
+        };
       } else if (card.qteType === "DOUBLE_RING") {
         const tol = Math.min(0.095, Math.max(0.036, 0.054 * wMul));
         Match.qte = {
           type: "DOUBLE_RING", stage: 1, stage1Grade: null,
           ringR: 1.0, speed: (Match.isZone ? 0.78 : 0.96) * tierMul,
-          targetR: 0.36, perfTol: tol, goodTol: tol * 2.1, readyAt: now + 150
+          targetR: 0.36, perfTol: tol, goodTol: tol * 2.1,
+          activeSub: "二段時機 ① 起跳 → ② 加速終結", activeBtnText: "⚡ 第一段鎖定 (SPACE)"
         };
-        document.getElementById("qteSub").textContent = "二段時機 ① 起跳／假動作 → ② 加速出手鎖定";
-        btn.textContent = "⚡ 第一段鎖定 (SPACE)";
       } else if (card.qteType === "DIRECTION_SNAP") {
-        const targetDir = Math.floor(Math.random() * 3); // 0:左, 1:中, 2:右
+        const targetDir = Math.floor(Math.random() * 3);
         const maxT = Math.max(0.78, (1.18 / tierMul) * Math.min(1.22, Math.max(0.85, wMul)));
         Match.qte = {
           type: "DIRECTION_SNAP", targetDir, timeLeft: maxT, maxTime: maxT,
           labels: card.side === "DEFENSE" ? ["◀ 左翼封阻", "▲ 正面抄截", "▶ 右翼補防"] : ["◀ 左路變向", "▲ 中路直切", "▶ 右路分球"],
-          readyAt: now + 120
+          activeSub: "瞬間點擊金色方向（或按 ← ↑ →）", activeBtnText: ""
         };
-        btn.style.display = "none";
-        if (dirRow) dirRow.classList.add("active");
-        document.getElementById("qteSub").textContent = "瞬間判斷金色方向！點擊按鈕或按 ← / ↑ / →";
       } else if (card.qteType === "RING_TIMING") {
         const tol = Math.min(0.085, Math.max(0.032, 0.048 * wMul));
-        Match.qte = { type: "RING_TIMING", ringR: 1.0, speed: (Match.isGrit ? 1.08 : (Match.isZone ? 0.80 : 0.98)) * tierMul, targetR: 0.34, perfTol: tol, goodTol: tol * 2.0, readyAt: now + 150 };
-        document.getElementById("qteSub").textContent = "縮圈重疊金環瞬間精準鎖定"; btn.textContent = "💥 鎖定 (SPACE)";
+        Match.qte = {
+          type: "RING_TIMING", ringR: 1.0,
+          speed: (Match.isGrit ? 1.08 : (Match.isZone ? 0.80 : 0.98)) * tierMul,
+          targetR: 0.34, perfTol: tol, goodTol: tol * 2.0,
+          activeSub: "縮圈重疊金環瞬間精準鎖定", activeBtnText: "💥 鎖定 (SPACE)"
+        };
       } else if (card.qteType === "MASH_CLASH") {
-        Match.qte = { type: "MASH_CLASH", power: 0.30, timeLeft: 1.25, drainPerSec: (Match.isGrit ? 0.34 : 0.31) * tierMul, gainPerTap: 0.072 * Math.min(1.2, Math.max(0.7, wMul)), readyAt: now + 100 };
-        document.getElementById("qteSub").textContent = "極限連打推過 76% 金線"; btn.textContent = "💪 連打發力！(SPACE)";
+        Match.qte = {
+          type: "MASH_CLASH", power: 0.30, timeLeft: 1.25,
+          drainPerSec: (Match.isGrit ? 0.34 : 0.31) * tierMul,
+          gainPerTap: 0.072 * Math.min(1.2, Math.max(0.7, wMul)),
+          activeSub: "極限連打推過 76% 金線", activeBtnText: "💪 連打發力！(SPACE)"
+        };
       } else {
         const nt = Math.max(0.55, 0.72 / tierMul);
-        Match.qte = { type: "DUAL_SNAP", step: 0, hits: 0, nodes: [{ x: 0.25 + Math.random() * 0.16, y: 0.38 + Math.random() * 0.26 }, { x: 0.58 + Math.random() * 0.18, y: 0.32 + Math.random() * 0.32 }], nodeTimer: nt, maxNodeTime: nt, readyAt: now + 130 };
-        document.getElementById("qteSub").textContent = "高速依序鎖定 ① → ②"; btn.textContent = "⚡ 鎖定 ① (SPACE)";
+        Match.qte = {
+          type: "DUAL_SNAP", step: 0, hits: 0,
+          nodes: [{ x: 0.25 + Math.random() * 0.16, y: 0.38 + Math.random() * 0.26 }, { x: 0.58 + Math.random() * 0.18, y: 0.32 + Math.random() * 0.32 }],
+          nodeTimer: nt, maxNodeTime: nt,
+          activeSub: "高速依序鎖定 ① → ②", activeBtnText: "⚡ 鎖定 ① (SPACE)"
+        };
       }
+
+      // 統一進入「預備停頓說明」狀態，待玩家看完玩法並點擊後才開始計時／移動
+      Match.qte.awaitingStart = true;
+      Match.qte.readyAt = now + 180;
+      const guide = QTE_PREP_GUIDE[Match.qte.type] || { title: "🎯 動作判定", tip: "準備好後點擊開始！" };
+      document.getElementById("qteSub").textContent = `⏸ 預備中 · ${guide.title}`;
+      btn.style.display = "block";
+      btn.textContent = "▶ 準備好了！開始判定 (SPACE)";
+      if (dirRow) dirRow.classList.remove("active");
     }
 
     function handleQteDirection(dirIdx) {
       if (Match.phase !== "QTE" || !Match.qte || Match.qte.type !== "DIRECTION_SNAP") return;
-      if (performance.now() < Match.qte.readyAt) return;
+      if (Match.qte.awaitingStart || performance.now() < Match.qte.readyAt) return;
       const q = Match.qte;
       if (dirIdx === q.targetDir) {
         const ratio = q.timeLeft / q.maxTime;
@@ -3134,6 +3192,7 @@
     function handleQteInput(cx = null, cy = null) {
       if (Match.phase !== "QTE" || !Match.qte || performance.now() < Match.qte.readyAt) return;
       const q = Match.qte;
+      if (q.awaitingStart) { beginActiveQTE(); return; }
       if (q.type === "SHOT_ARC") finishQTE((q.pos >= q.perfStart && q.pos <= q.perfEnd) ? "PERFECT" : (q.pos >= q.goodStart && q.pos <= q.goodEnd) ? "GOOD" : "MISS");
       else if (q.type === "RING_TIMING") { const d = Math.abs(q.ringR - q.targetR); finishQTE(d <= q.perfTol ? "PERFECT" : d <= q.goodTol ? "GOOD" : "MISS"); }
       else if (q.type === "DOUBLE_RING") {
@@ -3143,13 +3202,12 @@
           q.stage1Grade = g;
           q.stage = 2;
           q.ringR = 1.0;
-          q.speed = q.speed * 1.24; // 第二段加速收縮
+          q.speed = q.speed * 1.24;
           q.targetR = 0.31;
           q.readyAt = performance.now() + 100;
           if (g === "MISS") SoundFX.clank(); else SoundFX.tap();
           document.getElementById("btnQteAction").textContent = "🔥 第二段終結鎖定！(SPACE)";
         } else {
-          // 兩段綜合評級
           if (q.stage1Grade === "PERFECT" && g === "PERFECT") finishQTE("PERFECT");
           else if ((q.stage1Grade === "PERFECT" && g === "GOOD") || (q.stage1Grade === "GOOD" && g === "PERFECT")) finishQTE("PERFECT");
           else if (q.stage1Grade !== "MISS" || g !== "MISS") finishQTE("GOOD");
@@ -3175,6 +3233,22 @@
       const q = Match.qte; if (!q) return;
       const w = qteCanvas.width, h = qteCanvas.height;
       qCtx.fillStyle = "#181614"; qCtx.fillRect(0, 0, w, h);
+
+      // 預備停頓畫面：清楚告知本回合 QTE 玩法，未點開始絕不扣時間或移動
+      if (q.awaitingStart) {
+        const guide = QTE_PREP_GUIDE[q.type] || { title: "🎯 動作判定", tip: "準備好後點擊開始！" };
+        qCtx.strokeStyle = "#FACC15"; qCtx.lineWidth = 3;
+        qCtx.strokeRect(8, 8, w - 16, h - 16);
+        qCtx.fillStyle = "#FACC15";
+        qCtx.font = `900 ${Math.max(15, Math.round(h * 0.17))}px sans-serif`;
+        qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
+        qCtx.fillText(guide.title, w * 0.5, h * 0.34);
+        qCtx.fillStyle = "#FAF7F0";
+        qCtx.font = `800 ${Math.max(12, Math.round(h * 0.125))}px sans-serif`;
+        qCtx.fillText(guide.tip, w * 0.5, h * 0.66);
+        return;
+      }
+
       if (q.type === "SHOT_ARC") {
         q.pos += q.dir * q.speed * dt; if (q.pos >= 1) { q.pos = 1; q.dir = -1; } else if (q.pos <= 0) { q.pos = 0; q.dir = 1; }
         const cx = w * 0.5, cy = h * 0.90, rx = w * 0.38, ry = h * 0.72, ang = t => Math.PI + t * Math.PI;
@@ -3221,7 +3295,6 @@
           qCtx.font = "900 13px sans-serif"; qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
           qCtx.fillText(q.labels[i], bx + boxW / 2, by + boxH / 2);
         }
-        // 底部倒數計時條
         const barY = h * 0.80, barH = 12, barW = w - pad * 2;
         qCtx.fillStyle = "#292524"; qCtx.fillRect(pad, barY, barW, barH);
         qCtx.fillStyle = ratio >= 0.42 ? "#FACC15" : "#EF4444";
