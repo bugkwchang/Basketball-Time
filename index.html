@@ -268,9 +268,20 @@
 
     .command-dock {
       background: var(--paper-card); border: 3px solid var(--ink);
-      box-shadow: var(--shadow-ink); padding: 9px 11px; display: none;
+      box-shadow: var(--shadow-ink); padding: 8px 10px; display: none;
+      flex-shrink: 0; max-height: 50dvh; overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
     .command-dock.active { display: block; }
+    @media (max-width: 640px) {
+      .arena-wrap { padding: 4px 6px 6px; gap: 4px; }
+      .stage-shell { min-height: 118px; }
+      .command-dock { padding: 6px 8px; max-height: 56dvh; }
+      .card-grid { grid-template-columns: 1fr; gap: 5px; }
+      .action-card { padding: 6px 9px; gap: 2px; }
+      .ac-title { font-size: 13px; }
+      .ac-rr { font-size: 9.5px; }
+      .qte-arena { height: 102px; }
+    }
     .dock-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 7px; }
     .sit-stamp { background: var(--crimson); color: #FFF; border: 2px solid var(--ink); padding: 2px 9px; font-size: 12px; font-weight: 900; transform: skewX(-8deg); }
 
@@ -474,7 +485,7 @@
         <div class="comic-card c-5">
           <div class="card-head"><div class="card-title">🏀 建立 15 歲高一新秀</div></div>
           <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; font-weight:800;">
-            <label>球員姓名 <input id="inpPlayerName" class="field-sel" style="width:100%; margin-top:3px;" value="主角 #10" maxlength="12" /></label>
+            <label>球員姓名 <input id="inpPlayerName" class="field-sel" style="width:100%; margin-top:3px;" value="新秀主角" maxlength="12" /></label>
             <label>場上位置
               <select id="inpPlayerPos" class="field-sel" style="width:100%; margin-top:3px;">
                 <option value="PG">控球後衛 (PG)</option><option value="SG" selected>得分後衛 (SG)</option>
@@ -1282,6 +1293,7 @@
 
       // Sync exact 5 STARTER / 3 BENCH invariant on Season.userRoster
       Season.userRoster = ensureRosterProfiles(Season.userRoster);
+      syncUserJerseyNumber(Season.userRoster, true);
       const uSlot = Season.userRoster.find(x => x.isUser);
       if (uSlot) {
         uSlot.role = userIsStarter ? "STARTER" : "BENCH";
@@ -1544,6 +1556,35 @@
       return rounds;
     }
 
+    // ---------- 球衣背號分配與主力自選事件 ----------
+    const PREFERRED_ROOKIE_NUMS = [16, 17, 18, 19, 20, 21, 22, 25, 26, 27, 28, 29, 31, 32, 33, 35, 36, 40, 41, 42, 44, 45];
+    const ICONIC_STARTER_NUMS = [0, 1, 2, 3, 7, 8, 9, 10, 11, 13, 23, 24, 30, 34, 77];
+
+    function pickUnusedJerseyNumber(roster, preferred = null, pool = PREFERRED_ROOKIE_NUMS) {
+      const used = new Set((roster || []).filter(p => p && !p.isUser).map(p => Number(p.num)));
+      if (typeof preferred === "number" && preferred >= 0 && preferred <= 99 && !used.has(preferred)) {
+        return preferred;
+      }
+      const avail = pool.filter(n => !used.has(n));
+      if (avail.length > 0) return avail[Math.floor(Math.random() * avail.length)];
+      for (let n = 0; n <= 99; n++) {
+        if (!used.has(n)) return n;
+      }
+      return 99;
+    }
+
+    function syncUserJerseyNumber(roster, preferCurrent = true) {
+      if (!Array.isArray(roster)) return;
+      const uSlot = roster.find(p => p && p.isUser);
+      if (!uSlot) return;
+      const desired = preferCurrent && Season && Season.player && typeof Season.player.jerseyNum === "number"
+        ? Season.player.jerseyNum
+        : null;
+      const assigned = pickUnusedJerseyNumber(roster, desired);
+      uSlot.num = assigned;
+      if (Season && Season.player) Season.player.jerseyNum = assigned;
+    }
+
     function buildLeagueUserRoster(leagueId, playerObj) {
       const tLeague = DB.leagues.leagues.find(l => l.id === leagueId) || DB.leagues.leagues[0];
       const uTeamObj = tLeague.teams.find(t => t.isUserTeam) || tLeague.teams[0];
@@ -1554,7 +1595,9 @@
       if (!roster.some(pl => pl.isUser)) roster[1].isUser = true;
       const uSlot = roster.find(p => p.isUser);
       if (uSlot && playerObj) {
-        uSlot.num = uSlot.num || 10;
+        const assignedNum = pickUnusedJerseyNumber(roster, typeof playerObj.jerseyNum === "number" ? playerObj.jerseyNum : null);
+        uSlot.num = assignedNum;
+        playerObj.jerseyNum = assignedNum;
         uSlot.name = playerObj.name;
         uSlot.pos = playerObj.pos;
         uSlot.heightCm = playerObj.heightCm;
@@ -3234,18 +3277,14 @@
       const w = qteCanvas.width, h = qteCanvas.height;
       qCtx.fillStyle = "#181614"; qCtx.fillRect(0, 0, w, h);
 
-      // 預備停頓畫面：清楚告知本回合 QTE 玩法，未點開始絕不扣時間或移動
+      // 預備停頓畫面：清楚告知本回合 QTE 玩法，自動換行絕不出界
       if (q.awaitingStart) {
         const guide = QTE_PREP_GUIDE[q.type] || { title: "🎯 動作判定", tip: "準備好後點擊開始！" };
-        qCtx.strokeStyle = "#FACC15"; qCtx.lineWidth = 3;
+        qCtx.strokeStyle = "#FACC15"; qCtx.lineWidth = Math.max(2, h * 0.025);
         qCtx.strokeRect(8, 8, w - 16, h - 16);
-        qCtx.fillStyle = "#FACC15";
-        qCtx.font = `900 ${Math.max(15, Math.round(h * 0.17))}px sans-serif`;
         qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
-        qCtx.fillText(guide.title, w * 0.5, h * 0.34);
-        qCtx.fillStyle = "#FAF7F0";
-        qCtx.font = `800 ${Math.max(12, Math.round(h * 0.125))}px sans-serif`;
-        qCtx.fillText(guide.tip, w * 0.5, h * 0.66);
+        drawFittedText(qCtx, guide.title, w * 0.5, h * 0.27, w - 32, 900, Math.max(14, h * 0.17), "#FACC15");
+        drawWrappedText(qCtx, guide.tip, w * 0.5, h * 0.65, w - 34, Math.max(16, h * 0.19), 800, Math.max(12, h * 0.135), "#FAF7F0", 2);
         return;
       }
 
@@ -3275,8 +3314,8 @@
         qCtx.lineWidth = Math.max(6, maxR * q.perfTol * 1.8); qCtx.beginPath(); qCtx.arc(cx, cy, maxR * q.targetR, 0, Math.PI * 2); qCtx.stroke();
         qCtx.strokeStyle = "#FFF"; qCtx.lineWidth = 5; qCtx.beginPath(); qCtx.arc(cx, cy, maxR * q.ringR, 0, Math.PI * 2); qCtx.stroke();
         if (q.type === "DOUBLE_RING") {
-          qCtx.fillStyle = "#FACC15"; qCtx.font = "900 13px sans-serif"; qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
-          qCtx.fillText(q.stage === 1 ? "① 起跳" : "② 終結!", cx, cy);
+          qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
+          drawFittedText(qCtx, q.stage === 1 ? "① 起跳" : "② 終結!", cx, cy, maxR * 0.55, 900, Math.max(13, h * 0.14), "#FACC15");
         }
       } else if (q.type === "DIRECTION_SNAP") {
         q.timeLeft -= dt;
@@ -3291,9 +3330,8 @@
           qCtx.strokeStyle = isTarget ? "#FFF" : "#57534E";
           qCtx.lineWidth = isTarget ? 3.5 : 2;
           qCtx.strokeRect(bx, by, boxW, boxH);
-          qCtx.fillStyle = isTarget ? "#111" : "#A8A29E";
-          qCtx.font = "900 13px sans-serif"; qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
-          qCtx.fillText(q.labels[i], bx + boxW / 2, by + boxH / 2);
+          qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
+          drawFittedText(qCtx, q.labels[i], bx + boxW / 2, by + boxH / 2, boxW - 10, 900, Math.max(13, h * 0.15), isTarget ? "#111" : "#A8A29E");
         }
         const barY = h * 0.80, barH = 12, barW = w - pad * 2;
         qCtx.fillStyle = "#292524"; qCtx.fillRect(pad, barY, barW, barH);
@@ -3307,13 +3345,13 @@
         qCtx.fillStyle = q.power >= 0.72 ? "#FACC15" : (q.power >= 0.48 ? "#16A34A" : "#C81E1E"); qCtx.fillRect(pad, by, bw * q.power, bh);
         qCtx.strokeStyle = "#FAF7F0"; qCtx.lineWidth = 2.5; qCtx.strokeRect(pad, by, bw, bh);
         qCtx.strokeStyle = "#FACC15"; qCtx.lineWidth = 3; qCtx.beginPath(); qCtx.moveTo(pad + bw * 0.72, by - 7); qCtx.lineTo(pad + bw * 0.72, by + bh + 7); qCtx.stroke();
-        qCtx.fillStyle = "#FAF7F0"; qCtx.font = "900 13px sans-serif"; qCtx.textAlign = "center"; qCtx.fillText(`${Math.round(q.power * 100)}% ｜ ${q.timeLeft.toFixed(2)}s`, w * 0.5, by - 13);
+        qCtx.textAlign = "center"; qCtx.textBaseline = "middle"; drawFittedText(qCtx, `${Math.round(q.power * 100)}% ｜ ${q.timeLeft.toFixed(2)}s`, w * 0.5, by - Math.max(14, h * 0.12), w - 32, 900, Math.max(13, h * 0.14), "#FAF7F0");
       } else if (q.type === "DUAL_SNAP") {
         q.nodeTimer -= dt; if (q.nodeTimer <= 0) { finishQTE(q.hits >= 1 ? "GOOD" : "MISS"); return; }
         const node = q.nodes[q.step], nx = node.x * w, ny = node.y * h, ratio = Math.max(0, q.nodeTimer / q.maxNodeTime);
         qCtx.strokeStyle = "#FACC15"; qCtx.lineWidth = 4; qCtx.beginPath(); qCtx.arc(nx, ny, 20 + ratio * 30, 0, Math.PI * 2); qCtx.stroke();
         qCtx.fillStyle = "#C81E1E"; qCtx.strokeStyle = "#FFF"; qCtx.lineWidth = 3; qCtx.beginPath(); qCtx.arc(nx, ny, 20, 0, Math.PI * 2); qCtx.fill(); qCtx.stroke();
-        qCtx.fillStyle = "#FFF"; qCtx.font = "900 13px sans-serif"; qCtx.textAlign = "center"; qCtx.textBaseline = "middle"; qCtx.fillText(q.step === 0 ? "①" : "②", nx, ny);
+        qCtx.textAlign = "center"; qCtx.textBaseline = "middle"; drawFittedText(qCtx, q.step === 0 ? "①" : "②", nx, ny, 34, 900, Math.max(14, h * 0.15), "#FFF");
       }
     }
 
@@ -3370,7 +3408,7 @@
       const home5 = activeLineup(Match.homeTeam), away5 = activeLineup(Match.awayTeam);
       if (grade === "PERFECT") {
         Match.perfectsTotal += 1; Match.perfectStreak += 1;
-        if (Match.perfectStreak >= 2 && !Match.isZone) { Match.isZone = true; Match.zonePossessionsLeft = 2; broadcast("🔥🔥 不可思議！#${u.num} ${u.name} 踏入【ZONE 領域】！", true); }
+        if (Match.perfectStreak >= 2 && !Match.isZone) { Match.isZone = true; Match.zonePossessionsLeft = 2; broadcast(`🔥🔥 不可思議！#${u.num} ${u.name} 踏入【ZONE 領域】！`, true); }
       } else Match.perfectStreak = 0;
 
       const hoopX = card.side === "OFFENSE" ? 0.945 : 0.055;
@@ -3639,6 +3677,53 @@
       woodPatternCanvas = oc;
     }
 
+    // ---------- CANVAS 安全文字排版工具（自動縮字／換行，絕不出界） ----------
+    function drawFittedText(c, text, x, y, maxW, weight, basePx, fillCol, strokeW = 0, strokeCol = "#111", family = '"Noto Sans TC", sans-serif') {
+      const str = String(text || "");
+      let px = Math.max(10, Math.round(basePx));
+      c.font = `${weight} ${px}px ${family}`;
+      const measured = c.measureText(str).width;
+      if (maxW > 10 && measured > maxW) {
+        px = Math.max(9, Math.floor(px * (maxW / measured)));
+        c.font = `${weight} ${px}px ${family}`;
+      }
+      if (strokeW > 0) {
+        c.lineWidth = strokeW;
+        c.strokeStyle = strokeCol;
+        c.lineJoin = "round";
+        c.strokeText(str, x, y, maxW > 10 ? maxW : undefined);
+      }
+      c.fillStyle = fillCol;
+      c.fillText(str, x, y, maxW > 10 ? maxW : undefined);
+    }
+
+    function drawWrappedText(c, text, cx, cy, maxW, lineH, weight, basePx, fillCol, maxLines = 2) {
+      const str = String(text || "");
+      const px = Math.max(10, Math.round(basePx));
+      c.font = `${weight} ${px}px "Noto Sans TC", sans-serif`;
+      c.fillStyle = fillCol;
+      c.textAlign = "center";
+      c.textBaseline = "middle";
+      const lines = [];
+      let cur = "";
+      for (const ch of str) {
+        if (c.measureText(cur + ch).width > maxW && cur.length > 0) {
+          lines.push(cur);
+          cur = ch;
+          if (lines.length >= maxLines - 1) break;
+        } else {
+          cur += ch;
+        }
+      }
+      const consumed = lines.join("").length;
+      const rest = str.slice(consumed);
+      if (rest) lines.push(rest);
+      const totalH = (lines.length - 1) * lineH;
+      lines.forEach((ln, i) => {
+        drawFittedText(c, ln, cx, cy - totalH / 2 + i * lineH, maxW, weight, px, fillCol, 0);
+      });
+    }
+
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
       if (rect.width < 10 || rect.height < 10) return;
@@ -3729,20 +3814,26 @@
       ctx.restore();
 
       if (Match.phase === "BULLET" && Match.activeScenario) {
-        ctx.fillStyle = "#111"; ctx.fillRect(ox + 8, oy + 8, Math.min(260, cw * 0.34), ch * 0.11);
-        ctx.strokeStyle = "#FACC15"; ctx.lineWidth = 2; ctx.strokeRect(ox + 8, oy + 8, Math.min(260, cw * 0.34), ch * 0.11);
-        ctx.fillStyle = "#FACC15"; ctx.font = `900 ${Math.round(ch * 0.052)}px sans-serif`; ctx.textAlign = "left"; ctx.textBaseline = "middle";
-        ctx.fillText(`📍 ${Match.activeScenario.label}`, ox + 16, oy + 8 + ch * 0.055);
+        const tagTxt = `📍 ${Match.activeScenario.label}`;
+        const tagFontPx = Math.max(11, Math.round(ch * 0.052));
+        ctx.font = `900 ${tagFontPx}px "Noto Sans TC", sans-serif`;
+        const maxBoxW = Math.max(120, cw - 16);
+        const boxW = Math.min(maxBoxW, Math.max(140, ctx.measureText(tagTxt).width + 22));
+        const boxH = Math.max(22, ch * 0.115);
+        ctx.fillStyle = "rgba(17,17,17,0.92)"; ctx.fillRect(ox + 8, oy + 8, boxW, boxH);
+        ctx.strokeStyle = "#FACC15"; ctx.lineWidth = 2; ctx.strokeRect(ox + 8, oy + 8, boxW, boxH);
+        ctx.textAlign = "left"; ctx.textBaseline = "middle";
+        drawFittedText(ctx, tagTxt, ox + 16, oy + 8 + boxH * 0.5, boxW - 16, 900, tagFontPx, "#FACC15");
       }
       if (Match.userPlayer && !Match.userPlayer.onFloor && Match.phase === "PLAYING") {
-        ctx.fillStyle = "rgba(17,17,17,0.80)"; ctx.fillRect(0, h * 0.41, w, h * 0.18);
-        ctx.fillStyle = "#FACC15"; ctx.font = `900 ${Math.round(ch * 0.068)}px sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText(`⏩ 板凳 7x 快進 · ${Match.benchReason} (體力 ${Math.round(Match.userPlayer.stamina)}%)`, w / 2, h / 2);
+        ctx.fillStyle = "rgba(17,17,17,0.82)"; ctx.fillRect(0, h * 0.41, w, h * 0.18);
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        drawFittedText(ctx, `⏩ 板凳 7x 快進 · ${Match.benchReason} (體力 ${Math.round(Match.userPlayer.stamina)}%)`, w / 2, h / 2, w * 0.92, 900, Math.max(12, ch * 0.068), "#FACC15");
       }
       if (Match.popupTimer > 0) {
-        ctx.save(); ctx.font = `900 ${Math.round(ch * 0.13)}px sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.lineWidth = 7; ctx.strokeStyle = "#111"; ctx.strokeText(Match.popupText, w / 2, h * 0.28);
-        ctx.fillStyle = Match.popupColor; ctx.fillText(Match.popupText, w / 2, h * 0.28); ctx.restore();
+        ctx.save(); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        drawFittedText(ctx, Match.popupText, w / 2, h * 0.28, w * 0.90, 900, Math.max(16, ch * 0.13), Match.popupColor, Math.max(4, ch * 0.025), "#111");
+        ctx.restore();
       }
     }
 
@@ -3761,8 +3852,11 @@
       const im = LoadedImages[data.artAsset] || LoadedImages.default;
       if (im && im._loaded) {
         const slide = Math.min(1, elapsed / 120), scale = Math.max(w / im.width, panelH / im.height) * (1.08 - slide * 0.04);
-        ctx.save(); ctx.filter = inHitstop ? "invert(1) contrast(1.8)" : (data.bgStyle === "GRIT_MONO" ? "grayscale(1) contrast(1.4)" : "contrast(1.16)");
-        ctx.drawImage(im, (w - im.width * scale) * 0.5 + (1 - slide) * w * 0.16, (h - im.height * scale) * 0.50, im.width * scale, im.height * scale); ctx.restore();
+        ctx.save();
+        try { ctx.filter = inHitstop ? "invert(1) contrast(1.8)" : (data.bgStyle === "GRIT_MONO" ? "grayscale(1) contrast(1.4)" : "contrast(1.16)"); } catch (_) {}
+        ctx.drawImage(im, (w - im.width * scale) * 0.5 + (1 - slide) * w * 0.16, (h - im.height * scale) * 0.50, im.width * scale, im.height * scale);
+        ctx.restore();
+        if (inHitstop) { ctx.fillStyle = "rgba(250,247,240,0.28)"; ctx.fillRect(0, panelY - h * 0.05, w, panelH + h * 0.1); }
       }
       ctx.strokeStyle = inHitstop ? "#111" : "#FAF7F0";
       for (let i = 0; i < Math.min(100, data.speedLinesDensity || 64); i++) {
@@ -3772,11 +3866,20 @@
         ctx.lineTo(w * 0.5 + Math.cos(a) * Math.max(w, h) * 0.85, h * 0.5 + Math.sin(a) * Math.max(w, h) * 0.85); ctx.stroke();
       }
       ctx.restore();
-      const pad = w * 0.035; ctx.textAlign = "left"; ctx.textBaseline = "middle";
-      ctx.font = `900 ${Math.round(h * 0.095)}px sans-serif`; ctx.lineWidth = 8 * (w / 900); ctx.strokeStyle = "#111";
-      ctx.strokeText(data.name, pad, h * 0.78); ctx.fillStyle = inHitstop ? "#C81E1E" : "#FAF7F0"; ctx.fillText(data.name, pad, h * 0.78);
-      ctx.font = `800 ${Math.round(h * 0.048)}px sans-serif`; ctx.lineWidth = 5 * (w / 900);
-      ctx.strokeText(data.voiceLine, pad + 4, h * 0.88); ctx.fillStyle = "#FACC15"; ctx.fillText(data.voiceLine, pad + 4, h * 0.88);
+      // 底部漸層護底，確保必殺技名稱與台詞在任何背景與螢幕皆清晰且不出界
+      const cg = ctx.createLinearGradient(0, h * 0.62, 0, h);
+      cg.addColorStop(0, "rgba(17,17,17,0)");
+      cg.addColorStop(0.5, "rgba(17,17,17,0.72)");
+      cg.addColorStop(1, "rgba(17,17,17,0.92)");
+      ctx.fillStyle = cg; ctx.fillRect(0, h * 0.62, w, h * 0.38);
+
+      const pad = Math.max(12, w * 0.04);
+      const maxTxtW = Math.max(120, w - pad * 2);
+      ctx.textAlign = "left"; ctx.textBaseline = "middle";
+      const titlePx = Math.min(h * 0.095, w * 0.075);
+      const voicePx = Math.min(h * 0.050, w * 0.042);
+      drawFittedText(ctx, data.name || "", pad, h * 0.76, maxTxtW, 900, titlePx, inHitstop ? "#EF4444" : "#FAF7F0", Math.max(4, titlePx * 0.14), "#111");
+      drawFittedText(ctx, data.voiceLine || "", pad + 2, h * 0.88, maxTxtW - 4, 800, voicePx, "#FACC15", Math.max(3, voicePx * 0.14), "#111");
       ctx.restore();
     }
 
@@ -3840,26 +3943,28 @@
       ctx.lineWidth = isZone || isSig ? 5.5 : 3.5;
       ctx.strokeRect(kx, ky, kw, kh);
 
-      // Top-left Tier Distinction Stamp
+      // Top-left Tier Distinction Stamp (依文字實測動態計算框寬，絕不衝出右側)
       const badgeBg = isZone ? "#FACC15" : (isSig ? "#C81E1E" : (isFail ? "#374151" : "#111111"));
       const badgeFg = isZone ? "#111111" : "#FFFFFF";
-      const bw = Math.min(kw * 0.48, 220), bh = Math.max(24, kh * 0.13);
+      const bh = Math.max(24, kh * 0.13);
+      const badgeFontPx = Math.max(11, Math.round(bh * 0.54));
+      ctx.font = `900 ${badgeFontPx}px "Noto Sans TC", sans-serif`;
+      const bw = Math.min(kw - 20, Math.max(110, ctx.measureText(sp.tierLabel || "").width + 20));
       ctx.fillStyle = badgeBg; ctx.fillRect(kx + 10, ky + 10, bw, bh);
       ctx.strokeStyle = "#111"; ctx.lineWidth = 2; ctx.strokeRect(kx + 10, ky + 10, bw, bh);
-      ctx.fillStyle = badgeFg; ctx.font = `900 ${Math.round(bh * 0.56)}px "Noto Sans TC", sans-serif`;
       ctx.textAlign = "left"; ctx.textBaseline = "middle";
-      ctx.fillText(sp.tierLabel, kx + 18, ky + 10 + bh / 2);
+      drawFittedText(ctx, sp.tierLabel, kx + 18, ky + 10 + bh / 2, bw - 16, 900, badgeFontPx, badgeFg);
 
-      // Result Headline & Stat Subline
-      ctx.font = `900 ${Math.round(kh * (isZone || isSig ? 0.155 : 0.14))}px "Noto Sans TC", sans-serif`;
-      ctx.lineWidth = 7; ctx.strokeStyle = "#111";
-      ctx.strokeText(sp.headline, kx + kw * 0.04, ky + kh * 0.74);
-      ctx.fillStyle = isZone ? "#FACC15" : (isSig ? "#FEF08A" : (isFail ? "#F87171" : "#FFFFFF"));
-      ctx.fillText(sp.headline, kx + kw * 0.04, ky + kh * 0.74);
-
-      ctx.font = `800 ${Math.round(kh * 0.08)}px "Noto Sans TC", sans-serif`;
-      ctx.fillStyle = "#E7DFCE";
-      ctx.fillText(sp.subline, kx + kw * 0.042, ky + kh * 0.89);
+      // Result Headline & Stat Subline (嚴格限制於卡片內寬 92%)
+      const innerMaxW = Math.max(100, kw * 0.91);
+      const headPx = Math.min(kh * (isZone || isSig ? 0.15 : 0.135), kw * 0.095);
+      const subPx = Math.min(kh * 0.078, kw * 0.048);
+      drawFittedText(
+        ctx, sp.headline, kx + kw * 0.042, ky + kh * 0.73, innerMaxW, 900, headPx,
+        isZone ? "#FACC15" : (isSig ? "#FEF08A" : (isFail ? "#F87171" : "#FFFFFF")),
+        Math.max(4, headPx * 0.14), "#111"
+      );
+      drawFittedText(ctx, sp.subline, kx + kw * 0.042, ky + kh * 0.89, innerMaxW, 800, subPx, "#E7DFCE");
       ctx.restore();
     }
 
@@ -4149,7 +4254,8 @@
       createDraft.name = (document.getElementById("inpPlayerName").value || "主角 #10").trim();
       const customRoster = JSON.parse(JSON.stringify(DB.leagues.defaultUserRoster));
       const u = customRoster.find(p => p.isUser);
-      if (u) { u.name = createDraft.name; u.pos = createDraft.pos; u.ovr = calcOVR(createDraft.stats, createDraft.pos, createDraft.skills); }
+      const rookieNum = pickUnusedJerseyNumber(customRoster, null);
+      if (u) { u.num = rookieNum; u.name = createDraft.name; u.pos = createDraft.pos; u.ovr = calcOVR(createDraft.stats, createDraft.pos, createDraft.skills); }
       createNewCareer("hs_nationals", [], 1, customRoster);
       const trustByRarity = { mortal: 22, regional_gem: 38, generational: 58, once_in_century: 76 };
       const initTrust = trustByRarity[createDraft.rarity.id] || 32;
@@ -4157,6 +4263,7 @@
         name: createDraft.name, pos: createDraft.pos, age: 15, heightCm: createDraft.heightCm,
         rarityName: createDraft.rarity.name, bgName: createDraft.bg.name, cap: createDraft.cap,
         stars: createDraft.rarity.stars, condition: 100, injured: false, reputation: 45,
+        jerseyNum: rookieNum, jerseyPickedTeams: [],
         coachTrust: initTrust, growthCheckCounter: 0, lastDelta: {}, eventLog: [],
         stats: { ...createDraft.stats }, flags: [...createDraft.flags],
         ap: 2, rivalHeat: 35, eventTriggeredThisRound: false
@@ -4460,7 +4567,43 @@
       const eligible = DB.events.events.filter(e => (e.stage === "ANY" || e.stage === stage) && ConditionEvaluator.evalAll(e.conditions, ctx));
       if (!eligible.length) return;
       p.eventTriggeredThisRound = true;
-      const evt = eligible[Math.floor(Math.random() * eligible.length)];
+      const nctxPre = getEventNameContext();
+      const curTeamStand = Season.standings && Season.standings.find(t => t.isUserTeam);
+      const curTeamKey = `${Season.leagueId}:${(curTeamStand && curTeamStand.id) || "team"}`;
+      if (!Array.isArray(p.jerseyPickedTeams)) p.jerseyPickedTeams = [];
+      const isMainStarter = Season.rotationKey === "STARTER" || Season.rotationKey === "STAR";
+      const canPickJersey = isMainStarter && (p.coachTrust || 35) >= 65 && !p.jerseyPickedTeams.includes(curTeamKey);
+
+      let evt = null;
+      if (canPickJersey && Math.random() < 0.70) {
+        const usedNums = new Set((Season.userRoster || []).filter(x => x && !x.isUser).map(x => Number(x.num)));
+        const curNum = typeof p.jerseyNum === "number" ? p.jerseyNum : ((Season.userRoster.find(x => x.isUser) || {}).num || 18);
+        const iconicAvail = ICONIC_STARTER_NUMS.filter(n => !usedNums.has(n) && n !== curNum);
+        // 隨機挑出 3 個熱門空號供挑選
+        const shuffled = [...iconicAvail].sort(() => Math.random() - 0.5).slice(0, 3);
+        const jChoices = shuffled.map(num => ({
+          label: `換穿 #${num} 號戰袍（主力專屬背號）`,
+          stat: "reputation", base: 1.0, w: 0, jerseyNum: num,
+          ok: { msg: `👕 你正式接過 ${nctxPre.teamName} 的 #${num} 號球衣！隊友與球迷響起熱烈掌聲，屬於你的傳奇背號就此定格！`, eff: { reputation: 4, coachTrust: 2 } },
+          fail: { msg: "", eff: {} }
+        }));
+        jChoices.push({
+          label: `保留現有 #${curNum} 號，延續入隊初心`,
+          stat: "reputation", base: 1.0, w: 0, jerseyNum: curNum,
+          ok: { msg: `🔥 你婉拒更換背號，決定讓 #${curNum} 號成為自己的招牌象徵！${nctxPre.coachName} 欣賞你的專注與沉穩。`, eff: { reputation: 3, coachTrust: 3 } },
+          fail: { msg: "", eff: {} }
+        });
+        evt = {
+          id: "evt_pick_jersey_number",
+          isJerseyEvent: true,
+          teamKey: curTeamKey,
+          title: "👕 主力殊榮：自選專屬球衣背號",
+          desc: `憑藉你穩定的先發表現與教練團高度信賴，${nctxPre.coachName} 與球隊經理特別在更衣室找到你：「你已經是 ${nctxPre.teamName} 不可或缺的主力核心，現在隊上這幾個空缺號碼任你挑選，選一個代表你的背號吧！」`,
+          choices: jChoices
+        };
+      } else {
+        evt = eligible[Math.floor(Math.random() * eligible.length)];
+      }
 
       document.getElementById("evtStageStamp").textContent = typeof stageStampLabel === "string" ? stageStampLabel : "📅 賽間人生經歷";
       document.getElementById("evtAgeStamp").textContent = `${p.age} 歲 · 狀態 ${p.condition}%`;
@@ -4486,6 +4629,13 @@
     function resolveEventChoice(idx) {
       const evt = document.getElementById("evtChoicesBox")._evt; if (!evt) return;
       const ch = evt.choices[idx], p = Season.player;
+      if (evt.isJerseyEvent && typeof ch.jerseyNum === "number") {
+        p.jerseyNum = ch.jerseyNum;
+        if (!Array.isArray(p.jerseyPickedTeams)) p.jerseyPickedTeams = [];
+        if (evt.teamKey && !p.jerseyPickedTeams.includes(evt.teamKey)) p.jerseyPickedTeams.push(evt.teamKey);
+        const uSlot = (Season.userRoster || []).find(x => x && x.isUser);
+        if (uSlot) uSlot.num = ch.jerseyNum;
+      }
       const statVal = ch.stat === "reputation" ? (typeof p.reputation === "number" ? p.reputation : 50) : (p.stats[ch.stat] || 65);
       const rate = Math.min(0.98, ch.base + statVal * ch.w);
       const ok = Math.random() <= rate;
@@ -4517,7 +4667,12 @@
             }
             const newRoster = buildOpponentRoster(topTeam).map((pl, idx2) => ({ ...pl, isRival: false, isUser: idx2 === 1 }));
             const uSlot = newRoster.find(x => x.isUser);
-            if (uSlot) { uSlot.num = 10; uSlot.name = p.name; uSlot.pos = p.pos; uSlot.heightCm = p.heightCm; uSlot.ovr = calcOVR(p.stats, p.pos, Season.equippedTraits); }
+            if (uSlot) {
+              const newNum = pickUnusedJerseyNumber(newRoster, null);
+              uSlot.num = newNum; p.jerseyNum = newNum;
+              uSlot.name = p.name; uSlot.pos = p.pos; uSlot.heightCm = p.heightCm;
+              uSlot.ovr = calcOVR(p.stats, p.pos, Season.equippedTraits);
+            }
             Season.userRoster = newRoster;
           }
         }
