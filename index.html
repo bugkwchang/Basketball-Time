@@ -1506,10 +1506,16 @@
     function adjustCoachTrustLive(delta, reason = "") {
       if (!Season || !Season.player || !delta) return;
       const p = Season.player;
-      if (typeof p.coachTrust !== "number") p.coachTrust = 35;
-      p.coachTrust = Math.max(5, Math.min(100, p.coachTrust + delta));
+      if (typeof p.coachTrust !== "number") p.coachTrust = 28;
+      // 單場即時信任總變動限制於 [-4, +5]，杜絕單場刷爆信任直升王牌
+      const curLive = Match.liveTrustDelta || 0;
+      const clampedNext = Math.max(-4, Math.min(5, curLive + delta));
+      const actualDelta = clampedNext - curLive;
+      if (actualDelta === 0) return;
+      Match.liveTrustDelta = clampedNext;
+      p.coachTrust = Math.max(5, Math.min(100, p.coachTrust + actualDelta));
       if (reason && !Match.fastSimming) {
-        const sign = delta > 0 ? `+${delta}` : `${delta}`;
+        const sign = actualDelta > 0 ? `+${actualDelta}` : `${actualDelta}`;
         broadcast(`📋 教練反應（信任 ${sign} → ${p.coachTrust}）：${reason}`);
       }
     }
@@ -1545,9 +1551,25 @@
       const curLeague = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
       const lgAvg = curLeague.teams.reduce((s, t) => s + (t.ovr || 75), 0) / Math.max(1, curLeague.teams.length);
       const prevKey = Season.rotationKey;
+      const POS_ADJ = {
+        PG: ["PG", "SG", "SF", "PF", "C"],
+        SG: ["SG", "PG", "SF", "PF", "C"],
+        SF: ["SF", "SG", "PF", "PG", "C"],
+        PF: ["PF", "C", "SF", "SG", "PG"],
+        C:  ["C", "PF", "SF", "SG", "PG"]
+      };
+      const posDist = (aPos, bPos) => {
+        const ord = POS_ADJ[aPos] || POS_ADJ.SF;
+        const idx = ord.indexOf(bPos);
+        return idx < 0 ? 5 : idx;
+      };
+
+      const gpSeason = (Season.seasonTotals && Season.seasonTotals.gp) || 0;
+      const isVetYear = (Season.careerYear || 1) >= 2;
       let nextKey = "BENCH_WARMER";
-      if (p.coachTrust >= 85 && ovr >= Math.round(lgAvg + 1)) nextKey = "STAR";
-      else if (p.coachTrust >= 65 && ovr >= Math.round(lgAvg - 4)) nextKey = "STARTER";
+      // 晉升先發／王牌須兼具出賽資歷、教練信任與實力門檻
+      if (p.coachTrust >= 85 && ovr >= Math.round(lgAvg + 3) && (gpSeason >= 6 || isVetYear)) nextKey = "STAR";
+      else if (p.coachTrust >= 65 && ovr >= Math.round(lgAvg - 3) && (gpSeason >= 3 || isVetYear)) nextKey = "STARTER";
       else if (p.coachTrust >= 46) nextKey = "SIXTH_MAN";
       else if (p.coachTrust >= 26) nextKey = "ROOKIE";
       else nextKey = "BENCH_WARMER";
@@ -1555,7 +1577,7 @@
       Season.rotationKey = nextKey;
       const userIsStarter = (nextKey === "STAR" || nextKey === "STARTER");
 
-      // Sync exact 5 STARTER / 3 BENCH invariant on Season.userRoster
+      // Sync exact 5 STARTER invariant WITH position-matched replacement (不讓 C 踢掉 PG)
       Season.userRoster = ensureRosterProfiles(Season.userRoster);
       syncUserJerseyNumber(Season.userRoster, true);
       const uSlot = Season.userRoster.find(x => x.isUser);
@@ -1563,13 +1585,31 @@
         uSlot.role = userIsStarter ? "STARTER" : "BENCH";
         let starters = Season.userRoster.filter(x => x.role === "STARTER");
         while (starters.length < 5) {
-          const promote = Season.userRoster.filter(x => !x.isUser && x.role !== "STARTER").sort((a, b) => b.ovr - a.ovr)[0];
+          // 優先拉上與主角同位置（或場上最缺位置）的替補
+          const starterPosSet = new Set(starters.map(s => s.pos));
+          const promote = Season.userRoster
+            .filter(x => !x.isUser && x.role !== "STARTER")
+            .sort((a, b) => {
+              const aFill = starterPosSet.has(a.pos) ? 1 : 0;
+              const bFill = starterPosSet.has(b.pos) ? 1 : 0;
+              if (aFill !== bFill) return aFill - bFill;
+              const dDiff = posDist(uSlot.pos, a.pos) - posDist(uSlot.pos, b.pos);
+              if (dDiff !== 0) return dDiff;
+              return b.ovr - a.ovr;
+            })[0];
           if (!promote) break;
           promote.role = "STARTER";
           starters = Season.userRoster.filter(x => x.role === "STARTER");
         }
         while (starters.length > 5) {
-          const demote = Season.userRoster.filter(x => !x.isUser && x.role === "STARTER").sort((a, b) => a.ovr - b.ovr)[0];
+          // 優先替換與主角「同位置」的先發（例如打 C 就替換原本的 C，不會誤踢 PG）
+          const demote = Season.userRoster
+            .filter(x => !x.isUser && x.role === "STARTER")
+            .sort((a, b) => {
+              const dDiff = posDist(uSlot.pos, a.pos) - posDist(uSlot.pos, b.pos);
+              if (dDiff !== 0) return dDiff;
+              return a.ovr - b.ovr;
+            })[0];
           if (!demote) break;
           demote.role = "BENCH";
           starters = Season.userRoster.filter(x => x.role === "STARTER");
@@ -1630,26 +1670,27 @@
       if (typeof p.coachTrust !== "number") p.coachTrust = 35;
       const prevTrust = p.coachTrust;
 
-      let delta = won ? 3 : 0;
-      if (perfScore >= 32) delta += 8;
-      else if (perfScore >= 20) delta += 5;
-      else if (perfScore >= 11) delta += 3;
-      else if (perfScore < 6) delta -= 2; // 降低懲罰性，避免雪崩式掉信任
+      let delta = won ? 2 : 0;
+      if (perfScore >= 34) delta += 5;
+      else if (perfScore >= 22) delta += 3;
+      else if (perfScore >= 12) delta += 2;
+      else if (perfScore < 6) delta -= 3;
 
       // 贏回信任路徑 1：團隊紀律與防守拚勁獎勵（助攻 >= 4 或 抄阻 >= 3 且失誤 <= 2）
       let comebackNote = "";
       if (box) {
         const teamPlayGood = (box.ast >= 4 || (box.stl + box.blk) >= 3) && box.tov <= 2;
         if (teamPlayGood) {
-          delta += 3;
+          delta += 2;
           comebackNote = "團隊助攻與防守紀律贏得教練讚賞";
         }
-        // 贏回信任路徑 2：低信任觸底反彈補償（信任 < 35 時只要正負值 >= 0 或表現 >= 10 就額外加回信任）
-        if (prevTrust < 35 && (box.plusMinus >= 0 || perfScore >= 10)) {
-          delta += 3;
+        // 贏回信任路徑 2：低信任觸底反彈補償（信任 < 35 時展現正負值 >= 0 或達標表現）
+        if (prevTrust < 35 && (box.plusMinus >= 0 || perfScore >= 11)) {
+          delta += 2;
           comebackNote = comebackNote || "你在逆境中展現積極態度，成功開始贏回教練信任";
         }
       }
+      delta = Math.max(-4, Math.min(7, delta));
 
       if (p.condition < 45) delta -= 1;
       p.coachTrust = Math.max(5, Math.min(100, p.coachTrust + delta));
@@ -2739,6 +2780,7 @@
       Match.activeCutIn = null;
       Match.resultSplash = null;
       Match.qte = null;
+      Match.liveTrustDelta = 0;
       Match.fastSimming = false;
       Match.simAccumulator = 0;
 
@@ -2884,18 +2926,37 @@
         }
 
         if (wantOn !== u.onFloor && (urgent || Match.userSubCooldownSec <= 0)) {
+          const subPosRank = (targetPos, candPos) => {
+            const m = { PG: ["PG","SG","SF","PF","C"], SG: ["SG","PG","SF","PF","C"], SF: ["SF","SG","PF","PG","C"], PF: ["PF","C","SF","SG","PG"], C: ["C","PF","SF","SG","PG"] };
+            const idx = (m[targetPos] || m.SF).indexOf(candPos);
+            return idx < 0 ? 5 : idx;
+          };
           if (wantOn) {
-            const outP = teamList.find(p => !p.isUser && p.onFloor && p.role === "BENCH")
-              || teamList.filter(p => !p.isUser && p.onFloor).sort((a, b) => a.stamina - b.stamina)[0];
+            // 上場時優先換下「同位置或相鄰位置」的場上隊友（避免 C 換下 PG）
+            const outP = teamList
+              .filter(p => !p.isUser && p.onFloor)
+              .sort((a, b) => {
+                const pd = subPosRank(u.pos, a.pos) - subPosRank(u.pos, b.pos);
+                if (pd !== 0) return pd;
+                if (a.role !== b.role) return a.role === "BENCH" ? -1 : 1;
+                return a.stamina - b.stamina;
+              })[0];
             if (swapPlayers(outP, u)) {
               Match.userSubCooldownSec = 105;
-              broadcast(`全場歡呼！#${u.num} ${u.name} 替換 ${outP.name} 重返戰場！${tp.coachSubIn}`);
+              broadcast(`全場歡呼！#${u.num} ${u.name}(${u.pos}) 替換 ${outP.name}(${outP.pos}) 重返戰場！${tp.coachSubIn}`);
             }
           } else {
-            const inP = teamList.filter(p => !p.isUser && !p.onFloor && p.pf < foulLimit).sort((a, b) => b.stamina - a.stamina)[0];
+            // 下場休息時優先由同位置／相鄰位置隊友頂替
+            const inP = teamList
+              .filter(p => !p.isUser && !p.onFloor && p.pf < foulLimit)
+              .sort((a, b) => {
+                const pd = subPosRank(u.pos, a.pos) - subPosRank(u.pos, b.pos);
+                if (pd !== 0) return pd;
+                return b.stamina - a.stamina;
+              })[0];
             if (swapPlayers(u, inP)) {
               Match.userSubCooldownSec = 95;
-              broadcast(`場邊換人，${inP.name} 入替 #${u.num} ${u.name}（${Match.benchReason}）。${tp.coachSubOut}`);
+              broadcast(`場邊換人，${inP.name}(${inP.pos}) 入替 #${u.num} ${u.name}(${u.pos})（${Match.benchReason}）。${tp.coachSubOut}`);
             }
           }
         }
@@ -3267,7 +3328,9 @@
           advancePlayoffBracketIfNeeded(g);
           if (Season.player) {
             Season.player.ap = 2;
-            Season.player.condition = Math.max(35, Season.player.condition - 10);
+            const minRatio = u.secPlayed / Math.max(1, Match.totalGameSec);
+            const condLoss = Math.round(8 + minRatio * 10); // 依實際上場時間扣除 8% ~ 18%
+            Season.player.condition = Math.max(25, Season.player.condition - condLoss);
             Season.player.eventTriggeredThisRound = false;
             checkPeriodicHeightGrowth();
             const perf = u.pts * 1.2 + (u.oreb + u.dreb) * 1.2 + u.ast * 1.4 + u.stl * 2 + u.blk * 2 - u.tov * 1.5;
@@ -3313,23 +3376,49 @@
         const filtered = candidates.filter(s => wantOnBall ? s.ballHolder === "USER" : s.ballHolder !== "USER");
         if (filtered.length > 0) candidates = filtered;
       }
-      const scenario = candidates[Math.floor(Math.random() * candidates.length)];
+      // 依球員位置加權挑選符合真實打法的情境（例：C/PF 偏向低位、擋拆順下、護框搶板；PG/SG 偏向外線與擋拆）
+      const uPos = (Match.userPlayer && Match.userPlayer.pos) || p.pos || "SG";
+      const isBig = (uPos === "C" || uPos === "PF");
+      const isGuard = (uPos === "PG" || uPos === "SG");
+      const isStretchBig = isBig && p.stats && (p.stats.threePt || 50) >= 72;
+      const BIG_SCENARIOS = new Set(["OFF_POST_MISMATCH", "OFF_PICK_ROLL", "OFF_BASELINE_CUT", "OFF_HORNS_SET", "DEF_OFFBALL_GLASS", "DEF_SWITCH_BIG", "DEF_PNR_DROP"]);
+      const GUARD_SCENARIOS = new Set(["OFF_ONBALL_ISO", "OFF_PICK_ROLL", "OFF_FASTBREAK", "OFF_OFFBALL_SCREEN", "OFF_FULLCOURT_PRESS", "DEF_ONBALL_ISO", "DEF_CORNER_CLOSEOUT", "DEF_INBOUND_DENY"]);
+      const scWeighted = candidates.map(sc => {
+        let w = 1.0;
+        if (isBig && BIG_SCENARIOS.has(sc.id)) w *= 3.0;
+        if (isBig && sc.id === "OFF_TRAILER_3" && !isStretchBig) w *= 0.2;
+        if (isGuard && GUARD_SCENARIOS.has(sc.id)) w *= 2.2;
+        return { sc, w };
+      });
+      let scRoll = Math.random() * scWeighted.reduce((s, x) => s + x.w, 0);
+      let scenario = candidates[0];
+      for (const item of scWeighted) { scRoll -= item.w; if (scRoll <= 0) { scenario = item.sc; break; } }
       Match.activeScenario = scenario;
       arrangeCourtFormation(scenario.id);
 
-      // 3. 情境動態評分挑選 3 張具策略差異的卡片（避免全同質化）
+      // 3. 情境＋位置動態評分挑選 3 張具策略差異的卡片（杜絕傳統中鋒狂射三分）
       const pool = DB.actions.actions.filter(a => a.scenarios.includes(scenario.id));
       const scoreActionFit = (a) => {
-        let s = (Match.recentActionIds.includes(a.id) ? -3.2 : 0) + Math.random() * 1.8;
+        let s = (Match.recentActionIds.includes(a.id) ? -3.2 : 0) + Math.random() * 1.6;
         if (side === "OFFENSE") {
-          if (lead <= -4 && Match.quarter >= 3 && (a.zone === "THREE" || a.statType === "AND1")) s += 2.2; // 落後追分偏向三分／2+1
-          if (lead >= 4 && Match.quarter >= 4 && (a.zone === "PASS" || a.zone === "MID")) s += 2.0;        // 領先守成偏向控場傳球／中投
-          if (stamina < 45 && (a.zone === "PASS" || a.zone === "MID")) s += 1.8;                          // 低體力推薦穩健傳導
-          if (trust < 32 && a.zone === "PASS") s += 1.9;                                                  // 低信任優先給團隊助攻贏回信任
-          if (trust >= 75 && isCrunch && (a.zone === "THREE" || a.zone === "PAINT" || a.zone === "MID")) s += 1.5;
+          if (isBig) {
+            if (a.zone === "PAINT" || a.statType === "OREB_PUTBACK" || a.statType === "AND1") s += 3.2;
+            if (a.zone === "THREE" && !isStretchBig) s -= 4.8; // 非空間型長人大幅壓低三分卡出現率
+            if (uPos === "C" && a.zone === "PASS") s -= 1.2;
+          } else if (isGuard) {
+            if (a.zone === "THREE" || a.zone === "MID" || a.zone === "PASS") s += 1.6;
+            if (a.statType === "OREB_PUTBACK") s -= 2.4;
+          }
+          if (lead <= -4 && Match.quarter >= 3 && (a.zone === "THREE" || a.statType === "AND1")) s += 2.0;
+          if (lead >= 4 && Match.quarter >= 4 && (a.zone === "PASS" || a.zone === "MID")) s += 1.8;
+          if (stamina < 45 && (a.zone === "PASS" || a.zone === "MID")) s += 1.6;
+          if (trust < 32 && a.zone === "PASS") s += 1.8;
+          if (trust >= 75 && isCrunch && (a.zone === "THREE" || a.zone === "PAINT" || a.zone === "MID")) s += 1.4;
         } else {
-          if (lead > 0 && lead <= 3 && (a.statType === "CONTEST" || a.statType === "BOXOUT_DREB")) s += 1.8;
-          if (lead < 0 && (a.statType === "STEAL" || a.statType === "BLOCK")) s += 2.0;
+          if (isBig && (a.statType === "BLOCK" || a.statType === "BOXOUT_DREB")) s += 3.0;
+          if (isGuard && (a.statType === "STEAL" || a.statType === "CONTEST")) s += 2.2;
+          if (lead > 0 && lead <= 3 && (a.statType === "CONTEST" || a.statType === "BOXOUT_DREB")) s += 1.6;
+          if (lead < 0 && (a.statType === "STEAL" || a.statType === "BLOCK")) s += 1.8;
         }
         return s;
       };
@@ -3369,11 +3458,13 @@
         const uH = p.heightCm || Match.userPlayer.heightCm || 185;
         const oH = (oppDef && oppDef.heightCm) || 188;
         const heightAdj = (a.zone === "PAINT" || a.statType === "BLOCK" || a.statType === "BOXOUT_DREB" || a.statType === "OREB_PUTBACK") ? Math.round((uH - oH) * 0.42) : Math.round((uH - oH) * 0.14);
-        const leagueDiffPenalty = ((Match.league && Match.league.difficultyTier) || 1) * 4;
-        const staminaPen = stamina < 30 ? -12 : (stamina < 55 ? -5 : 0);
-        const statAdj = Math.round((relStat - oppVal) * 0.85) + heightAdj - leagueDiffPenalty + staminaPen - (p.injured ? 10 : 0);
-        const baseSkillRate = (side === "DEFENSE" ? res.finalStats.defenseRating : res.finalStats.shootPct) - 6;
-        let rate = Math.max(8, Math.min(84, Math.round(baseSkillRate + statAdj)));
+        const leagueDiffPenalty = ((Match.league && Match.league.difficultyTier) || 1) * 5;
+        const staminaPen = stamina < 30 ? -14 : (stamina < 55 ? -6 : 0);
+        const statAdj = Math.round((relStat - oppVal) * 0.92) + heightAdj - leagueDiffPenalty + staminaPen - (p.injured ? 12 : 0);
+        const baseSkillRate = (side === "DEFENSE" ? res.finalStats.defenseRating : res.finalStats.shootPct) - 8;
+        // 相關能力值過低時設真實命中天花板（避免 50 三分中鋒亂投高命中）
+        const statCeiling = Math.max(24, Math.min(86, Math.round(relStat * 0.90 + 6)));
+        let rate = Math.max(6, Math.min(statCeiling, Math.round(baseSkillRate + statAdj)));
 
         // 判定風險等級（高風險動作受 Grit 意志明顯加持）
         const isHighRiskAction = rate < 45 || a.zone === "THREE" || a.statType === "AND1" || a.statType === "STEAL" || a.statType === "BLOCK" || a.statType === "CHARGE";
@@ -3393,8 +3484,13 @@
         const isCoachPlay = Boolean(side === "OFFENSE" && isCrunch && trust >= 75 && cardIdx === 0);
         if (isCoachPlay) rate = Math.min(90, rate + 4);
 
-        const perfectRate = Math.max(18, Math.min(94, Math.round(rate + 18 + Math.min(8, res.finalStats.perfectBonusPct || 0))));
-        const statQteScale = Math.max(0.68, Math.min(1.22, 0.72 + (relStat - 55) * 0.011 - (((Match.league && Match.league.difficultyTier) || 1) - 1) * 0.06)) * gritQteBoost;
+        // PERFECT 紅利與上限深度綁定該項能力值（低能力即使 PERFECT 也無法超車神射手）
+        const perfBonus = Math.round(6 + Math.max(0, relStat - 50) * 0.34) + Math.min(6, res.finalStats.perfectBonusPct || 0);
+        const perfCeiling = Math.max(30, Math.min(92, Math.round(relStat * 0.95 + 10)));
+        const perfectRate = Math.max(12, Math.min(perfCeiling, Math.round(rate + perfBonus)));
+        // 能力值直接影響 QTE 黃金區寬度（0.44x ~ 1.16x）與移動速度（低能力更急促、高能力更從容）
+        const statQteScale = Math.max(0.44, Math.min(1.16, 0.48 + (relStat - 50) * 0.0155 - (((Match.league && Match.league.difficultyTier) || 1) - 1) * 0.06)) * gritQteBoost;
+        const qteSpeedMul = relStat < 58 ? 1.34 : (relStat < 70 ? 1.16 : (relStat >= 86 ? 0.90 : 1.03));
         const feel = describeSuccessFeel(rate, Season.careerYear, eqSet, stamina);
 
         // 風險／報酬數值設定（供 applyActionOutcome 結算信任與提示）
@@ -3422,6 +3518,7 @@
           rate, feel, perfectRate, relStat,
           riskLevel, gritBonusPct, isCoachPlay, trustWin, trustFail, rewardTxt, riskTxt,
           qteWidthMul: (res.finalStats.qtePerfectWidth / 100) * statQteScale,
+          qteSpeedMul,
           zoneTag: zoneLabelMap[a.zone] || a.zone
         };
       });
@@ -3519,8 +3616,8 @@
 
     function startQTE() {
       Match.phase = "QTE"; setDockMode("QTE"); resizeQteCanvas();
-      const card = Match.selectedAction, wMul = card.qteWidthMul || 1, now = performance.now();
-      const tierMul = 1 + (((Match.league && Match.league.difficultyTier) || 1) - 1) * 0.09;
+      const card = Match.selectedAction, wMul = card.qteWidthMul || 1, spdMul = card.qteSpeedMul || 1, now = performance.now();
+      const tierMul = (1 + (((Match.league && Match.league.difficultyTier) || 1) - 1) * 0.10) * spdMul;
       document.getElementById("qteTitle").textContent = card.name;
       const btn = document.getElementById("btnQteAction");
       const dirRow = document.getElementById("qteDirRow");
@@ -3538,13 +3635,13 @@
         const tol = Math.min(0.095, Math.max(0.036, 0.054 * wMul));
         Match.qte = {
           type: "DOUBLE_RING", stage: 1, stage1Grade: null,
-          ringR: 1.0, speed: (Match.isZone ? 0.78 : 0.96) * tierMul,
+          ringR: 1.0, speed: (Match.isZone ? 0.86 : 1.08) * tierMul,
           targetR: 0.36, perfTol: tol, goodTol: tol * 2.1,
           activeSub: "二段時機 ① 起跳 → ② 加速終結", activeBtnText: "⚡ 第一段鎖定 (SPACE)"
         };
       } else if (card.qteType === "DIRECTION_SNAP") {
         const targetDir = Math.floor(Math.random() * 3);
-        const maxT = Math.max(0.78, (1.18 / tierMul) * Math.min(1.22, Math.max(0.85, wMul)));
+        const maxT = Math.max(0.62, (0.98 / tierMul) * Math.min(1.18, Math.max(0.76, wMul)));
         Match.qte = {
           type: "DIRECTION_SNAP", targetDir, timeLeft: maxT, maxTime: maxT,
           labels: card.side === "DEFENSE" ? ["◀ 左翼封阻", "▲ 正面抄截", "▶ 右翼補防"] : ["◀ 左路變向", "▲ 中路直切", "▶ 右路分球"],
@@ -3554,7 +3651,7 @@
         const tol = Math.min(0.085, Math.max(0.032, 0.048 * wMul));
         Match.qte = {
           type: "RING_TIMING", ringR: 1.0,
-          speed: (Match.isGrit ? 1.08 : (Match.isZone ? 0.80 : 0.98)) * tierMul,
+          speed: (Match.isGrit ? 1.18 : (Match.isZone ? 0.88 : 1.12)) * tierMul,
           targetR: 0.34, perfTol: tol, goodTol: tol * 2.0,
           activeSub: "縮圈重疊金環瞬間精準鎖定", activeBtnText: "💥 鎖定 (SPACE)"
         };
@@ -3725,7 +3822,7 @@
     function finishQTE(grade) {
       setDockMode("NONE");
       const card = Match.selectedAction;
-      const prob = grade === "PERFECT" ? (card.perfectRate || Math.min(90, card.rate + 18)) : (grade === "GOOD" ? Math.round(card.rate * 0.82) : Math.max(5, Math.round(card.rate * 0.32)));
+      const prob = grade === "PERFECT" ? (card.perfectRate || Math.min(90, card.rate + 14)) : (grade === "GOOD" ? Math.round(card.rate * 0.72) : Math.max(4, Math.round(card.rate * 0.20)));
       const success = (Math.random() * 100) < prob;
       Match.qte = null;
 
@@ -4624,7 +4721,7 @@
       const rookieNum = pickUnusedJerseyNumber(customRoster, null);
       if (u) { u.num = rookieNum; u.name = createDraft.name; u.pos = createDraft.pos; u.ovr = calcOVR(createDraft.stats, createDraft.pos, createDraft.skills); }
       createNewCareer("hs_nationals", [], 1, customRoster);
-      const trustByRarity = { mortal: 22, regional_gem: 38, generational: 58, once_in_century: 76 };
+      const trustByRarity = { mortal: 18, regional_gem: 28, generational: 40, once_in_century: 52 };
       const initTrust = trustByRarity[createDraft.rarity.id] || 32;
       Season.player = {
         name: createDraft.name, pos: createDraft.pos, age: 15, heightCm: createDraft.heightCm,
@@ -4752,12 +4849,37 @@
 
       const batchDelta = {};
       const addSt = (k, d) => { const prev = p.stats[k]; p.stats[k] = Math.min(cap, Math.max(40, prev + d)); if (p.stats[k] !== prev) batchDelta[k] = (batchDelta[k] || 0) + (p.stats[k] - prev); };
+      // 區間遞減成長曲線（70 以下穩步成長、70~82 放緩、83~90 瓶頸、91+ 極限突破）
+      const addScaled = (k, rawGain, isGreat = false) => {
+        const cur = p.stats[k] || 60;
+        let g = 0;
+        if (cur < 70) g = isGreat ? Math.min(2, rawGain) : Math.min(1, rawGain);
+        else if (cur <= 82) g = isGreat ? (rawGain >= 2 ? 2 : 1) : (Math.random() < 0.85 ? 1 : 0);
+        else if (cur <= 90) g = isGreat ? 1 : (Math.random() < 0.52 ? 1 : 0);
+        else g = isGreat ? (Math.random() < 0.68 ? 1 : 0) : (Math.random() < 0.22 ? 1 : 0);
+        if (g > 0) addSt(k, g);
+      };
+      const fmtBatch = () => {
+        const entries = Object.entries(batchDelta).map(([k, v]) => {
+          const lbl = (DB.origins.statDefs.find(d => d.k === k) || { l: k }).l;
+          return `${lbl} ${v > 0 ? "+" + v : v}`;
+        });
+        return entries.length ? entries.join("、") : "瓶頸期穩固手感（未突破上限）";
+      };
 
       if (act === "recover") {
         const hadInj = p.injured;
-        p.condition = 100; p.injured = false;
+        const healAmt = hadInj ? 18 : 28; // 不再一鍵滿血：傷癒回復 +18%，一般理療回復 +28%
+        p.condition = Math.min(100, (p.condition || 50) + healAmt);
+        p.injured = false;
         SoundFX.swish();
-        showTrainBanner("SUCCESS", "🧊 冰浴與隊醫理療完成！", hadInj ? "腳踝拉傷已徹底康復，賽季狀態回復至 100%！" : "肌肉徹底放鬆，賽季狀態回復至 100%！");
+        showTrainBanner(
+          "SUCCESS",
+          hadInj ? "🩺 隊醫理療康復完成！" : "🧊 冰浴與肌肉放鬆完成！",
+          hadInj
+            ? `拉傷已妥善處理並解除傷病保護，賽季狀態回復 +${healAmt}%（現 ${p.condition}%）。`
+            : `深層拉伸舒緩疲勞，賽季狀態回復 +${healAmt}%（現 ${p.condition}%）。`
+        );
       } else if (act === "social") {
         const res = evalTrainingOutcome(p.condition, p.stats.grit, true);
         if (res === "GREAT") {
@@ -4781,40 +4903,40 @@
           SoundFX.clank();
           showTrainBanner("FAIL", "⚠️ 訓練失敗！手感全無……", "身體過於疲憊導致動作走樣，今節特訓毫無進帳，賽季狀態 -13。");
         } else if (act === "train_shoot") {
-          p.condition = Math.max(20, p.condition - 10);
+          p.condition = Math.max(20, p.condition - 11);
           if (res === "GREAT") {
-            addSt("threePt", 4); addSt("midRange", 3); SoundFX.swish();
-            showTrainBanner("GREAT", "✨ 大成功！連續 30 球空心刷網！", "館內隊友全體拍手叫好，出手肌肉記憶徹底鎖定！三分 +4、中投 +3！");
+            addScaled("threePt", 2, true); addScaled("midRange", 1, true); SoundFX.swish();
+            showTrainBanner("GREAT", "✨ 大成功！連續 30 球空心刷網！", `出手肌肉記憶進一步鎖定！實際成長：${fmtBatch()}。`);
           } else {
-            addSt("threePt", 2); addSt("midRange", 1); SoundFX.tap();
-            showTrainBanner("SUCCESS", "✅ 投射特訓達標", "穩定完成定點與急停投籃課表。三分 +2、中投 +1。");
+            addScaled("threePt", 1, false); if (Math.random() < 0.65) addScaled("midRange", 1, false); SoundFX.tap();
+            showTrainBanner("SUCCESS", "✅ 投射特訓達標", `穩定完成定點與急停投籃課表。實際成長：${fmtBatch()}。`);
           }
         } else if (act === "train_finish") {
-          p.condition = Math.max(20, p.condition - 12);
+          p.condition = Math.max(20, p.condition - 13);
           if (res === "GREAT") {
-            addSt("inside", 4); addSt("vertical", 3); addSt("speed", 2); SoundFX.swish();
-            showTrainBanner("GREAT", "✨ 大成功！摸高再破個人紀錄！", "雙腳爆發力全面覺醒，輕鬆完成平框暴扣！內線 +4、彈跳 +3、速度 +2！");
+            addScaled("inside", 2, true); addScaled("vertical", 1, true); addScaled("speed", 1, true); SoundFX.swish();
+            showTrainBanner("GREAT", "✨ 大成功！摸高再破個人紀錄！", `爆發力與終結手腕更銳利！實際成長：${fmtBatch()}。`);
           } else {
-            addSt("inside", 2); addSt("vertical", 2); addSt("speed", 1); SoundFX.tap();
-            showTrainBanner("SUCCESS", "✅ 終結與爆發訓練完成", "上籃腳步與起跳節奏更紮實。內線 +2、彈跳 +2、速度 +1。");
+            addScaled("inside", 1, false); if (Math.random() < 0.6) addScaled("vertical", 1, false); SoundFX.tap();
+            showTrainBanner("SUCCESS", "✅ 終結與爆發訓練完成", `上籃腳步與起跳節奏更紮實。實際成長：${fmtBatch()}。`);
           }
         } else if (act === "train_def") {
-          p.condition = Math.max(20, p.condition - 12);
+          p.condition = Math.max(20, p.condition - 13);
           if (res === "GREAT") {
-            addSt("perimDef", 3); addSt("intDef", 3); addSt("rebound", 3); addSt("strength", 2); SoundFX.swish();
-            showTrainBanner("GREAT", "✨ 大成功！防守大閘覺醒！", "隊內對抗賽連續 5 回合零封對手！外防 +3、護框 +3、籃板 +3、力量 +2！");
+            addScaled("perimDef", 2, true); addScaled("intDef", 1, true); addScaled("rebound", 1, true); addScaled("strength", 1, true); SoundFX.swish();
+            showTrainBanner("GREAT", "✨ 大成功！防守大閘覺醒！", `隊內對抗賽連續零封對手！實際成長：${fmtBatch()}。`);
           } else {
-            addSt("perimDef", 2); addSt("intDef", 1); addSt("rebound", 2); addSt("strength", 1); SoundFX.tap();
-            showTrainBanner("SUCCESS", "✅ 防守與籃板卡位完成", "滑步橫移與卡位意識進步。外防 +2、護框 +1、籃板 +2、力量 +1。");
+            addScaled("perimDef", 1, false); if (Math.random() < 0.55) addScaled("rebound", 1, false); if (Math.random() < 0.45) addScaled("intDef", 1, false); SoundFX.tap();
+            showTrainBanner("SUCCESS", "✅ 防守與籃板卡位完成", `滑步橫移與卡位意識進步。實際成長：${fmtBatch()}。`);
           }
         } else if (act === "train_iq") {
-          p.condition = Math.max(20, p.condition - 4);
+          p.condition = Math.max(20, p.condition - 5);
           if (res === "GREAT") {
-            addSt("playmaking", 3); addSt("iq", 4); addSt("grit", 2); SoundFX.swish();
-            showTrainBanner("GREAT", "✨ 大成功！徹底看穿對手戰術板！", "你精準預判咗所有擋拆變化，臨場判斷力大幅飆升！組織 +3、球商 +4、意志 +2！");
+            addScaled("playmaking", 2, true); addScaled("iq", 2, true); addScaled("grit", 1, true); SoundFX.swish();
+            showTrainBanner("GREAT", "✨ 大成功！徹底看穿對手戰術板！", `精準預判擋拆變化！實際成長：${fmtBatch()}。`);
           } else {
-            addSt("playmaking", 2); addSt("iq", 2); SoundFX.tap();
-            showTrainBanner("SUCCESS", "✅ 戰術覆盤與組織訓練完成", "球場視野與傳球時機更成熟。組織 +2、球商 +2。");
+            addScaled("iq", 1, false); if (Math.random() < 0.65) addScaled("playmaking", 1, false); SoundFX.tap();
+            showTrainBanner("SUCCESS", "✅ 戰術覆盤與組織訓練完成", `球場視野與傳球時機更成熟。實際成長：${fmtBatch()}。`);
           }
         }
       }
@@ -5052,7 +5174,13 @@
       const evtDeltas = {};
       for (const [k, v] of Object.entries(out.eff || {})) {
         if (k === "heightCm") { const prevH = p.heightCm; const hCap = POS_HEIGHT_CAP[p.pos] || 212; p.heightCm = Math.min(hCap, Math.max(165, p.heightCm + v)); if (p.heightCm !== prevH) evtDeltas.heightCm = p.heightCm - prevH; }
-        else if (p.stats[k] !== undefined) { const prev = p.stats[k]; p.stats[k] = Math.min(p.cap, Math.max(40, prev + v)); if (p.stats[k] !== prev) evtDeltas[k] = p.stats[k] - prev; }
+        else if (p.stats[k] !== undefined) {
+          const prev = p.stats[k];
+          // 高能力值區間事件增幅適度收斂，維持跨季真實成長曲線
+          const scaledV = (v > 0 && prev >= 80) ? Math.max(1, Math.round(v * 0.65)) : v;
+          p.stats[k] = Math.min(p.cap, Math.max(40, prev + scaledV));
+          if (p.stats[k] !== prev) evtDeltas[k] = p.stats[k] - prev;
+        }
         else if (k === "condition") p.condition = Math.min(100, Math.max(20, p.condition + v));
         else if (k === "reputation") p.reputation = Math.min(100, Math.max(0, p.reputation + v));
         else if (k === "rivalHeat") p.rivalHeat = Math.min(100, Math.max(0, p.rivalHeat + v));
