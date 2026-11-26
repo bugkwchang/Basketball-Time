@@ -38,38 +38,37 @@
       "id": "hs_nationals",
       "name": "日本全國高校大賽 (Winter Cup)",
       "difficultyTier": 1,
-      "legendName": "田臥 勇太",
+      "legendName": "澤北 榮治",
       "quarterMinutes": 8,
       "otMinutes": 4,
       "foulOutLimit": 5,
       "seasonGames": 7,
       "teams": [
         {
-          "id": "fukuoka_1st",
-          "name": "福岡第一高校",
+          "id": "shohoku",
+          "name": "湘北高校",
           "ovr": 71,
-          "ace": "河村 勇輝",
-          "coach": "井手口 孝",
+          "ace": "流川 楓",
+          "coach": "安西 光義",
           "isUserTeam": true,
           "roster": [
             {
-              "num": 8,
-              "name": "河村 勇輝",
+              "num": 7,
+              "name": "宮城 良田",
               "pos": "PG",
               "role": "STARTER",
-              "ovr": 73,
-              "heightCm": 172,
+              "ovr": 71,
+              "heightCm": 168,
               "skills": [
                 "dimer_general_t3",
-                "floor_iq",
+                "fastbreak_king",
                 "pace_changer_t3",
                 "clutch_stealer"
               ],
               "statBias": {
-                "speed": 10,
-                "playmaking": 12,
-                "threePt": 6,
-                "iq": 8,
+                "speed": 12,
+                "playmaking": 11,
+                "perimDef": 7,
                 "intDef": -12
               },
               "rebW": 0.12,
@@ -93,82 +92,138 @@
             },
             {
               "num": 11,
-              "name": "小川 麻斗",
+              "name": "流川 楓",
               "pos": "SF",
               "role": "STARTER",
-              "ovr": 69,
-              "heightCm": 184,
+              "ovr": 74,
+              "heightCm": 187,
               "skills": [
-                "fastbreak_king",
-                "perimeter_lockdown_t3"
+                "pullup_shot_t3",
+                "posterizer_t3",
+                "alpha_dog",
+                "eurostep_assassin_t3"
               ],
               "statBias": {
+                "inside": 9,
+                "midRange": 10,
+                "threePt": 6,
                 "speed": 7,
-                "perimDef": 6,
-                "threePt": 4
+                "vertical": 8
               },
               "rebW": 0.2,
               "astW": 0.2,
               "stlW": 0.22,
-              "blkW": 0.18
+              "blkW": 0.16
             },
             {
-              "num": 14,
-              "name": "內尾 聰理",
+              "num": 10,
+              "name": "櫻木 花道",
               "pos": "PF",
               "role": "STARTER",
-              "ovr": 68,
-              "heightCm": 192,
+              "ovr": 70,
+              "heightCm": 189,
               "skills": [
-                "glue_guy",
-                "boxout_beast_t3"
+                "glass_cleaner_t3",
+                "boxout_beast_t3",
+                "putback_boss_t3",
+                "perpetual_motor",
+                "foul_trouble"
               ],
               "statBias": {
-                "rebound": 6,
-                "perimDef": 5,
-                "grit": 6
+                "rebound": 16,
+                "vertical": 14,
+                "strength": 10,
+                "grit": 12,
+                "threePt": -14
               },
               "rebW": 0.26,
-              "astW": 0.12,
+              "astW": 0.1,
               "stlW": 0.14,
-              "blkW": 0.28
+              "blkW": 0.32
             },
             {
               "num": 4,
-              "name": "哈伯・簡",
+              "name": "赤木 剛憲",
               "pos": "C",
               "role": "STARTER",
-              "ovr": 70,
-              "heightCm": 204,
+              "ovr": 72,
+              "heightCm": 197,
               "skills": [
                 "rim_eraser_t4",
-                "glass_cleaner_t3"
+                "paint_beast_t3",
+                "help_def_anchor"
               ],
               "statBias": {
-                "intDef": 9,
-                "rebound": 9,
-                "strength": 7,
-                "threePt": -14
+                "intDef": 12,
+                "rebound": 10,
+                "strength": 12,
+                "inside": 9,
+                "threePt": -15
               },
-              "rebW": 0.3,
-              "astW": 0.08,
+              "rebW": 0.32,
+              "astW": 0.06,
               "stlW": 0.1,
-              "blkW": 0.39
+              "blkW": 0.37
+            },
+            {
+              "num": 14,
+              "name": "三井 壽",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 71,
+              "heightCm": 184,
+              "skills": [
+                "deadeye_three_t4",
+                "corner_specialist_t3",
+                "big_heart",
+                "glass_ankles"
+              ],
+              "statBias": {
+                "threePt": 15,
+                "midRange": 8,
+                "iq": 7,
+                "perimDef": 6
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
             },
             {
               "num": 5,
-              "name": "轟 琉維",
-              "pos": "PG",
+              "name": "木暮 公延",
+              "pos": "SF",
               "role": "BENCH",
-              "ovr": 62,
-              "heightCm": 174,
+              "ovr": 63,
+              "heightCm": 178,
               "skills": [
-                "microwave",
-                "fastbreak_king"
+                "corner_specialist_t3",
+                "glue_guy",
+                "ice_in_veins"
               ],
               "statBias": {
-                "speed": 8,
-                "playmaking": 5
+                "threePt": 7,
+                "iq": 6
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 8,
+              "name": "安田 靖春",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 165,
+              "skills": [
+                "floor_iq",
+                "glue_guy"
+              ],
+              "statBias": {
+                "playmaking": 5,
+                "iq": 6
               },
               "rebW": 0.12,
               "astW": 0.42,
@@ -177,17 +232,219 @@
             },
             {
               "num": 6,
-              "name": "崎濱 秀斗",
+              "name": "潮崎 哲士",
               "pos": "SG",
               "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 180,
+              "ovr": 59,
+              "heightCm": 170,
               "skills": [
-                "corner_specialist_t3"
+                "perimeter_lockdown_t3"
               ],
               "statBias": {
-                "threePt": 7,
-                "midRange": 4
+                "perimDef": 6
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 9,
+              "name": "角田 悟",
+              "pos": "C",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 180,
+              "skills": [
+                "boxout_beast_t3"
+              ],
+              "statBias": {
+                "rebound": 5,
+                "strength": 4
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 12,
+              "name": "石井 健太郎",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 58,
+              "heightCm": 170,
+              "skills": [
+                "glue_guy"
+              ],
+              "statBias": {
+                "grit": 5
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 13,
+              "name": "佐佐岡 智",
+              "pos": "SF",
+              "role": "BENCH",
+              "ovr": 58,
+              "heightCm": 172,
+              "skills": [
+                "offball_ghost"
+              ],
+              "statBias": {
+                "speed": 4
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            }
+          ]
+        },
+        {
+          "id": "sannoh",
+          "name": "山王工業高校",
+          "ovr": 75,
+          "ace": "澤北 榮治",
+          "coach": "堂本 五郎",
+          "roster": [
+            {
+              "num": 4,
+              "name": "深津 一成",
+              "pos": "PG",
+              "role": "STARTER",
+              "ovr": 73,
+              "heightCm": 180,
+              "skills": [
+                "dimer_general_t3",
+                "floor_iq",
+                "perimeter_lockdown_t3",
+                "ice_in_veins"
+              ],
+              "statBias": {
+                "playmaking": 11,
+                "iq": 13,
+                "perimDef": 10
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 6,
+              "name": "松本 稔",
+              "pos": "SG",
+              "role": "STARTER",
+              "ovr": 71,
+              "heightCm": 180,
+              "skills": [
+                "pullup_shot_t3",
+                "microwave",
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "threePt": 8,
+                "midRange": 9,
+                "speed": 7
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 9,
+              "name": "澤北 榮治",
+              "pos": "SF",
+              "role": "STARTER",
+              "ovr": 76,
+              "heightCm": 188,
+              "skills": [
+                "ankle_breaker_t3",
+                "floater_wizard_t3",
+                "perimeter_lockdown_t3",
+                "alpha_dog"
+              ],
+              "statBias": {
+                "inside": 12,
+                "midRange": 11,
+                "speed": 11,
+                "perimDef": 11,
+                "vertical": 10
+              },
+              "isRival": true,
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 5,
+              "name": "野邊 將廣",
+              "pos": "PF",
+              "role": "STARTER",
+              "ovr": 70,
+              "heightCm": 198,
+              "skills": [
+                "boxout_beast_t3",
+                "glass_cleaner_t3",
+                "help_def_anchor"
+              ],
+              "statBias": {
+                "rebound": 12,
+                "strength": 9,
+                "intDef": 8
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 7,
+              "name": "河田 雅史",
+              "pos": "C",
+              "role": "STARTER",
+              "ovr": 75,
+              "heightCm": 194,
+              "skills": [
+                "paint_beast_t3",
+                "rim_eraser_t4",
+                "dream_shake_t4",
+                "chasedown_artist_t4"
+              ],
+              "statBias": {
+                "inside": 12,
+                "intDef": 12,
+                "rebound": 11,
+                "strength": 11,
+                "midRange": 7
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 8,
+              "name": "一之倉 聰",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 64,
+              "heightCm": 171,
+              "skills": [
+                "perimeter_lockdown_t3",
+                "iron_lungs",
+                "perpetual_motor"
+              ],
+              "statBias": {
+                "perimDef": 11,
+                "grit": 10
               },
               "rebW": 0.15,
               "astW": 0.22,
@@ -196,118 +453,1390 @@
             },
             {
               "num": 15,
-              "name": "山口 瑛司",
+              "name": "河田 美紀男",
+              "pos": "C",
+              "role": "BENCH",
+              "ovr": 63,
+              "heightCm": 210,
+              "skills": [
+                "paint_beast_t3",
+                "height_tower"
+              ],
+              "statBias": {
+                "strength": 14,
+                "inside": 8,
+                "rebound": 7,
+                "speed": -10
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 10,
+              "name": "堂本 健太",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 61,
+              "heightCm": 176,
+              "skills": [
+                "floor_iq"
+              ],
+              "statBias": {
+                "playmaking": 5,
+                "iq": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 11,
+              "name": "佐佐木 翔",
+              "pos": "SF",
+              "role": "BENCH",
+              "ovr": 61,
+              "heightCm": 184,
+              "skills": [
+                "offball_ghost"
+              ],
+              "statBias": {
+                "threePt": 5,
+                "speed": 4
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 12,
+              "name": "高橋 雄大",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 60,
-              "heightCm": 194,
+              "heightCm": 190,
               "skills": [
-                "glass_cleaner_t3"
+                "boxout_beast_t3"
+              ],
+              "statBias": {
+                "rebound": 5,
+                "strength": 5
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 13,
+              "name": "中村 陸",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 174,
+              "skills": [
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "speed": 6
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 14,
+              "name": "小林 誠",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 179,
+              "skills": [
+                "corner_specialist_t3"
+              ],
+              "statBias": {
+                "threePt": 6
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            }
+          ]
+        },
+        {
+          "id": "kainan",
+          "name": "海南大附屬高校",
+          "ovr": 74,
+          "ace": "牧 紳一",
+          "coach": "高頭 力",
+          "roster": [
+            {
+              "num": 4,
+              "name": "牧 紳一",
+              "pos": "PG",
+              "role": "STARTER",
+              "ovr": 75,
+              "heightCm": 184,
+              "skills": [
+                "dimer_general_t3",
+                "alpha_dog",
+                "foul_merchant",
+                "iron_lungs"
+              ],
+              "statBias": {
+                "playmaking": 12,
+                "strength": 12,
+                "inside": 11,
+                "iq": 12,
+                "speed": 9
+              },
+              "isRival": true,
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 6,
+              "name": "神 宗一郎",
+              "pos": "SG",
+              "role": "STARTER",
+              "ovr": 72,
+              "heightCm": 189,
+              "skills": [
+                "deadeye_three_t4",
+                "limitless_range_t4",
+                "offball_ghost"
+              ],
+              "statBias": {
+                "threePt": 16,
+                "midRange": 8,
+                "iq": 7
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 10,
+              "name": "清田 信長",
+              "pos": "SF",
+              "role": "STARTER",
+              "ovr": 70,
+              "heightCm": 178,
+              "skills": [
+                "posterizer_t3",
+                "transition_finisher_t3",
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "vertical": 13,
+                "speed": 10,
+                "inside": 8
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 9,
+              "name": "武藤 正",
+              "pos": "PF",
+              "role": "STARTER",
+              "ovr": 67,
+              "heightCm": 184,
+              "skills": [
+                "glue_guy",
+                "help_def_anchor"
+              ],
+              "statBias": {
+                "perimDef": 6,
+                "iq": 6,
+                "grit": 6
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 5,
+              "name": "高砂 一馬",
+              "pos": "C",
+              "role": "STARTER",
+              "ovr": 70,
+              "heightCm": 191,
+              "skills": [
+                "boxout_beast_t3",
+                "charge_card_t2",
+                "floor_iq"
+              ],
+              "statBias": {
+                "intDef": 9,
+                "rebound": 9,
+                "iq": 8,
+                "strength": 7
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 15,
+              "name": "宮益 義範",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 63,
+              "heightCm": 160,
+              "skills": [
+                "corner_specialist_t3",
+                "height_petite",
+                "ice_in_veins"
+              ],
+              "statBias": {
+                "threePt": 10,
+                "iq": 7
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 7,
+              "name": "小菅 健",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 61,
+              "heightCm": 175,
+              "skills": [
+                "floor_iq"
+              ],
+              "statBias": {
+                "playmaking": 5,
+                "speed": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 8,
+              "name": "鈴木 大輔",
+              "pos": "SF",
+              "role": "BENCH",
+              "ovr": 61,
+              "heightCm": 183,
+              "skills": [
+                "glue_guy"
+              ],
+              "statBias": {
+                "perimDef": 5,
+                "grit": 5
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 11,
+              "name": "伊藤 拓海",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 188,
+              "skills": [
+                "boxout_beast_t3"
               ],
               "statBias": {
                 "rebound": 6,
                 "strength": 5
               },
               "rebW": 0.26,
-              "astW": 0.12,
+              "astW": 0.1,
               "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 9,
-              "name": "松崎 裕樹",
-              "pos": "SF",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 192,
-              "skills": [
-                "perimeter_lockdown_t3"
-              ],
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18,
-              "statBias": {
-                "perimDef": 6,
-                "threePt": 5
-              }
+              "blkW": 0.32
             },
             {
               "num": 12,
-              "name": "神田 壯一郎",
-              "pos": "SG",
+              "name": "渡邊 駿",
+              "pos": "C",
               "role": "BENCH",
               "ovr": 60,
-              "heightCm": 190,
+              "heightCm": 192,
               "skills": [
-                "fastbreak_king"
+                "help_def_anchor"
               ],
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1,
               "statBias": {
-                "speed": 6,
-                "inside": 5
-              }
+                "intDef": 6,
+                "rebound": 5
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
             },
             {
               "num": 13,
-              "name": "城戶 賢心",
-              "pos": "PF",
+              "name": "加藤 蓮",
+              "pos": "PG",
               "role": "BENCH",
               "ovr": 59,
-              "heightCm": 190,
+              "heightCm": 173,
               "skills": [
-                "boxout_beast_t3"
+                "fastbreak_king"
               ],
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28,
               "statBias": {
-                "rebound": 6,
-                "grit": 6
-              }
+                "speed": 6
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
             },
             {
-              "num": 16,
-              "name": "宮本 聰",
-              "pos": "C",
+              "num": 14,
+              "name": "山本 翼",
+              "pos": "SG",
               "role": "BENCH",
-              "ovr": 58,
-              "heightCm": 197,
+              "ovr": 59,
+              "heightCm": 179,
               "skills": [
-                "glass_cleaner_t3"
+                "microwave"
               ],
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39,
               "statBias": {
-                "rebound": 6,
-                "intDef": 5
-              }
+                "midRange": 5
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
             }
           ]
         },
         {
-          "id": "meisei",
-          "name": "仙台明成高校",
-          "ovr": 73,
-          "ace": "八村 壘",
-          "coach": "佐藤 久夫",
+          "id": "ryonan",
+          "name": "陵南高校",
+          "ovr": 72,
+          "ace": "仙道 彰",
+          "coach": "田岡 茂一",
+          "roster": [
+            {
+              "num": 5,
+              "name": "植草 智之",
+              "pos": "PG",
+              "role": "STARTER",
+              "ovr": 66,
+              "heightCm": 170,
+              "skills": [
+                "floor_iq",
+                "glue_guy"
+              ],
+              "statBias": {
+                "playmaking": 7,
+                "iq": 8
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 6,
+              "name": "越野 宏明",
+              "pos": "SG",
+              "role": "STARTER",
+              "ovr": 66,
+              "heightCm": 174,
+              "skills": [
+                "microwave",
+                "grit_state_rule"
+              ],
+              "statBias": {
+                "grit": 8,
+                "midRange": 6
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 7,
+              "name": "仙道 彰",
+              "pos": "SF",
+              "role": "STARTER",
+              "ovr": 75,
+              "heightCm": 190,
+              "skills": [
+                "dimer_general_t3",
+                "pullup_shot_t3",
+                "big_heart",
+                "pace_changer_t3"
+              ],
+              "statBias": {
+                "playmaking": 11,
+                "midRange": 11,
+                "inside": 10,
+                "iq": 12,
+                "threePt": 7
+              },
+              "isRival": true,
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 13,
+              "name": "福田 吉兆",
+              "pos": "PF",
+              "role": "STARTER",
+              "ovr": 71,
+              "heightCm": 188,
+              "skills": [
+                "paint_beast_t3",
+                "putback_boss_t3",
+                "offball_ghost",
+                "defensive_sieve"
+              ],
+              "statBias": {
+                "inside": 13,
+                "vertical": 9,
+                "rebound": 7,
+                "perimDef": -8,
+                "intDef": -6
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 4,
+              "name": "魚住 純",
+              "pos": "C",
+              "role": "STARTER",
+              "ovr": 71,
+              "heightCm": 202,
+              "skills": [
+                "rim_eraser_t4",
+                "boxout_beast_t3",
+                "height_tower",
+                "foul_trouble"
+              ],
+              "statBias": {
+                "intDef": 12,
+                "strength": 13,
+                "rebound": 10,
+                "inside": 8
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 8,
+              "name": "池上 亮二",
+              "pos": "SF",
+              "role": "BENCH",
+              "ovr": 64,
+              "heightCm": 183,
+              "skills": [
+                "perimeter_lockdown_t3",
+                "clutch_stealer",
+                "help_def_anchor"
+              ],
+              "statBias": {
+                "perimDef": 12,
+                "iq": 7
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 15,
+              "name": "相田 彥一",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 165,
+              "skills": [
+                "floor_iq",
+                "glue_guy"
+              ],
+              "statBias": {
+                "iq": 8,
+                "speed": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 9,
+              "name": "菅平 健",
+              "pos": "C",
+              "role": "BENCH",
+              "ovr": 61,
+              "heightCm": 190,
+              "skills": [
+                "boxout_beast_t3"
+              ],
+              "statBias": {
+                "rebound": 6,
+                "intDef": 5
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 10,
+              "name": "岡田 翼",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 178,
+              "skills": [
+                "corner_specialist_t3"
+              ],
+              "statBias": {
+                "threePt": 5
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 11,
+              "name": "吉田 颯",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 186,
+              "skills": [
+                "glue_guy"
+              ],
+              "statBias": {
+                "strength": 5,
+                "rebound": 5
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 12,
+              "name": "森田 健",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 172,
+              "skills": [
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "speed": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 14,
+              "name": "井上 誠",
+              "pos": "SF",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 181,
+              "skills": [
+                "offball_ghost"
+              ],
+              "statBias": {
+                "midRange": 5
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            }
+          ]
+        },
+        {
+          "id": "shoyo",
+          "name": "翔陽高校",
+          "ovr": 71,
+          "ace": "藤真 健司",
+          "coach": "藤真 健司",
           "roster": [
             {
               "num": 4,
-              "name": "納見 悠仁",
+              "name": "藤真 健司",
+              "pos": "PG",
+              "role": "STARTER",
+              "ovr": 73,
+              "heightCm": 178,
+              "skills": [
+                "dimer_general_t3",
+                "floor_iq",
+                "pullup_shot_t3",
+                "alpha_dog"
+              ],
+              "statBias": {
+                "playmaking": 12,
+                "iq": 12,
+                "threePt": 9,
+                "speed": 9
+              },
+              "isRival": true,
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 6,
+              "name": "長谷川 一志",
+              "pos": "SG",
+              "role": "STARTER",
+              "ovr": 69,
+              "heightCm": 190,
+              "skills": [
+                "perimeter_lockdown_t3",
+                "help_def_anchor",
+                "height_long"
+              ],
+              "statBias": {
+                "perimDef": 11,
+                "midRange": 6,
+                "iq": 7
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 8,
+              "name": "永野 滿",
+              "pos": "SF",
+              "role": "STARTER",
+              "ovr": 67,
+              "heightCm": 191,
+              "skills": [
+                "height_long",
+                "glue_guy"
+              ],
+              "statBias": {
+                "rebound": 6,
+                "intDef": 6,
+                "inside": 6
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 7,
+              "name": "高野 昭一",
+              "pos": "PF",
+              "role": "STARTER",
+              "ovr": 67,
+              "heightCm": 193,
+              "skills": [
+                "height_long",
+                "boxout_beast_t3"
+              ],
+              "statBias": {
+                "rebound": 7,
+                "intDef": 6,
+                "inside": 6
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 5,
+              "name": "花形 透",
+              "pos": "C",
+              "role": "STARTER",
+              "ovr": 71,
+              "heightCm": 197,
+              "skills": [
+                "midrange_maestro_t3",
+                "dream_shake_t4",
+                "floor_iq"
+              ],
+              "statBias": {
+                "midRange": 11,
+                "inside": 9,
+                "rebound": 8,
+                "iq": 8
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 9,
+              "name": "伊藤 卓",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 63,
+              "heightCm": 174,
+              "skills": [
+                "floor_iq",
+                "corner_specialist_t3"
+              ],
+              "statBias": {
+                "playmaking": 6,
+                "threePt": 6
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 10,
+              "name": "渡邊 翔",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 61,
+              "heightCm": 182,
+              "skills": [
+                "offball_ghost"
+              ],
+              "statBias": {
+                "midRange": 5
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 11,
+              "name": "齋藤 亮",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 189,
+              "skills": [
+                "boxout_beast_t3"
+              ],
+              "statBias": {
+                "rebound": 6
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 12,
+              "name": "木村 樹",
+              "pos": "C",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 193,
+              "skills": [
+                "help_def_anchor"
+              ],
+              "statBias": {
+                "intDef": 6
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 13,
+              "name": "清水 悠",
+              "pos": "SF",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 186,
+              "skills": [
+                "glue_guy"
+              ],
+              "statBias": {
+                "perimDef": 5
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 14,
+              "name": "松本 健",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 175,
+              "skills": [
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "speed": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 15,
+              "name": "石川 翼",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 180,
+              "skills": [
+                "microwave"
+              ],
+              "statBias": {
+                "threePt": 5
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            }
+          ]
+        },
+        {
+          "id": "aiwa",
+          "name": "愛和學院高校",
+          "ovr": 72,
+          "ace": "諸星 大",
+          "coach": "愛和總教練",
+          "roster": [
+            {
+              "num": 5,
+              "name": "井手 拓也",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 67,
-              "heightCm": 182,
+              "heightCm": 177,
               "skills": [
-                "floor_iq",
-                "dimer_general_t3"
+                "pnr_maestro_t3",
+                "floor_iq"
+              ],
+              "statBias": {
+                "playmaking": 8,
+                "iq": 7
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 4,
+              "name": "諸星 大",
+              "pos": "SG",
+              "role": "STARTER",
+              "ovr": 74,
+              "heightCm": 186,
+              "skills": [
+                "pullup_shot_t3",
+                "alpha_dog",
+                "eurostep_assassin_t3",
+                "big_heart"
+              ],
+              "statBias": {
+                "midRange": 11,
+                "inside": 11,
+                "speed": 10,
+                "threePt": 8,
+                "grit": 10
+              },
+              "isRival": true,
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 7,
+              "name": "杉山 翔",
+              "pos": "SF",
+              "role": "STARTER",
+              "ovr": 68,
+              "heightCm": 188,
+              "skills": [
+                "corner_specialist_t3",
+                "offball_ghost"
+              ],
+              "statBias": {
+                "threePt": 8,
+                "perimDef": 6
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 8,
+              "name": "橫山 陸",
+              "pos": "PF",
+              "role": "STARTER",
+              "ovr": 68,
+              "heightCm": 192,
+              "skills": [
+                "boxout_beast_t3",
+                "help_def_anchor"
+              ],
+              "statBias": {
+                "rebound": 8,
+                "strength": 7
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 6,
+              "name": "大塚 剛",
+              "pos": "C",
+              "role": "STARTER",
+              "ovr": 69,
+              "heightCm": 196,
+              "skills": [
+                "paint_beast_t3",
+                "rim_eraser_t4"
+              ],
+              "statBias": {
+                "intDef": 9,
+                "rebound": 9,
+                "strength": 8
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 9,
+              "name": "藤井 健",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 61,
+              "heightCm": 174,
+              "skills": [
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "speed": 6,
+                "playmaking": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 10,
+              "name": "橋本 蓮",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 61,
+              "heightCm": 181,
+              "skills": [
+                "microwave"
+              ],
+              "statBias": {
+                "threePt": 6
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 11,
+              "name": "小川 誠",
+              "pos": "SF",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 185,
+              "skills": [
+                "glue_guy"
+              ],
+              "statBias": {
+                "perimDef": 5
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 12,
+              "name": "岡本 樹",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 189,
+              "skills": [
+                "boxout_beast_t3"
+              ],
+              "statBias": {
+                "rebound": 5
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 13,
+              "name": "前田 剛",
+              "pos": "C",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 193,
+              "skills": [
+                "help_def_anchor"
+              ],
+              "statBias": {
+                "intDef": 5
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 14,
+              "name": "村上 翼",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 173,
+              "skills": [
+                "floor_iq"
+              ],
+              "statBias": {
+                "iq": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 15,
+              "name": "近藤 駿",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 179,
+              "skills": [
+                "corner_specialist_t3"
+              ],
+              "statBias": {
+                "threePt": 5
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            }
+          ]
+        },
+        {
+          "id": "toyotama",
+          "name": "豐玉高校",
+          "ovr": 70,
+          "ace": "南 烈",
+          "coach": "金平 教練",
+          "roster": [
+            {
+              "num": 6,
+              "name": "板倉 大二朗",
+              "pos": "PG",
+              "role": "STARTER",
+              "ovr": 68,
+              "heightCm": 183,
+              "skills": [
+                "fastbreak_king",
+                "corner_specialist_t3",
+                "hot_head"
+              ],
+              "statBias": {
+                "threePt": 8,
+                "speed": 7,
+                "playmaking": 6
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 7,
+              "name": "矢嶋 京平",
+              "pos": "SG",
+              "role": "STARTER",
+              "ovr": 67,
+              "heightCm": 180,
+              "skills": [
+                "transition_finisher_t3",
+                "microwave"
+              ],
+              "statBias": {
+                "speed": 8,
+                "midRange": 7
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 4,
+              "name": "南 烈",
+              "pos": "SF",
+              "role": "STARTER",
+              "ovr": 73,
+              "heightCm": 184,
+              "skills": [
+                "deadeye_three_t4",
+                "limitless_range_t4",
+                "first_quarter_spark",
+                "hot_head"
+              ],
+              "statBias": {
+                "threePt": 14,
+                "midRange": 9,
+                "speed": 8,
+                "grit": 7
+              },
+              "isRival": true,
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 5,
+              "name": "岸本 實理",
+              "pos": "PF",
+              "role": "STARTER",
+              "ovr": 70,
+              "heightCm": 188,
+              "skills": [
+                "paint_beast_t3",
+                "fastbreak_king",
+                "hot_head"
+              ],
+              "statBias": {
+                "inside": 10,
+                "strength": 8,
+                "rebound": 7,
+                "speed": 6
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 8,
+              "name": "岩田 三秋",
+              "pos": "C",
+              "role": "STARTER",
+              "ovr": 66,
+              "heightCm": 190,
+              "skills": [
+                "boxout_beast_t3",
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "rebound": 7,
+                "intDef": 6
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 9,
+              "name": "大川 輝男",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 62,
+              "heightCm": 181,
+              "skills": [
+                "fastbreak_king",
+                "microwave"
+              ],
+              "statBias": {
+                "speed": 6,
+                "threePt": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 10,
+              "name": "奧野 健",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 61,
+              "heightCm": 178,
+              "skills": [
+                "corner_specialist_t3"
+              ],
+              "statBias": {
+                "threePt": 6
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            },
+            {
+              "num": 11,
+              "name": "西村 亮",
+              "pos": "SF",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 183,
+              "skills": [
+                "transition_finisher_t3"
+              ],
+              "statBias": {
+                "speed": 6
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 12,
+              "name": "谷口 翔",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 186,
+              "skills": [
+                "glue_guy"
+              ],
+              "statBias": {
+                "rebound": 5
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
+            },
+            {
+              "num": 13,
+              "name": "森 剛",
+              "pos": "C",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 189,
+              "skills": [
+                "boxout_beast_t3"
+              ],
+              "statBias": {
+                "strength": 5
+              },
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 14,
+              "name": "池田 翼",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 174,
+              "skills": [
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "speed": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 15,
+              "name": "濱田 誠",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 59,
+              "heightCm": 179,
+              "skills": [
+                "microwave"
+              ],
+              "statBias": {
+                "midRange": 5
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
+            }
+          ]
+        },
+        {
+          "id": "meihou",
+          "name": "名朋工業高校",
+          "ovr": 71,
+          "ace": "森重 寬",
+          "coach": "名朋總教練",
+          "roster": [
+            {
+              "num": 5,
+              "name": "佐伯 健",
+              "pos": "PG",
+              "role": "STARTER",
+              "ovr": 66,
+              "heightCm": 176,
+              "skills": [
+                "lob_city_passer_t3",
+                "floor_iq"
               ],
               "statBias": {
                 "playmaking": 7,
@@ -319,609 +1848,15 @@
               "blkW": 0.05
             },
             {
-              "num": 7,
-              "name": "山崎 一涉",
+              "num": 6,
+              "name": "三浦 翔",
               "pos": "SG",
-              "role": "STARTER",
-              "ovr": 68,
-              "heightCm": 196,
-              "skills": [
-                "deadeye_three_t4",
-                "height_long"
-              ],
-              "statBias": {
-                "threePt": 9,
-                "midRange": 5
-              },
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
-              "num": 8,
-              "name": "八村 壘",
-              "pos": "PF",
-              "role": "STARTER",
-              "ovr": 76,
-              "heightCm": 203,
-              "skills": [
-                "posterizer_t3",
-                "midrange_maestro_t3",
-                "alpha_dog"
-              ],
-              "statBias": {
-                "inside": 11,
-                "midRange": 9,
-                "strength": 9,
-                "vertical": 8
-              },
-              "isRival": true,
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 11,
-              "name": "越田 大翔",
-              "pos": "SF",
               "role": "STARTER",
               "ovr": 66,
-              "heightCm": 192,
+              "heightCm": 181,
               "skills": [
-                "perimeter_lockdown_t3"
-              ],
-              "statBias": {
-                "perimDef": 6,
-                "speed": 5
-              },
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18
-            },
-            {
-              "num": 15,
-              "name": "八村 阿蓮",
-              "pos": "C",
-              "role": "STARTER",
-              "ovr": 69,
-              "heightCm": 198,
-              "skills": [
-                "paint_beast_t3",
-                "glass_cleaner_t3"
-              ],
-              "statBias": {
-                "inside": 7,
-                "rebound": 8,
-                "strength": 7
-              },
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39
-            },
-            {
-              "num": 6,
-              "name": "佐藤 涼成",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 175,
-              "skills": [
-                "clutch_stealer"
-              ],
-              "statBias": {
-                "speed": 6,
-                "perimDef": 5
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 12,
-              "name": "菅野 布魯斯",
-              "pos": "SF",
-              "role": "BENCH",
-              "ovr": 62,
-              "heightCm": 197,
-              "skills": [
-                "fastbreak_king"
-              ],
-              "statBias": {
-                "vertical": 6,
-                "inside": 5
-              },
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18
-            },
-            {
-              "num": 14,
-              "name": "山內 傑克",
-              "pos": "C",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 198,
-              "skills": [
-                "boxout_beast_t3"
-              ],
-              "statBias": {
-                "rebound": 6,
-                "intDef": 5
-              },
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39
-            },
-            {
-              "num": 5,
-              "name": "八村 亮",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 184,
-              "skills": [
-                "corner_specialist_t3"
-              ],
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1,
-              "statBias": {
-                "threePt": 6
-              }
-            },
-            {
-              "num": 9,
-              "name": "塚本 舞生",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 59,
-              "heightCm": 176,
-              "skills": [
-                "floor_iq"
-              ],
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05,
-              "statBias": {
-                "playmaking": 6
-              }
-            },
-            {
-              "num": 13,
-              "name": "木村 圭吾",
-              "pos": "SF",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 188,
-              "skills": [
-                "microwave"
-              ],
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18,
-              "statBias": {
-                "threePt": 7,
-                "midRange": 5
-              }
-            },
-            {
-              "num": 16,
-              "name": "三谷 桂司朗",
-              "pos": "PF",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 191,
-              "skills": [
-                "glue_guy"
-              ],
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28,
-              "statBias": {
-                "perimDef": 6,
-                "rebound": 5
-              }
-            }
-          ]
-        },
-        {
-          "id": "ohori",
-          "name": "福岡大附屬大濠",
-          "ovr": 72,
-          "ace": "川島 悠翔",
-          "coach": "片峯 聰太",
-          "roster": [
-            {
-              "num": 13,
-              "name": "湧川 颯斗",
-              "pos": "PG",
-              "role": "STARTER",
-              "ovr": 70,
-              "heightCm": 194,
-              "skills": [
-                "dimer_general_t3",
-                "height_long"
-              ],
-              "statBias": {
-                "playmaking": 8,
-                "inside": 6,
-                "rebound": 5
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 7,
-              "name": "西田 優大",
-              "pos": "SG",
-              "role": "STARTER",
-              "ovr": 69,
-              "heightCm": 190,
-              "skills": [
-                "deadeye_three_t4",
-                "perimeter_lockdown_t3"
-              ],
-              "statBias": {
-                "threePt": 8,
-                "perimDef": 7
-              },
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
-              "num": 10,
-              "name": "高田 將吾",
-              "pos": "SF",
-              "role": "STARTER",
-              "ovr": 66,
-              "heightCm": 189,
-              "skills": [
-                "glue_guy"
-              ],
-              "statBias": {
-                "midRange": 5,
-                "iq": 5
-              },
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18
-            },
-            {
-              "num": 8,
-              "name": "川島 悠翔",
-              "pos": "PF",
-              "role": "STARTER",
-              "ovr": 74,
-              "heightCm": 200,
-              "skills": [
-                "big_heart",
-                "paint_beast_t3",
-                "alpha_dog"
-              ],
-              "statBias": {
-                "inside": 10,
-                "rebound": 9,
-                "threePt": 5,
-                "iq": 7
-              },
-              "isRival": true,
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 15,
-              "name": "渡邊 伶音",
-              "pos": "C",
-              "role": "STARTER",
-              "ovr": 70,
-              "heightCm": 204,
-              "skills": [
-                "rim_eraser_t4",
-                "glass_cleaner_t3"
-              ],
-              "statBias": {
-                "intDef": 8,
-                "rebound": 8,
-                "threePt": 4
-              },
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39
-            },
-            {
-              "num": 5,
-              "name": "岩下 准平",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 180,
-              "skills": [
-                "floor_iq"
-              ],
-              "statBias": {
-                "playmaking": 6,
-                "iq": 5
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 9,
-              "name": "廣瀨 洸生",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 185,
-              "skills": [
-                "corner_specialist_t3"
-              ],
-              "statBias": {
-                "threePt": 6
-              },
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
-              "num": 14,
-              "name": "副島 成翔",
-              "pos": "PF",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 195,
-              "skills": [
-                "boxout_beast_t3"
-              ],
-              "statBias": {
-                "rebound": 6
-              },
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 4,
-              "name": "橫地 聖真",
-              "pos": "SF",
-              "role": "BENCH",
-              "ovr": 62,
-              "heightCm": 192,
-              "skills": [
-                "midrange_maestro_t3"
-              ],
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18,
-              "statBias": {
-                "midRange": 7,
-                "inside": 6
-              }
-            },
-            {
-              "num": 6,
-              "name": "木林 優",
-              "pos": "PF",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 200,
-              "skills": [
-                "rim_eraser_t4"
-              ],
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28,
-              "statBias": {
-                "intDef": 7,
-                "rebound": 6
-              }
-            },
-            {
-              "num": 11,
-              "name": "中田 嵩基",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 173,
-              "skills": [
-                "clutch_stealer"
-              ],
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05,
-              "statBias": {
-                "speed": 7,
-                "playmaking": 6
-              }
-            },
-            {
-              "num": 16,
-              "name": "淺井 修伍",
-              "pos": "C",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 198,
-              "skills": [
-                "boxout_beast_t3"
-              ],
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39,
-              "statBias": {
-                "rebound": 6,
-                "strength": 6
-              }
-            }
-          ]
-        },
-        {
-          "id": "kaishi",
-          "name": "開志國際高校",
-          "ovr": 72,
-          "ace": "富永 啟生",
-          "coach": "富樫 英樹",
-          "roster": [
-            {
-              "num": 4,
-              "name": "富樫 勇樹",
-              "pos": "PG",
-              "role": "STARTER",
-              "ovr": 71,
-              "heightCm": 167,
-              "skills": [
-                "pace_changer_t3",
-                "limitless_range_t4",
-                "floor_iq"
-              ],
-              "statBias": {
-                "speed": 10,
-                "threePt": 10,
-                "playmaking": 9,
-                "intDef": -14
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 30,
-              "name": "富永 啟生",
-              "pos": "SG",
-              "role": "STARTER",
-              "ovr": 74,
-              "heightCm": 188,
-              "skills": [
-                "limitless_range_t4",
-                "deadeye_three_t4",
-                "microwave",
-                "alpha_dog"
-              ],
-              "statBias": {
-                "threePt": 15,
-                "midRange": 6,
-                "speed": 6,
-                "perimDef": -6
-              },
-              "isRival": true,
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
-              "num": 7,
-              "name": "介川 安東尼",
-              "pos": "SF",
-              "role": "STARTER",
-              "ovr": 69,
-              "heightCm": 197,
-              "skills": [
-                "posterizer_t3",
-                "fastbreak_king"
-              ],
-              "statBias": {
-                "vertical": 9,
-                "inside": 8
-              },
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18
-            },
-            {
-              "num": 11,
-              "name": "武藤 俊太朗",
-              "pos": "PF",
-              "role": "STARTER",
-              "ovr": 66,
-              "heightCm": 190,
-              "skills": [
-                "glue_guy"
-              ],
-              "statBias": {
-                "rebound": 5,
-                "perimDef": 5
-              },
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 15,
-              "name": "巴・穆薩",
-              "pos": "C",
-              "role": "STARTER",
-              "ovr": 70,
-              "heightCm": 206,
-              "skills": [
-                "rim_eraser_t4",
-                "putback_boss_t3"
-              ],
-              "statBias": {
-                "intDef": 10,
-                "rebound": 10,
-                "strength": 8
-              },
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39
-            },
-            {
-              "num": 6,
-              "name": "澤田 龍輝",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 178,
-              "skills": [
-                "floor_iq"
-              ],
-              "statBias": {
-                "playmaking": 5
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 9,
-              "name": "平良 宗龍",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 62,
-              "heightCm": 182,
-              "skills": [
-                "corner_specialist_t3"
+                "corner_specialist_t3",
+                "offball_ghost"
               ],
               "statBias": {
                 "threePt": 7
@@ -932,402 +1867,15 @@
               "blkW": 0.1
             },
             {
-              "num": 14,
-              "name": "中島 遙希",
-              "pos": "PF",
-              "role": "BENCH",
-              "ovr": 59,
-              "heightCm": 193,
-              "skills": [
-                "glass_cleaner_t3"
-              ],
-              "statBias": {
-                "rebound": 5
-              },
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 5,
-              "name": "板澤 明大",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 178,
-              "skills": [
-                "pace_changer_t3"
-              ],
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05,
-              "statBias": {
-                "speed": 6,
-                "playmaking": 5
-              }
-            },
-            {
-              "num": 8,
-              "name": "高野 泰成",
-              "pos": "SF",
-              "role": "BENCH",
-              "ovr": 59,
-              "heightCm": 187,
-              "skills": [
-                "glue_guy"
-              ],
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18,
-              "statBias": {
-                "perimDef": 5
-              }
-            },
-            {
-              "num": 12,
-              "name": "小池 文哉",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 181,
-              "skills": [
-                "corner_specialist_t3"
-              ],
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1,
-              "statBias": {
-                "threePt": 6
-              }
-            },
-            {
-              "num": 16,
-              "name": "恩迪亞耶・塞庫",
-              "pos": "C",
-              "role": "BENCH",
-              "ovr": 62,
-              "heightCm": 203,
-              "skills": [
-                "rim_eraser_t4"
-              ],
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39,
-              "statBias": {
-                "intDef": 8,
-                "rebound": 8
-              }
-            }
-          ]
-        },
-        {
-          "id": "higashiyama",
-          "name": "京都東山高校",
-          "ovr": 71,
-          "ace": "瀨川 琉久",
-          "coach": "大澤 徹也",
-          "roster": [
-            {
-              "num": 5,
-              "name": "瀨川 琉久",
-              "pos": "PG",
-              "role": "STARTER",
-              "ovr": 73,
-              "heightCm": 184,
-              "skills": [
-                "ankle_breaker_t3",
-                "dimer_general_t3",
-                "big_heart",
-                "alpha_dog"
-              ],
-              "statBias": {
-                "playmaking": 10,
-                "speed": 9,
-                "midRange": 8,
-                "iq": 8
-              },
-              "isRival": true,
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 9,
-              "name": "岡田 侑大",
-              "pos": "SG",
-              "role": "STARTER",
-              "ovr": 70,
-              "heightCm": 189,
-              "skills": [
-                "midrange_maestro_t3",
-                "pullup_shot_t3"
-              ],
-              "statBias": {
-                "midRange": 9,
-                "threePt": 7,
-                "playmaking": 6
-              },
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
               "num": 7,
-              "name": "佐藤 凪",
+              "name": "遠藤 陸",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 67,
-              "heightCm": 188,
-              "skills": [
-                "perimeter_lockdown_t3"
-              ],
-              "statBias": {
-                "perimDef": 7,
-                "threePt": 5
-              },
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18
-            },
-            {
-              "num": 11,
-              "name": "南川 陸斗",
-              "pos": "PF",
-              "role": "STARTER",
-              "ovr": 66,
-              "heightCm": 192,
-              "skills": [
-                "boxout_beast_t3"
-              ],
-              "statBias": {
-                "rebound": 7,
-                "strength": 6
-              },
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 15,
-              "name": "卡迪奧・約翰",
-              "pos": "C",
-              "role": "STARTER",
-              "ovr": 69,
-              "heightCm": 205,
-              "skills": [
-                "rim_eraser_t4",
-                "glass_cleaner_t3"
-              ],
-              "statBias": {
-                "intDef": 9,
-                "rebound": 9
-              },
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39
-            },
-            {
-              "num": 6,
-              "name": "松島 慎之介",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 176,
-              "skills": [
-                "clutch_stealer"
-              ],
-              "statBias": {
-                "speed": 6
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 10,
-              "name": "小野寺 佑紀",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 184,
-              "skills": [
-                "microwave"
-              ],
-              "statBias": {
-                "threePt": 6
-              },
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
-              "num": 14,
-              "name": "中村 颯斗",
-              "pos": "PF",
-              "role": "BENCH",
-              "ovr": 59,
-              "heightCm": 194,
-              "skills": [
-                "glue_guy"
-              ],
-              "statBias": {
-                "rebound": 5
-              },
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 4,
-              "name": "米須 玲音",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 63,
-              "heightCm": 177,
-              "skills": [
-                "dimer_general_t3",
-                "floor_iq"
-              ],
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05,
-              "statBias": {
-                "playmaking": 9,
-                "iq": 8
-              }
-            },
-            {
-              "num": 8,
-              "name": "中川 泰志",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 60,
               "heightCm": 186,
               "skills": [
-                "corner_specialist_t3"
-              ],
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1,
-              "statBias": {
-                "threePt": 6
-              }
-            },
-            {
-              "num": 12,
-              "name": "西部 秀馬",
-              "pos": "SF",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 189,
-              "skills": [
-                "fastbreak_king"
-              ],
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18,
-              "statBias": {
-                "speed": 6,
-                "inside": 5
-              }
-            },
-            {
-              "num": 16,
-              "name": "卡巴・穆罕默德",
-              "pos": "C",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 204,
-              "skills": [
-                "glass_cleaner_t3"
-              ],
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39,
-              "statBias": {
-                "rebound": 8,
-                "intDef": 7
-              }
-            }
-          ]
-        },
-        {
-          "id": "rakunan",
-          "name": "京都洛南高校",
-          "ovr": 70,
-          "ace": "比江島 慎",
-          "coach": "吉田 裕司",
-          "roster": [
-            {
-              "num": 4,
-              "name": "辻 直人",
-              "pos": "PG",
-              "role": "STARTER",
-              "ovr": 68,
-              "heightCm": 185,
-              "skills": [
-                "deadeye_three_t4",
-                "dimer_general_t3"
-              ],
-              "statBias": {
-                "threePt": 10,
-                "playmaking": 7
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 6,
-              "name": "比江島 慎",
-              "pos": "SG",
-              "role": "STARTER",
-              "ovr": 73,
-              "heightCm": 191,
-              "skills": [
-                "eurostep_assassin_t3",
-                "big_heart",
-                "alpha_dog"
-              ],
-              "statBias": {
-                "inside": 9,
-                "midRange": 8,
-                "threePt": 7,
-                "iq": 9
-              },
-              "isRival": true,
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
-              "num": 8,
-              "name": "星野 曹樹",
-              "pos": "SF",
-              "role": "STARTER",
-              "ovr": 66,
-              "heightCm": 195,
-              "skills": [
-                "perimeter_lockdown_t3"
+                "glue_guy",
+                "help_def_anchor"
               ],
               "statBias": {
                 "perimDef": 6,
@@ -1336,301 +1884,85 @@
               "rebW": 0.2,
               "astW": 0.2,
               "stlW": 0.22,
-              "blkW": 0.18
+              "blkW": 0.16
             },
             {
-              "num": 12,
-              "name": "小川 敦也",
+              "num": 8,
+              "name": "柴田 剛",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 67,
               "heightCm": 190,
               "skills": [
-                "fastbreak_king"
-              ],
-              "statBias": {
-                "speed": 7,
-                "inside": 6
-              },
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 15,
-              "name": "竹內 公輔",
-              "pos": "C",
-              "role": "STARTER",
-              "ovr": 69,
-              "heightCm": 206,
-              "skills": [
-                "glass_cleaner_t3",
-                "rim_eraser_t4"
-              ],
-              "statBias": {
-                "rebound": 9,
-                "intDef": 8
-              },
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39
-            },
-            {
-              "num": 5,
-              "name": "寺嶋 良",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 62,
-              "heightCm": 179,
-              "skills": [
-                "pace_changer_t3"
-              ],
-              "statBias": {
-                "speed": 7,
-                "playmaking": 5
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 9,
-              "name": "津屋 一球",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 190,
-              "skills": [
-                "corner_specialist_t3"
-              ],
-              "statBias": {
-                "threePt": 6
-              },
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
-              "num": 14,
-              "name": "谷口 大智",
-              "pos": "C",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 201,
-              "skills": [
-                "boxout_beast_t3"
-              ],
-              "statBias": {
-                "rebound": 6
-              },
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39
-            },
-            {
-              "num": 7,
-              "name": "大橋 大空",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 176,
-              "skills": [
-                "floor_iq"
-              ],
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05,
-              "statBias": {
-                "playmaking": 6
-              }
-            },
-            {
-              "num": 10,
-              "name": "笹山 貴哉",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 180,
-              "skills": [
-                "deadeye_three_t4"
-              ],
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1,
-              "statBias": {
-                "threePt": 7,
-                "playmaking": 5
-              }
-            },
-            {
-              "num": 11,
-              "name": "谷口 光貴",
-              "pos": "SF",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 187,
-              "skills": [
+                "boxout_beast_t3",
                 "glue_guy"
-              ],
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18,
-              "statBias": {
-                "perimDef": 6
-              }
-            },
-            {
-              "num": 16,
-              "name": "佐藤 卓磨",
-              "pos": "PF",
-              "role": "BENCH",
-              "ovr": 62,
-              "heightCm": 197,
-              "skills": [
-                "perimeter_lockdown_t3"
-              ],
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28,
-              "statBias": {
-                "perimDef": 8,
-                "vertical": 7
-              }
-            }
-          ]
-        },
-        {
-          "id": "noshiro",
-          "name": "能代工業高校",
-          "ovr": 69,
-          "ace": "田臥 勇太",
-          "coach": "加藤 廣志",
-          "roster": [
-            {
-              "num": 4,
-              "name": "田臥 勇太",
-              "pos": "PG",
-              "role": "STARTER",
-              "ovr": 72,
-              "heightCm": 173,
-              "skills": [
-                "dimer_general_t3",
-                "floor_iq",
-                "fastbreak_king",
-                "alpha_dog"
-              ],
-              "statBias": {
-                "playmaking": 12,
-                "speed": 10,
-                "iq": 11,
-                "intDef": -10
-              },
-              "isRival": true,
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 7,
-              "name": "長谷川 暢",
-              "pos": "SG",
-              "role": "STARTER",
-              "ovr": 66,
-              "heightCm": 174,
-              "skills": [
-                "perimeter_lockdown_t3",
-                "clutch_stealer"
-              ],
-              "statBias": {
-                "perimDef": 8,
-                "speed": 7
-              },
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
-              "num": 9,
-              "name": "菊地 祥平",
-              "pos": "SF",
-              "role": "STARTER",
-              "ovr": 67,
-              "heightCm": 191,
-              "skills": [
-                "glue_guy",
-                "perpetual_motor"
-              ],
-              "statBias": {
-                "perimDef": 7,
-                "grit": 8
-              },
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18
-            },
-            {
-              "num": 12,
-              "name": "滿原 優樹",
-              "pos": "PF",
-              "role": "STARTER",
-              "ovr": 67,
-              "heightCm": 198,
-              "skills": [
-                "midrange_maestro_t3",
-                "boxout_beast_t3"
-              ],
-              "statBias": {
-                "midRange": 6,
-                "rebound": 7
-              },
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 15,
-              "name": "豬狩 涉",
-              "pos": "C",
-              "role": "STARTER",
-              "ovr": 65,
-              "heightCm": 196,
-              "skills": [
-                "glass_cleaner_t3"
               ],
               "statBias": {
                 "rebound": 7,
-                "strength": 6
+                "strength": 7
               },
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.32
             },
             {
-              "num": 5,
-              "name": "高橋 耕陽",
+              "num": 15,
+              "name": "森重 寬",
+              "pos": "C",
+              "role": "STARTER",
+              "ovr": 75,
+              "heightCm": 199,
+              "skills": [
+                "posterizer_t3",
+                "paint_beast_t3",
+                "rim_eraser_t4",
+                "glass_cleaner_t3",
+                "height_tower"
+              ],
+              "statBias": {
+                "strength": 16,
+                "inside": 14,
+                "rebound": 14,
+                "intDef": 13,
+                "vertical": 12,
+                "threePt": -18
+              },
+              "isRival": true,
+              "rebW": 0.32,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.37
+            },
+            {
+              "num": 9,
+              "name": "淺野 蓮",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 174,
+              "skills": [
+                "floor_iq"
+              ],
+              "statBias": {
+                "playmaking": 5
+              },
+              "rebW": 0.12,
+              "astW": 0.42,
+              "stlW": 0.3,
+              "blkW": 0.05
+            },
+            {
+              "num": 10,
+              "name": "坂本 翼",
               "pos": "SG",
               "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 192,
+              "ovr": 60,
+              "heightCm": 179,
               "skills": [
                 "microwave"
               ],
               "statBias": {
-                "inside": 5,
                 "threePt": 5
               },
               "rebW": 0.15,
@@ -1639,355 +1971,95 @@
               "blkW": 0.1
             },
             {
-              "num": 8,
-              "name": "盛實 海翔",
-              "pos": "PG",
+              "num": 11,
+              "name": "上田 誠",
+              "pos": "SF",
               "role": "BENCH",
               "ovr": 60,
-              "heightCm": 187,
-              "skills": [
-                "corner_specialist_t3"
-              ],
-              "statBias": {
-                "threePt": 6
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 14,
-              "name": "新號 健",
-              "pos": "PF",
-              "role": "BENCH",
-              "ovr": 59,
-              "heightCm": 192,
+              "heightCm": 184,
               "skills": [
                 "glue_guy"
+              ],
+              "statBias": {
+                "perimDef": 5
+              },
+              "rebW": 0.2,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.16
+            },
+            {
+              "num": 12,
+              "name": "原田 樹",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 60,
+              "heightCm": 188,
+              "skills": [
+                "boxout_beast_t3"
               ],
               "statBias": {
                 "rebound": 5
               },
               "rebW": 0.26,
-              "astW": 0.12,
+              "astW": 0.1,
               "stlW": 0.14,
-              "blkW": 0.28
+              "blkW": 0.32
             },
             {
-              "num": 6,
-              "name": "內海 慎吾",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 188,
-              "skills": [
-                "corner_specialist_t3"
-              ],
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1,
-              "statBias": {
-                "threePt": 6,
-                "perimDef": 5
-              }
-            },
-            {
-              "num": 10,
-              "name": "山田 大治",
-              "pos": "PF",
+              "num": 13,
+              "name": "宮崎 剛",
+              "pos": "C",
               "role": "BENCH",
               "ovr": 61,
-              "heightCm": 200,
+              "heightCm": 193,
               "skills": [
-                "paint_beast_t3"
-              ],
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28,
-              "statBias": {
-                "inside": 7,
-                "rebound": 7
-              }
-            },
-            {
-              "num": 11,
-              "name": "小納 貴雄",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 59,
-              "heightCm": 175,
-              "skills": [
-                "clutch_stealer"
-              ],
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05,
-              "statBias": {
-                "speed": 6
-              }
-            },
-            {
-              "num": 16,
-              "name": "梁川 禎浩",
-              "pos": "SF",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 189,
-              "skills": [
-                "perpetual_motor"
-              ],
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18,
-              "statBias": {
-                "grit": 7,
-                "threePt": 5
-              }
-            }
-          ]
-        },
-        {
-          "id": "teikyo",
-          "name": "帝京長岡高校",
-          "ovr": 69,
-          "ace": "田中 力",
-          "coach": "柴田 勳",
-          "roster": [
-            {
-              "num": 4,
-              "name": "島倉 歐",
-              "pos": "PG",
-              "role": "STARTER",
-              "ovr": 65,
-              "heightCm": 180,
-              "skills": [
-                "floor_iq"
+                "help_def_anchor"
               ],
               "statBias": {
-                "playmaking": 6,
-                "speed": 6
+                "intDef": 6,
+                "rebound": 5
               },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 7,
-              "name": "田中 力",
-              "pos": "SG",
-              "role": "STARTER",
-              "ovr": 71,
-              "heightCm": 192,
-              "skills": [
-                "eurostep_assassin_t3",
-                "fastbreak_king",
-                "alpha_dog"
-              ],
-              "statBias": {
-                "speed": 9,
-                "inside": 8,
-                "vertical": 8,
-                "perimDef": 6
-              },
-              "isRival": true,
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
-            },
-            {
-              "num": 10,
-              "name": "祝 俊成",
-              "pos": "SF",
-              "role": "STARTER",
-              "ovr": 66,
-              "heightCm": 190,
-              "skills": [
-                "corner_specialist_t3"
-              ],
-              "statBias": {
-                "threePt": 7,
-                "midRange": 5
-              },
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18
-            },
-            {
-              "num": 12,
-              "name": "古川 孝敏",
-              "pos": "PF",
-              "role": "STARTER",
-              "ovr": 66,
-              "heightCm": 190,
-              "skills": [
-                "big_heart"
-              ],
-              "statBias": {
-                "threePt": 6,
-                "grit": 7
-              },
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 15,
-              "name": "科內・博瓦",
-              "pos": "C",
-              "role": "STARTER",
-              "ovr": 69,
-              "heightCm": 206,
-              "skills": [
-                "rim_eraser_t4",
-                "paint_beast_t3"
-              ],
-              "statBias": {
-                "intDef": 9,
-                "rebound": 9,
-                "inside": 7
-              },
-              "rebW": 0.3,
-              "astW": 0.08,
+              "rebW": 0.32,
+              "astW": 0.06,
               "stlW": 0.1,
-              "blkW": 0.39
-            },
-            {
-              "num": 6,
-              "name": "箕輪 武藏",
-              "pos": "PG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 177,
-              "skills": [
-                "clutch_stealer"
-              ],
-              "statBias": {
-                "speed": 6
-              },
-              "rebW": 0.12,
-              "astW": 0.42,
-              "stlW": 0.3,
-              "blkW": 0.05
-            },
-            {
-              "num": 9,
-              "name": "赤澤 翔太",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 59,
-              "heightCm": 183,
-              "skills": [
-                "microwave"
-              ],
-              "statBias": {
-                "threePt": 5
-              },
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1
+              "blkW": 0.37
             },
             {
               "num": 14,
-              "name": "星野 達也",
-              "pos": "PF",
-              "role": "BENCH",
-              "ovr": 59,
-              "heightCm": 193,
-              "skills": [
-                "boxout_beast_t3"
-              ],
-              "statBias": {
-                "rebound": 6
-              },
-              "rebW": 0.26,
-              "astW": 0.12,
-              "stlW": 0.14,
-              "blkW": 0.28
-            },
-            {
-              "num": 5,
-              "name": "祝 銘震",
-              "pos": "SF",
-              "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 196,
-              "skills": [
-                "perimeter_lockdown_t3",
-                "corner_specialist_t3"
-              ],
-              "rebW": 0.2,
-              "astW": 0.2,
-              "stlW": 0.22,
-              "blkW": 0.18,
-              "statBias": {
-                "perimDef": 7,
-                "threePt": 6
-              }
-            },
-            {
-              "num": 8,
-              "name": "小林 拓也",
+              "name": "中田 健",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 59,
-              "heightCm": 176,
+              "heightCm": 173,
               "skills": [
-                "floor_iq"
+                "fastbreak_king"
               ],
+              "statBias": {
+                "speed": 5
+              },
               "rebW": 0.12,
               "astW": 0.42,
               "stlW": 0.3,
-              "blkW": 0.05,
-              "statBias": {
-                "playmaking": 5
-              }
-            },
-            {
-              "num": 11,
-              "name": "遠藤 善",
-              "pos": "SG",
-              "role": "BENCH",
-              "ovr": 60,
-              "heightCm": 182,
-              "skills": [
-                "microwave"
-              ],
-              "rebW": 0.15,
-              "astW": 0.22,
-              "stlW": 0.24,
-              "blkW": 0.1,
-              "statBias": {
-                "threePt": 6
-              }
+              "blkW": 0.05
             },
             {
               "num": 16,
-              "name": "迪亞洛・阿馬杜",
-              "pos": "C",
+              "name": "河合 駿",
+              "pos": "SG",
               "role": "BENCH",
-              "ovr": 61,
-              "heightCm": 203,
+              "ovr": 59,
+              "heightCm": 178,
               "skills": [
-                "boxout_beast_t3"
+                "corner_specialist_t3"
               ],
-              "rebW": 0.3,
-              "astW": 0.08,
-              "stlW": 0.1,
-              "blkW": 0.39,
               "statBias": {
-                "rebound": 8,
-                "strength": 7
-              }
+                "threePt": 5
+              },
+              "rebW": 0.15,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.1
             }
           ]
         }
@@ -10704,23 +10776,22 @@
   ],
   "defaultUserRoster": [
     {
-      "num": 8,
-      "name": "河村 勇輝",
+      "num": 7,
+      "name": "宮城 良田",
       "pos": "PG",
       "role": "STARTER",
-      "ovr": 73,
-      "heightCm": 172,
+      "ovr": 71,
+      "heightCm": 168,
       "skills": [
         "dimer_general_t3",
-        "floor_iq",
+        "fastbreak_king",
         "pace_changer_t3",
         "clutch_stealer"
       ],
       "statBias": {
-        "speed": 10,
-        "playmaking": 12,
-        "threePt": 6,
-        "iq": 8,
+        "speed": 12,
+        "playmaking": 11,
+        "perimDef": 7,
         "intDef": -12
       },
       "rebW": 0.12,
@@ -10744,82 +10815,138 @@
     },
     {
       "num": 11,
-      "name": "小川 麻斗",
+      "name": "流川 楓",
       "pos": "SF",
       "role": "STARTER",
-      "ovr": 69,
-      "heightCm": 184,
+      "ovr": 74,
+      "heightCm": 187,
       "skills": [
-        "fastbreak_king",
-        "perimeter_lockdown_t3"
+        "pullup_shot_t3",
+        "posterizer_t3",
+        "alpha_dog",
+        "eurostep_assassin_t3"
       ],
       "statBias": {
+        "inside": 9,
+        "midRange": 10,
+        "threePt": 6,
         "speed": 7,
-        "perimDef": 6,
-        "threePt": 4
+        "vertical": 8
       },
       "rebW": 0.2,
       "astW": 0.2,
       "stlW": 0.22,
-      "blkW": 0.18
+      "blkW": 0.16
     },
     {
-      "num": 14,
-      "name": "內尾 聰理",
+      "num": 10,
+      "name": "櫻木 花道",
       "pos": "PF",
       "role": "STARTER",
-      "ovr": 68,
-      "heightCm": 192,
+      "ovr": 70,
+      "heightCm": 189,
       "skills": [
-        "glue_guy",
-        "boxout_beast_t3"
+        "glass_cleaner_t3",
+        "boxout_beast_t3",
+        "putback_boss_t3",
+        "perpetual_motor",
+        "foul_trouble"
       ],
       "statBias": {
-        "rebound": 6,
-        "perimDef": 5,
-        "grit": 6
+        "rebound": 16,
+        "vertical": 14,
+        "strength": 10,
+        "grit": 12,
+        "threePt": -14
       },
       "rebW": 0.26,
-      "astW": 0.12,
+      "astW": 0.1,
       "stlW": 0.14,
-      "blkW": 0.28
+      "blkW": 0.32
     },
     {
       "num": 4,
-      "name": "哈伯・簡",
+      "name": "赤木 剛憲",
       "pos": "C",
       "role": "STARTER",
-      "ovr": 70,
-      "heightCm": 204,
+      "ovr": 72,
+      "heightCm": 197,
       "skills": [
         "rim_eraser_t4",
-        "glass_cleaner_t3"
+        "paint_beast_t3",
+        "help_def_anchor"
       ],
       "statBias": {
-        "intDef": 9,
-        "rebound": 9,
-        "strength": 7,
-        "threePt": -14
+        "intDef": 12,
+        "rebound": 10,
+        "strength": 12,
+        "inside": 9,
+        "threePt": -15
       },
-      "rebW": 0.3,
-      "astW": 0.08,
+      "rebW": 0.32,
+      "astW": 0.06,
       "stlW": 0.1,
-      "blkW": 0.39
+      "blkW": 0.37
+    },
+    {
+      "num": 14,
+      "name": "三井 壽",
+      "pos": "SG",
+      "role": "BENCH",
+      "ovr": 71,
+      "heightCm": 184,
+      "skills": [
+        "deadeye_three_t4",
+        "corner_specialist_t3",
+        "big_heart",
+        "glass_ankles"
+      ],
+      "statBias": {
+        "threePt": 15,
+        "midRange": 8,
+        "iq": 7,
+        "perimDef": 6
+      },
+      "rebW": 0.15,
+      "astW": 0.22,
+      "stlW": 0.24,
+      "blkW": 0.1
     },
     {
       "num": 5,
-      "name": "轟 琉維",
-      "pos": "PG",
+      "name": "木暮 公延",
+      "pos": "SF",
       "role": "BENCH",
-      "ovr": 62,
-      "heightCm": 174,
+      "ovr": 63,
+      "heightCm": 178,
       "skills": [
-        "microwave",
-        "fastbreak_king"
+        "corner_specialist_t3",
+        "glue_guy",
+        "ice_in_veins"
       ],
       "statBias": {
-        "speed": 8,
-        "playmaking": 5
+        "threePt": 7,
+        "iq": 6
+      },
+      "rebW": 0.2,
+      "astW": 0.2,
+      "stlW": 0.22,
+      "blkW": 0.16
+    },
+    {
+      "num": 8,
+      "name": "安田 靖春",
+      "pos": "PG",
+      "role": "BENCH",
+      "ovr": 60,
+      "heightCm": 165,
+      "skills": [
+        "floor_iq",
+        "glue_guy"
+      ],
+      "statBias": {
+        "playmaking": 5,
+        "iq": 6
       },
       "rebW": 0.12,
       "astW": 0.42,
@@ -10828,17 +10955,16 @@
     },
     {
       "num": 6,
-      "name": "崎濱 秀斗",
+      "name": "潮崎 哲士",
       "pos": "SG",
       "role": "BENCH",
-      "ovr": 61,
-      "heightCm": 180,
+      "ovr": 59,
+      "heightCm": 170,
       "skills": [
-        "corner_specialist_t3"
+        "perimeter_lockdown_t3"
       ],
       "statBias": {
-        "threePt": 7,
-        "midRange": 4
+        "perimDef": 6
       },
       "rebW": 0.15,
       "astW": 0.22,
@@ -10846,99 +10972,59 @@
       "blkW": 0.1
     },
     {
-      "num": 15,
-      "name": "山口 瑛司",
-      "pos": "PF",
-      "role": "BENCH",
-      "ovr": 60,
-      "heightCm": 194,
-      "skills": [
-        "glass_cleaner_t3"
-      ],
-      "statBias": {
-        "rebound": 6,
-        "strength": 5
-      },
-      "rebW": 0.26,
-      "astW": 0.12,
-      "stlW": 0.14,
-      "blkW": 0.28
-    },
-    {
       "num": 9,
-      "name": "松崎 裕樹",
-      "pos": "SF",
-      "role": "BENCH",
-      "ovr": 61,
-      "heightCm": 192,
-      "skills": [
-        "perimeter_lockdown_t3"
-      ],
-      "rebW": 0.2,
-      "astW": 0.2,
-      "stlW": 0.22,
-      "blkW": 0.18,
-      "statBias": {
-        "perimDef": 6,
-        "threePt": 5
-      }
-    },
-    {
-      "num": 12,
-      "name": "神田 壯一郎",
-      "pos": "SG",
-      "role": "BENCH",
-      "ovr": 60,
-      "heightCm": 190,
-      "skills": [
-        "fastbreak_king"
-      ],
-      "rebW": 0.15,
-      "astW": 0.22,
-      "stlW": 0.24,
-      "blkW": 0.1,
-      "statBias": {
-        "speed": 6,
-        "inside": 5
-      }
-    },
-    {
-      "num": 13,
-      "name": "城戶 賢心",
-      "pos": "PF",
+      "name": "角田 悟",
+      "pos": "C",
       "role": "BENCH",
       "ovr": 59,
-      "heightCm": 190,
+      "heightCm": 180,
       "skills": [
         "boxout_beast_t3"
       ],
-      "rebW": 0.26,
-      "astW": 0.12,
-      "stlW": 0.14,
-      "blkW": 0.28,
       "statBias": {
-        "rebound": 6,
-        "grit": 6
-      }
+        "rebound": 5,
+        "strength": 4
+      },
+      "rebW": 0.32,
+      "astW": 0.06,
+      "stlW": 0.1,
+      "blkW": 0.37
     },
     {
-      "num": 16,
-      "name": "宮本 聰",
-      "pos": "C",
+      "num": 12,
+      "name": "石井 健太郎",
+      "pos": "PF",
       "role": "BENCH",
       "ovr": 58,
-      "heightCm": 197,
+      "heightCm": 170,
       "skills": [
-        "glass_cleaner_t3"
+        "glue_guy"
       ],
-      "rebW": 0.3,
-      "astW": 0.08,
-      "stlW": 0.1,
-      "blkW": 0.39,
       "statBias": {
-        "rebound": 6,
-        "intDef": 5
-      }
+        "grit": 5
+      },
+      "rebW": 0.26,
+      "astW": 0.1,
+      "stlW": 0.14,
+      "blkW": 0.32
+    },
+    {
+      "num": 13,
+      "name": "佐佐岡 智",
+      "pos": "SF",
+      "role": "BENCH",
+      "ovr": 58,
+      "heightCm": 172,
+      "skills": [
+        "offball_ghost"
+      ],
+      "statBias": {
+        "speed": 4
+      },
+      "rebW": 0.2,
+      "astW": 0.2,
+      "stlW": 0.22,
+      "blkW": 0.16
     }
   ]
 }
