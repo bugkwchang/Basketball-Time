@@ -61,7 +61,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_mentor_secret",
@@ -100,7 +101,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_rival_hallway",
@@ -147,7 +149,7 @@
           "label": "冷笑轉身保持冷靜",
           "stat": "iq",
           "base": 0.9,
-          "w": 0.001,
+          "w": 0.0025,
           "ok": {
             "text": "完全唔受挑釁影響！球商 +3、狀態 +6。",
             "eff": {
@@ -166,7 +168,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_rival_street1v1",
@@ -214,7 +217,7 @@
           "label": "拒絕消耗體力，養精蓄銳留待正賽",
           "stat": "iq",
           "base": 0.95,
-          "w": 0,
+          "w": 0.0025,
           "ok": {
             "text": "保持最佳體能狀態！狀態 +12、球商 +1。",
             "eff": {
@@ -231,7 +234,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_ankle_injury",
@@ -250,7 +254,7 @@
           "label": "立即冰敷並接受隊醫專業理療",
           "stat": "iq",
           "base": 0.95,
-          "w": 0,
+          "w": 0.0025,
           "ok": {
             "text": "及時止損！徹底康復並回復狀態 +22，清除傷病隱患。",
             "eff": {
@@ -295,7 +299,8 @@
             ]
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_midseason_transfer",
@@ -314,7 +319,7 @@
           "label": "✈️ 接受重磅轉會！加盟聯盟爭冠強權",
           "stat": "iq",
           "base": 0.95,
-          "w": 0,
+          "w": 0.0025,
           "ok": {
             "text": "震撼球壇！你正式轉會加盟勁旅，即刻獲得高強度隊友支援，名氣 +10！",
             "eff": {
@@ -337,7 +342,7 @@
           "label": "🛡️ 拒絕挖角，誓與原隊友並肩作戰！",
           "stat": "grit",
           "base": 0.92,
-          "w": 0,
+          "w": 0.0025,
           "ok": {
             "text": "忠誠宣言感動全城！更衣室士氣爆棚，意志 +4、名氣 +8、球商 +2！",
             "eff": {
@@ -359,7 +364,8 @@
             ]
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_locker_chemistry",
@@ -416,7 +422,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_brand_deal",
@@ -472,7 +479,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_growth_spurt",
@@ -538,7 +546,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_euro_scout",
@@ -601,7 +610,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_film_room",
@@ -654,7 +664,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_fiba_camp",
@@ -700,7 +711,7 @@
           "label": "婉拒集訓專心備戰球會賽程",
           "stat": "iq",
           "base": 0.9,
-          "w": 0.001,
+          "w": 0.0025,
           "ok": {
             "text": "保持充沛體能與球隊默契！狀態 +12、教練 {{coachName}}信任 +4。",
             "eff": {
@@ -717,7 +728,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_street_legend",
@@ -771,7 +783,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_media_mvp_debate",
@@ -825,7 +838,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_vet_mentorship",
@@ -880,7 +894,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_playoff_hype",
@@ -935,7 +950,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_hs_midterm",
@@ -988,7 +1004,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_hs_summer_camp",
@@ -1046,7 +1063,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_hs_shoes_worn",
@@ -1101,7 +1119,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_rival_gym_crash",
@@ -1155,7 +1174,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_scout_combine",
@@ -1216,7 +1236,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_nutrition_chef",
@@ -1271,7 +1292,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_back_spasm",
@@ -1311,7 +1333,7 @@
         {
           "label": "貼滿肌內效貼布頂硬上繼續加練",
           "stat": "grit",
-          "base": 0.45,
+          "base": 0.5,
           "w": 0.004,
           "ok": {
             "text": "靠驚人意志克服不適！意志 +4、教練 {{coachName}}信任 +6（狀態 -10）。",
@@ -1331,7 +1353,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_teammate_slump",
@@ -1386,7 +1409,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_local_magazine",
@@ -1440,7 +1464,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_charity_clinic",
@@ -1494,7 +1519,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_yoga_mobility",
@@ -1548,7 +1574,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_nba_agent_call",
@@ -1601,7 +1628,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_pro_trade_rumor",
@@ -1654,7 +1682,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_pro_allstar_invite",
@@ -1715,7 +1744,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_dunk_contest_dare",
@@ -1769,7 +1799,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_defensive_boot_camp",
@@ -1825,7 +1856,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_clutch_ft_pressure",
@@ -1880,7 +1912,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_overseas_highlight_viral",
@@ -1933,7 +1966,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_cold_weather_run",
@@ -1987,7 +2021,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "NEGATIVE"
     },
     {
       "id": "evt_rival_handshake",
@@ -2042,7 +2077,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_playmaking_chess",
@@ -2096,7 +2132,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_rebound_rodman",
@@ -2149,7 +2186,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_coach_tactic_trust",
@@ -2202,7 +2240,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_growth_spurt_late",
@@ -2267,7 +2306,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_nba_draft_whisper",
@@ -2328,7 +2368,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_pro_playoff_intensity",
@@ -2383,7 +2424,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_fiba_anthem",
@@ -2446,7 +2488,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_ankle_brace_tech",
@@ -2501,7 +2544,8 @@
             "flags": []
           }
         }
-      ]
+      ],
+      "tone": "POSITIVE"
     },
     {
       "id": "evt_midnight_buzzer",
@@ -2537,7 +2581,7 @@
           "label": "準時收工沖個熱水澡保住最佳賽季狀態",
           "stat": "iq",
           "base": 0.9,
-          "w": 0.001,
+          "w": 0.0025,
           "ok": {
             "text": "自律管理體能！狀態 +14、球商 +1。",
             "eff": {
@@ -2550,6 +2594,2067 @@
             "text": "狀態 +10。",
             "eff": {
               "condition": 10
+            },
+            "flags": []
+          }
+        }
+      ],
+      "tone": "POSITIVE"
+    },
+    {
+      "id": "evt_ncaa_march_madness_bracket",
+      "stage": "PRO",
+      "tone": "MIXED",
+      "title": "🎓 三月瘋單敗淘汰前夕：全美直播的窒息壓力",
+      "desc": "NCAA 錦標賽鏡頭對準 {{teamName}} 更衣室，輸一場球季就即刻畫上句號，年輕隊友手心直冒冷汗。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "ncaa_madness"
+        }
+      ],
+      "choices": [
+        {
+          "label": "站上更衣室中央帶頭嘶吼，接下全隊壓力",
+          "stat": "grit",
+          "base": 0.58,
+          "w": 0.0045,
+          "ok": {
+            "text": "更衣室士氣瞬間炸裂！意志 +3、名氣 +6、教練 {{coachName}} 信任 +5！",
+            "eff": {
+              "grit": 3,
+              "reputation": 6,
+              "coachTrust": 5
+            },
+            "flags": [
+              "march_leader"
+            ]
+          },
+          "fail": {
+            "text": "喊得太激動反而讓自己賽前緊繃過度，但鬥志仍在。意志 +1、狀態 -6。",
+            "eff": {
+              "grit": 1,
+              "condition": -6
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "冷靜拆解對手戰術板，幫隊友穩住呼吸節奏",
+          "stat": "iq",
+          "base": 0.72,
+          "w": 0.003,
+          "ok": {
+            "text": "全隊眼神重新聚焦！球商 +3、組織 +2、教練 {{coachName}} 信任 +6！",
+            "eff": {
+              "iq": 3,
+              "playmaking": 2,
+              "coachTrust": 6
+            },
+            "flags": [
+              "film_student"
+            ]
+          },
+          "fail": {
+            "text": "隊友仍有點緊張，但你的沉著贏得肯定。球商 +1、教練 {{coachName}} 信任 +3。",
+            "eff": {
+              "iq": 1,
+              "coachTrust": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_ncaa_nil_endorsement",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "💵 NIL 大學商業代言談判：流量還是球場？",
+      "desc": "兩家運動飲料與球鞋品牌找上門，開出豐厚 NIL 贊助合約，但要求你週末飛往外州拍兩天廣告。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "ncaa_madness"
+        },
+        {
+          "field": "reputation",
+          "op": "gte",
+          "value": 40
+        }
+      ],
+      "choices": [
+        {
+          "label": "談判改為休賽日拍攝，兼顧曝光與訓練",
+          "stat": "reputation",
+          "base": 0.56,
+          "w": 0.0045,
+          "ok": {
+            "text": "品牌大方讓步！名氣 +9、狀態 +4、教練 {{coachName}} 信任 +4！",
+            "eff": {
+              "reputation": 9,
+              "condition": 4,
+              "coachTrust": 4
+            },
+            "flags": [
+              "nil_star"
+            ]
+          },
+          "fail": {
+            "text": "行程仍略有壓縮，拍完廣告略顯疲憊。名氣 +5、狀態 -7。",
+            "eff": {
+              "reputation": 5,
+              "condition": -7
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "婉拒外地拍攝，全力留在球館加練備戰",
+          "stat": "grit",
+          "base": 0.82,
+          "w": 0.002,
+          "ok": {
+            "text": "純粹的籃球態度登上校報頭條！中投 +2、外防 +2、教練 {{coachName}} 信任 +7！",
+            "eff": {
+              "midRange": 2,
+              "perimDef": 2,
+              "coachTrust": 7
+            },
+            "flags": [
+              "gym_rat"
+            ]
+          },
+          "fail": {
+            "text": "雖少了點曝光，但訓練紮實。意志 +2、教練 {{coachName}} 信任 +4。",
+            "eff": {
+              "grit": 2,
+              "coachTrust": 4
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_ncaa_scout_combine",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "🔭 NBA 球探團現身看台！選秀行情關鍵驗收",
+      "desc": "多位 NBA 總經理與首席球探悄悄坐在 {{teamName}} 訓練館二樓，專門評估你的爆發力與投籃抗壓。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "ncaa_madness"
+        },
+        {
+          "field": "ovr",
+          "op": "gte",
+          "value": 72
+        }
+      ],
+      "choices": [
+        {
+          "label": "主動加演高難度急停三分與對抗終結",
+          "stat": "threePt",
+          "base": 0.54,
+          "w": 0.0048,
+          "ok": {
+            "text": "連續 8 球空心刷網！球探在筆記本狂畫星號：三分 +2、名氣 +10、選秀評價暴漲！",
+            "eff": {
+              "threePt": 2,
+              "reputation": 10,
+              "coachTrust": 4
+            },
+            "flags": [
+              "lottery_buzz"
+            ]
+          },
+          "fail": {
+            "text": "太想表現導致前兩球打鐵，還好後段找回節奏。名氣 +2、意志 +2。",
+            "eff": {
+              "reputation": 2,
+              "grit": 2
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "在隊內對抗賽展現無私串聯與換防覆蓋",
+          "stat": "iq",
+          "base": 0.7,
+          "w": 0.0035,
+          "ok": {
+            "text": "球探盛讚「即戰力等級球商」！組織 +2、外防 +2、名氣 +7、教練信任 +5！",
+            "eff": {
+              "playmaking": 2,
+              "perimDef": 2,
+              "reputation": 7,
+              "coachTrust": 5
+            },
+            "flags": [
+              "high_iq_prospect"
+            ]
+          },
+          "fail": {
+            "text": "打法偏保守但零失誤，球探給出穩健評價。球商 +2、名氣 +3。",
+            "eff": {
+              "iq": 2,
+              "reputation": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_ncaa_academic_probation",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "📚 期末考撞期客場背靠背！學生運動員的考驗",
+      "desc": "學校教務處寄來警告信：若本週核心課程不及格將面臨禁賽，但明天一早球隊就要搭機打客場。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "ncaa_madness"
+        },
+        {
+          "field": "age",
+          "op": "lte",
+          "value": 22
+        }
+      ],
+      "choices": [
+        {
+          "label": "機艙與深夜挑燈夜戰，硬把學分與戰術同時啃完",
+          "stat": "iq",
+          "base": 0.6,
+          "w": 0.0045,
+          "ok": {
+            "text": "高分過關！教務與球隊雙雙滿意，球商 +3、教練 {{coachName}} 信任 +5、狀態 -7。",
+            "eff": {
+              "iq": 3,
+              "coachTrust": 5,
+              "condition": -7
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "勉強及格保住出賽資格，但熬夜讓你元氣大傷。狀態 -13、意志 +1。",
+            "eff": {
+              "condition": -13,
+              "grit": 1
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "向教練 {{coachName}} 坦白，請球隊助教安排補課並微調訓練量",
+          "stat": "playmaking",
+          "base": 0.78,
+          "w": 0.0025,
+          "ok": {
+            "text": "坦誠溝通獲得體諒！順利過關且狀態回升 +6、教練信任 +3。",
+            "eff": {
+              "condition": 6,
+              "coachTrust": 3
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "助教加緊輔導勉強過關，但教練提醒你時間管理要更成熟。教練信任 -2、狀態 +3。",
+            "eff": {
+              "coachTrust": -2,
+              "condition": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_ncaa_senior_rival_rematch",
+      "stage": "PRO",
+      "tone": "MIXED",
+      "title": "🔥 跨海宿敵重逢！昔日高中勁敵竟在敵隊陣中",
+      "desc": "賽前熱身時，對面 {{rivalTeam}} 陣中走出熟悉身影——正是當年高校全國大賽曾與你血戰的 {{rivalName}}！",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "ncaa_madness"
+        }
+      ],
+      "choices": [
+        {
+          "label": "走上前碰拳下戰帖：「大學舞台，再分一次高下！」",
+          "stat": "grit",
+          "base": 0.64,
+          "w": 0.004,
+          "ok": {
+            "text": "熱血沸騰！全場攝影機捕捉經典一幕：意志 +3、速度 +2、宿敵火藥味 +15、名氣 +6！",
+            "eff": {
+              "grit": 3,
+              "speed": 2,
+              "rivalHeat": 15,
+              "reputation": 6
+            },
+            "flags": [
+              "ncaa_rival_duel"
+            ]
+          },
+          "fail": {
+            "text": "對方冷笑一句轉身離去，反而點燃你的勝負欲！意志 +2、宿敵火藥味 +10。",
+            "eff": {
+              "grit": 2,
+              "rivalHeat": 10
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "賽前私下研究他的最新球探報告，用表現說話",
+          "stat": "iq",
+          "base": 0.76,
+          "w": 0.003,
+          "ok": {
+            "text": "精準鎖定他的慣用手習慣！外防 +3、球商 +2、教練信任 +4。",
+            "eff": {
+              "perimDef": 3,
+              "iq": 2,
+              "coachTrust": 4
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "對方進步神速，但你仍做好了心理準備。外防 +1、球商 +1。",
+            "eff": {
+              "perimDef": 1,
+              "iq": 1
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_asia_foreign_star_clash",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "⚡ 外援球權之爭：誰才是 {{teamName}} 關鍵先生？",
+      "desc": "球隊高薪聘請的大牌外援不滿末節球權分散，在訓練賽中直接對你攤手抱怨，更衣室氣氛瞬間凝結。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "asia_pro"
+        }
+      ],
+      "choices": [
+        {
+          "label": "約他單挑鬥牛＋賽後吃宵夜，用實力與真誠收服對方",
+          "stat": "inside",
+          "base": 0.56,
+          "w": 0.0045,
+          "ok": {
+            "text": "打到最後兩人大笑擊掌！雙人擋拆默契暴增：組織 +3、內線 +2、教練 {{coachName}} 信任 +7！",
+            "eff": {
+              "playmaking": 3,
+              "inside": 2,
+              "coachTrust": 7
+            },
+            "flags": [
+              "locker_unifier"
+            ]
+          },
+          "fail": {
+            "text": "單挑互有勝負，但對方至少願意開始聽你的跑位溝通。意志 +2、教練信任 +2。",
+            "eff": {
+              "grit": 2,
+              "coachTrust": 2
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "主動在戰術會上提出雙核心擋拆配合方案",
+          "stat": "iq",
+          "base": 0.72,
+          "w": 0.003,
+          "ok": {
+            "text": "{{coachName}} 當場拍板採用！組織 +3、球商 +2、教練信任 +6！",
+            "eff": {
+              "playmaking": 3,
+              "iq": 2,
+              "coachTrust": 6
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "外援態度仍偏冷淡，但教練肯定你的大局觀。教練信任 +3、狀態 -4。",
+            "eff": {
+              "coachTrust": 3,
+              "condition": -4
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_asia_local_hero_contract",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "📝 球團捧出頂薪長約！挽留亞洲招牌球星",
+      "desc": "{{teamName}} 老闆親自設宴，開出聯賽最高等級本土頂薪合約，希望把你塑造成球隊十年看板。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "asia_pro"
+        },
+        {
+          "field": "reputation",
+          "op": "gte",
+          "value": 48
+        }
+      ],
+      "choices": [
+        {
+          "label": "簽下附帶「海外跳出條款」的彈性合約",
+          "stat": "iq",
+          "base": 0.62,
+          "w": 0.004,
+          "ok": {
+            "text": "既拿高薪又保留衝擊歐美夢想！名氣 +8、教練信任 +6、球商 +2！",
+            "eff": {
+              "reputation": 8,
+              "coachTrust": 6,
+              "iq": 2
+            },
+            "flags": [
+              "opt_out_clause"
+            ]
+          },
+          "fail": {
+            "text": "球團對條款略有微詞，但最終仍達成短期續約。名氣 +5、教練信任 +2。",
+            "eff": {
+              "reputation": 5,
+              "coachTrust": 2
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "果斷表態忠誠留隊，先把本季總冠軍帶回主場",
+          "stat": "grit",
+          "base": 0.84,
+          "w": 0.002,
+          "ok": {
+            "text": "全城球迷沸騰！教練 {{coachName}} 信任 +10、意志 +3、名氣 +7！",
+            "eff": {
+              "coachTrust": 10,
+              "grit": 3,
+              "reputation": 7
+            },
+            "flags": [
+              "franchise_loyal"
+            ]
+          },
+          "fail": {
+            "text": "球團非常滿意你的態度，教練信任 +6、名氣 +4。",
+            "eff": {
+              "coachTrust": 6,
+              "reputation": 4
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_asia_fan_frenzy_social",
+      "stage": "PRO",
+      "tone": "MIXED",
+      "title": "📱 暴扣短影音破千萬觀看！網民熱議「華而不實」",
+      "desc": "你的比賽精華在短影音平台瘋傳，人氣暴漲的同時，酸民開始剪輯你的失誤片段嘲諷「只會刷集錦」。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "asia_pro"
+        },
+        {
+          "field": "reputation",
+          "op": "gte",
+          "value": 42
+        }
+      ],
+      "choices": [
+        {
+          "label": "關掉社群通知一週，用一場硬仗打臉所有質疑",
+          "stat": "grit",
+          "base": 0.68,
+          "w": 0.0035,
+          "ok": {
+            "text": "極致專注！外防 +2、中投 +2、意志 +3、名氣 +6！",
+            "eff": {
+              "perimDef": 2,
+              "midRange": 2,
+              "grit": 3,
+              "reputation": 6
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "雜音多少干擾了睡眠，但你穩住心態。意志 +2、狀態 -5。",
+            "eff": {
+              "grit": 2,
+              "condition": -5
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "幽默自嘲轉發失誤集錦：「謝指教，今晚加練 300 球！」",
+          "stat": "reputation",
+          "base": 0.62,
+          "w": 0.004,
+          "ok": {
+            "text": "高情商逆轉全網風向！名氣 +10、教練信任 +4！",
+            "eff": {
+              "reputation": 10,
+              "coachTrust": 4
+            },
+            "flags": [
+              "media_darling"
+            ]
+          },
+          "fail": {
+            "text": "媒體拿你的話大做文章，壓力略增。名氣 +3、狀態 -6。",
+            "eff": {
+              "reputation": 3,
+              "condition": -6
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_asia_b2b_travel_fatigue",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "✈️ 跨城魔鬼客場之旅：膝蓋隱隱作痛",
+      "desc": "連續四天飛越兩座城市打客場，晨練落地時膝蓋傳來一陣酸緊感，隊醫建議你主動輪休半場。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "asia_pro"
+        },
+        {
+          "field": "condition",
+          "op": "lte",
+          "value": 72
+        }
+      ],
+      "choices": [
+        {
+          "label": "聽從隊醫安排做深度冰療與核心強化",
+          "stat": "iq",
+          "base": 0.85,
+          "w": 0.002,
+          "ok": {
+            "text": "完美避開傷病隱患！狀態 +16、力量 +1、清除潛在傷勢！",
+            "eff": {
+              "condition": 16,
+              "strength": 1,
+              "clearInjury": 1
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "恢復進度較慢，但安全無虞。狀態 +10。",
+            "eff": {
+              "condition": 10
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "纏緊肌貼帶傷硬撐，向教練證明鐵人意志",
+          "stat": "strength",
+          "base": 0.5,
+          "w": 0.0045,
+          "ok": {
+            "text": "硬漢精神震撼全隊！意志 +4、教練 {{coachName}} 信任 +7、狀態 -6。",
+            "eff": {
+              "grit": 4,
+              "coachTrust": 7,
+              "condition": -6
+            },
+            "flags": [
+              "iron_man"
+            ]
+          },
+          "fail": {
+            "text": "過度負荷導致膝蓋腫脹發炎！狀態 -14、進入輕傷保護。",
+            "eff": {
+              "condition": -14,
+              "setInjury": 1
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_asia_overseas_offer",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "🌍 歐美球探密函：更高殿堂的試訓邀請",
+      "desc": "一位常駐亞洲的歐洲／北美球探遞上名片，邀請你休賽日參加秘密特訓營，直接對標歐美對抗強度。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "asia_pro"
+        },
+        {
+          "field": "ovr",
+          "op": "gte",
+          "value": 77
+        }
+      ],
+      "choices": [
+        {
+          "label": "接受高強度對抗特訓，把身體素質推向世界級",
+          "stat": "strength",
+          "base": 0.62,
+          "w": 0.004,
+          "ok": {
+            "text": "突破亞洲對抗天花板！力量 +3、內防 +2、名氣 +8、狀態 -6！",
+            "eff": {
+              "strength": 3,
+              "intDef": 2,
+              "reputation": 8,
+              "condition": -6
+            },
+            "flags": [
+              "overseas_ready"
+            ]
+          },
+          "fail": {
+            "text": "對抗強度遠超預期，雖然吃盡苦頭但眼界大開。力量 +1、意志 +2、狀態 -10。",
+            "eff": {
+              "strength": 1,
+              "grit": 2,
+              "condition": -10
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "與球探深度交流戰術思維，補強無球與外線投射",
+          "stat": "iq",
+          "base": 0.76,
+          "w": 0.003,
+          "ok": {
+            "text": "收穫現代空間籃球精髓！三分 +2、球商 +3、名氣 +5！",
+            "eff": {
+              "threePt": 2,
+              "iq": 3,
+              "reputation": 5
+            },
+            "flags": [
+              "overseas_ready"
+            ]
+          },
+          "fail": {
+            "text": "記滿一整本戰術筆記，球商 +2、名氣 +3。",
+            "eff": {
+              "iq": 2,
+              "reputation": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_euro_hell_away_crowd",
+      "stage": "PRO",
+      "tone": "MIXED",
+      "title": "🔥 巴爾幹魔鬼客場：兩萬人齊聲震天噓聲",
+      "desc": "踏進 {{rivalTeam}} 主場，看台煙霧瀰漫、兩萬名主場狂熱球迷的聲浪震到地板都在晃，連隊友喊戰術都聽不見。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "euro_elite"
+        }
+      ],
+      "choices": [
+        {
+          "label": "張開雙臂迎接漫天噓聲，享受客場殺手快感",
+          "stat": "grit",
+          "base": 0.6,
+          "w": 0.0045,
+          "ok": {
+            "text": "大心臟震懾全歐！意志 +4、三分 +2、名氣 +8！",
+            "eff": {
+              "grit": 4,
+              "threePt": 2,
+              "reputation": 8
+            },
+            "flags": [
+              "euro_silencer"
+            ]
+          },
+          "fail": {
+            "text": "客場氣場實在太兇，但你咬牙撐過前五分鐘。意志 +2、狀態 -6。",
+            "eff": {
+              "grit": 2,
+              "condition": -6
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "改用手勢與眼神和隊友暗號溝通，穩打半場陣地",
+          "stat": "iq",
+          "base": 0.75,
+          "w": 0.003,
+          "ok": {
+            "text": "如機器般精準拆解全場壓迫！球商 +3、組織 +3、教練 {{coachName}} 信任 +6！",
+            "eff": {
+              "iq": 3,
+              "playmaking": 3,
+              "coachTrust": 6
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "偶有溝通延誤，但整體保持紀律。球商 +1、教練信任 +3。",
+            "eff": {
+              "iq": 1,
+              "coachTrust": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_euro_tactical_coach_clash",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "📋 歐洲名帥鐵血訓話：個人單打遭當眾喊停",
+      "desc": "訓練賽中你一次華麗單打進球，{{coachName}} 卻怒摔戰術板：「這裡是 EuroLeague！沒跑完三層掩護誰准你亂出手？」",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "euro_elite"
+        },
+        {
+          "field": "coachTrust",
+          "op": "lte",
+          "value": 72
+        }
+      ],
+      "choices": [
+        {
+          "label": "虛心認錯，連夜背熟全套 30 組歐洲擋拆戰術",
+          "stat": "iq",
+          "base": 0.72,
+          "w": 0.0035,
+          "ok": {
+            "text": "隔天演練零失誤！{{coachName}} 罕見露出笑容：球商 +3、組織 +2、教練信任 +9！",
+            "eff": {
+              "iq": 3,
+              "playmaking": 2,
+              "coachTrust": 9
+            },
+            "flags": [
+              "euro_tactician"
+            ]
+          },
+          "fail": {
+            "text": "戰術細節極其繁複，但你的態度化解了危機。教練信任 +4、狀態 -5。",
+            "eff": {
+              "coachTrust": 4,
+              "condition": -5
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "據理力爭：證明關鍵球需要巨星破局能力",
+          "stat": "midRange",
+          "base": 0.52,
+          "w": 0.0048,
+          "ok": {
+            "text": "隊內對抗賽連砍 10 分說服名帥！中投 +3、意志 +3、教練信任 +4！",
+            "eff": {
+              "midRange": 3,
+              "grit": 3,
+              "coachTrust": 4
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "與鐵血主帥硬碰硬討不到便宜，被罰跑折返跑。教練信任 -5、狀態 -7、意志 +2。",
+            "eff": {
+              "coachTrust": -5,
+              "condition": -7,
+              "grit": 2
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_euro_buyout_clause",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "💼 歐陸豪門合約談判：NBA 買斷條款拉鋸",
+      "desc": "{{teamName}} 提出漲薪續約，但要求提高 NBA 買斷金額；經紀人提醒這攸關你明年能否順利赴美。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "euro_elite"
+        },
+        {
+          "field": "ovr",
+          "op": "gte",
+          "value": 81
+        }
+      ],
+      "choices": [
+        {
+          "label": "堅持保留低門檻 NBA 買斷條款，哪怕少拿一點薪水",
+          "stat": "reputation",
+          "base": 0.64,
+          "w": 0.0038,
+          "ok": {
+            "text": "談判大獲全勝！北美媒體讚賞你的野心：名氣 +9、意志 +2！",
+            "eff": {
+              "reputation": 9,
+              "grit": 2
+            },
+            "flags": [
+              "nba_buyout_ready"
+            ]
+          },
+          "fail": {
+            "text": "管理層態度強硬，只能先簽一年短約保持彈性。名氣 +4、教練信任 -2。",
+            "eff": {
+              "reputation": 4,
+              "coachTrust": -2
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "接受核心長約，立志先奪歐洲聯賽冠軍與 MVP",
+          "stat": "grit",
+          "base": 0.84,
+          "w": 0.002,
+          "ok": {
+            "text": "球團將你樹立為歐陸王牌！教練 {{coachName}} 信任 +9、名氣 +7、中投 +2！",
+            "eff": {
+              "coachTrust": 9,
+              "reputation": 7,
+              "midRange": 2
+            },
+            "flags": [
+              "euro_king"
+            ]
+          },
+          "fail": {
+            "text": "順利完成續約，教練信任 +5、名氣 +4。",
+            "eff": {
+              "coachTrust": 5,
+              "reputation": 4
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_euro_veteran_locker_talk",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "🧠 歐冠老將的咖啡館私房課",
+      "desc": "隊上曾拿過三次歐冠的 36 歲老將 {{vetName}} 約你喝濃縮咖啡，主動分享如何用節奏差與卡位延長巔峰。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "euro_elite"
+        }
+      ],
+      "choices": [
+        {
+          "label": "請教無球反跑與假動作造犯規技巧",
+          "stat": "iq",
+          "base": 0.78,
+          "w": 0.0025,
+          "ok": {
+            "text": "老狐狸絕學到手！球商 +3、中投 +2、組織 +2、教練信任 +4！",
+            "eff": {
+              "iq": 3,
+              "midRange": 2,
+              "playmaking": 2,
+              "coachTrust": 4
+            },
+            "flags": [
+              "euro_craft"
+            ]
+          },
+          "fail": {
+            "text": "學到不少防守閱讀細節。球商 +2、教練信任 +2。",
+            "eff": {
+              "iq": 2,
+              "coachTrust": 2
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "請教長賽季的身體保養與冥想恢復法",
+          "stat": "grit",
+          "base": 0.84,
+          "w": 0.002,
+          "ok": {
+            "text": "身心煥然一新！狀態 +15、意志 +2、清除疲勞傷患！",
+            "eff": {
+              "condition": 15,
+              "grit": 2,
+              "clearInjury": 1
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "心情放鬆了不少，狀態 +10。",
+            "eff": {
+              "condition": 10
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_euro_derby_blood_feud",
+      "stage": "PRO",
+      "tone": "MIXED",
+      "title": "⚔️ 歐陸世紀德比！宿敵 {{rivalName}} 賽前隔空開火",
+      "desc": "{{rivalTeam}} 王牌 {{rivalName}} 在記者會上冷笑：「{{teamName}} 的防守擋不住我，特別是那位亞洲來的傢伙。」",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "euro_elite"
+        }
+      ],
+      "choices": [
+        {
+          "label": "直接點名：「今晚我親自守死你，別躲在掩護後面！」",
+          "stat": "perimDef",
+          "base": 0.58,
+          "w": 0.0045,
+          "ok": {
+            "text": "鐵血宣言燃爆整個歐洲籃壇！外防 +3、意志 +3、宿敵火藥味 +18、名氣 +8！",
+            "eff": {
+              "perimDef": 3,
+              "grit": 3,
+              "rivalHeat": 18,
+              "reputation": 8
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "對手反嗆引來媒體追訪，但你眼神更加銳利。外防 +1、宿敵火藥味 +12、狀態 -4。",
+            "eff": {
+              "perimDef": 1,
+              "rivalHeat": 12,
+              "condition": -4
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "微笑回應：「計分板會說話。」轉身拉隊友加練協防",
+          "stat": "iq",
+          "base": 0.78,
+          "w": 0.0025,
+          "ok": {
+            "text": "大師級風度！內防 +2、外防 +2、教練 {{coachName}} 信任 +6、名氣 +5！",
+            "eff": {
+              "intDef": 2,
+              "perimDef": 2,
+              "coachTrust": 6,
+              "reputation": 5
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "全隊防守專注度提升。外防 +1、教練信任 +3。",
+            "eff": {
+              "perimDef": 1,
+              "coachTrust": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_nba_max_extension_drama",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "💰 NBA 提前頂薪續約談判：管理層試探你的底線",
+      "desc": "{{teamName}} 總經理找上你的經紀人，想以低於頂薪 15% 的價格提前綁定四年合約，換取補強陣容空間。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "nba_prime"
+        },
+        {
+          "field": "reputation",
+          "op": "gte",
+          "value": 58
+        }
+      ],
+      "choices": [
+        {
+          "label": "展現奪冠格局，適度降薪換取球隊補強與絕對核心承諾",
+          "stat": "iq",
+          "base": 0.78,
+          "w": 0.0025,
+          "ok": {
+            "text": "全美讚譽「鄧肯級領袖格局」！教練 {{coachName}} 信任 +10、名氣 +9、組織 +2！",
+            "eff": {
+              "coachTrust": 10,
+              "reputation": 9,
+              "playmaking": 2
+            },
+            "flags": [
+              "nba_franchise_face"
+            ]
+          },
+          "fail": {
+            "text": "管理層迅速簽字，你的更衣室威望大增。教練信任 +6、名氣 +5。",
+            "eff": {
+              "coachTrust": 6,
+              "reputation": 5
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "硬氣喊價：「我是聯盟門面，一毛都不讓，否則自由市場見！」",
+          "stat": "reputation",
+          "base": 0.56,
+          "w": 0.0048,
+          "ok": {
+            "text": "管理層被迫奉上超級頂薪！名氣 +12、意志 +3、霸氣震動全聯盟！",
+            "eff": {
+              "reputation": 12,
+              "grit": 3
+            },
+            "flags": [
+              "supermax_alpha"
+            ]
+          },
+          "fail": {
+            "text": "談判暫時破裂且消息外洩，引起部分球迷議論。名氣 -3、教練信任 -4、意志 +2。",
+            "eff": {
+              "reputation": -3,
+              "coachTrust": -4,
+              "grit": 2
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_nba_trade_deadline_rumor",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "🚨 NBA 交易截止日風暴：你的名字登上流言頭條",
+      "desc": "名記凌晨爆料 {{teamName}} 正考慮發動重磅交易，你的名字赫然在籌碼名單上，手機瞬間被訊息塞爆。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "nba_prime"
+        },
+        {
+          "field": "winPct",
+          "op": "lte",
+          "value": 58
+        }
+      ],
+      "choices": [
+        {
+          "label": "把憤怒帶上訓練場，用炸裂表現讓管理層絕不敢動你",
+          "stat": "grit",
+          "base": 0.64,
+          "w": 0.004,
+          "ok": {
+            "text": "管理層緊急出面闢謠「絕對非賣品」！意志 +3、內線 +2、教練信任 +8、名氣 +6！",
+            "eff": {
+              "grit": 3,
+              "inside": 2,
+              "coachTrust": 8,
+              "reputation": 6
+            },
+            "flags": [
+              "untouchable"
+            ]
+          },
+          "fail": {
+            "text": "流言仍困擾了幾天，但你挺過低谷。意志 +2、狀態 -6。",
+            "eff": {
+              "grit": 2,
+              "condition": -6
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "透過經紀人表態願意轉戰爭冠豪門，直接開啟轉會大門",
+          "stat": "reputation",
+          "base": 0.55,
+          "w": 0.0045,
+          "ok": {
+            "text": "壓哨重磅交易達成！你火線空降聯盟頂級爭冠強權，全美頭條洗版！名氣 +12！",
+            "eff": {
+              "midTransfer": 1,
+              "reputation": 12
+            },
+            "flags": [
+              "deadline_blockbuster"
+            ]
+          },
+          "fail": {
+            "text": "最終並未成行，留隊面對些許尷尬氣氛。教練信任 -4、名氣 +3。",
+            "eff": {
+              "coachTrust": -4,
+              "reputation": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_nba_podcast_beef",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "🎙️ 名宿播客開火點名：酸你「靠吹罰刷數據」",
+      "desc": "退役傳奇球星在熱門播客節目中連續十分鐘嘲諷你的球風偏軟、季後賽一定原形畢露，全美社群瘋狂轉發。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "nba_prime"
+        },
+        {
+          "field": "reputation",
+          "op": "gte",
+          "value": 50
+        }
+      ],
+      "choices": [
+        {
+          "label": "受訪時冷笑回擊：「老時代的錄影帶我也有看，歡迎來場邊見證！」",
+          "stat": "grit",
+          "base": 0.6,
+          "w": 0.0045,
+          "ok": {
+            "text": "新世代王牌霸氣回擊引爆全網！名氣 +10、意志 +3、中投 +2！",
+            "eff": {
+              "reputation": 10,
+              "grit": 3,
+              "midRange": 2
+            },
+            "flags": [
+              "media_killer"
+            ]
+          },
+          "fail": {
+            "text": "口水戰越演越烈，成為客場噓聲焦點。名氣 -3、宿敵火藥味 +10、意志 +2。",
+            "eff": {
+              "reputation": -3,
+              "rivalHeat": 10,
+              "grit": 2
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "大方致敬前輩，同時請訓練師加練對抗核心力量",
+          "stat": "strength",
+          "base": 0.76,
+          "w": 0.003,
+          "ok": {
+            "text": "高情商回應＋紮實苦練贏得全聯盟敬重！力量 +3、教練信任 +6、名氣 +5！",
+            "eff": {
+              "strength": 3,
+              "coachTrust": 6,
+              "reputation": 5
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "風波迅速平息，力量 +1、教練信任 +3。",
+            "eff": {
+              "strength": 1,
+              "coachTrust": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_nba_rookie_wall_mental",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "🧱 NBA 高強度撞牆期：雙腿像灌了鉛一樣沉重",
+      "desc": "連續客場與世界最強身體天賦碰撞，你感覺投籃弧度發平、反應慢了半拍，深夜坐在飯店窗邊懷疑自己是否跟得上。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "nba_prime"
+        },
+        {
+          "field": "condition",
+          "op": "lte",
+          "value": 75
+        }
+      ],
+      "choices": [
+        {
+          "label": "預約球隊運動心理師與睡眠恢復艙，徹底重整節奏",
+          "stat": "iq",
+          "base": 0.82,
+          "w": 0.0025,
+          "ok": {
+            "text": "心靈與體能雙雙重啟！狀態 +18、球商 +2、意志 +2！",
+            "eff": {
+              "condition": 18,
+              "iq": 2,
+              "grit": 2
+            },
+            "flags": [
+              "mental_fortress"
+            ]
+          },
+          "fail": {
+            "text": "睡了一場久違的深眠，狀態 +11。",
+            "eff": {
+              "condition": 11
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "凌晨五點找老將 {{vetName}} 一起練基本功找回初心",
+          "stat": "grit",
+          "base": 0.65,
+          "w": 0.004,
+          "ok": {
+            "text": "一記記空心刷網掃空陰霾！中投 +3、意志 +3、教練信任 +5、狀態 +4！",
+            "eff": {
+              "midRange": 3,
+              "grit": 3,
+              "coachTrust": 5,
+              "condition": 4
+            },
+            "flags": [
+              "mamba_dawn"
+            ]
+          },
+          "fail": {
+            "text": "雖仍有些疲倦，但手感已回暖。中投 +1、意志 +2、狀態 -4。",
+            "eff": {
+              "midRange": 1,
+              "grit": 2,
+              "condition": -4
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_nba_allstar_snub_fire",
+      "stage": "PRO",
+      "tone": "MIXED",
+      "title": "⭐ 全明星名單公布：你在最後一刻被擠出先發！",
+      "desc": "全美全明星陣容揭曉，儘管你數據亮眼，卻因市場曝光略遜一籌被 {{rivalName}} 壓過一頭，全隊都為你抱不平。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "nba_prime"
+        },
+        {
+          "field": "ovr",
+          "op": "gte",
+          "value": 84
+        }
+      ],
+      "choices": [
+        {
+          "label": "把落選名單貼在置物櫃門上：「下半季讓他們全部後悔！」",
+          "stat": "grit",
+          "base": 0.68,
+          "w": 0.0038,
+          "ok": {
+            "text": "黑化覺醒模式啟動！速度 +2、三分 +2、意志 +4、宿敵火藥味 +16！",
+            "eff": {
+              "speed": 2,
+              "threePt": 2,
+              "grit": 4,
+              "rivalHeat": 16
+            },
+            "flags": [
+              "allstar_snub_revenge"
+            ]
+          },
+          "fail": {
+            "text": "滿腔不甘化為額外加練！意志 +3、宿敵火藥味 +10。",
+            "eff": {
+              "grit": 3,
+              "rivalHeat": 10
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "淡定受訪：「我只在乎六月那座總冠軍獎盃。」",
+          "stat": "iq",
+          "base": 0.8,
+          "w": 0.0025,
+          "ok": {
+            "text": "頂級巨星氣度圈粉無數！名氣 +9、教練 {{coachName}} 信任 +7、球商 +2！",
+            "eff": {
+              "reputation": 9,
+              "coachTrust": 7,
+              "iq": 2
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "球迷紛紛為你聲援。名氣 +5、教練信任 +4。",
+            "eff": {
+              "reputation": 5,
+              "coachTrust": 4
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_nba_superstar_duel_tunnel",
+      "stage": "PRO",
+      "tone": "MIXED",
+      "title": "⚡ 球員通道狹路相逢：與 {{rivalName}} 的無聲對峙",
+      "desc": "全美焦點大戰開打前 10 分鐘，你在暗紅燈光的球員通道正好與 {{rivalTeam}} 王牌 {{rivalName}} 擦肩而過，火花四濺！",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "nba_prime"
+        },
+        {
+          "field": "rivalHeat",
+          "op": "gte",
+          "value": 25
+        }
+      ],
+      "choices": [
+        {
+          "label": "直視雙眼低聲說：「今晚最後一球，我來守你。」",
+          "stat": "perimDef",
+          "base": 0.62,
+          "w": 0.0042,
+          "ok": {
+            "text": "全場腎上腺素狂飆！外防 +3、意志 +3、名氣 +7、宿敵火藥味 +14！",
+            "eff": {
+              "perimDef": 3,
+              "grit": 3,
+              "reputation": 7,
+              "rivalHeat": 14
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "對方氣場強大，但你寸步不退！外防 +1、意志 +2、宿敵火藥味 +10。",
+            "eff": {
+              "perimDef": 1,
+              "grit": 2,
+              "rivalHeat": 10
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "戴上耳機無視挑釁，把專注力全鎖在進攻腳步上",
+          "stat": "inside",
+          "base": 0.72,
+          "w": 0.0032,
+          "ok": {
+            "text": "進入冰冷殺手模式！內線 +3、中投 +2、狀態 +5！",
+            "eff": {
+              "inside": 3,
+              "midRange": 2,
+              "condition": 5
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "保持平靜心態迎接大戰。中投 +1、狀態 +3。",
+            "eff": {
+              "midRange": 1,
+              "condition": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_fiba_national_anthem_weight",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "🌏 國歌響起！胸前戰袍的千斤榮耀",
+      "desc": "世界盃開幕聚光燈落下，全國千萬雙眼睛盯著直播螢幕。站在中線列隊時，你心跳如雷鼓般震撼胸口。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "fiba_world"
+        }
+      ],
+      "choices": [
+        {
+          "label": "緊握胸前隊徽，把全國期待化作無畏衝鋒",
+          "stat": "grit",
+          "base": 0.74,
+          "w": 0.0032,
+          "ok": {
+            "text": "國家英雄氣場覺醒！意志 +4、速度 +2、名氣 +10、狀態 +6！",
+            "eff": {
+              "grit": 4,
+              "speed": 2,
+              "reputation": 10,
+              "condition": 6
+            },
+            "flags": [
+              "national_hero"
+            ]
+          },
+          "fail": {
+            "text": "開賽略顯緊張，但滿腔熱血沸騰！意志 +2、名氣 +5。",
+            "eff": {
+              "grit": 2,
+              "reputation": 5
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "轉頭與身旁每位國家隊隊友擊掌，凝聚整體防線",
+          "stat": "playmaking",
+          "base": 0.8,
+          "w": 0.0025,
+          "ok": {
+            "text": "團隊向心力滿格！組織 +3、外防 +2、教練 {{coachName}} 信任 +8！",
+            "eff": {
+              "playmaking": 3,
+              "perimDef": 2,
+              "coachTrust": 8
+            },
+            "flags": [
+              "national_captain"
+            ]
+          },
+          "fail": {
+            "text": "全隊士氣穩定上升。組織 +1、教練信任 +5。",
+            "eff": {
+              "playmaking": 1,
+              "coachTrust": 5
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_fiba_no_def3sec_wall",
+      "stage": "PRO",
+      "tone": "MIXED",
+      "title": "🧱 FIBA 無防守三秒！歐美雙塔禁區鐵幕",
+      "desc": "國際賽沒有防守三秒違例，對手 215 公分中鋒直接蹲守籃下，切入空間被壓縮到極致。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "fiba_world"
+        }
+      ],
+      "choices": [
+        {
+          "label": "緊急加練高位拋投與急停中投，專打蹲坑長人",
+          "stat": "midRange",
+          "base": 0.66,
+          "w": 0.0038,
+          "ok": {
+            "text": "完美破解 FIBA 禁區鐵桶陣！中投 +3、三分 +2、球商 +2！",
+            "eff": {
+              "midRange": 3,
+              "threePt": 2,
+              "iq": 2
+            },
+            "flags": [
+              "fiba_floater_master"
+            ]
+          },
+          "fail": {
+            "text": "拋投弧度仍在微調，但已經找到出手空間。中投 +2。",
+            "eff": {
+              "midRange": 2
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "強化身體對抗與造犯規意識，正面撕裂禁區",
+          "stat": "strength",
+          "base": 0.6,
+          "w": 0.0042,
+          "ok": {
+            "text": "硬撼世界級高塔毫不退縮！力量 +3、內線 +3、意志 +2、狀態 -5！",
+            "eff": {
+              "strength": 3,
+              "inside": 3,
+              "grit": 2,
+              "condition": -5
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "對抗吃力但吸取寶貴經驗。力量 +1、意志 +2、狀態 -7。",
+            "eff": {
+              "strength": 1,
+              "grit": 2,
+              "condition": -7
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_fiba_club_vs_country",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "📞 母隊職業球團來電施壓：要求限制國家隊出賽時間",
+      "desc": "你的職業母隊總經理致電國家隊，擔心你在世界盃過度消耗受傷，要求下場比賽限制在 20 分鐘以內。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "fiba_world"
+        },
+        {
+          "field": "condition",
+          "op": "lte",
+          "value": 85
+        }
+      ],
+      "choices": [
+        {
+          "label": "堅定表態：「代表國家打世界盃沒有保留，我願意扛起一切！」",
+          "stat": "grit",
+          "base": 0.68,
+          "w": 0.0038,
+          "ok": {
+            "text": "全國球迷動容落淚！名氣 +12、意志 +4、國家隊教練 {{coachName}} 信任 +9、狀態 -5！",
+            "eff": {
+              "reputation": 12,
+              "grit": 4,
+              "coachTrust": 9,
+              "condition": -5
+            },
+            "flags": [
+              "country_first"
+            ]
+          },
+          "fail": {
+            "text": "母隊仍有顧慮，但國家隊上下全力挺你！名氣 +6、意志 +2、狀態 -7。",
+            "eff": {
+              "reputation": 6,
+              "grit": 2,
+              "condition": -7
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "與國家隊隊醫協商科學輪換，關鍵時刻再全力燃燒",
+          "stat": "iq",
+          "base": 0.8,
+          "w": 0.0025,
+          "ok": {
+            "text": "兩邊皆大歡喜！狀態 +12、球商 +2、教練信任 +4！",
+            "eff": {
+              "condition": 12,
+              "iq": 2,
+              "coachTrust": 4
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "妥善控管體能負荷，狀態 +8。",
+            "eff": {
+              "condition": 8
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_fiba_world_upset_call",
+      "stage": "PRO",
+      "tone": "MIXED",
+      "title": "🏆 挑戰世界之巔：賠率一面倒看衰的背水一戰",
+      "desc": "國際博弈盤口開出 18.5 分受讓，外媒預測 {{rivalTeam}} 將輕鬆血洗 {{teamName}}，整間更衣室鴉雀無聲。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "eq",
+          "value": "fiba_world"
+        }
+      ],
+      "choices": [
+        {
+          "label": "把外媒預測報紙撕成兩半：「奇蹟就是用來打破常識的！」",
+          "stat": "grit",
+          "base": 0.62,
+          "w": 0.0045,
+          "ok": {
+            "text": "全隊雙眼燃起藍色火焰！意志 +4、彈跳 +2、三分 +2、名氣 +8！",
+            "eff": {
+              "grit": 4,
+              "vertical": 2,
+              "threePt": 2,
+              "reputation": 8
+            },
+            "flags": [
+              "giant_slayer"
+            ]
+          },
+          "fail": {
+            "text": "氣氛瞬間點燃，全隊決心拚到最後一秒！意志 +3、宿敵火藥味 +10。",
+            "eff": {
+              "grit": 3,
+              "rivalHeat": 10
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "連夜與 {{coachName}} 設計奇襲聯防與快攻陷阱",
+          "stat": "iq",
+          "base": 0.75,
+          "w": 0.003,
+          "ok": {
+            "text": "神級奇兵戰術成形！球商 +3、外防 +3、教練信任 +7！",
+            "eff": {
+              "iq": 3,
+              "perimDef": 3,
+              "coachTrust": 7
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "至少找出兩處可趁之機。球商 +2、教練信任 +3。",
+            "eff": {
+              "iq": 2,
+              "coachTrust": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_pro_national_team_callup",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "🏅 國家隊總教練親自致電：國際賽徵召邀約",
+      "desc": "國家籃協送來正式徵召邀請，希望你領軍參加國際熱身邀請賽，與各國頂尖好手提前過招。",
+      "conditions": [
+        {
+          "field": "leagueId",
+          "op": "neq",
+          "value": "fiba_world"
+        },
+        {
+          "field": "ovr",
+          "op": "gte",
+          "value": 76
+        }
+      ],
+      "choices": [
+        {
+          "label": "義無反顧披上國家隊戰袍，在國際賽場磨練大賽經驗",
+          "stat": "grit",
+          "base": 0.72,
+          "w": 0.0035,
+          "ok": {
+            "text": "國際賽場大放異彩！名氣 +10、球商 +2、意志 +3、狀態 -5！",
+            "eff": {
+              "reputation": 10,
+              "iq": 2,
+              "grit": 3,
+              "condition": -5
+            },
+            "flags": [
+              "national_team_vet"
+            ]
+          },
+          "fail": {
+            "text": "舟車勞頓略微疲累，但收穫寶貴國際賽歷練。名氣 +6、意志 +2、狀態 -9。",
+            "eff": {
+              "reputation": 6,
+              "grit": 2,
+              "condition": -9
+            },
+            "flags": [
+              "national_team_vet"
+            ]
+          }
+        },
+        {
+          "label": "誠懇溝通本季賽程緊繃，先以球隊衝冠與養傷為重",
+          "stat": "iq",
+          "base": 0.8,
+          "w": 0.0025,
+          "ok": {
+            "text": "獲得國家隊體諒，母隊更是大力讚賞！狀態 +12、教練 {{coachName}} 信任 +6！",
+            "eff": {
+              "condition": 12,
+              "coachTrust": 6
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "國內輿論略有微詞，但身體狀態保持在巔峰。狀態 +10、名氣 -3。",
+            "eff": {
+              "condition": 10,
+              "reputation": -3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_pro_rehab_fear_jump",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "🩹 傷後復出的心理陰影：起跳那一秒的猶豫",
+      "desc": "經歷連日高負荷比賽或傷勢侵襲後，你在快攻起跳扣籃的瞬間下意識收了腳，內心湧起對再受傷的恐懼。",
+      "conditions": [
+        {
+          "field": "condition",
+          "op": "lte",
+          "value": 68
+        }
+      ],
+      "choices": [
+        {
+          "label": "正視心魔，與防護員逐步重建落地發力與起跳信心",
+          "stat": "grit",
+          "base": 0.7,
+          "w": 0.0035,
+          "ok": {
+            "text": "徹底跨過心理高牆！彈跳 +2、意志 +3、狀態 +12、清除傷病陰影！",
+            "eff": {
+              "vertical": 2,
+              "grit": 3,
+              "condition": 12,
+              "clearInjury": 1
+            },
+            "flags": [
+              "fearless_return"
+            ]
+          },
+          "fail": {
+            "text": "雖然仍有些許保留，但身體反應好轉許多。狀態 +8、意志 +1。",
+            "eff": {
+              "condition": 8,
+              "grit": 1
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "順勢轉型「地板流」，精研假動作、節奏變速與外線投射",
+          "stat": "iq",
+          "base": 0.78,
+          "w": 0.0028,
+          "ok": {
+            "text": "因禍得福進化成全能大師！球商 +3、三分 +2、中投 +2、狀態 +10！",
+            "eff": {
+              "iq": 3,
+              "threePt": 2,
+              "midRange": 2,
+              "condition": 10
+            },
+            "flags": [
+              "crafty_veteran"
+            ]
+          },
+          "fail": {
+            "text": "減少硬碰硬後體能負擔大減。中投 +1、狀態 +8。",
+            "eff": {
+              "midRange": 1,
+              "condition": 8
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_pro_locker_room_feud",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "💥 戰績低迷！更衣室爆發激烈口角",
+      "desc": "近期戰績不如預期，輸球後 {{teammateName}} 與控衛互相指責防守漏人，眼看更衣室就要徹底分裂！",
+      "conditions": [
+        {
+          "field": "winPct",
+          "op": "lte",
+          "value": 50
+        }
+      ],
+      "choices": [
+        {
+          "label": "出面扛下責任：「是我做得不夠好，下一場一起拼回來！」",
+          "stat": "grit",
+          "base": 0.72,
+          "w": 0.0035,
+          "ok": {
+            "text": "真正的領袖風範！全隊握手言和，教練 {{coachName}} 信任 +9、意志 +3、名氣 +5！",
+            "eff": {
+              "coachTrust": 9,
+              "grit": 3,
+              "reputation": 5
+            },
+            "flags": [
+              "true_captain"
+            ]
+          },
+          "fail": {
+            "text": "氣氛暫時緩和下來，但你背負了不小壓力。教練信任 +4、狀態 -5。",
+            "eff": {
+              "coachTrust": 4,
+              "condition": -5
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "打開比賽錄影帶，客觀點出輪轉站位問題對事不對人",
+          "stat": "iq",
+          "base": 0.74,
+          "w": 0.003,
+          "ok": {
+            "text": "數據與畫面讓兩人心服口服！球商 +3、內防 +2、教練信任 +7！",
+            "eff": {
+              "iq": 3,
+              "intDef": 2,
+              "coachTrust": 7
+            },
+            "flags": []
+          },
+          "fail": {
+            "text": "爭吵雖停了，但隊友仍需時間消化。球商 +1、教練信任 +3。",
+            "eff": {
+              "iq": 1,
+              "coachTrust": 3
+            },
+            "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_pro_sneaker_signature_deal",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "👟 專屬簽名戰靴企劃：打造你的傳奇標誌",
+      "desc": "國際運動巨頭正式邀請你推出個人第一代簽名籃球鞋，設計師請你決定這雙戰靴的核心靈魂。",
+      "conditions": [
+        {
+          "field": "reputation",
+          "op": "gte",
+          "value": 60
+        },
+        {
+          "field": "flags",
+          "op": "notFlag",
+          "value": "signature_shoe"
+        }
+      ],
+      "choices": [
+        {
+          "label": "主打「極致輕量與急停抓地」，親自參與實戰測試",
+          "stat": "speed",
+          "base": 0.76,
+          "w": 0.0028,
+          "ok": {
+            "text": "首發當日全球秒殺！速度 +2、彈跳 +2、名氣 +12！",
+            "eff": {
+              "speed": 2,
+              "vertical": 2,
+              "reputation": 12
+            },
+            "flags": [
+              "signature_shoe"
+            ]
+          },
+          "fail": {
+            "text": "鞋款口碑不俗，名氣 +7、速度 +1。",
+            "eff": {
+              "reputation": 7,
+              "speed": 1
+            },
+            "flags": [
+              "signature_shoe"
+            ]
+          }
+        },
+        {
+          "label": "主打「鐵血對抗與腳踝保護」，並捐出千雙球鞋給基層校隊",
+          "stat": "reputation",
+          "base": 0.8,
+          "w": 0.0025,
+          "ok": {
+            "text": "公益與專業兼具，成為萬千少年偶像！名氣 +11、力量 +2、教練信任 +5！",
+            "eff": {
+              "reputation": 11,
+              "strength": 2,
+              "coachTrust": 5
+            },
+            "flags": [
+              "signature_shoe",
+              "community_icon"
+            ]
+          },
+          "fail": {
+            "text": "好評如潮，名氣 +7、教練信任 +3。",
+            "eff": {
+              "reputation": 7,
+              "coachTrust": 3
+            },
+            "flags": [
+              "signature_shoe"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_pro_old_rival_dinner",
+      "stage": "PRO",
+      "tone": "POSITIVE",
+      "title": "🍜 深夜拉麵店的偶遇：與宿敵 {{rivalName}} 的英雄惜英雄",
+      "desc": "大戰前夜你獨自走進巷弄拉麵店，吧檯角落竟坐著宿敵 {{rivalName}}。兩人相視一笑，默契地並肩坐下。",
+      "conditions": [
+        {
+          "field": "age",
+          "op": "gte",
+          "value": 20
+        },
+        {
+          "field": "rivalHeat",
+          "op": "gte",
+          "value": 30
+        }
+      ],
+      "choices": [
+        {
+          "label": "碰杯冰水約定：「明天全力以赴，誰都不許留手！」",
+          "stat": "grit",
+          "base": 0.78,
+          "w": 0.0028,
+          "ok": {
+            "text": "漫畫般的頂尖對決預告！意志 +3、狀態 +8、宿敵火藥味 +12、名氣 +6！",
+            "eff": {
+              "grit": 3,
+              "condition": 8,
+              "rivalHeat": 12,
+              "reputation": 6
+            },
+            "flags": [
+              "rival_respect"
+            ]
+          },
+          "fail": {
+            "text": "無需多言，眼神已說明一切。意志 +2、狀態 +5。",
+            "eff": {
+              "grit": 2,
+              "condition": 5
+            },
+            "flags": []
+          }
+        },
+        {
+          "label": "聊起彼此進職業後的技術瓶頸，互相交流破解防守心得",
+          "stat": "iq",
+          "base": 0.76,
+          "w": 0.003,
+          "ok": {
+            "text": "唯有頂尖對手最懂你的盲點！球商 +3、中投 +2、外防 +2！",
+            "eff": {
+              "iq": 3,
+              "midRange": 2,
+              "perimDef": 2
+            },
+            "flags": [
+              "rival_respect"
+            ]
+          },
+          "fail": {
+            "text": "雖各自留了一手，但仍有收穫。球商 +2、狀態 +5。",
+            "eff": {
+              "iq": 2,
+              "condition": 5
             },
             "flags": []
           }
