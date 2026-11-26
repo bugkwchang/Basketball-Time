@@ -4563,7 +4563,23 @@
       const p = Season.player;
       if (p.eventTriggeredThisRound) return;
       const stage = Season.leagueId === "hs_nationals" ? "HIGH_SCHOOL" : "PRO";
-      const ctx = { age: p.age, condition: p.condition, reputation: p.reputation, flags: p.flags };
+      const uStandForEvt = Season.standings && Season.standings.find(t => t.isUserTeam);
+      const teamGp = uStandForEvt ? ((uStandForEvt.w || 0) + (uStandForEvt.l || 0)) : 0;
+      const winPct = teamGp > 0 ? Math.round(((uStandForEvt.w || 0) / teamGp) * 100) : 50;
+      const curOvr = calcOVR(p.stats, p.pos, Season.equippedTraits);
+      const ctx = {
+        age: p.age,
+        condition: p.condition,
+        reputation: p.reputation,
+        coachTrust: typeof p.coachTrust === "number" ? p.coachTrust : 35,
+        rivalHeat: p.rivalHeat || 0,
+        careerYear: Season.careerYear || 1,
+        leagueId: Season.leagueId,
+        ovr: curOvr,
+        winPct,
+        injured: p.injured ? 1 : 0,
+        flags: p.flags
+      };
       const eligible = DB.events.events.filter(e => (e.stage === "ANY" || e.stage === stage) && ConditionEvaluator.evalAll(e.conditions, ctx));
       if (!eligible.length) return;
       p.eventTriggeredThisRound = true;
@@ -4602,7 +4618,33 @@
           choices: jChoices
         };
       } else {
-        evt = eligible[Math.floor(Math.random() * eligible.length)];
+        // 依聯賽專屬度、球員／球隊狀態動態加權抽取事件，並避免近期重複
+        if (!Array.isArray(p.recentEventIds)) p.recentEventIds = [];
+        const weighted = eligible.map(e => {
+          let w = 1.0;
+          const isLeagueSpecific = Array.isArray(e.conditions) && e.conditions.some(c => c.field === "leagueId" && c.op === "eq");
+          if (isLeagueSpecific) w *= 2.8;           // 優先呈現當前聯賽專屬劇情
+          else if (e.stage === stage) w *= 1.8;     // 其次呈現當前階段專屬事件
+          // 依球員與球隊處境動態調整正負面事件權重（避免雪上加霜或脫離現實）
+          if (e.tone === "NEGATIVE") {
+            if (p.injured || p.condition < 45) w *= 0.45; // 已經受傷／低體力時降低惡性負面事件機率
+            else if (winPct < 45 || (p.coachTrust || 35) < 40) w *= 1.35; // 戰績低迷時合理反映更衣室與輿論壓力
+          } else if (e.tone === "POSITIVE") {
+            if (winPct >= 60 || p.reputation >= 65) w *= 1.30; // 高勝率／高名氣更容易吸引合約、代言與徵召
+            if (p.injured && e.id.includes("rehab")) w *= 2.4;
+          }
+          if (p.recentEventIds.includes(e.id)) w *= 0.12; // 近期觸發過大幅降權避免重複
+          return { e, w };
+        });
+        const totalW = weighted.reduce((s, x) => s + x.w, 0);
+        let roll = Math.random() * totalW;
+        evt = weighted[weighted.length - 1].e;
+        for (const item of weighted) {
+          roll -= item.w;
+          if (roll <= 0) { evt = item.e; break; }
+        }
+        p.recentEventIds.push(evt.id);
+        if (p.recentEventIds.length > 8) p.recentEventIds.shift();
       }
 
       document.getElementById("evtStageStamp").textContent = typeof stageStampLabel === "string" ? stageStampLabel : "📅 賽間人生經歷";
