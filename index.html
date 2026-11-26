@@ -409,6 +409,66 @@
     }
     .qte-dir-btn:active { transform: translate(1px, 1px); box-shadow: none; background: var(--gold-bright); }
 
+    /* CAREER GROWTH CURVE & MANGA CHAPTER RECAP */
+    .story-arc-box {
+      border: 2.5px solid var(--ink);
+      background-color: #FFFDF7;
+      background-image: radial-gradient(rgba(17,17,17,0.06) 1px, transparent 0);
+      background-size: 10px 10px;
+      box-shadow: var(--shadow-sm);
+      padding: 11px 12px;
+    }
+    .story-narration {
+      margin: 8px 0 10px;
+      padding: 7px 10px;
+      background: #181614;
+      color: #FAF7F0;
+      border-left: 5px solid var(--crimson);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+    .manga-curve-wrap {
+      width: 100%;
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      padding: 6px;
+      overflow-x: auto;
+    }
+    .chapter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .chapter-card {
+      border: 2px solid var(--ink);
+      background: #FFFFFF;
+      box-shadow: 2px 2px 0 var(--ink);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11.5px;
+    }
+    .chapter-card.peak {
+      background: linear-gradient(180deg, #FFFDF7 0%, #FEF9C3 100%);
+      border-color: var(--crimson);
+    }
+    .chapter-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1.5px solid var(--ink);
+      padding-bottom: 4px;
+    }
+    .chapter-line {
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--ink-soft);
+    }
+
     /* BOOT LOADING / ERROR OVERLAY (Hidden automatically once JSON DBs load) */
     .boot-overlay {
       position: fixed; inset: 0; z-index: 10000;
@@ -713,6 +773,7 @@
             </div>
           </div>
           <div id="careerTrophyCase"></div>
+          <div id="careerGrowthStoryBox" style="margin-bottom:12px;"></div>
           <div id="careerRivalryHistoryBox" style="margin-bottom:12px;"></div>
           <div class="table-scroll">
             <table class="data-table">
@@ -890,7 +951,8 @@
     <div class="modal-sheet" style="max-width:640px;">
       <div class="stamp" id="crStamp">18 歲畢業分岔口</div>
       <div style="font-size:20px; font-weight:900; margin:6px 0;" id="crTitle">選擇你嘅下一個舞台</div>
-      <div style="font-size:12.5px; color:var(--ink-soft); margin-bottom:12px;" id="crDesc"></div>
+      <div style="font-size:12.5px; color:var(--ink-soft); margin-bottom:10px;" id="crDesc"></div>
+      <div id="crGrowthStoryBox" style="margin-bottom:12px;"></div>
       <div id="crOptionsBox" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
   </div>
@@ -1235,6 +1297,212 @@
       { pos: "PF", tag: "空間型四號位", skills: ["boxout_beast_t3", "corner_specialist_t3"] },
       { pos: "C",  tag: "藍領護框長人", skills: ["rim_eraser_t4", "glass_cleaner_t3"] }
     ];
+
+    // ---------- 生涯成長曲線與漫畫關鍵時刻回顧系統 ----------
+    function ensureCareerTimeline(targetSeason = Season) {
+      const hist = ensureCareerHistory(targetSeason);
+      if (!Array.isArray(hist.timeline)) hist.timeline = [];
+      // 向後相容舊存檔：若已有 archive 但無 timeline，自動依歷季紀錄補建基礎章節
+      if (hist.timeline.length === 0 && targetSeason && Array.isArray(targetSeason.archive) && targetSeason.archive.length > 0) {
+        const sortedArc = [...targetSeason.archive].sort((a, b) => (a.year || 1) - (b.year || 1));
+        sortedArc.forEach((a, idx) => {
+          const estOvr = Math.min(95, Math.max(60, Math.round(64 + idx * 4 + Number(a.ppg || 10) * 0.45)));
+          hist.timeline.push({
+            year: a.year || (idx + 1),
+            age: 14 + (a.year || (idx + 1)),
+            leagueName: a.leagueName || "",
+            teamName: a.teamName || "",
+            ovr: a.endOvr || estOvr,
+            topStats: [],
+            wl: a.wl || "",
+            honor: a.honor || "完成球季",
+            keyEvent: "在賽場與訓練館之間一步步蛻變成長。",
+            keyWin: a.ring ? `奪下 ${a.leagueName} 總冠軍！` : "",
+            keyLoss: "",
+            chapterTitle: a.ring ? "👑 登頂加冕・制霸賽季" : "🏀 燃燒青春・歷練成長"
+          });
+        });
+      }
+      return hist.timeline;
+    }
+
+    function pickSeasonKeyMatches(schedule) {
+      const played = (Array.isArray(schedule) ? schedule : []).filter(g => g && g.played);
+      const wins = played.filter(g => (g.userScore || 0) > (g.oppScore || 0));
+      const losses = played.filter(g => (g.userScore || 0) < (g.oppScore || 0));
+
+      const scoreWin = (g) => (g.stage === "FINAL" ? 100 : (g.stage === "SEMI" ? 60 : 0))
+        + (Math.abs(g.userScore - g.oppScore) <= 5 ? 35 : 0)
+        + (g.oppOvr || 70) * 0.4;
+      const bestWin = [...wins].sort((a, b) => scoreWin(b) - scoreWin(a))[0] || null;
+
+      const scoreLoss = (g) => (g.stage === "FINAL" ? 100 : (g.stage === "SEMI" ? 60 : 0))
+        + (Math.abs(g.userScore - g.oppScore) <= 5 ? 30 : 0)
+        + (g.oppOvr || 70) * 0.3;
+      const toughLoss = [...losses].sort((a, b) => scoreLoss(b) - scoreLoss(a))[0] || null;
+
+      const fmtStage = (g) => g.stage === "FINAL" ? "總決賽" : (g.stage === "SEMI" ? "準決賽" : `第${g.round}輪`);
+      return {
+        keyWin: bestWin ? `${fmtStage(bestWin)} ${bestWin.userScore}-${bestWin.oppScore} 力克 ${bestWin.oppName}（${bestWin.oppAce}）` : "",
+        keyLoss: toughLoss ? `${fmtStage(toughLoss)} ${toughLoss.userScore}-${toughLoss.oppScore} 惜敗 ${toughLoss.oppName}（${toughLoss.oppAce}）` : ""
+      };
+    }
+
+    function buildSeasonChapterSnapshot(rec = null) {
+      const p = Season && Season.player;
+      const league = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
+      const uTeam = Season.standings && Season.standings.find(t => t.isUserTeam);
+      const curOvr = p ? calcOVR(p.stats, p.pos, Season.equippedTraits) : 70;
+      const statDefs = (DB.origins && DB.origins.statDefs) || [];
+      const topStats = p && p.stats
+        ? [...statDefs].map(d => ({ label: d.l, val: p.stats[d.k] || 60 })).sort((a, b) => b.val - a.val).slice(0, 2)
+        : [];
+      const { keyWin, keyLoss } = pickSeasonKeyMatches(Season.schedule);
+      const evLogs = (p && Array.isArray(p.eventLog)) ? p.eventLog : [];
+      const keyEvent = evLogs.length ? `${evLogs[0].title}（${evLogs[0].summary.slice(0, 34)}${evLogs[0].summary.length > 34 ? "…" : ""}）` : "";
+
+      const honor = rec ? rec.honor : (Season.playoffs && Season.playoffs.result === "CHAMPION" ? "🏆 總冠軍" : "激戰進行中");
+      const isChamp = (rec && rec.ring) || (Season.playoffs && Season.playoffs.result === "CHAMPION");
+      const isRunnerUp = (rec && rec.honor && rec.honor.includes("亞軍")) || (Season.playoffs && Season.playoffs.result === "RUNNER_UP");
+      const chapterTitle = isChamp
+        ? "👑 登頂加冕・稱霸舞台"
+        : (isRunnerUp ? "🔥 飲恨決賽・埋下復仇火種"
+        : (Season.careerYear === 1 ? "🌱 初登大賽・熱血啟程"
+        : (Season.leagueId === "nba_prime" ? "🇺🇸 站上籃球最高殿堂"
+        : (Season.leagueId === "fiba_world" ? "🌏 身披戰袍・為國出征" : "⚔️ 破繭蛻變・逆流而上"))));
+
+      return {
+        year: Season.careerYear,
+        age: p ? p.age : (14 + Season.careerYear),
+        leagueName: league ? league.name : "",
+        teamName: (rec && rec.teamName) || (uTeam && uTeam.name) || "",
+        ovr: curOvr,
+        topStats,
+        wl: (rec && rec.wl) || (uTeam ? `${uTeam.w}勝${uTeam.l}負` : "0勝0負"),
+        honor,
+        keyEvent: keyEvent || "在球館的汗水與對抗中默默淬鍊自己。",
+        keyWin,
+        keyLoss,
+        chapterTitle
+      };
+    }
+
+    function recordSeasonTimelineEntry(rec) {
+      const timeline = ensureCareerTimeline(Season);
+      const snap = buildSeasonChapterSnapshot(rec);
+      const idx = timeline.findIndex(t => t.year === snap.year);
+      if (idx >= 0) timeline[idx] = snap;
+      else timeline.push(snap);
+      timeline.sort((a, b) => a.year - b.year);
+      return snap;
+    }
+
+    function renderMangaGrowthStoryHtml(compact = false) {
+      if (!Season || !Season.player) return "";
+      const savedTimeline = ensureCareerTimeline(Season);
+      const liveSnap = buildSeasonChapterSnapshot(null);
+      const points = [...savedTimeline];
+      const existingIdx = points.findIndex(x => x.year === liveSnap.year);
+      if (existingIdx >= 0) points[existingIdx] = { ...points[existingIdx], ovr: Math.max(points[existingIdx].ovr, liveSnap.ovr) };
+      else points.push(liveSnap);
+      points.sort((a, b) => a.year - b.year);
+
+      // 若僅有第 1 季，加入「入隊起點」節點讓曲線即刻呈現從起步到現在的成長張力
+      const startOvr = (typeof Season.player.initialOvr === "number")
+        ? Season.player.initialOvr
+        : Math.max(55, points[0].ovr - 4);
+      const chartNodes = points.length === 1
+        ? [{ label: "入隊起點", sub: `${Math.max(15, points[0].age)}歲`, ovr: startOvr }, { label: `第${points[0].year}季`, sub: `${points[0].age}歲`, ovr: points[0].ovr, peak: true }]
+        : points.map((pt, i) => ({
+            label: `第${pt.year}季`,
+            sub: `${pt.age}歲`,
+            ovr: pt.ovr,
+            peak: pt.ovr === Math.max(...points.map(x => x.ovr))
+          }));
+
+      const firstOvr = chartNodes[0].ovr;
+      const latestOvr = chartNodes[chartNodes.length - 1].ovr;
+      const totalGain = latestOvr - firstOvr;
+      const minVal = Math.max(40, Math.min(...chartNodes.map(n => n.ovr)) - 6);
+      const maxVal = Math.min(99, Math.max(...chartNodes.map(n => n.ovr)) + 5);
+      const span = Math.max(10, maxVal - minVal);
+
+      const svgW = Math.max(320, chartNodes.length * 84);
+      const svgH = compact ? 130 : 152;
+      const padL = 34, padR = 28, padT = 26, padB = 34;
+      const plotW = svgW - padL - padR;
+      const plotH = svgH - padT - padB;
+
+      const coords = chartNodes.map((n, i) => {
+        const x = chartNodes.length === 1 ? padL + plotW / 2 : padL + (plotW * i) / (chartNodes.length - 1);
+        const y = padT + plotH * (1 - (n.ovr - minVal) / span);
+        return { ...n, x, y };
+      });
+      const polyPts = coords.map(c => `${c.x.toFixed(1)},${c.y.toFixed(1)}`).join(" ");
+      const shadowPts = coords.map(c => `${(c.x + 2).toFixed(1)},${(c.y + 3).toFixed(1)}`).join(" ");
+      const areaPts = `${coords[0].x.toFixed(1)},${(padT + plotH).toFixed(1)} ${polyPts} ${coords[coords.length - 1].x.toFixed(1)},${(padT + plotH).toFixed(1)}`;
+
+      const svgHtml = `
+        <svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%; min-width:${Math.min(svgW, 300)}px; height:${svgH}px; display:block;">
+          <line x1="${padL}" y1="${padT}" x2="${svgW - padR}" y2="${padT}" stroke="rgba(17,17,17,0.14)" stroke-dasharray="4 4" />
+          <line x1="${padL}" y1="${padT + plotH * 0.5}" x2="${svgW - padR}" y2="${padT + plotH * 0.5}" stroke="rgba(17,17,17,0.14)" stroke-dasharray="4 4" />
+          <line x1="${padL}" y1="${padT + plotH}" x2="${svgW - padR}" y2="${padT + plotH}" stroke="#111" stroke-width="2" />
+          <polygon points="${areaPts}" fill="rgba(200,30,30,0.12)" />
+          <polyline points="${shadowPts}" fill="none" stroke="rgba(17,17,17,0.28)" stroke-width="4" stroke-linejoin="round" />
+          <polyline points="${polyPts}" fill="none" stroke="#C81E1E" stroke-width="3.5" stroke-linejoin="round" />
+          ${coords.map(c => `
+            <circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${c.peak ? 6.5 : 5}" fill="${c.peak ? "#FACC15" : "#FAF7F0"}" stroke="#111" stroke-width="2.5" />
+            <text x="${c.x.toFixed(1)}" y="${(c.y - 10).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="900" fill="${c.peak ? "#C81E1E" : "#111"}">${c.peak ? "★" : ""}${c.ovr}</text>
+            <text x="${c.x.toFixed(1)}" y="${(padT + plotH + 14).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="900" fill="#111">${c.label}</text>
+            <text x="${c.x.toFixed(1)}" y="${(padT + plotH + 26).toFixed(1)}" text-anchor="middle" font-size="9.5" font-weight="700" fill="#57534E">${c.sub}</text>
+          `).join("")}
+        </svg>`;
+
+      // 依成長曲線與生涯歷練動態產生熱血漫畫旁白
+      const rings = Season.archive.reduce((s, a) => s + (a.ring || 0), 0);
+      const narration = totalGain >= 16
+        ? `「從最初的 OVR ${firstOvr} 一路蛻變至 OVR ${latestOvr}（+${totalGain}）！那些無人看見的深夜投籃與惜敗淚水，早已鍛造出震動籃壇的傳奇身影！」`
+        : (rings > 0
+          ? `「手握 ${rings} 座總冠軍金盃、目前 OVR ${latestOvr}！每一次關鍵球與宿敵血戰，都是你親手刻進歷史的熱血篇章！」`
+          : (totalGain >= 6
+            ? `「從 OVR ${firstOvr} 成長到 OVR ${latestOvr}（+${totalGain}），你不再是當年青澀的菜鳥——下一個更宏大的舞台正在呼喚你的名字！」`
+            : `「故事才正要進入高潮（現 OVR ${latestOvr}）！把每一場勝利與不甘的敗仗化作養分，屬於你的時代即將拉開序幕！」`));
+
+      const displayChapters = compact ? points.slice(-2).reverse() : [...points].reverse();
+      const maxOvrVal = Math.max(...points.map(x => x.ovr));
+
+      return `
+        <div class="story-arc-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
+            <div style="font-weight:900; font-size:13.5px;">📖 生涯成長曲線與漫畫篇章回顧</div>
+            <div class="btn-row">
+              <span class="tag gold">累計蛻變 ${totalGain >= 0 ? "+" : ""}${totalGain} OVR</span>
+              <span class="tag">巔峰 OVR ${maxOvrVal}</span>
+            </div>
+          </div>
+          <div class="manga-curve-wrap">${svgHtml}</div>
+          <div class="story-narration">${narration}</div>
+          <div class="chapter-grid">
+            ${displayChapters.map((ch, i) => {
+              const prevPt = points.find(x => x.year === ch.year - 1);
+              const diffTxt = prevPt ? ` (${ch.ovr - prevPt.ovr >= 0 ? "▲+" : "▼"}${ch.ovr - prevPt.ovr})` : "";
+              const statBadges = (ch.topStats || []).map(s => `<span class="tag">${s.label} ${s.val}</span>`).join(" ");
+              return `
+                <div class="chapter-card ${ch.ovr === maxOvrVal && points.length > 1 ? "peak" : ""}">
+                  <div class="chapter-head">
+                    <span><span class="stamp" style="font-size:10px; padding:1px 5px;">CH.${ch.year} · ${ch.age}歲</span> <strong>${ch.chapterTitle}</strong></span>
+                    <span style="font-weight:900; color:var(--crimson); white-space:nowrap;">OVR ${ch.ovr}${diffTxt}</span>
+                  </div>
+                  <div class="chapter-line"><strong>${ch.teamName}</strong>（${ch.leagueName}）｜ ${ch.wl} ｜ ${ch.honor}</div>
+                  ${statBadges ? `<div style="margin:2px 0;">招牌強項：${statBadges}</div>` : ""}
+                  <div class="chapter-line">⚡ <strong>關鍵轉折：</strong>${ch.keyEvent}</div>
+                  ${ch.keyWin ? `<div class="chapter-line" style="color:#166534;">🏆 <strong>最燃一勝：</strong>${ch.keyWin}</div>` : ""}
+                  ${ch.keyLoss ? `<div class="chapter-line" style="color:#991B1B;">💔 <strong>刻骨一敗：</strong>${ch.keyLoss}</div>` : ""}
+                </div>`;
+            }).join("")}
+          </div>
+        </div>`;
+    }
 
     function ensureCareerHistory(targetSeason = Season) {
       if (!targetSeason) return { rivalries: {}, classicMoments: [] };
@@ -2442,6 +2710,12 @@
           </div>
           ${growthHtml}
           ${faHtml}`;
+      }
+
+      // Render Manga Career Growth Curve & Chapter Recap in Hall of Fame
+      const growthBox = document.getElementById("careerGrowthStoryBox");
+      if (growthBox) {
+        growthBox.innerHTML = renderMangaGrowthStoryHtml(false);
       }
 
       // Render Cross-Season Rivalries & Hall-of-Fame Classic Moments
@@ -4728,6 +5002,7 @@
         rarityName: createDraft.rarity.name, bgName: createDraft.bg.name, cap: createDraft.cap,
         stars: createDraft.rarity.stars, condition: 100, injured: false, reputation: 45,
         jerseyNum: rookieNum, jerseyPickedTeams: [],
+        initialOvr: calcOVR(createDraft.stats, createDraft.pos, createDraft.skills),
         coachTrust: initTrust, growthCheckCounter: 0, lastDelta: {}, eventLog: [],
         stats: { ...createDraft.stats }, flags: [...createDraft.flags],
         ap: 2, rivalHeat: 35, eventTriggeredThisRound: false
@@ -5403,6 +5678,9 @@
           <button type="button" class="choice-btn" data-cr-league="RETIRE"><span>🏛️ 功成身退・進入名人堂結算</span><span class="tag loss">退役結算</span></button>
         `;
       }
+      recordSeasonTimelineEntry(rec);
+      const crStory = document.getElementById("crGrowthStoryBox");
+      if (crStory) crStory.innerHTML = renderMangaGrowthStoryHtml(true);
       optsBox._nextArchive = nextArchive;
       document.getElementById("crossroadsModal").classList.remove("hidden");
     }
