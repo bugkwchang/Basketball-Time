@@ -368,6 +368,36 @@
       padding: 10px 12px; font-size: 12px; color: var(--ink); line-height: 1.5;
     }
     .skill-tip-popover.hidden { display: none; }
+    .ac-meta {
+      display: flex; align-items: center; justify-content: space-between; gap: 4px; flex-wrap: wrap;
+      font-size: 10px; font-weight: 800; margin-top: 2px;
+    }
+    .risk-pill {
+      padding: 1px 5px; border: 1.5px solid var(--ink); font-size: 9.5px; font-weight: 900;
+    }
+    .risk-pill.low { background: #DCFCE7; color: #166534; }
+    .risk-pill.mid { background: #FEF9C3; color: #854D0E; }
+    .risk-pill.high { background: #FEE2E2; color: #991B1B; }
+    .grit-pill {
+      padding: 1px 5px; background: #181614; color: #FACC15; border: 1.5px solid var(--ink);
+      font-size: 9.5px; font-weight: 900;
+    }
+    .ac-rr {
+      font-size: 10px; font-weight: 800; color: var(--ink-soft); line-height: 1.3;
+      border-top: 1px dashed rgba(17,17,17,0.22); padding-top: 3px; margin-top: 2px;
+    }
+    .action-card.zone-card .ac-rr { color: #FDE68A; border-top-color: rgba(250,204,21,0.35); }
+    .qte-dir-row {
+      display: none; width: 100%; max-width: 540px; gap: 8px;
+    }
+    .qte-dir-row.active { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .qte-dir-btn {
+      padding: 9px 6px; font-size: 13.5px; font-weight: 900; font-family: inherit;
+      background: var(--paper-card); color: var(--ink); border: 2.5px solid var(--ink);
+      box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+    .qte-dir-btn:active { transform: translate(1px, 1px); box-shadow: none; background: var(--gold-bright); }
+
     /* BOOT LOADING / ERROR OVERLAY (Hidden automatically once JSON DBs load) */
     .boot-overlay {
       position: fixed; inset: 0; z-index: 10000;
@@ -754,6 +784,11 @@
           </div>
           <div class="qte-arena" id="qteArena"><canvas id="qteCanvas"></canvas></div>
           <button class="qte-fire-btn" id="btnQteAction" type="button">🔥 鎖定 (SPACE)</button>
+          <div class="qte-dir-row" id="qteDirRow">
+            <button type="button" class="qte-dir-btn" data-qdir="0">◀ 左路 (A / ←)</button>
+            <button type="button" class="qte-dir-btn" data-qdir="1">▲ 中路 (W / ↑)</button>
+            <button type="button" class="qte-dir-btn" data-qdir="2">▶ 右路 (D / →)</button>
+          </div>
         </div>
       </section>
     </main>
@@ -1178,19 +1213,53 @@
       return Math.max(60, Math.min(99, Math.round(stAvg * 0.78 + bnAvg * 0.22 + Math.min(4.5, skillBonus))));
     }
 
+    // ---------- 教練信任影響力配置（上場時間 / 關鍵球權 / 對話回饋） ----------
+    const COACH_TRUST_CONFIG = {
+      tiers: [
+        { key: "LOW",  min: 0,  max: 29, label: "冷板凳觀察", minAdj: -0.14, crunchBallRate: 0.25, allowCrunch: false, coachSubOut: "教練板起臉提醒：「先從防守、無球走位與減少失誤做起，把信任贏回來！」", coachSubIn: "教練拍拍你肩膀：「給你幾分鐘機會，打得聰明點！」" },
+        { key: "MID",  min: 30, max: 54, label: "輪換考驗",   minAdj:  0.00, crunchBallRate: 0.52, allowCrunch: false, coachSubOut: "教練比出換人手勢：「先下來喘口氣，保持場上紀律。」", coachSubIn: "教練揮手示意：「上吧，照戰術節奏來！」" },
+        { key: "HIGH", min: 55, max: 79, label: "核心信賴",   minAdj:  0.06, crunchBallRate: 0.76, allowCrunch: true,  coachSubOut: "教練點頭致意：「幹得好，先休息一下，關鍵時刻靠你！」", coachSubIn: "教練眼神堅定：「節奏交給你掌控！」" },
+        { key: "ACE",  min: 80, max: 100, label: "絕對王牌",  minAdj:  0.10, crunchBallRate: 0.90, allowCrunch: true,  coachSubOut: "教練為你鼓掌：「保留體力，收官戰全隊等你回來接管！」", coachSubIn: "教練大喊：「清開空間，把球交給我們的王牌！」" }
+      ]
+    };
+
+    function getCoachTrustProfile(trustVal) {
+      const t = typeof trustVal === "number" ? trustVal : ((Season && Season.player && typeof Season.player.coachTrust === "number") ? Season.player.coachTrust : 35);
+      return COACH_TRUST_CONFIG.tiers.find(x => t >= x.min && t <= x.max) || COACH_TRUST_CONFIG.tiers[1];
+    }
+
+    function adjustCoachTrustLive(delta, reason = "") {
+      if (!Season || !Season.player || !delta) return;
+      const p = Season.player;
+      if (typeof p.coachTrust !== "number") p.coachTrust = 35;
+      p.coachTrust = Math.max(5, Math.min(100, p.coachTrust + delta));
+      if (reason && !Match.fastSimming) {
+        const sign = delta > 0 ? `+${delta}` : `${delta}`;
+        broadcast(`📋 教練反應（信任 ${sign} → ${p.coachTrust}）：${reason}`);
+      }
+    }
+
     function getEffectiveRotationWindow() {
       const tiers = DB.leagues.rotationTiers;
       const base = tiers[Season.rotationKey] || tiers.ROOKIE;
-      const p = Season.player || { condition: 100, injured: false };
-      let adj = 0, note = "正常輪換";
-      if (p.injured) { adj = -0.22; note = "🚑 傷病限時保護 (-22%)"; }
-      else if (p.condition < 50) { adj = -0.18; note = "🚨 過勞減時 (-18%)"; }
-      else if (p.condition < 70) { adj = -0.10; note = "⚠️ 狀態偏低 (-10%)"; }
-      else if (p.condition >= 90) { adj = 0.05; note = "✨ 狀態火熱 (+5%)"; }
-      const minPct = Math.max(0.08, Math.min(0.84, +(base.minPct + adj).toFixed(2)));
-      const maxPct = Math.max(minPct + 0.08, Math.min(0.90, +(base.maxPct + adj).toFixed(2)));
-      const forceBenchStart = Boolean(p.injured && p.condition < 70) || (p.condition < 45);
-      return { label: base.label, minPct, maxPct, targetPct: (minPct + maxPct) / 2, note, forceBenchStart };
+      const p = Season.player || { condition: 100, injured: false, coachTrust: 35 };
+      const tp = getCoachTrustProfile(p.coachTrust);
+      let condAdj = 0, condNote = "";
+      if (p.injured) { condAdj = -0.22; condNote = "🚑 傷病限時 (-22%)"; }
+      else if (p.condition < 50) { condAdj = -0.18; condNote = "🚨 過勞減時 (-18%)"; }
+      else if (p.condition < 70) { condAdj = -0.10; condNote = "⚠️ 狀態偏低 (-10%)"; }
+      else if (p.condition >= 90) { condAdj = 0.05; condNote = "✨ 狀態火熱 (+5%)"; }
+
+      const trustAdj = tp.minAdj;
+      const trustNote = trustAdj !== 0 ? `📋 信任[${tp.label}] (${trustAdj > 0 ? "+" : ""}${Math.round(trustAdj * 100)}%)` : "";
+      const note = [condNote, trustNote].filter(Boolean).join(" · ") || "正常輪換";
+
+      const totalAdj = condAdj + trustAdj;
+      // 低信任時保留最低 12% 上場時間底線，讓玩家有空間靠好表現贏回信任
+      const minPct = Math.max(0.12, Math.min(0.84, +(base.minPct + totalAdj).toFixed(2)));
+      const maxPct = Math.max(minPct + 0.08, Math.min(0.92, +(base.maxPct + totalAdj).toFixed(2)));
+      const forceBenchStart = Boolean(p.injured && p.condition < 70) || (p.condition < 45) || ((p.coachTrust || 35) < 25);
+      return { label: base.label, minPct, maxPct, targetPct: (minPct + maxPct) / 2, note, forceBenchStart, trustProfile: tp };
     }
 
     function syncUserTeamRole(announce = false) {
@@ -1279,18 +1348,40 @@
       }
     }
 
-    function evaluatePostMatchTrust(perfScore, won) {
+    function evaluatePostMatchTrust(perfScore, won, box = null) {
       if (!Season || !Season.player) return;
       const p = Season.player;
       if (typeof p.coachTrust !== "number") p.coachTrust = 35;
+      const prevTrust = p.coachTrust;
+
       let delta = won ? 3 : 0;
-      if (perfScore >= 32) delta += 9;
-      else if (perfScore >= 20) delta += 6;
+      if (perfScore >= 32) delta += 8;
+      else if (perfScore >= 20) delta += 5;
       else if (perfScore >= 11) delta += 3;
-      else if (perfScore < 6) delta -= 3;
-      if (p.condition < 50) delta -= 2;
+      else if (perfScore < 6) delta -= 2; // 降低懲罰性，避免雪崩式掉信任
+
+      // 贏回信任路徑 1：團隊紀律與防守拚勁獎勵（助攻 >= 4 或 抄阻 >= 3 且失誤 <= 2）
+      let comebackNote = "";
+      if (box) {
+        const teamPlayGood = (box.ast >= 4 || (box.stl + box.blk) >= 3) && box.tov <= 2;
+        if (teamPlayGood) {
+          delta += 3;
+          comebackNote = "團隊助攻與防守紀律贏得教練讚賞";
+        }
+        // 贏回信任路徑 2：低信任觸底反彈補償（信任 < 35 時只要正負值 >= 0 或表現 >= 10 就額外加回信任）
+        if (prevTrust < 35 && (box.plusMinus >= 0 || perfScore >= 10)) {
+          delta += 3;
+          comebackNote = comebackNote || "你在逆境中展現積極態度，成功開始贏回教練信任";
+        }
+      }
+
+      if (p.condition < 45) delta -= 1;
       p.coachTrust = Math.max(5, Math.min(100, p.coachTrust + delta));
       syncUserTeamRole(true);
+
+      if (comebackNote) {
+        showToast(`📋 教練賽後談話：${comebackNote}（信任 ${delta >= 0 ? "+" : ""}${delta} → ${p.coachTrust}）`);
+      }
     }
 
     // ---------- 3. SEASON & LOD SIMULATION ENGINE ----------
@@ -2365,7 +2456,8 @@
         const targetPct = tier.targetPct;
         const ratio = Match.totalGameSec > 45 ? (u.secPlayed / elapsed) : (u.onFloor ? 1 : 0);
         const foulCap = { 1: 2, 2: 3, 3: 4 }[Match.quarter];
-        const canPlayCrunch = (Season.rotationKey === "STAR" || Season.rotationKey === "STARTER" || Season.rotationKey === "SIXTH_MAN") && !(Season.player && Season.player.injured);
+        const tp = tier.trustProfile || getCoachTrustProfile();
+        const canPlayCrunch = (tp.allowCrunch || Season.rotationKey === "STAR" || Season.rotationKey === "STARTER" || (Season.rotationKey === "SIXTH_MAN" && (Season.player ? Season.player.coachTrust : 35) >= 48)) && !(Season.player && Season.player.injured);
 
         let wantOn = u.onFloor;
         let urgent = false;
@@ -2389,13 +2481,13 @@
               || teamList.filter(p => !p.isUser && p.onFloor).sort((a, b) => a.stamina - b.stamina)[0];
             if (swapPlayers(outP, u)) {
               Match.userSubCooldownSec = 105;
-              broadcast(`全場歡呼！#${u.num} ${u.name} 替換 ${outP.name} 重返戰場！`);
+              broadcast(`全場歡呼！#${u.num} ${u.name} 替換 ${outP.name} 重返戰場！${tp.coachSubIn}`);
             }
           } else {
             const inP = teamList.filter(p => !p.isUser && !p.onFloor && p.pf < foulLimit).sort((a, b) => b.stamina - a.stamina)[0];
             if (swapPlayers(u, inP)) {
               Match.userSubCooldownSec = 95;
-              broadcast(`場邊換人，${inP.name} 入替 #${u.num} ${u.name}（${Match.benchReason}）。`);
+              broadcast(`場邊換人，${inP.name} 入替 #${u.num} ${u.name}（${Match.benchReason}）。${tp.coachSubOut}`);
             }
           }
         }
@@ -2770,7 +2862,7 @@
             Season.player.eventTriggeredThisRound = false;
             checkPeriodicHeightGrowth();
             const perf = u.pts * 1.2 + (u.oreb + u.dreb) * 1.2 + u.ast * 1.4 + u.stl * 2 + u.blk * 2 - u.tov * 1.5;
-            evaluatePostMatchTrust(perf, Match.homeScore > Match.awayScore);
+            evaluatePostMatchTrust(perf, Match.homeScore > Match.awayScore, u);
           }
           clearMatchCheckpoint();
           SaveManager.save(Season);
@@ -2779,35 +2871,67 @@
       }
     }
 
-    // ---------- BULLET TIME WITH DIEGETIC TEXT JUDGMENT (NO EXACT %) ----------
+    // ---------- BULLET TIME：情境動態選卡、風險／報酬、Grit 意志與教練信任 ----------
     function enterBulletTime(triggerTag) {
       const eqSet = new Set(Season.equippedTraits);
       Match.phase = "BULLET"; Match.tension = 0;
       const tc = DB.leagues.tensionConfig;
-      Match.cooldownSec = (Match.quarter >= 4 && Match.timeLeftSec <= tc.clutchWindowSec) ? tc.clutchCooldownSec : tc.normalCooldownSec;
+      const isCrunch = Match.quarter >= 4 && Match.timeLeftSec <= Math.max(120, tc.clutchWindowSec);
+      Match.cooldownSec = isCrunch ? tc.clutchCooldownSec : tc.normalCooldownSec;
       SoundFX.highlight();
 
+      const p = Season.player || { coachTrust: 35, stats: { grit: 65 } };
+      const trust = typeof p.coachTrust === "number" ? p.coachTrust : 35;
+      const trustProf = getCoachTrustProfile(trust);
+      const gritVal = (p.stats && typeof p.stats.grit === "number") ? p.stats.grit : 65;
+      const stamina = Match.userPlayer ? Match.userPlayer.stamina : 100;
       const lead = Match.homeScore - Match.awayScore;
+
+      // 1. 攻守情境權重（結合分差、時間與教練信任）
       let defWeight = 0.32 + (eqSet.has("perimeter_lockdown_t3") ? 0.08 : 0);
-      if (Match.quarter >= 4 && Match.timeLeftSec <= 30 && lead > 0 && lead <= 4) defWeight = 0.72;
+      if (Match.quarter >= 4 && Match.timeLeftSec <= 35 && lead > 0 && lead <= 4) defWeight = 0.70;
+      else if (trust < 30 && !triggerTag.includes("壓哨")) defWeight += 0.14; // 低信任時更常被要求先扛防守苦工
       if (triggerTag.includes("壓哨") && lead <= 0) defWeight = 0;
       if (triggerTag.includes("以牙還牙") || triggerTag.includes("里程碑")) defWeight = 0;
 
       const side = Math.random() < defWeight ? "DEFENSE" : "OFFENSE";
-      const candidates = DB.actions.scenarios.filter(s => s.side === side);
+      let candidates = DB.actions.scenarios.filter(s => s.side === side);
+
+      // 2. 關鍵球持球分配：高教練信任優先把關鍵球交給你持球主攻；低信任偏向無球配合
+      if (side === "OFFENSE") {
+        const wantOnBall = Math.random() < (isCrunch ? trustProf.crunchBallRate : Math.min(0.85, trustProf.crunchBallRate + 0.12));
+        const filtered = candidates.filter(s => wantOnBall ? s.ballHolder === "USER" : s.ballHolder !== "USER");
+        if (filtered.length > 0) candidates = filtered;
+      }
       const scenario = candidates[Math.floor(Math.random() * candidates.length)];
       Match.activeScenario = scenario;
       arrangeCourtFormation(scenario.id);
 
+      // 3. 情境動態評分挑選 3 張具策略差異的卡片（避免全同質化）
       const pool = DB.actions.actions.filter(a => a.scenarios.includes(scenario.id));
-      const picked = pool.map(a => ({ a, s: (Match.recentActionIds.includes(a.id) ? -3 : 0) + Math.random() * 2 })).sort((x, y) => y.s - x.s).slice(0, 3).map(x => x.a);
+      const scoreActionFit = (a) => {
+        let s = (Match.recentActionIds.includes(a.id) ? -3.2 : 0) + Math.random() * 1.8;
+        if (side === "OFFENSE") {
+          if (lead <= -4 && Match.quarter >= 3 && (a.zone === "THREE" || a.statType === "AND1")) s += 2.2; // 落後追分偏向三分／2+1
+          if (lead >= 4 && Match.quarter >= 4 && (a.zone === "PASS" || a.zone === "MID")) s += 2.0;        // 領先守成偏向控場傳球／中投
+          if (stamina < 45 && (a.zone === "PASS" || a.zone === "MID")) s += 1.8;                          // 低體力推薦穩健傳導
+          if (trust < 32 && a.zone === "PASS") s += 1.9;                                                  // 低信任優先給團隊助攻贏回信任
+          if (trust >= 75 && isCrunch && (a.zone === "THREE" || a.zone === "PAINT" || a.zone === "MID")) s += 1.5;
+        } else {
+          if (lead > 0 && lead <= 3 && (a.statType === "CONTEST" || a.statType === "BOXOUT_DREB")) s += 1.8;
+          if (lead < 0 && (a.statType === "STEAL" || a.statType === "BLOCK")) s += 2.0;
+        }
+        return s;
+      };
+      const picked = pool.map(a => ({ a, s: scoreActionFit(a) })).sort((x, y) => y.s - x.s).slice(0, 3).map(x => x.a);
       const zoneLabelMap = { THREE: "三分", MID: "中投", PAINT: "禁區", PASS: "組織", DEFENSE: "防守" };
 
-      const cards = picked.map(a => {
+      // 4. 計算每張卡的成功率、風險階級、Grit 意志加成與風險／報酬文案
+      const cards = picked.map((a, cardIdx) => {
         const res = ModifierResolver.resolve({ shootPct: a.baseRate, defenseRating: a.baseRate, qtePerfectWidth: 100, perfectBonusPct: 0 }, eqSet, getLiveContext(a.zone, side));
         const cutinId = a.cutinId || (a.cutinReq && res.unlockedActions.has(a.cutinReq) ? a.cutinReq : null);
         const positiveTriggered = (res.triggeredSkills || []).filter(s => s.category !== "RED_TRAIT");
-        const pst = Season.player && Season.player.stats ? Season.player.stats : null;
+        const pst = p.stats || null;
         let relStat = 65;
         if (pst) {
           if (side === "DEFENSE") {
@@ -2819,22 +2943,68 @@
           else if (a.zone === "PASS") relStat = pst.playmaking * 0.6 + pst.iq * 0.4;
           else relStat = a.statType === "OREB_PUTBACK" ? (pst.rebound * 0.55 + pst.vertical * 0.45) : (pst.inside * 0.55 + pst.vertical * 0.25 + pst.strength * 0.20);
         }
-        const oppDef = activeLineup(Match.awayTeam).find(p => p.pos === Match.userPlayer.pos) || activeLineup(Match.awayTeam)[0];
+        const oppDef = activeLineup(Match.awayTeam).find(pl => pl.pos === Match.userPlayer.pos) || activeLineup(Match.awayTeam)[0];
         const oppVal = oppDef && oppDef.stats
           ? (side === "DEFENSE" ? (oppDef.stats.inside + oppDef.stats.threePt + oppDef.stats.midRange) / 3 : (a.zone === "THREE" ? oppDef.stats.perimDef : (a.zone === "MID" ? (oppDef.stats.perimDef * 0.65 + oppDef.stats.intDef * 0.35) : oppDef.stats.intDef)))
           : 78;
-        const uH = (Season.player && Season.player.heightCm) || Match.userPlayer.heightCm || 185;
+        const uH = p.heightCm || Match.userPlayer.heightCm || 185;
         const oH = (oppDef && oppDef.heightCm) || 188;
         const heightAdj = (a.zone === "PAINT" || a.statType === "BLOCK" || a.statType === "BOXOUT_DREB" || a.statType === "OREB_PUTBACK") ? Math.round((uH - oH) * 0.42) : Math.round((uH - oH) * 0.14);
         const leagueDiffPenalty = ((Match.league && Match.league.difficultyTier) || 1) * 4;
-        const staminaPen = Match.userPlayer.stamina < 30 ? -12 : (Match.userPlayer.stamina < 55 ? -5 : 0);
-        const statAdj = Math.round((relStat - oppVal) * 0.85) + heightAdj - leagueDiffPenalty + staminaPen - (Season.player && Season.player.injured ? 10 : 0);
+        const staminaPen = stamina < 30 ? -12 : (stamina < 55 ? -5 : 0);
+        const statAdj = Math.round((relStat - oppVal) * 0.85) + heightAdj - leagueDiffPenalty + staminaPen - (p.injured ? 10 : 0);
         const baseSkillRate = (side === "DEFENSE" ? res.finalStats.defenseRating : res.finalStats.shootPct) - 6;
-        const rate = Math.max(8, Math.min(84, Math.round(baseSkillRate + statAdj)));
-        const perfectRate = Math.max(18, Math.min(92, Math.round(rate + 18 + Math.min(8, res.finalStats.perfectBonusPct || 0))));
-        const statQteScale = Math.max(0.68, Math.min(1.18, 0.72 + (relStat - 55) * 0.011 - (((Match.league && Match.league.difficultyTier) || 1) - 1) * 0.06));
-        const feel = describeSuccessFeel(rate, Season.careerYear, eqSet, Match.userPlayer.stamina);
-        return { ...a, side, cutinId, triggeredSkills: positiveTriggered, rate, feel, perfectRate, relStat, qteWidthMul: (res.finalStats.qtePerfectWidth / 100) * statQteScale, zoneTag: zoneLabelMap[a.zone] || a.zone };
+        let rate = Math.max(8, Math.min(84, Math.round(baseSkillRate + statAdj)));
+
+        // 判定風險等級（高風險動作受 Grit 意志明顯加持）
+        const isHighRiskAction = rate < 45 || a.zone === "THREE" || a.statType === "AND1" || a.statType === "STEAL" || a.statType === "BLOCK" || a.statType === "CHARGE";
+        const isLowRiskAction = !isHighRiskAction && (rate >= 62 || a.zone === "PASS" || a.statType === "BOXOUT_DREB" || a.statType === "CONTEST");
+        const riskLevel = isHighRiskAction ? "HIGH" : (isLowRiskAction ? "LOW" : "MID");
+
+        // Grit 意志加成（高風險選擇專屬）
+        let gritBonusPct = 0;
+        let gritQteBoost = 1.0;
+        if (riskLevel === "HIGH") {
+          gritBonusPct = Math.min(16, Math.max(0, Math.round((gritVal - 65) * 0.35)) + (Match.isGrit ? 8 : 0));
+          rate = Math.min(88, rate + gritBonusPct);
+          gritQteBoost = 1 + gritBonusPct * 0.012;
+        }
+
+        // 高教練信任 + 關鍵時刻：首張進攻卡獲「教練欽點」戰術加成
+        const isCoachPlay = Boolean(side === "OFFENSE" && isCrunch && trust >= 75 && cardIdx === 0);
+        if (isCoachPlay) rate = Math.min(90, rate + 4);
+
+        const perfectRate = Math.max(18, Math.min(94, Math.round(rate + 18 + Math.min(8, res.finalStats.perfectBonusPct || 0))));
+        const statQteScale = Math.max(0.68, Math.min(1.22, 0.72 + (relStat - 55) * 0.011 - (((Match.league && Match.league.difficultyTier) || 1) - 1) * 0.06)) * gritQteBoost;
+        const feel = describeSuccessFeel(rate, Season.careerYear, eqSet, stamina);
+
+        // 風險／報酬數值設定（供 applyActionOutcome 結算信任與提示）
+        const trustWin = riskLevel === "HIGH" ? (isCoachPlay ? 3 : 2) : (a.zone === "PASS" || side === "DEFENSE" ? 2 : 1);
+        const trustFail = riskLevel === "HIGH" ? (gritVal >= 80 || Match.isGrit ? -1 : -2) : 0;
+        const rewardTxt = side === "DEFENSE"
+          ? `守成並轉守為攻｜信任+${trustWin}`
+          : (a.statType === "ASSIST" ? `隊友得分+助攻｜信任+${trustWin}` : `+${a.pts || 2}分${a.statType === "AND1" ? "/2+1" : ""}｜信任+${trustWin}`);
+        const riskTxt = riskLevel === "HIGH"
+          ? `失手易被反擊｜信任${trustFail}`
+          : (riskLevel === "MID" ? "失手交出球權" : "失誤風險低・不扣信任");
+
+        // 依動作屬性自然指派新版 QTE（保留縮圈，並加入二段時機 DOUBLE_RING 與方向判斷 DIRECTION_SNAP）
+        let assignedQte = a.qteType;
+        if (a.qteType === "RING_TIMING" && (a.zone === "PAINT" || a.statType === "AND1" || a.statType === "OREB_PUTBACK")) {
+          assignedQte = "DOUBLE_RING";
+        } else if (a.qteType === "DUAL_SNAP" || a.statType === "ASSIST" || a.statType === "STEAL" || a.statType === "CONTEST") {
+          assignedQte = "DIRECTION_SNAP";
+        }
+
+        return {
+          ...a,
+          qteType: assignedQte,
+          side, cutinId, triggeredSkills: positiveTriggered,
+          rate, feel, perfectRate, relStat,
+          riskLevel, gritBonusPct, isCoachPlay, trustWin, trustFail, rewardTxt, riskTxt,
+          qteWidthMul: (res.finalStats.qtePerfectWidth / 100) * statQteScale,
+          zoneTag: zoneLabelMap[a.zone] || a.zone
+        };
       });
 
       if (side === "OFFENSE" && Match.isZone) {
@@ -2842,26 +3012,46 @@
           id: "act_zone_hidden", name: "🔥 ZONE 無我三分", side: "OFFENSE", zone: "THREE",
           qteType: "RING_TIMING", cutinId: "zone_awakening", rate: 95,
           feel: { text: "絕對支配", tone: "#FACC15" },
+          riskLevel: "LOW", gritBonusPct: 0, isCoachPlay: false, trustWin: 3, trustFail: 0,
+          rewardTxt: "+3分・全場震懾｜信任+3", riskTxt: "極低失手風險",
           perfectRate: 99, pts: 3, statType: "SHOT", qteWidthMul: 1.55, isZoneCard: true, zoneTag: "ZONE"
         });
       }
 
-      document.getElementById("bulletBanner").textContent = `${triggerTag} · ${scenario.label}`;
-      document.getElementById("bulletSub").textContent = `${scenario.ballHolder === "USER" ? "🏀 你持球" : (side === "OFFENSE" ? "🏃 無球走位" : "🛡️ 防守站位")}`;
+      const sitTags = [];
+      if (isCrunch) sitTags.push("⏱️關鍵時刻");
+      if (lead <= -4) sitTags.push(`落後${Math.abs(lead)}分`);
+      else if (lead >= 4) sitTags.push(`領先${lead}分`);
+      if (stamina < 45) sitTags.push("⚡低體力");
+      if (Match.isGrit) sitTags.push("🔥極限意志");
 
+      document.getElementById("bulletBanner").textContent = `${triggerTag} · ${scenario.label}`;
+      document.getElementById("bulletSub").textContent = `${scenario.ballHolder === "USER" ? "🏀 你持球" : (side === "OFFENSE" ? "🏃 無球走位" : "🛡️ 防守站位")} ｜ 📋 信任 ${trust}(${trustProf.label})${sitTags.length ? " · " + sitTags.join(" ") : ""}`;
+
+      const riskLabelMap = { LOW: ["low", "穩健"], MID: ["mid", "中風險"], HIGH: ["high", "高風險"] };
       const grid = document.getElementById("bulletCardGrid");
-      grid.innerHTML = cards.map((c, idx) => `
+      grid.innerHTML = cards.map((c, idx) => {
+        const [rCls, rTxt] = riskLabelMap[c.riskLevel] || ["mid", "中風險"];
+        return `
         <button type="button" class="action-card ${c.isZoneCard ? "zone-card" : ""}" data-card-idx="${idx}">
           <div class="ac-top">
-            <span>${c.zoneTag}${c.pts ? ` · +${c.pts}分` : ""}</span>
-            <span style="color:${c.isZoneCard ? "#FACC15" : c.feel.tone};">${c.feel.text}</span>
+            <span>${c.isCoachPlay ? "📋欽點 · " : ""}${c.zoneTag}${c.pts ? ` · +${c.pts}分` : ""}</span>
+            <span style="color:${c.isZoneCard ? "#FACC15" : c.feel.tone};">${c.feel.text} (~${c.rate}%)</span>
           </div>
           <div class="ac-title">${c.name}</div>
-        </button>
-      `).join("");
+          <div class="ac-meta">
+            <span class="risk-pill ${rCls}">${rTxt}</span>
+            ${c.gritBonusPct > 0 ? `<span class="grit-pill">⚡意志+${c.gritBonusPct}%</span>` : ""}
+          </div>
+          <div class="ac-rr">報：${c.rewardTxt}<br/>險：${c.riskTxt}</div>
+        </button>`;
+      }).join("");
       grid._cards = cards;
 
-      broadcast(`關鍵時刻！${scenario.label}，#${Match.userPlayer.num} ${Match.userPlayer.name} 正在憑藉經驗臨場判斷破局方式！`, true);
+      const coachNote = isCrunch && trust >= 75 && side === "OFFENSE"
+        ? "教練喊出戰術手勢：「最後一擊交給你處理！」"
+        : (trust < 30 ? "教練在場邊緊盯你的每一次選擇！" : "");
+      broadcast(`關鍵時刻！${scenario.label}，#${Match.userPlayer.num} ${Match.userPlayer.name} 正在評估風險與破局方式！${coachNote}`, true);
       setDockMode("BULLET"); updateHUD();
     }
 
@@ -2885,16 +3075,40 @@
       const tierMul = 1 + (((Match.league && Match.league.difficultyTier) || 1) - 1) * 0.09;
       document.getElementById("qteTitle").textContent = card.name;
       const btn = document.getElementById("btnQteAction");
+      const dirRow = document.getElementById("qteDirRow");
+      btn.style.display = "block";
+      if (dirRow) dirRow.classList.remove("active");
+
       if (card.qteType === "SHOT_ARC") {
         const span = Math.min(0.18, Math.max(0.055, 0.095 * wMul));
-        Match.qte = { type: "SHOT_ARC", pos: 0.02, dir: 1, speed: (Match.isGrit ? 1.75 : (Match.isZone ? 1.25 : 1.52)) * tierMul, perfStart: 0.5 - span / 2, perfEnd: 0.5 + span / 2, goodStart: 0.5 - span * 1.30, goodEnd: 0.5 + span * 1.30, readyAt: now + 150 };
+        Match.qte = { type: "SHOT_ARC", pos: 0.02, dir: 1, speed: (Match.isGrit ? 1.65 : (Match.isZone ? 1.25 : 1.52)) * tierMul, perfStart: 0.5 - span / 2, perfEnd: 0.5 + span / 2, goodStart: 0.5 - span * 1.30, goodEnd: 0.5 + span * 1.30, readyAt: now + 150 };
         document.getElementById("qteSub").textContent = "金色最高點精準鎖定（速度隨聯賽提升）"; btn.textContent = "🏀 出手 (SPACE)";
+      } else if (card.qteType === "DOUBLE_RING") {
+        const tol = Math.min(0.095, Math.max(0.036, 0.054 * wMul));
+        Match.qte = {
+          type: "DOUBLE_RING", stage: 1, stage1Grade: null,
+          ringR: 1.0, speed: (Match.isZone ? 0.78 : 0.96) * tierMul,
+          targetR: 0.36, perfTol: tol, goodTol: tol * 2.1, readyAt: now + 150
+        };
+        document.getElementById("qteSub").textContent = "二段時機 ① 起跳／假動作 → ② 加速出手鎖定";
+        btn.textContent = "⚡ 第一段鎖定 (SPACE)";
+      } else if (card.qteType === "DIRECTION_SNAP") {
+        const targetDir = Math.floor(Math.random() * 3); // 0:左, 1:中, 2:右
+        const maxT = Math.max(0.78, (1.18 / tierMul) * Math.min(1.22, Math.max(0.85, wMul)));
+        Match.qte = {
+          type: "DIRECTION_SNAP", targetDir, timeLeft: maxT, maxTime: maxT,
+          labels: card.side === "DEFENSE" ? ["◀ 左翼封阻", "▲ 正面抄截", "▶ 右翼補防"] : ["◀ 左路變向", "▲ 中路直切", "▶ 右路分球"],
+          readyAt: now + 120
+        };
+        btn.style.display = "none";
+        if (dirRow) dirRow.classList.add("active");
+        document.getElementById("qteSub").textContent = "瞬間判斷金色方向！點擊按鈕或按 ← / ↑ / →";
       } else if (card.qteType === "RING_TIMING") {
         const tol = Math.min(0.085, Math.max(0.032, 0.048 * wMul));
-        Match.qte = { type: "RING_TIMING", ringR: 1.0, speed: (Match.isGrit ? 1.15 : (Match.isZone ? 0.80 : 0.98)) * tierMul, targetR: 0.34, perfTol: tol, goodTol: tol * 2.0, readyAt: now + 150 };
+        Match.qte = { type: "RING_TIMING", ringR: 1.0, speed: (Match.isGrit ? 1.08 : (Match.isZone ? 0.80 : 0.98)) * tierMul, targetR: 0.34, perfTol: tol, goodTol: tol * 2.0, readyAt: now + 150 };
         document.getElementById("qteSub").textContent = "縮圈重疊金環瞬間精準鎖定"; btn.textContent = "💥 鎖定 (SPACE)";
       } else if (card.qteType === "MASH_CLASH") {
-        Match.qte = { type: "MASH_CLASH", power: 0.30, timeLeft: 1.25, drainPerSec: (Match.isGrit ? 0.36 : 0.31) * tierMul, gainPerTap: 0.072 * Math.min(1.2, Math.max(0.7, wMul)), readyAt: now + 100 };
+        Match.qte = { type: "MASH_CLASH", power: 0.30, timeLeft: 1.25, drainPerSec: (Match.isGrit ? 0.34 : 0.31) * tierMul, gainPerTap: 0.072 * Math.min(1.2, Math.max(0.7, wMul)), readyAt: now + 100 };
         document.getElementById("qteSub").textContent = "極限連打推過 76% 金線"; btn.textContent = "💪 連打發力！(SPACE)";
       } else {
         const nt = Math.max(0.55, 0.72 / tierMul);
@@ -2903,11 +3117,51 @@
       }
     }
 
+    function handleQteDirection(dirIdx) {
+      if (Match.phase !== "QTE" || !Match.qte || Match.qte.type !== "DIRECTION_SNAP") return;
+      if (performance.now() < Match.qte.readyAt) return;
+      const q = Match.qte;
+      if (dirIdx === q.targetDir) {
+        const ratio = q.timeLeft / q.maxTime;
+        SoundFX.tap();
+        finishQTE(ratio >= 0.42 ? "PERFECT" : "GOOD");
+      } else {
+        SoundFX.clank();
+        finishQTE("MISS");
+      }
+    }
+
     function handleQteInput(cx = null, cy = null) {
       if (Match.phase !== "QTE" || !Match.qte || performance.now() < Match.qte.readyAt) return;
       const q = Match.qte;
       if (q.type === "SHOT_ARC") finishQTE((q.pos >= q.perfStart && q.pos <= q.perfEnd) ? "PERFECT" : (q.pos >= q.goodStart && q.pos <= q.goodEnd) ? "GOOD" : "MISS");
       else if (q.type === "RING_TIMING") { const d = Math.abs(q.ringR - q.targetR); finishQTE(d <= q.perfTol ? "PERFECT" : d <= q.goodTol ? "GOOD" : "MISS"); }
+      else if (q.type === "DOUBLE_RING") {
+        const d = Math.abs(q.ringR - q.targetR);
+        const g = d <= q.perfTol ? "PERFECT" : d <= q.goodTol ? "GOOD" : "MISS";
+        if (q.stage === 1) {
+          q.stage1Grade = g;
+          q.stage = 2;
+          q.ringR = 1.0;
+          q.speed = q.speed * 1.24; // 第二段加速收縮
+          q.targetR = 0.31;
+          q.readyAt = performance.now() + 100;
+          if (g === "MISS") SoundFX.clank(); else SoundFX.tap();
+          document.getElementById("btnQteAction").textContent = "🔥 第二段終結鎖定！(SPACE)";
+        } else {
+          // 兩段綜合評級
+          if (q.stage1Grade === "PERFECT" && g === "PERFECT") finishQTE("PERFECT");
+          else if ((q.stage1Grade === "PERFECT" && g === "GOOD") || (q.stage1Grade === "GOOD" && g === "PERFECT")) finishQTE("PERFECT");
+          else if (q.stage1Grade !== "MISS" || g !== "MISS") finishQTE("GOOD");
+          else finishQTE("MISS");
+        }
+      }
+      else if (q.type === "DIRECTION_SNAP") {
+        if (cx !== null) {
+          const pickedDir = cx < 0.333 ? 0 : (cx < 0.666 ? 1 : 2);
+          handleQteDirection(pickedDir);
+        }
+      }
       else if (q.type === "MASH_CLASH") { q.power = Math.min(1.0, q.power + q.gainPerTap); SoundFX.tap(); }
       else if (q.type === "DUAL_SNAP") {
         const node = q.nodes[q.step];
@@ -2930,12 +3184,48 @@
         qCtx.strokeStyle = "#FACC15"; qCtx.lineWidth = 14; qCtx.beginPath(); qCtx.ellipse(cx, cy, rx, ry, 0, ang(q.perfStart), ang(q.perfEnd)); qCtx.stroke();
         const a = ang(q.pos); qCtx.fillStyle = "#EA580C"; qCtx.strokeStyle = "#FFF"; qCtx.lineWidth = 3;
         qCtx.beginPath(); qCtx.arc(cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, 10, 0, Math.PI * 2); qCtx.fill(); qCtx.stroke();
-      } else if (q.type === "RING_TIMING") {
-        q.ringR -= q.speed * dt; if (q.ringR <= 0.08) { finishQTE("MISS"); return; }
+      } else if (q.type === "RING_TIMING" || q.type === "DOUBLE_RING") {
+        q.ringR -= q.speed * dt;
+        if (q.ringR <= 0.08) {
+          if (q.type === "DOUBLE_RING" && q.stage === 1) {
+            q.stage1Grade = "MISS"; q.stage = 2; q.ringR = 1.0; q.speed *= 1.24; q.targetR = 0.31;
+            document.getElementById("btnQteAction").textContent = "🔥 第二段終結鎖定！(SPACE)";
+          } else {
+            finishQTE(q.type === "DOUBLE_RING" && q.stage1Grade && q.stage1Grade !== "MISS" ? "GOOD" : "MISS");
+            return;
+          }
+        }
         const cx = w * 0.5, cy = h * 0.5, maxR = Math.min(w, h) * 0.44;
         qCtx.strokeStyle = "rgba(22,163,74,0.45)"; qCtx.lineWidth = maxR * q.goodTol * 2; qCtx.beginPath(); qCtx.arc(cx, cy, maxR * q.targetR, 0, Math.PI * 2); qCtx.stroke();
-        qCtx.strokeStyle = "#FACC15"; qCtx.lineWidth = Math.max(6, maxR * q.perfTol * 1.8); qCtx.beginPath(); qCtx.arc(cx, cy, maxR * q.targetR, 0, Math.PI * 2); qCtx.stroke();
+        qCtx.strokeStyle = q.type === "DOUBLE_RING" && q.stage === 2 ? "#EF4444" : "#FACC15";
+        qCtx.lineWidth = Math.max(6, maxR * q.perfTol * 1.8); qCtx.beginPath(); qCtx.arc(cx, cy, maxR * q.targetR, 0, Math.PI * 2); qCtx.stroke();
         qCtx.strokeStyle = "#FFF"; qCtx.lineWidth = 5; qCtx.beginPath(); qCtx.arc(cx, cy, maxR * q.ringR, 0, Math.PI * 2); qCtx.stroke();
+        if (q.type === "DOUBLE_RING") {
+          qCtx.fillStyle = "#FACC15"; qCtx.font = "900 13px sans-serif"; qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
+          qCtx.fillText(q.stage === 1 ? "① 起跳" : "② 終結!", cx, cy);
+        }
+      } else if (q.type === "DIRECTION_SNAP") {
+        q.timeLeft -= dt;
+        if (q.timeLeft <= 0) { finishQTE("MISS"); return; }
+        const ratio = Math.max(0, q.timeLeft / q.maxTime);
+        const pad = 12, gap = 10, boxW = (w - pad * 2 - gap * 2) / 3, boxH = h * 0.56, by = h * 0.14;
+        for (let i = 0; i < 3; i++) {
+          const bx = pad + i * (boxW + gap);
+          const isTarget = i === q.targetDir;
+          qCtx.fillStyle = isTarget ? "#FACC15" : "#292524";
+          qCtx.fillRect(bx, by, boxW, boxH);
+          qCtx.strokeStyle = isTarget ? "#FFF" : "#57534E";
+          qCtx.lineWidth = isTarget ? 3.5 : 2;
+          qCtx.strokeRect(bx, by, boxW, boxH);
+          qCtx.fillStyle = isTarget ? "#111" : "#A8A29E";
+          qCtx.font = "900 13px sans-serif"; qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
+          qCtx.fillText(q.labels[i], bx + boxW / 2, by + boxH / 2);
+        }
+        // 底部倒數計時條
+        const barY = h * 0.80, barH = 12, barW = w - pad * 2;
+        qCtx.fillStyle = "#292524"; qCtx.fillRect(pad, barY, barW, barH);
+        qCtx.fillStyle = ratio >= 0.42 ? "#FACC15" : "#EF4444";
+        qCtx.fillRect(pad, barY, barW * ratio, barH);
       } else if (q.type === "MASH_CLASH") {
         q.timeLeft -= dt; q.power = Math.max(0.05, q.power - q.drainPerSec * dt);
         if (q.timeLeft <= 0) { finishQTE(q.power >= 0.76 ? "PERFECT" : q.power >= 0.52 ? "GOOD" : "MISS"); return; }
@@ -3083,8 +3373,21 @@
       }
 
       if (Match.isZone) { Match.zonePossessionsLeft -= 1; if (Match.zonePossessionsLeft <= 0) Match.isZone = false; }
+      // 依卡片風險／報酬即時微調教練信任並給出對話回饋
+      if (card && typeof card.trustWin === "number") {
+        if (success && card.trustWin > 0) {
+          const msg = card.isCoachPlay ? "完美執行教練欽點戰術！"
+            : (card.zone === "PASS" ? "漂亮分球帶動團隊，教練滿意點頭！"
+            : (card.side === "DEFENSE" ? "鐵血防守立功，場邊教練用力鼓掌！"
+            : (card.riskLevel === "HIGH" ? "大膽出手命中，全隊氣勢大振！" : "")));
+          adjustCoachTrustLive(card.trustWin, msg);
+        } else if (!success && card.trustFail < 0) {
+          adjustCoachTrustLive(card.trustFail, "高風險強攻失手，教練眉頭一皺提醒要注意出手選擇。");
+        }
+      }
       Match.activeScenario = null; Match.simAccumulator = 0;
       updateHUD();
+      saveMatchCheckpoint(false);
       let tier = "NORMAL", tierLabel = "普通回合";
       if (!splash.good) { tier = "FAIL"; tierLabel = "失手 / 被破"; }
       else if (card.isZoneCard || Match.isZone) { tier = "ZONE"; tierLabel = "🔥 ZONE 領域特殊技"; }
@@ -4417,6 +4720,13 @@
         if (card) chooseBulletCard(card);
       });
       document.getElementById("btnQteAction").addEventListener("click", () => handleQteInput(null, null));
+      const qteDirRowEl = document.getElementById("qteDirRow");
+      if (qteDirRowEl) {
+        qteDirRowEl.addEventListener("click", (e) => {
+          const b = e.target.closest("[data-qdir]");
+          if (b) handleQteDirection(Number(b.dataset.qdir));
+        });
+      }
       document.getElementById("qteArena").addEventListener("pointerdown", (e) => {
         const r = qteCanvas.getBoundingClientRect();
         handleQteInput((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height);
@@ -4424,6 +4734,9 @@
       window.addEventListener("keydown", (e) => {
         if (e.code === "Space" && tqState && tqState.active) { e.preventDefault(); resolveExtremeTrainQTE(true); }
         else if (e.code === "Space" && Match.phase === "QTE") { e.preventDefault(); handleQteInput(null, null); }
+        else if (Match.phase === "QTE" && Match.qte && Match.qte.type === "DIRECTION_SNAP" && (e.code === "ArrowLeft" || e.code === "KeyA")) { e.preventDefault(); handleQteDirection(0); }
+        else if (Match.phase === "QTE" && Match.qte && Match.qte.type === "DIRECTION_SNAP" && (e.code === "ArrowUp" || e.code === "KeyW")) { e.preventDefault(); handleQteDirection(1); }
+        else if (Match.phase === "QTE" && Match.qte && Match.qte.type === "DIRECTION_SNAP" && (e.code === "ArrowRight" || e.code === "KeyD")) { e.preventDefault(); handleQteDirection(2); }
         else if (e.code === "Space" && Match.phase === "RESULT_SPLASH") { e.preventDefault(); Match.resultSplash = null; Match.phase = "PLAYING"; }
         else if (e.code === "Escape" && Match.phase !== "IDLE") { if (Match.phase === "PAUSED_MENU") closePauseCenter(); else openPauseCenter(Match.phase === "ENDED"); }
       });
