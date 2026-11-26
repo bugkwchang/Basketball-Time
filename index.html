@@ -1150,7 +1150,7 @@
             heightCm: Season.player.heightCm,
             stats: { ...Season.player.stats },
             skills: [...(Season.equippedTraits || [])],
-            ovr: calcOVR12(Season.player.stats)
+            ovr: calcOVR(Season.player.stats, Season.player.pos, Season.equippedTraits)
           };
         }
         return (p.stats && p.heightCm && Array.isArray(p.skills)) ? p : generateNpcProfile(p);
@@ -1197,7 +1197,7 @@
       if (!Season || !Season.player) return;
       const p = Season.player;
       if (typeof p.coachTrust !== "number") p.coachTrust = 35;
-      const ovr = calcOVR12(p.stats);
+      const ovr = calcOVR(p.stats, p.pos, Season.equippedTraits);
       const curLeague = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
       const lgAvg = curLeague.teams.reduce((s, t) => s + (t.ovr || 75), 0) / Math.max(1, curLeague.teams.length);
       const prevKey = Season.rotationKey;
@@ -1354,7 +1354,7 @@
         uSlot.name = playerObj.name;
         uSlot.pos = playerObj.pos;
         uSlot.heightCm = playerObj.heightCm;
-        uSlot.ovr = calcOVR12(playerObj.stats);
+        uSlot.ovr = calcOVR(playerObj.stats, playerObj.pos, Season ? Season.equippedTraits : []);
       }
       return roster;
     }
@@ -1557,7 +1557,7 @@
       g.played = true; g.userScore = us; g.oppScore = os;
       const rotWin = getEffectiveRotationWindow();
       const minScale = rotWin.targetPct / 0.80;
-      const uOvr = Season.player ? calcOVR12(Season.player.stats) : 72;
+      const uOvr = Season.player ? calcOVR(Season.player.stats, Season.player.pos, Season.equippedTraits) : 72;
       const leagueAvgOvr = league.teams.reduce((s, t) => s + (t.ovr || 85), 0) / Math.max(1, league.teams.length);
       const ovrGap = uOvr - leagueAvgOvr;
       const ovrMul = Math.max(0.28, Math.min(1.45, Math.pow(Math.max(0.45, uOvr / leagueAvgOvr), 2.3)));
@@ -3231,10 +3231,149 @@
     // ---------- PHASE 3.5: 12-ATTR SYSTEM, 4-TIER TRAINING OUTCOMES, AUTO EVENT CHAINING ----------
     // DB.origins 與 DB.events 已統一由 loadGameDatabases() 非同步載入
 
-    function calcOVR12(st) {
-      if (!st) return 75;
-      const vals = Object.values(st).map(Number);
-      return Math.round(vals.reduce((a, b) => a + b, 0) / Math.max(1, vals.length));
+    // ---------- OVR 位置權重與技能加減權系統（可調平衡表） ----------
+    const OVR_CONFIG = {
+      attrs: [
+        "threePt", "midRange", "inside", "playmaking",
+        "perimDef", "intDef", "rebound",
+        "speed", "vertical", "strength", "iq", "grit"
+      ],
+      defaultAttrVal: 60,
+      minOvr: 40,
+      maxOvr: 99,
+      // 各位置 12 項屬性權重（每列總和 = 1.00）
+      posWeights: {
+        PG: {
+          playmaking: 0.16, speed: 0.14, iq: 0.14, threePt: 0.11,
+          perimDef: 0.11, midRange: 0.08, inside: 0.07, grit: 0.07,
+          vertical: 0.04, strength: 0.03, rebound: 0.03, intDef: 0.02
+        },
+        SG: {
+          threePt: 0.15, midRange: 0.13, speed: 0.12, perimDef: 0.12,
+          inside: 0.10, iq: 0.09, playmaking: 0.08, grit: 0.07,
+          vertical: 0.06, strength: 0.04, rebound: 0.02, intDef: 0.02
+        },
+        SF: {
+          inside: 0.11, threePt: 0.11, perimDef: 0.11, midRange: 0.10,
+          speed: 0.10, vertical: 0.09, iq: 0.09, grit: 0.08,
+          playmaking: 0.07, rebound: 0.06, strength: 0.05, intDef: 0.03
+        },
+        PF: {
+          inside: 0.14, rebound: 0.14, intDef: 0.13, strength: 0.12,
+          vertical: 0.09, midRange: 0.08, grit: 0.08, iq: 0.07,
+          perimDef: 0.05, threePt: 0.04, speed: 0.04, playmaking: 0.02
+        },
+        C: {
+          intDef: 0.17, rebound: 0.17, inside: 0.15, strength: 0.14,
+          vertical: 0.08, grit: 0.08, iq: 0.07, midRange: 0.05,
+          perimDef: 0.03, speed: 0.03, playmaking: 0.02, threePt: 0.01
+        }
+      },
+      // 技能 / 特質對 OVR 的加減權
+      skillModifiers: {
+        BADGE: 1.2,            // 預設徽章加分（若帶 _t2 / _t3 / _t4 則依階級覆寫）
+        BADGE_TIER: {
+          t2: 0.9,
+          t3: 1.3,
+          t4: 1.8
+        },
+        BLUE_TRAIT: 0.8,       // 藍色正面特質
+        RED_TRAIT: -1.5,       // 紅色負面特質
+        PHYSICAL: 0.3,         // 一般體型天賦
+        PHYSICAL_OVERRIDES: {
+          height_unicorn: 1.5  // 獨角獸靜態天賦額外加權
+        },
+        SYSTEM: 0,             // 系統規則類不計入 OVR
+        maxBonus: 8.0,         // 正向技能總加分上限（防後期通膨）
+        minPenalty: -6.0       // 負面特質總扣分下限
+      }
+    };
+
+    function getSkillCategoryLookup() {
+      if (!DB || !DB.skills || !Array.isArray(DB.skills.skills)) return {};
+      if (!DB.skills._catMap) {
+        DB.skills._catMap = Object.fromEntries(DB.skills.skills.map(s => [s.id, s.category]));
+      }
+      return DB.skills._catMap;
+    }
+
+    function calcSkillOvrDelta(skillIds) {
+      if (!Array.isArray(skillIds) || skillIds.length === 0) return 0;
+      const catMap = getSkillCategoryLookup();
+      const mod = OVR_CONFIG.skillModifiers;
+      const uniqueIds = Array.from(new Set(skillIds));
+      let delta = 0;
+
+      for (const id of uniqueIds) {
+        const cat = catMap[id];
+        if (!cat) continue;
+        if (cat === "BADGE") {
+          const tierMatch = /_(t[2-4])$/.exec(id);
+          delta += (tierMatch && mod.BADGE_TIER[tierMatch[1]] !== undefined)
+            ? mod.BADGE_TIER[tierMatch[1]]
+            : mod.BADGE;
+        } else if (cat === "BLUE_TRAIT") {
+          delta += mod.BLUE_TRAIT;
+        } else if (cat === "RED_TRAIT") {
+          delta += mod.RED_TRAIT;
+        } else if (cat === "PHYSICAL") {
+          delta += (mod.PHYSICAL_OVERRIDES[id] !== undefined)
+            ? mod.PHYSICAL_OVERRIDES[id]
+            : mod.PHYSICAL;
+        }
+      }
+      return Math.max(mod.minPenalty, Math.min(mod.maxBonus, delta));
+    }
+
+    /**
+     * 計算球員綜合評價 OVR（向後相容舊呼叫與舊存檔）
+     * 用法 1：calcOVR(playerObj)                      // 自動讀取 stats、pos、skills
+     * 用法 2：calcOVR(statsObj, "PG", skillIdsArray)  // 明確傳入屬性、位置、技能
+     * 用法 3：calcOVR(statsObj)                       // 無位置時自動退回 12 屬性均權
+     */
+    function calcOVR(playerOrStats, pos = null, skillIds = null) {
+      if (!playerOrStats) return 75;
+
+      // 偵測是否傳入完整球員物件（含 .stats）
+      const isPlayerObj = Boolean(playerOrStats.stats && typeof playerOrStats.stats === "object");
+      const st = isPlayerObj ? playerOrStats.stats : playerOrStats;
+      const resolvedPos = pos || (isPlayerObj ? playerOrStats.pos : null);
+      let resolvedSkills = skillIds;
+      if (!resolvedSkills && isPlayerObj) {
+        resolvedSkills = Array.isArray(playerOrStats.skills)
+          ? playerOrStats.skills
+          : (typeof Season !== "undefined" && Season && Season.player === playerOrStats ? Season.equippedTraits : []);
+      }
+
+      const weights = resolvedPos ? OVR_CONFIG.posWeights[resolvedPos] : null;
+      let weightedSum = 0;
+      let totalWeight = 0;
+
+      if (weights) {
+        for (const k of OVR_CONFIG.attrs) {
+          const w = weights[k] || 0;
+          const raw = st[k];
+          const val = (typeof raw === "number" && !Number.isNaN(raw)) ? raw : OVR_CONFIG.defaultAttrVal;
+          weightedSum += val * w;
+          totalWeight += w;
+        }
+      } else {
+        // 無位置資訊時維持 12 項屬性等權平均（向後相容）
+        const vals = Object.values(st).map(Number).filter(v => !Number.isNaN(v));
+        if (vals.length === 0) return 75;
+        weightedSum = vals.reduce((a, b) => a + b, 0);
+        totalWeight = vals.length;
+      }
+
+      const baseOvr = totalWeight > 0 ? (weightedSum / totalWeight) : 75;
+      const skillDelta = calcSkillOvrDelta(resolvedSkills);
+      const finalOvr = Math.round(baseOvr + skillDelta);
+      return Math.max(OVR_CONFIG.minOvr, Math.min(OVR_CONFIG.maxOvr, finalOvr));
+    }
+
+    // 向後相容別名：保留舊函式名稱 calcOVR12
+    function calcOVR12(st, pos = null, skillIds = null) {
+      return calcOVR(st, pos, skillIds);
     }
 
     function render12StatGrid(st, lastDelta = null, heightCm = null) {
@@ -3311,7 +3450,7 @@
       document.getElementById("createRerollTag").textContent = mode === "FATE_MODE" ? `命運重骰：${createRerollsLeft} / 3` : "標準自訂模式";
       document.getElementById("btnCreateRoll").style.display = mode === "CUSTOM_MODE" ? "none" : "inline-flex";
       document.getElementById("btnCreateRoll").disabled = (mode === "FATE_MODE" && createRerollsLeft <= 0);
-      document.getElementById("createCapTag").textContent = `潛力上限 ${rarity.cap} · OVR ${calcOVR12(stats)}`;
+      document.getElementById("createCapTag").textContent = `潛力上限 ${rarity.cap} · OVR ${calcOVR(stats, pos, skills)}`;
 
       const card = document.getElementById("createPreviewCard");
       card.className = `rarity-card ${rarity.style}`;
@@ -3354,7 +3493,7 @@
       createDraft.name = (document.getElementById("inpPlayerName").value || "主角 #10").trim();
       const customRoster = JSON.parse(JSON.stringify(DB.leagues.defaultUserRoster));
       const u = customRoster.find(p => p.isUser);
-      if (u) { u.name = createDraft.name; u.pos = createDraft.pos; u.ovr = calcOVR12(createDraft.stats); }
+      if (u) { u.name = createDraft.name; u.pos = createDraft.pos; u.ovr = calcOVR(createDraft.stats, createDraft.pos, createDraft.skills); }
       createNewCareer("hs_nationals", [], 1, customRoster);
       const trustByRarity = { mortal: 22, regional_gem: 38, generational: 58, once_in_century: 76 };
       const initTrust = trustByRarity[createDraft.rarity.id] || 32;
@@ -3443,7 +3582,7 @@
         btn.disabled = p.ap < need;
       });
 
-      const ovr = calcOVR12(p.stats);
+      const ovr = calcOVR(p.stats, p.pos, Season.equippedTraits);
       const stars = Math.min(5, Math.max(1, Math.round((ovr - 62) / 6.5) + (p.reputation >= 78 ? 1 : 0)));
       p.stars = stars;
       document.getElementById("trainStarsTag").textContent = "★".repeat(stars) + "☆".repeat(5 - stars);
@@ -3722,7 +3861,7 @@
             }
             const newRoster = buildOpponentRoster(topTeam).map((pl, idx2) => ({ ...pl, isRival: false, isUser: idx2 === 1 }));
             const uSlot = newRoster.find(x => x.isUser);
-            if (uSlot) { uSlot.num = 10; uSlot.name = p.name; uSlot.pos = p.pos; uSlot.heightCm = p.heightCm; uSlot.ovr = calcOVR12(p.stats); }
+            if (uSlot) { uSlot.num = 10; uSlot.name = p.name; uSlot.pos = p.pos; uSlot.heightCm = p.heightCm; uSlot.ovr = calcOVR(p.stats, p.pos, Season.equippedTraits); }
             Season.userRoster = newRoster;
           }
         }
@@ -3804,7 +3943,7 @@
         growthMsg = `目前 ${p.age} 歲，大賽經驗持續累積！`;
       }
 
-      const curOvr = calcOVR12(p.stats);
+      const curOvr = calcOVR(p.stats, p.pos, Season.equippedTraits);
       const hsRings = nextArchive.reduce((s, a) => s + (a.ring || 0), 0);
       const hsMvps = nextArchive.reduce((s, a) => s + (a.seasonMvp || 0) + (a.fmvp || 0), 0);
       const draftScore = curOvr + p.stars * 2.5 + hsRings * 3 + hsMvps * 2 + (p.reputation || 45) * 0.08;
