@@ -42,7 +42,7 @@
       "quarterMinutes": 8,
       "otMinutes": 4,
       "foulOutLimit": 5,
-      "seasonGames": 7,
+      "seasonGames": 12,
       "teams": [
         {
           "id": "shohoku",
@@ -2073,7 +2073,7 @@
       "quarterMinutes": 10,
       "otMinutes": 5,
       "foulOutLimit": 5,
-      "seasonGames": 8,
+      "seasonGames": 14,
       "teams": [
         {
           "id": "ncaa_duke",
@@ -3557,7 +3557,7 @@
       "quarterMinutes": 10,
       "otMinutes": 5,
       "foulOutLimit": 5,
-      "seasonGames": 14,
+      "seasonGames": 22,
       "teams": [
         {
           "id": "chiba_jets",
@@ -5566,7 +5566,7 @@
       "quarterMinutes": 10,
       "otMinutes": 5,
       "foulOutLimit": 5,
-      "seasonGames": 8,
+      "seasonGames": 20,
       "teams": [
         {
           "id": "eu_mad",
@@ -7117,7 +7117,7 @@
       "quarterMinutes": 12,
       "otMinutes": 5,
       "foulOutLimit": 6,
-      "seasonGames": 14,
+      "seasonGames": 28,
       "teams": [
         {
           "id": "lal",
@@ -9232,7 +9232,7 @@
       "quarterMinutes": 10,
       "otMinutes": 5,
       "foulOutLimit": 5,
-      "seasonGames": 6,
+      "seasonGames": 10,
       "teams": [
         {
           "id": "fiba_jpn",
