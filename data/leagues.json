@@ -77,8 +77,8 @@
               "blkW": 0.05
             },
             {
-              "num": 10,
-              "name": "主角 #10",
+              "num": 18,
+              "name": "新秀主角",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 60,
@@ -10800,8 +10800,8 @@
       "blkW": 0.05
     },
     {
-      "num": 10,
-      "name": "主角 #10",
+      "num": 18,
+      "name": "新秀主角",
       "pos": "SG",
       "role": "STARTER",
       "ovr": 60,
