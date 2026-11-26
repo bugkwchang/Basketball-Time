@@ -1,0 +1,1569 @@
+{
+  "skills": [
+    {
+      "id": "height_petite",
+      "name": "📏 靈巧小鋼炮",
+      "category": "PHYSICAL",
+      "iqBonus": 2,
+      "triggerDesc": "常駐身體天賦（開局隨機抽取）",
+      "desc": "身高較同位置偏矮 (-6cm)，但重心極低！速度 +4、組織 +3、外線橫移更靈敏，面對高大防守者更易切入過人。",
+      "conditions": [],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": "height_standard",
+      "name": "📏 標準黃金體型",
+      "category": "PHYSICAL",
+      "iqBonus": 0,
+      "triggerDesc": "常駐身體天賦（開局隨機抽取）",
+      "desc": "符合該位置嘅標準身高比例 (+0cm)，攻守平衡無明顯身材短板，高中期仍有機會自然抽高。",
+      "conditions": [],
+      "modifiers": []
+    },
+    {
+      "id": "height_long",
+      "name": "📏 長臂高個",
+      "category": "PHYSICAL",
+      "iqBonus": 0,
+      "triggerDesc": "常駐身體天賦（開局隨機抽取）",
+      "desc": "高出同位置一截 (+5cm)！護框 +3、籃板 +3、外防 +2，干擾投籃同搶板範圍顯著擴大。",
+      "conditions": [],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 4
+        }
+      ]
+    },
+    {
+      "id": "height_tower",
+      "name": "📏 錯位高塔",
+      "category": "PHYSICAL",
+      "iqBonus": 0,
+      "triggerDesc": "常駐身體天賦（開局隨機抽取）",
+      "desc": "罕見嘅高大身材 (+9cm)！籃板 +5、護框 +4、內線 +3（速度 -2），對位同位置球員形成強烈高度錯位優勢。",
+      "conditions": [],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 6
+        },
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "height_unicorn",
+      "name": "🌟 獨角獸靜態天賦",
+      "category": "PHYSICAL",
+      "iqBonus": 2,
+      "triggerDesc": "常駐超稀有身體天賦 (3%)",
+      "desc": "百年一遇嘅異次元靜態天賦 (+13cm)！護框 +6、籃板 +5、彈跳 +3、三分 +2，兼具高塔高度與靈活身手。",
+      "conditions": [],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 8
+        },
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "id": "big_heart",
+      "name": "🔵 大心臟",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 4,
+      "triggerDesc": "第 4 節最後 3 分鐘、分差 ≤ 6 分",
+      "desc": "關鍵時刻越打越冷靜！命中率 +12%、QTE 完美判定區擴大 25%，臨場判讀更精準。",
+      "conditions": [
+        {
+          "field": "quarter",
+          "op": "gte",
+          "value": 4
+        },
+        {
+          "field": "timeLeftSec",
+          "op": "lte",
+          "value": 180
+        },
+        {
+          "field": "scoreDiffAbs",
+          "op": "lte",
+          "value": 6
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 12
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.25
+        }
+      ]
+    },
+    {
+      "id": "microwave",
+      "name": "🔵 微波爐",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 0,
+      "triggerDesc": "連續進球 ≥ 2 球",
+      "desc": "一入波就極速升溫！連續命中後出手命中率 +8%、高光張力累積速度提升 28%。",
+      "conditions": [
+        {
+          "field": "makeStreak",
+          "op": "gte",
+          "value": 2
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 8
+        },
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.28
+        }
+      ]
+    },
+    {
+      "id": "floor_iq",
+      "name": "🔵 冷靜球商",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 8,
+      "triggerDesc": "體力 ≥ 20% 時常駐",
+      "desc": "閱讀比賽能力出眾！大幅降低選項成功率嘅誤判幅度，防守預判評分 +4。",
+      "conditions": [
+        {
+          "field": "staminaPct",
+          "op": "gte",
+          "value": 20
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 4
+        }
+      ]
+    },
+    {
+      "id": "iron_lungs",
+      "name": "🔵 鐵肺續航",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 0,
+      "triggerDesc": "全場常駐",
+      "desc": "驚人嘅心肺耐力！實戰每回合體力消耗減少 22%，第四節依然保持充沛體能。",
+      "conditions": [],
+      "modifiers": [
+        {
+          "target": "staminaDrain",
+          "op": "MUL",
+          "value": 0.78
+        }
+      ]
+    },
+    {
+      "id": "alpha_dog",
+      "name": "🔵 逆境領袖",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 3,
+      "triggerDesc": "比賽進入下半場（第 3 節起）且分差 ≤ 10 分",
+      "desc": "絕境扛隊前進！下半場焦灼戰命中率 +7%、張力累積 +20%。",
+      "conditions": [
+        {
+          "field": "quarter",
+          "op": "gte",
+          "value": 3
+        },
+        {
+          "field": "scoreDiffAbs",
+          "op": "lte",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 7
+        },
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.2
+        }
+      ]
+    },
+    {
+      "id": "clutch_stealer",
+      "name": "🔵 關鍵盜球手",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 2,
+      "triggerDesc": "第 4 節防守回合",
+      "desc": "末節專盯傳球路線！第 4 節防守判定成功率 +12%、完美 QTE 範圍 +18%。",
+      "conditions": [
+        {
+          "field": "quarter",
+          "op": "gte",
+          "value": 4
+        },
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 12
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.18
+        }
+      ]
+    },
+    {
+      "id": "fastbreak_king",
+      "name": "🔵 快攻箭頭",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 0,
+      "triggerDesc": "體力 ≥ 65% 時進攻回合",
+      "desc": "體力充沛時轉換進攻銳不可當！命中率 +6%、張力累積速度 +15%。",
+      "conditions": [
+        {
+          "field": "staminaPct",
+          "op": "gte",
+          "value": 65
+        },
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "OFFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 6
+        },
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.15
+        }
+      ]
+    },
+    {
+      "id": "streaky_shooter",
+      "name": "🔴 神經刀",
+      "category": "RED_TRAIT",
+      "iqBonus": -6,
+      "triggerDesc": "連續打鐵 ≥ 2 球（可透過 2 AP 極限特訓洗走）",
+      "desc": "手感極易起伏！連失兩球後信心受挫，命中率 -10%、QTE 完美區縮小 18%。",
+      "conditions": [
+        {
+          "field": "missStreak",
+          "op": "gte",
+          "value": 2
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": -10
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 0.82
+        }
+      ]
+    },
+    {
+      "id": "foul_trouble",
+      "name": "🔴 犯規麻煩",
+      "category": "RED_TRAIT",
+      "iqBonus": -2,
+      "triggerDesc": "個人犯規 ≥ 3 次（可透過 2 AP 極限特訓洗走）",
+      "desc": "防守動作毛躁易吃哨！背負 3 次以上犯規時防守綁手綁腳，防守評分 -12。",
+      "conditions": [
+        {
+          "field": "fouls",
+          "op": "gte",
+          "value": 3
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": -12
+        }
+      ]
+    },
+    {
+      "id": "glass_ankles",
+      "name": "🔴 體能瓶頸",
+      "category": "RED_TRAIT",
+      "iqBonus": -2,
+      "triggerDesc": "體力 < 35%（可透過 2 AP 極限特訓洗走）",
+      "desc": "體力見底時雙腿發沉！體力低於 35% 時命中率 -8%、體力消耗加快 15%。",
+      "conditions": [
+        {
+          "field": "staminaPct",
+          "op": "lt",
+          "value": 35
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": -8
+        },
+        {
+          "target": "staminaDrain",
+          "op": "MUL",
+          "value": 1.15
+        }
+      ]
+    },
+    {
+      "id": "tunnel_vision",
+      "name": "🔴 單打獨鬥",
+      "category": "RED_TRAIT",
+      "iqBonus": -7,
+      "triggerDesc": "全場常駐（可透過 2 AP 極限特訓洗走）",
+      "desc": "進攻過於沉迷個人單打而忽略隊友，臨場局勢判讀誤差顯著增加。",
+      "conditions": [],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": -2
+        }
+      ]
+    },
+    {
+      "id": "deadeye_three_t4",
+      "name": "🏅 死神三分 IV",
+      "category": "BADGE",
+      "iqBonus": 2,
+      "triggerDesc": "三分區域進攻出手",
+      "desc": "頂級外線神射手！三分出手命中率 +11%、解鎖專屬【底角冷箭】招牌 Cut-in 大招。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "THREE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 11
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "corner_sniper"
+        }
+      ]
+    },
+    {
+      "id": "paint_beast_t3",
+      "name": "🏅 禁區支配者 III",
+      "category": "BADGE",
+      "iqBonus": 1,
+      "triggerDesc": "禁區終結進攻",
+      "desc": "內線強攻無解！禁區終結命中率 +10%、解鎖專屬【戰斧隔扣】招牌 Cut-in 大招。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "PAINT"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 10
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "tomahawk_poster"
+        }
+      ]
+    },
+    {
+      "id": "perimeter_lockdown_t3",
+      "name": "🏅 外線大鎖 III",
+      "category": "BADGE",
+      "iqBonus": 2,
+      "triggerDesc": "所有防守回合",
+      "desc": "窒息式貼防！防守判定 +10%、大幅提高外線抄截率，並解鎖【外線封阻】與【追魂釘板】防守 Cut-in。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 10
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "chasedown_reject"
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "perimeter_closeout"
+        }
+      ]
+    },
+    {
+      "id": "midrange_maestro_t3",
+      "name": "🏅 中投殺手 III",
+      "category": "BADGE",
+      "iqBonus": 2,
+      "triggerDesc": "中距離跳投與翻身後仰",
+      "desc": "古典中投大師！中距離出手命中率 +12%、QTE 完美區 +18%，解鎖【幻影後仰】Cut-in。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "MID"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 12
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.18
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "fadeaway_phantom"
+        }
+      ]
+    },
+    {
+      "id": "dimer_general_t3",
+      "name": "🏅 球場指揮官 III",
+      "category": "BADGE",
+      "iqBonus": 5,
+      "triggerDesc": "組織分球與擋拆傳導",
+      "desc": "大師級視野！傳球組織成功率 +12%，並提升臨場判斷精度與隊友接球終結效率。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "PASS"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 12
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.15
+        }
+      ]
+    },
+    {
+      "id": "rim_eraser_t4",
+      "name": "🏅 禁區禁飛區 IV",
+      "category": "BADGE",
+      "iqBonus": 1,
+      "triggerDesc": "防守回合護框封阻",
+      "desc": "籃底絕對威懾！防守判定 +12%、封阻成功率大幅提高，解鎖【追魂釘板】Cut-in。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 12
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "chasedown_reject"
+        }
+      ]
+    },
+    {
+      "id": "posterizer_t3",
+      "name": "🏅 隔扣狂魔 III",
+      "category": "BADGE",
+      "iqBonus": 0,
+      "triggerDesc": "禁區突破與暴扣",
+      "desc": "無視防守強行起飛！禁區終結 +9%、完美 QTE 命中率提升，解鎖【戰斧隔扣】Cut-in。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "PAINT"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 9
+        },
+        {
+          "target": "perfectBonusPct",
+          "op": "ADD",
+          "value": 6
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "tomahawk_poster"
+        }
+      ]
+    },
+    {
+      "id": "glass_cleaner_t3",
+      "name": "🏅 籃板吸塵機 III",
+      "category": "BADGE",
+      "iqBonus": 2,
+      "triggerDesc": "卡位籃板與補籃回合",
+      "desc": "精準預判落點！防守卡位與前場籃板判定 +9%，團隊進攻籃板搶奪率提升。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 9
+        }
+      ]
+    },
+    {
+      "id": "zone_state_rule",
+      "name": "🔥 ZONE 領域覺醒",
+      "category": "SYSTEM",
+      "iqBonus": 0,
+      "triggerDesc": "連續 2 次 QTE 完美判定自動開啟",
+      "desc": "進入無我境界！全領域命中率 +15%、解鎖第 4 張隱藏金卡【ZONE 無我三分】，持續 3 回合。",
+      "conditions": [
+        {
+          "field": "isZone",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 15
+        },
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 15
+        }
+      ]
+    },
+    {
+      "id": "grit_state_rule",
+      "name": "⚡ 極限意志 GRIT",
+      "category": "SYSTEM",
+      "iqBonus": 0,
+      "triggerDesc": "第 4 節最後 2 分鐘且體力 < 25%",
+      "desc": "黑白漫畫意志模式啟動！靠雙腿最後一口氣頂住疲勞，張力累積 +30%、完美判定區維持穩定。",
+      "conditions": [
+        {
+          "field": "quarter",
+          "op": "gte",
+          "value": 4
+        },
+        {
+          "field": "timeLeftSec",
+          "op": "lte",
+          "value": 120
+        },
+        {
+          "field": "staminaPct",
+          "op": "lt",
+          "value": 25
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.3
+        }
+      ]
+    },
+    {
+      "id": "height_wingspan",
+      "name": "📏 鋼鐵長臂怪",
+      "category": "PHYSICAL",
+      "iqBonus": 1,
+      "triggerDesc": "常駐身體天賦（開局隨機抽取）",
+      "desc": "身高略高 (+3cm) 但臂展驚人！抄截與干擾範圍極廣，外防 +4、護框 +4、籃板 +2。",
+      "conditions": [],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "id": "home_court_king",
+      "name": "🔵 主場之王",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 2,
+      "triggerDesc": "主場作戰常駐",
+      "desc": "主場球迷吶喊令你腎上腺素飆升！出手命中率 +5%、高光張力累積 +15%。",
+      "conditions": [
+        {
+          "field": "staminaPct",
+          "op": "gte",
+          "value": 25
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 5
+        },
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.15
+        }
+      ]
+    },
+    {
+      "id": "road_silencer",
+      "name": "🔵 客場消音器",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 3,
+      "triggerDesc": "第 3 節起焦灼戰",
+      "desc": "最鍾意喺客場噓聲中入波令全場鴉雀無聲！下半場命中率 +6%、完美區 +12%。",
+      "conditions": [
+        {
+          "field": "quarter",
+          "op": "gte",
+          "value": 3
+        },
+        {
+          "field": "scoreDiffAbs",
+          "op": "lte",
+          "value": 10
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 6
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.12
+        }
+      ]
+    },
+    {
+      "id": "first_quarter_spark",
+      "name": "🔵 首節先鋒",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 1,
+      "triggerDesc": "第 1 節進攻回合",
+      "desc": "開波即刻入狀態！第 1 節出手命中率 +10%、張力累積 +25%，幫球隊搶佔先機。",
+      "conditions": [
+        {
+          "field": "quarter",
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "OFFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 10
+        },
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.25
+        }
+      ]
+    },
+    {
+      "id": "late_bloomer_match",
+      "name": "🔵 越戰越勇",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 2,
+      "triggerDesc": "第 4 節或加時賽",
+      "desc": "打到最後一節先係真正戲肉！末節攻防判定雙雙 +6%，體力消耗減緩 12%。",
+      "conditions": [
+        {
+          "field": "quarter",
+          "op": "gte",
+          "value": 4
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 6
+        },
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 6
+        },
+        {
+          "target": "staminaDrain",
+          "op": "MUL",
+          "value": 0.88
+        }
+      ]
+    },
+    {
+      "id": "foul_merchant",
+      "name": "🔵 犯規製造機",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 3,
+      "triggerDesc": "禁區突破與中距離單打",
+      "desc": "極擅長利用假動作博取身體接觸！終結判定 +7%、臨場判讀更精準。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "in",
+          "value": [
+            "PAINT",
+            "MID"
+          ]
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 7
+        }
+      ]
+    },
+    {
+      "id": "glue_guy",
+      "name": "🔵 團隊黏合劑",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 4,
+      "triggerDesc": "全場常駐",
+      "desc": "無私走位同補防令全隊更流暢！防守評分 +5、傳球組織判定 +5%。",
+      "conditions": [],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 5
+        },
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "offball_ghost",
+      "name": "🔵 無球鬼魅",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 2,
+      "triggerDesc": "三分與中距離接球出手",
+      "desc": "繞掩護走位如鬼魅般難以捉摸！外線接球投射 +7%、完美區 +12%。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "in",
+          "value": [
+            "THREE",
+            "MID"
+          ]
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 7
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.12
+        }
+      ]
+    },
+    {
+      "id": "buzzer_assassin",
+      "name": "🔵 壓哨殺手",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 3,
+      "triggerDesc": "每節最後 45 秒",
+      "desc": "倒數計時器係你嘅節拍器！每節讀秒階段命中率 +14%、完美判定區 +22%。",
+      "conditions": [
+        {
+          "field": "timeLeftSec",
+          "op": "lte",
+          "value": 45
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 14
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.22
+        }
+      ]
+    },
+    {
+      "id": "ice_in_veins",
+      "name": "🔵 冰血神經",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 5,
+      "triggerDesc": "全場常駐",
+      "desc": "完全唔受氣氛或連鐵影響心態！大幅提升選項判斷準確度與 QTE 穩定度。",
+      "conditions": [],
+      "modifiers": [
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.12
+        }
+      ]
+    },
+    {
+      "id": "help_def_anchor",
+      "name": "🔵 協防指揮塔",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 4,
+      "triggerDesc": "所有防守回合",
+      "desc": "提早一步睇穿對手傳球同切入路線！防守判定 +7%、判讀誤差縮窄。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 7
+        }
+      ]
+    },
+    {
+      "id": "perpetual_motor",
+      "name": "🔵 永動機",
+      "category": "BLUE_TRAIT",
+      "iqBonus": 0,
+      "triggerDesc": "體力 ≥ 40% 時常駐",
+      "desc": "全場不知疲倦來回衝刺！體力消耗減少 16%、高光張力累積 +12%。",
+      "conditions": [
+        {
+          "field": "staminaPct",
+          "op": "gte",
+          "value": 40
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "staminaDrain",
+          "op": "MUL",
+          "value": 0.84
+        },
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.12
+        }
+      ]
+    },
+    {
+      "id": "slow_starter",
+      "name": "🔴 慢熱冰手",
+      "category": "RED_TRAIT",
+      "iqBonus": -2,
+      "triggerDesc": "第 1 節進攻回合（可極限特訓洗走）",
+      "desc": "開局手緊難以入戲！第 1 節出手命中率 -8%，需熱身後先回復正常。",
+      "conditions": [
+        {
+          "field": "quarter",
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "OFFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": -8
+        }
+      ]
+    },
+    {
+      "id": "clutch_choker",
+      "name": "🔴 關鍵手軟",
+      "category": "RED_TRAIT",
+      "iqBonus": -4,
+      "triggerDesc": "第 4 節最後 2 分鐘焦灼戰（可極限特訓洗走）",
+      "desc": "讀秒時刻壓力過大導致手腕僵硬！關鍵時刻命中率 -10%、完美區縮小 16%。",
+      "conditions": [
+        {
+          "field": "quarter",
+          "op": "gte",
+          "value": 4
+        },
+        {
+          "field": "timeLeftSec",
+          "op": "lte",
+          "value": 120
+        },
+        {
+          "field": "scoreDiffAbs",
+          "op": "lte",
+          "value": 6
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": -10
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 0.84
+        }
+      ]
+    },
+    {
+      "id": "defensive_sieve",
+      "name": "🔴 防守漏勺",
+      "category": "RED_TRAIT",
+      "iqBonus": -2,
+      "triggerDesc": "所有防守回合（可極限特訓洗走）",
+      "desc": "橫移注意力唔集中容易俾人一步過！防守判定 -8%。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": -8
+        }
+      ]
+    },
+    {
+      "id": "glass_body",
+      "name": "🔴 玻璃體質",
+      "category": "RED_TRAIT",
+      "iqBonus": 0,
+      "triggerDesc": "體力 < 50% 時（可極限特訓洗走）",
+      "desc": "耐操度偏低，下半場體能下滑更快！體力消耗增加 20%。",
+      "conditions": [
+        {
+          "field": "staminaPct",
+          "op": "lt",
+          "value": 50
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "staminaDrain",
+          "op": "MUL",
+          "value": 1.2
+        }
+      ]
+    },
+    {
+      "id": "hot_head",
+      "name": "🔴 情緒上頭",
+      "category": "RED_TRAIT",
+      "iqBonus": -5,
+      "triggerDesc": "連鐵 ≥ 2 球或犯規 ≥ 3 次（可極限特訓洗走）",
+      "desc": "逆境易怒導致盲目強投，臨場判讀大幅失準且命中率 -6%。",
+      "conditions": [
+        {
+          "field": "missStreak",
+          "op": "gte",
+          "value": 2
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": -6
+        }
+      ]
+    },
+    {
+      "id": "turnover_prone",
+      "name": "🔴 黃油手",
+      "category": "RED_TRAIT",
+      "iqBonus": -3,
+      "triggerDesc": "組織與傳球回合（可極限特訓洗走）",
+      "desc": "受壓迫時護球唔穩！傳球組織判定 -9%、QTE 完美區縮小 12%。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "PASS"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": -9
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 0.88
+        }
+      ]
+    },
+    {
+      "id": "limitless_range_t4",
+      "name": "🏅 超遠射程 IV",
+      "category": "BADGE",
+      "iqBonus": 2,
+      "triggerDesc": "三分區域出手",
+      "desc": "剛過半場就入射程！三分命中率 +12%、張力累積 +18%，解鎖【底角冷箭】Cut-in。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "THREE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 12
+        },
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.18
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "corner_sniper"
+        }
+      ]
+    },
+    {
+      "id": "ankle_breaker_t3",
+      "name": "🏅 腳踝終結者 III",
+      "category": "BADGE",
+      "iqBonus": 1,
+      "triggerDesc": "中距離或禁區持球單打",
+      "desc": "急停變向晃倒對手！單打命中率 +9%、QTE 完美判定區擴大 18%。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "in",
+          "value": [
+            "MID",
+            "PAINT"
+          ]
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 9
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.18
+        }
+      ]
+    },
+    {
+      "id": "floater_wizard_t3",
+      "name": "🏅 拋投魔術師 III",
+      "category": "BADGE",
+      "iqBonus": 2,
+      "triggerDesc": "禁區或中距離出手",
+      "desc": "高弧度拋投越過長人指尖！近框與中距離命中率 +9%。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "in",
+          "value": [
+            "PAINT",
+            "MID"
+          ]
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 9
+        }
+      ]
+    },
+    {
+      "id": "eurostep_assassin_t3",
+      "name": "🏅 歐洲步刺客 III",
+      "category": "BADGE",
+      "iqBonus": 1,
+      "triggerDesc": "禁區突破上籃",
+      "desc": "大幅度蛇形步法避開護框中鋒！禁區命中率 +10%、張力 +15%。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "PAINT"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 10
+        },
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.15
+        }
+      ]
+    },
+    {
+      "id": "corner_specialist_t3",
+      "name": "🏅 零度角刺客 III",
+      "category": "BADGE",
+      "iqBonus": 1,
+      "triggerDesc": "三分線出手",
+      "desc": "底角埋伏手起刀落！三分命中率 +9%、解鎖【底角冷箭】Cut-in。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "THREE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 9
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "corner_sniper"
+        }
+      ]
+    },
+    {
+      "id": "pnr_maestro_t3",
+      "name": "🏅 擋拆大師 III",
+      "category": "BADGE",
+      "iqBonus": 4,
+      "triggerDesc": "組織傳導與中距離進攻",
+      "desc": "精準閱讀擋拆防線！組織與中投命中率 +8%、大幅提升臨場判讀精度。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "in",
+          "value": [
+            "PASS",
+            "MID"
+          ]
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 8
+        }
+      ]
+    },
+    {
+      "id": "lob_city_passer_t3",
+      "name": "🏅 空接魔術師 III",
+      "category": "BADGE",
+      "iqBonus": 2,
+      "triggerDesc": "組織分球回合",
+      "desc": "精準拋出空中接力妙傳！傳球組織判定 +11%、張力累積 +22%。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "PASS"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 11
+        },
+        {
+          "target": "tensionGain",
+          "op": "MUL",
+          "value": 1.22
+        }
+      ]
+    },
+    {
+      "id": "glove_steal_t4",
+      "name": "🏅 鬼手抄截王 IV",
+      "category": "BADGE",
+      "iqBonus": 3,
+      "triggerDesc": "所有防守回合",
+      "desc": "電光火石掏球截斷！防守判定 +11%、完美判定區擴大 18%。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 11
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.18
+        }
+      ]
+    },
+    {
+      "id": "chasedown_artist_t4",
+      "name": "🏅 追魂火鍋王 IV",
+      "category": "BADGE",
+      "iqBonus": 1,
+      "triggerDesc": "防守回合",
+      "desc": "快攻回防從天而降釘板封阻！防守判定 +11%，解鎖【追魂釘板】Cut-in。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 11
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "chasedown_reject"
+        }
+      ]
+    },
+    {
+      "id": "charge_card_t2",
+      "name": "🏅 造犯規專家 II",
+      "category": "BADGE",
+      "iqBonus": 3,
+      "triggerDesc": "防守回合",
+      "desc": "提早預判突破路線企定博進攻犯規！防守判定 +7%、判讀誤差縮窄。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 7
+        }
+      ]
+    },
+    {
+      "id": "putback_boss_t3",
+      "name": "🏅 補籃狂人 III",
+      "category": "BADGE",
+      "iqBonus": 0,
+      "triggerDesc": "禁區進攻回合",
+      "desc": "衝搶進攻籃板直接補扣得分！禁區終結 +9%、解鎖【戰斧隔扣】Cut-in。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "PAINT"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 9
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "tomahawk_poster"
+        }
+      ]
+    },
+    {
+      "id": "dream_shake_t4",
+      "name": "🏅 低位夢幻步 IV",
+      "category": "BADGE",
+      "iqBonus": 2,
+      "triggerDesc": "中距離與低位背打",
+      "desc": "連環假動作點飛防守者！中投與背打命中率 +11%，解鎖【幻影後仰】Cut-in。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "in",
+          "value": [
+            "MID",
+            "PAINT"
+          ]
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 11
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "fadeaway_phantom"
+        }
+      ]
+    },
+    {
+      "id": "pullup_shot_t3",
+      "name": "🏅 急停跳投大師 III",
+      "category": "BADGE",
+      "iqBonus": 1,
+      "triggerDesc": "中距離或三分急停跳投",
+      "desc": "高速運球中瞬間急停拔起！中遠投命中率 +8%、完美 QTE 額外加成 +5%。",
+      "conditions": [
+        {
+          "field": "shotZone",
+          "op": "in",
+          "value": [
+            "MID",
+            "THREE"
+          ]
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 8
+        },
+        {
+          "target": "perfectBonusPct",
+          "op": "ADD",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "id": "transition_finisher_t3",
+      "name": "🏅 轉換快攻之王 III",
+      "category": "BADGE",
+      "iqBonus": 0,
+      "triggerDesc": "體力 ≥ 55% 禁區進攻",
+      "desc": "快攻推進無人能擋！禁區終結 +10%、解鎖【戰斧隔扣】Cut-in。",
+      "conditions": [
+        {
+          "field": "staminaPct",
+          "op": "gte",
+          "value": 55
+        },
+        {
+          "field": "shotZone",
+          "op": "eq",
+          "value": "PAINT"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 10
+        },
+        {
+          "target": "UNLOCK_ACTION",
+          "op": "UNLOCK_ACTION",
+          "value": "tomahawk_poster"
+        }
+      ]
+    },
+    {
+      "id": "pace_changer_t3",
+      "name": "🏅 節奏變速師 III",
+      "category": "BADGE",
+      "iqBonus": 3,
+      "triggerDesc": "進攻回合",
+      "desc": "忽快忽慢玩弄防守重心！進攻命中率 +6%、QTE 完美區擴大 14%。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "OFFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "shootPct",
+          "op": "ADD",
+          "value": 6
+        },
+        {
+          "target": "qtePerfectWidth",
+          "op": "MUL",
+          "value": 1.14
+        }
+      ]
+    },
+    {
+      "id": "boxout_beast_t3",
+      "name": "🏅 鐵血卡位機器 III",
+      "category": "BADGE",
+      "iqBonus": 1,
+      "triggerDesc": "防守籃板卡位",
+      "desc": "下盤穩如泰山鎖死籃下！防守判定 +8%、體力消耗減少 8%。",
+      "conditions": [
+        {
+          "field": "possession",
+          "op": "eq",
+          "value": "DEFENSE"
+        }
+      ],
+      "modifiers": [
+        {
+          "target": "defenseRating",
+          "op": "ADD",
+          "value": 8
+        },
+        {
+          "target": "staminaDrain",
+          "op": "MUL",
+          "value": 0.92
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1027 @@
+{
+  "scenarios": [
+    {
+      "id": "OFF_ONBALL_ISO",
+      "side": "OFFENSE",
+      "ballHolder": "USER",
+      "label": "進攻・側翼持球單打",
+      "arrow": "USER_TO_RIM"
+    },
+    {
+      "id": "OFF_OFFBALL_SCREEN",
+      "side": "OFFENSE",
+      "ballHolder": "TEAMMATE_PG",
+      "label": "進攻・無球繞掩護跑位",
+      "arrow": "PG_TO_USER"
+    },
+    {
+      "id": "OFF_FASTBREAK",
+      "side": "OFFENSE",
+      "ballHolder": "USER",
+      "label": "進攻・快攻反擊 2打1",
+      "arrow": "USER_TO_RIM"
+    },
+    {
+      "id": "OFF_DOUBLE_TEAM",
+      "side": "OFFENSE",
+      "ballHolder": "USER",
+      "label": "進攻・遭遇雙人包夾",
+      "arrow": "USER_TO_RIM"
+    },
+    {
+      "id": "OFF_PICK_ROLL",
+      "side": "OFFENSE",
+      "ballHolder": "USER",
+      "label": "進攻・高位擋拆配合",
+      "arrow": "USER_TO_RIM"
+    },
+    {
+      "id": "OFF_POST_MISMATCH",
+      "side": "OFFENSE",
+      "ballHolder": "USER",
+      "label": "進攻・低位錯位背身",
+      "arrow": "USER_TO_RIM"
+    },
+    {
+      "id": "OFF_BASELINE_CUT",
+      "side": "OFFENSE",
+      "ballHolder": "TEAMMATE_PG",
+      "label": "進攻・底線反跑空切",
+      "arrow": "PG_TO_USER"
+    },
+    {
+      "id": "OFF_SHOTCLOCK_3S",
+      "side": "OFFENSE",
+      "ballHolder": "USER",
+      "label": "進攻・24秒讀秒拆炸彈",
+      "arrow": "USER_TO_RIM"
+    },
+    {
+      "id": "OFF_TRAILER_3",
+      "side": "OFFENSE",
+      "ballHolder": "TEAMMATE_PG",
+      "label": "進攻・轉換拖車跟進",
+      "arrow": "PG_TO_USER"
+    },
+    {
+      "id": "OFF_HORNS_SET",
+      "side": "OFFENSE",
+      "ballHolder": "USER",
+      "label": "進攻・牛角陣雙掩護",
+      "arrow": "USER_TO_RIM"
+    },
+    {
+      "id": "OFF_FULLCOURT_PRESS",
+      "side": "OFFENSE",
+      "ballHolder": "USER",
+      "label": "進攻・破解全場緊逼",
+      "arrow": "USER_TO_RIM"
+    },
+    {
+      "id": "OFF_SLOB_INBOUND",
+      "side": "OFFENSE",
+      "ballHolder": "TEAMMATE_PG",
+      "label": "進攻・邊線發球戰術",
+      "arrow": "PG_TO_USER"
+    },
+    {
+      "id": "DEF_ONBALL_ISO",
+      "side": "DEFENSE",
+      "ballHolder": "RIVAL",
+      "label": "防守・單防持球宿敵",
+      "arrow": "RIVAL_TO_RIM"
+    },
+    {
+      "id": "DEF_FASTBREAK",
+      "side": "DEFENSE",
+      "ballHolder": "RIVAL",
+      "label": "防守・緊急被快攻退防",
+      "arrow": "CHASEDOWN"
+    },
+    {
+      "id": "DEF_OFFBALL_GLASS",
+      "side": "DEFENSE",
+      "ballHolder": "AWAY_SHOOTER",
+      "label": "防守・無球協防搶板",
+      "arrow": "GLASS_BATTLE"
+    },
+    {
+      "id": "DEF_SWITCH_BIG",
+      "side": "DEFENSE",
+      "ballHolder": "RIVAL",
+      "label": "防守・換防錯位扛大個",
+      "arrow": "RIVAL_TO_RIM"
+    },
+    {
+      "id": "DEF_PNR_DROP",
+      "side": "DEFENSE",
+      "ballHolder": "RIVAL",
+      "label": "防守・應對對手擋拆",
+      "arrow": "RIVAL_TO_RIM"
+    },
+    {
+      "id": "DEF_CORNER_CLOSEOUT",
+      "side": "DEFENSE",
+      "ballHolder": "AWAY_SHOOTER",
+      "label": "防守・急撲底角射手",
+      "arrow": "RIVAL_TO_RIM"
+    },
+    {
+      "id": "DEF_INBOUND_DENY",
+      "side": "DEFENSE",
+      "ballHolder": "RIVAL",
+      "label": "防守・封鎖邊線發球",
+      "arrow": "RIVAL_TO_RIM"
+    },
+    {
+      "id": "DEF_LAST_SHOT",
+      "side": "DEFENSE",
+      "ballHolder": "RIVAL",
+      "label": "防守・關鍵一擊死守",
+      "arrow": "RIVAL_TO_RIM"
+    }
+  ],
+  "actions": [
+    {
+      "id": "on_stepback_3",
+      "name": "後撤步三分",
+      "scenarios": [
+        "OFF_ONBALL_ISO",
+        "OFF_SHOTCLOCK_3S"
+      ],
+      "zone": "THREE",
+      "qteType": "SHOT_ARC",
+      "cutinReq": "corner_sniper",
+      "baseRate": 45,
+      "pts": 3,
+      "statType": "SHOT"
+    },
+    {
+      "id": "on_fadeaway",
+      "name": "絕命後仰跳投",
+      "scenarios": [
+        "OFF_ONBALL_ISO",
+        "OFF_POST_MISMATCH",
+        "OFF_SHOTCLOCK_3S"
+      ],
+      "zone": "MID",
+      "qteType": "SHOT_ARC",
+      "cutinId": "fadeaway_phantom",
+      "baseRate": 55,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "on_ankle_drive",
+      "name": "變向晃倒強攻",
+      "scenarios": [
+        "OFF_ONBALL_ISO",
+        "OFF_HORNS_SET"
+      ],
+      "zone": "PAINT",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 58,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "on_floater",
+      "name": "高弧度騎馬射箭拋投",
+      "scenarios": [
+        "OFF_ONBALL_ISO",
+        "OFF_PICK_ROLL",
+        "OFF_HORNS_SET"
+      ],
+      "zone": "MID",
+      "qteType": "SHOT_ARC",
+      "baseRate": 60,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "on_pumpfake_ft",
+      "name": "假動作點飛博犯規",
+      "scenarios": [
+        "OFF_ONBALL_ISO",
+        "OFF_POST_MISMATCH"
+      ],
+      "zone": "PAINT",
+      "qteType": "RING_TIMING",
+      "baseRate": 62,
+      "pts": 2,
+      "statType": "AND1"
+    },
+    {
+      "id": "off_corner_catch3",
+      "name": "繞掩護零度角三分",
+      "scenarios": [
+        "OFF_OFFBALL_SCREEN",
+        "OFF_SLOB_INBOUND"
+      ],
+      "zone": "THREE",
+      "qteType": "SHOT_ARC",
+      "cutinReq": "corner_sniper",
+      "baseRate": 49,
+      "pts": 3,
+      "statType": "SHOT"
+    },
+    {
+      "id": "off_backdoor_cut",
+      "name": "反跑空切暴扣",
+      "scenarios": [
+        "OFF_OFFBALL_SCREEN",
+        "OFF_BASELINE_CUT",
+        "OFF_SLOB_INBOUND"
+      ],
+      "zone": "PAINT",
+      "qteType": "RING_TIMING",
+      "cutinReq": "tomahawk_poster",
+      "baseRate": 62,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "off_curl_mid",
+      "name": "繞樁急停接球中投",
+      "scenarios": [
+        "OFF_OFFBALL_SCREEN",
+        "OFF_SLOB_INBOUND"
+      ],
+      "zone": "MID",
+      "qteType": "SHOT_ARC",
+      "baseRate": 60,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "off_oreb_crash",
+      "name": "衝搶前場板補籃",
+      "scenarios": [
+        "OFF_OFFBALL_SCREEN",
+        "OFF_BASELINE_CUT"
+      ],
+      "zone": "PAINT",
+      "qteType": "MASH_CLASH",
+      "baseRate": 56,
+      "pts": 2,
+      "statType": "OREB_PUTBACK"
+    },
+    {
+      "id": "off_touch_pass",
+      "name": "接球一傳底角助攻",
+      "scenarios": [
+        "OFF_OFFBALL_SCREEN",
+        "OFF_SLOB_INBOUND"
+      ],
+      "zone": "PASS",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 70,
+      "pts": 2,
+      "statType": "ASSIST"
+    },
+    {
+      "id": "fb_tomahawk",
+      "name": "快攻戰斧隔扣",
+      "scenarios": [
+        "OFF_FASTBREAK",
+        "OFF_TRAILER_3"
+      ],
+      "zone": "PAINT",
+      "qteType": "RING_TIMING",
+      "cutinReq": "tomahawk_poster",
+      "baseRate": 66,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "fb_pullup_3",
+      "name": "追身急停三分",
+      "scenarios": [
+        "OFF_FASTBREAK",
+        "OFF_TRAILER_3"
+      ],
+      "zone": "THREE",
+      "qteType": "SHOT_ARC",
+      "cutinReq": "corner_sniper",
+      "baseRate": 47,
+      "pts": 3,
+      "statType": "SHOT"
+    },
+    {
+      "id": "fb_euro_and1",
+      "name": "歐洲步強打造 2+1",
+      "scenarios": [
+        "OFF_FASTBREAK",
+        "OFF_BASELINE_CUT"
+      ],
+      "zone": "PAINT",
+      "qteType": "MASH_CLASH",
+      "baseRate": 60,
+      "pts": 2,
+      "statType": "AND1"
+    },
+    {
+      "id": "fb_alleyoop",
+      "name": "快攻空接餵球助攻",
+      "scenarios": [
+        "OFF_FASTBREAK",
+        "OFF_TRAILER_3"
+      ],
+      "zone": "PASS",
+      "qteType": "RING_TIMING",
+      "baseRate": 70,
+      "pts": 2,
+      "statType": "ASSIST"
+    },
+    {
+      "id": "tr_catch_boom3",
+      "name": "弧頂拖車接球轟三分",
+      "scenarios": [
+        "OFF_TRAILER_3"
+      ],
+      "zone": "THREE",
+      "qteType": "SHOT_ARC",
+      "cutinReq": "corner_sniper",
+      "baseRate": 50,
+      "pts": 3,
+      "statType": "SHOT"
+    },
+    {
+      "id": "dt_bounce_pass",
+      "name": "穿透包夾擊地妙傳",
+      "scenarios": [
+        "OFF_DOUBLE_TEAM",
+        "OFF_FULLCOURT_PRESS"
+      ],
+      "zone": "PASS",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 72,
+      "pts": 2,
+      "statType": "ASSIST"
+    },
+    {
+      "id": "dt_skip_corner3",
+      "name": "跨場長傳底角助攻",
+      "scenarios": [
+        "OFF_DOUBLE_TEAM",
+        "OFF_FULLCOURT_PRESS"
+      ],
+      "zone": "PASS",
+      "qteType": "RING_TIMING",
+      "baseRate": 66,
+      "pts": 3,
+      "statType": "ASSIST"
+    },
+    {
+      "id": "dt_split_drive",
+      "name": "強行撕裂夾擊上籃",
+      "scenarios": [
+        "OFF_DOUBLE_TEAM",
+        "OFF_FULLCOURT_PRESS"
+      ],
+      "zone": "PAINT",
+      "qteType": "MASH_CLASH",
+      "baseRate": 52,
+      "pts": 2,
+      "statType": "AND1"
+    },
+    {
+      "id": "dt_logo_3",
+      "name": "頂住夾擊超遠拔起三分",
+      "scenarios": [
+        "OFF_DOUBLE_TEAM",
+        "OFF_SHOTCLOCK_3S"
+      ],
+      "zone": "THREE",
+      "qteType": "SHOT_ARC",
+      "cutinReq": "corner_sniper",
+      "baseRate": 41,
+      "pts": 3,
+      "statType": "SHOT"
+    },
+    {
+      "id": "fp_speed_burst",
+      "name": "極速變向破全場緊逼",
+      "scenarios": [
+        "OFF_FULLCOURT_PRESS"
+      ],
+      "zone": "PAINT",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 62,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "pnr_pocket_pass",
+      "name": "擋拆口袋擊地餵球",
+      "scenarios": [
+        "OFF_PICK_ROLL",
+        "OFF_HORNS_SET"
+      ],
+      "zone": "PASS",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 70,
+      "pts": 2,
+      "statType": "ASSIST"
+    },
+    {
+      "id": "pnr_reject_dunk",
+      "name": "假掩護反切炸框",
+      "scenarios": [
+        "OFF_PICK_ROLL",
+        "OFF_HORNS_SET"
+      ],
+      "zone": "PAINT",
+      "qteType": "RING_TIMING",
+      "cutinReq": "tomahawk_poster",
+      "baseRate": 61,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "horns_pop_3",
+      "name": "牛角掩護外彈三分",
+      "scenarios": [
+        "OFF_HORNS_SET"
+      ],
+      "zone": "THREE",
+      "qteType": "SHOT_ARC",
+      "cutinReq": "corner_sniper",
+      "baseRate": 49,
+      "pts": 3,
+      "statType": "SHOT"
+    },
+    {
+      "id": "horns_lob_big",
+      "name": "高吊禁區空接助攻",
+      "scenarios": [
+        "OFF_HORNS_SET",
+        "OFF_PICK_ROLL"
+      ],
+      "zone": "PASS",
+      "qteType": "RING_TIMING",
+      "baseRate": 68,
+      "pts": 2,
+      "statType": "ASSIST"
+    },
+    {
+      "id": "post_skyhook",
+      "name": "轉身小勾手終結",
+      "scenarios": [
+        "OFF_POST_MISMATCH"
+      ],
+      "zone": "PAINT",
+      "qteType": "SHOT_ARC",
+      "baseRate": 62,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "post_bully_and1",
+      "name": "背身硬鑿造 2+1",
+      "scenarios": [
+        "OFF_POST_MISMATCH"
+      ],
+      "zone": "PAINT",
+      "qteType": "MASH_CLASH",
+      "baseRate": 58,
+      "pts": 2,
+      "statType": "AND1"
+    },
+    {
+      "id": "post_kickout",
+      "name": "低位吸引協防分球",
+      "scenarios": [
+        "OFF_POST_MISMATCH"
+      ],
+      "zone": "PASS",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 71,
+      "pts": 3,
+      "statType": "ASSIST"
+    },
+    {
+      "id": "base_reverse_layup",
+      "name": "底線反手上籃拉桿",
+      "scenarios": [
+        "OFF_BASELINE_CUT"
+      ],
+      "zone": "PAINT",
+      "qteType": "SHOT_ARC",
+      "baseRate": 63,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "sc_bank_runner",
+      "name": "讀秒打板高難度拋投",
+      "scenarios": [
+        "OFF_SHOTCLOCK_3S"
+      ],
+      "zone": "MID",
+      "qteType": "RING_TIMING",
+      "baseRate": 50,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "sc_dump_big",
+      "name": "最後一秒塞球籃下助攻",
+      "scenarios": [
+        "OFF_SHOTCLOCK_3S"
+      ],
+      "zone": "PASS",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 64,
+      "pts": 2,
+      "statType": "ASSIST"
+    },
+    {
+      "id": "def_on_clamp",
+      "name": "死亡纏繞干擾",
+      "scenarios": [
+        "DEF_ONBALL_ISO",
+        "DEF_LAST_SHOT"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "SHOT_ARC",
+      "baseRate": 68,
+      "pts": 0,
+      "statType": "CONTEST"
+    },
+    {
+      "id": "def_on_steal",
+      "name": "正面鬼手偷球反擊",
+      "scenarios": [
+        "DEF_ONBALL_ISO",
+        "DEF_PNR_DROP"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 58,
+      "pts": 2,
+      "statType": "STEAL"
+    },
+    {
+      "id": "def_on_charge",
+      "name": "站定造進攻犯規",
+      "scenarios": [
+        "DEF_ONBALL_ISO",
+        "DEF_SWITCH_BIG"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "RING_TIMING",
+      "baseRate": 60,
+      "pts": 0,
+      "statType": "CHARGE"
+    },
+    {
+      "id": "def_fb_chaseblock",
+      "name": "追魂釘板大帽",
+      "scenarios": [
+        "DEF_FASTBREAK",
+        "DEF_LAST_SHOT"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "RING_TIMING",
+      "cutinReq": "chasedown_reject",
+      "baseRate": 62,
+      "pts": 0,
+      "statType": "BLOCK"
+    },
+    {
+      "id": "def_fb_intercept",
+      "name": "截斷快攻傳球反擊",
+      "scenarios": [
+        "DEF_FASTBREAK",
+        "DEF_INBOUND_DENY"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 58,
+      "pts": 2,
+      "statType": "STEAL"
+    },
+    {
+      "id": "def_fb_charge",
+      "name": "退防造帶球撞人",
+      "scenarios": [
+        "DEF_FASTBREAK"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "MASH_CLASH",
+      "baseRate": 60,
+      "pts": 0,
+      "statType": "CHARGE"
+    },
+    {
+      "id": "def_gl_boxout",
+      "name": "鐵血卡位制霸防守板",
+      "scenarios": [
+        "DEF_OFFBALL_GLASS",
+        "DEF_SWITCH_BIG",
+        "DEF_PNR_DROP"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "MASH_CLASH",
+      "baseRate": 72,
+      "pts": 0,
+      "statType": "BOXOUT_DREB"
+    },
+    {
+      "id": "def_gl_helpblock",
+      "name": "協防補位排球大帽",
+      "scenarios": [
+        "DEF_OFFBALL_GLASS",
+        "DEF_SWITCH_BIG",
+        "DEF_PNR_DROP"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "RING_TIMING",
+      "cutinReq": "chasedown_reject",
+      "baseRate": 63,
+      "pts": 0,
+      "statType": "BLOCK"
+    },
+    {
+      "id": "def_gl_passinglane",
+      "name": "繞前斷球偷球反擊",
+      "scenarios": [
+        "DEF_OFFBALL_GLASS",
+        "DEF_SWITCH_BIG",
+        "DEF_INBOUND_DENY"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 60,
+      "pts": 2,
+      "statType": "STEAL"
+    },
+    {
+      "id": "def_pnr_fightscreen",
+      "name": "硬擠掩護死貼持球人",
+      "scenarios": [
+        "DEF_PNR_DROP"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "MASH_CLASH",
+      "baseRate": 66,
+      "pts": 0,
+      "statType": "CONTEST"
+    },
+    {
+      "id": "def_close_contest3",
+      "name": "飛身撲防封眼干擾三分",
+      "scenarios": [
+        "DEF_FASTBREAK",
+        "DEF_LAST_SHOT"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "SHOT_ARC",
+      "baseRate": 66,
+      "pts": 0,
+      "statType": "CONTEST"
+    },
+    {
+      "id": "def_close_swat3",
+      "name": "極限起跳扇飛外線三分",
+      "scenarios": [
+        "DEF_FASTBREAK",
+        "DEF_LAST_SHOT"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "RING_TIMING",
+      "cutinReq": "perimeter_closeout",
+      "baseRate": 57,
+      "pts": 0,
+      "statType": "BLOCK"
+    },
+    {
+      "id": "def_close_drivecut",
+      "name": "識破假投真切斷球",
+      "scenarios": [
+        "DEF_FASTBREAK"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "DUAL_SNAP",
+      "baseRate": 61,
+      "pts": 2,
+      "statType": "STEAL"
+    },
+    {
+      "id": "def_inb_5sec",
+      "name": "窒息緊逼逼出 5 秒違例",
+      "scenarios": [
+        "DEF_INBOUND_DENY"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "MASH_CLASH",
+      "baseRate": 64,
+      "pts": 0,
+      "statType": "CHARGE"
+    },
+    {
+      "id": "def_inb_deflect",
+      "name": "長臂干擾拍走邊線球",
+      "scenarios": [
+        "DEF_INBOUND_DENY"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "RING_TIMING",
+      "baseRate": 65,
+      "pts": 0,
+      "statType": "CONTEST"
+    },
+    {
+      "id": "act_logo_3",
+      "name": "超遠 Logo 三分",
+      "scenarios": [
+        "OFF_ONBALL_ISO",
+        "OFF_SHOTCLOCK_3S",
+        "OFF_TRAILER_3"
+      ],
+      "zone": "THREE",
+      "qteType": "SHOT_ARC",
+      "cutinReq": "corner_sniper",
+      "baseRate": 52,
+      "pts": 3,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_euro_layup",
+      "name": "蛇形歐洲步上籃",
+      "scenarios": [
+        "OFF_FASTBREAK",
+        "OFF_ONBALL_ISO",
+        "OFF_PICK_ROLL"
+      ],
+      "zone": "PAINT",
+      "qteType": "RING_TIMING",
+      "cutinReq": null,
+      "baseRate": 68,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_teardrop_float",
+      "name": "高弧度拋投終結",
+      "scenarios": [
+        "OFF_PICK_ROLL",
+        "OFF_HORNS_SET",
+        "OFF_BASELINE_CUT"
+      ],
+      "zone": "PAINT",
+      "qteType": "SHOT_ARC",
+      "cutinReq": null,
+      "baseRate": 66,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_dream_shake",
+      "name": "夢幻腳步翻身勾手",
+      "scenarios": [
+        "OFF_POST_MISMATCH",
+        "OFF_ONBALL_ISO"
+      ],
+      "zone": "MID",
+      "qteType": "DUAL_SNAP",
+      "cutinReq": "fadeaway_phantom",
+      "baseRate": 64,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_hezi_pullup",
+      "name": "拜佛假動作急停中投",
+      "scenarios": [
+        "OFF_ONBALL_ISO",
+        "OFF_HORNS_SET",
+        "OFF_PICK_ROLL"
+      ],
+      "zone": "MID",
+      "qteType": "SHOT_ARC",
+      "cutinReq": "fadeaway_phantom",
+      "baseRate": 65,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_nolook_oop",
+      "name": "不看人空接餵餅",
+      "scenarios": [
+        "OFF_FASTBREAK",
+        "OFF_PICK_ROLL",
+        "OFF_DOUBLE_TEAM"
+      ],
+      "zone": "PASS",
+      "qteType": "RING_TIMING",
+      "cutinReq": null,
+      "baseRate": 67,
+      "pts": 2,
+      "statType": "PASS"
+    },
+    {
+      "id": "act_stepback_mid",
+      "name": "後撤步急停中投",
+      "scenarios": [
+        "OFF_ONBALL_ISO",
+        "OFF_SHOTCLOCK_3S",
+        "OFF_SLOB_INBOUND"
+      ],
+      "zone": "MID",
+      "qteType": "SHOT_ARC",
+      "cutinReq": null,
+      "baseRate": 63,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_pump_fake_and1",
+      "name": "點飛防守強打 2+1",
+      "scenarios": [
+        "OFF_POST_MISMATCH",
+        "OFF_BASELINE_CUT",
+        "OFF_SLOB_INBOUND"
+      ],
+      "zone": "PAINT",
+      "qteType": "MASH_CLASH",
+      "cutinReq": "tomahawk_poster",
+      "baseRate": 62,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_relocate_3",
+      "name": "傳切再兜底角三分",
+      "scenarios": [
+        "OFF_OFFBALL_SCREEN",
+        "OFF_HORNS_SET",
+        "OFF_TRAILER_3"
+      ],
+      "zone": "THREE",
+      "qteType": "SHOT_ARC",
+      "cutinReq": "corner_sniper",
+      "baseRate": 63,
+      "pts": 3,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_bounce_split",
+      "name": "擊地穿襠撕裂包夾",
+      "scenarios": [
+        "OFF_DOUBLE_TEAM",
+        "OFF_FULLCOURT_PRESS"
+      ],
+      "zone": "PASS",
+      "qteType": "DUAL_SNAP",
+      "cutinReq": null,
+      "baseRate": 68,
+      "pts": 2,
+      "statType": "PASS"
+    },
+    {
+      "id": "act_reverse_dunk",
+      "name": "拉桿反手背扣",
+      "scenarios": [
+        "OFF_BASELINE_CUT",
+        "OFF_FASTBREAK"
+      ],
+      "zone": "PAINT",
+      "qteType": "MASH_CLASH",
+      "cutinReq": "tomahawk_poster",
+      "baseRate": 64,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_press_spin",
+      "name": "高速轉身甩開全場緊逼",
+      "scenarios": [
+        "OFF_FULLCOURT_PRESS"
+      ],
+      "zone": "PAINT",
+      "qteType": "DUAL_SNAP",
+      "cutinReq": null,
+      "baseRate": 70,
+      "pts": 2,
+      "statType": "SHOT"
+    },
+    {
+      "id": "act_tip_slap_putback",
+      "name": "凌空補扣二次進攻",
+      "scenarios": [
+        "OFF_BASELINE_CUT",
+        "OFF_POST_MISMATCH"
+      ],
+      "zone": "PAINT",
+      "qteType": "MASH_CLASH",
+      "cutinReq": "tomahawk_poster",
+      "baseRate": 63,
+      "pts": 2,
+      "statType": "OREB_PUTBACK"
+    },
+    {
+      "id": "def_strip_drive",
+      "name": "切球精準掏掉突破球",
+      "scenarios": [
+        "DEF_ONBALL_ISO",
+        "DEF_CORNER_CLOSEOUT",
+        "DEF_LAST_SHOT"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "RING_TIMING",
+      "cutinReq": null,
+      "baseRate": 64,
+      "pts": 0,
+      "statType": "STEAL"
+    },
+    {
+      "id": "def_front_post",
+      "name": "繞前斷球封死低位",
+      "scenarios": [
+        "DEF_SWITCH_BIG",
+        "DEF_INBOUND_DENY"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "DUAL_SNAP",
+      "cutinReq": null,
+      "baseRate": 65,
+      "pts": 0,
+      "statType": "STEAL"
+    },
+    {
+      "id": "def_vertical_wall",
+      "name": "垂直起跳高舉雙手護框",
+      "scenarios": [
+        "DEF_SWITCH_BIG",
+        "DEF_FASTBREAK",
+        "DEF_CORNER_CLOSEOUT"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "MASH_CLASH",
+      "cutinReq": "chasedown_reject",
+      "baseRate": 67,
+      "pts": 0,
+      "statType": "BLOCK"
+    },
+    {
+      "id": "def_mirror_slide",
+      "name": "死亡纏繞滑步逼迫失誤",
+      "scenarios": [
+        "DEF_ONBALL_ISO",
+        "DEF_LAST_SHOT",
+        "DEF_FASTBREAK"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "DUAL_SNAP",
+      "cutinReq": null,
+      "baseRate": 66,
+      "pts": 0,
+      "statType": "CONTEST"
+    },
+    {
+      "id": "def_weakside_help",
+      "name": "弱側協防補位封蓋",
+      "scenarios": [
+        "DEF_OFFBALL_GLASS",
+        "DEF_CORNER_CLOSEOUT",
+        "DEF_FASTBREAK"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "RING_TIMING",
+      "cutinReq": "chasedown_reject",
+      "baseRate": 63,
+      "pts": 0,
+      "statType": "BLOCK"
+    },
+    {
+      "id": "def_swim_boxout",
+      "name": "強硬卡位搶下關鍵籃板",
+      "scenarios": [
+        "DEF_OFFBALL_GLASS",
+        "DEF_SWITCH_BIG"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "MASH_CLASH",
+      "cutinReq": null,
+      "baseRate": 70,
+      "pts": 0,
+      "statType": "BOXOUT_DREB"
+    },
+    {
+      "id": "def_deny_pass_lane",
+      "name": "預判傳球路線直接截斷",
+      "scenarios": [
+        "DEF_INBOUND_DENY",
+        "DEF_FASTBREAK"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "RING_TIMING",
+      "cutinReq": null,
+      "baseRate": 65,
+      "pts": 0,
+      "statType": "STEAL"
+    }
+  ]
+}

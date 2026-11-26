@@ -1,0 +1,70 @@
+{
+  "cutins": [
+    {
+      "id": "fadeaway_phantom",
+      "name": "絕命後仰跳投",
+      "artAsset": "fadeaway_phantom",
+      "bgStyle": "SPEEDLINES_RED",
+      "speedLinesDensity": 64,
+      "hitstopMs": 140,
+      "screenShake": 9,
+      "voiceLine": "「呢一球——冇人封得到！」",
+      "sfx": "SLASH_BOOM"
+    },
+    {
+      "id": "corner_sniper",
+      "name": "零度角必殺三分",
+      "artAsset": "corner_sniper",
+      "bgStyle": "HALFTONE_CRIMSON",
+      "speedLinesDensity": 52,
+      "hitstopMs": 115,
+      "screenShake": 7,
+      "voiceLine": "「三分線外——出手即入網！」",
+      "sfx": "SWISH_IMPACT"
+    },
+    {
+      "id": "tomahawk_poster",
+      "name": "戰斧隔扣",
+      "artAsset": "tomahawk_poster",
+      "bgStyle": "INK_EXPLOSION",
+      "speedLinesDensity": 88,
+      "hitstopMs": 185,
+      "screenShake": 16,
+      "voiceLine": "「讓開！籃框係我嘅！」",
+      "sfx": "RIM_SHATTER"
+    },
+    {
+      "id": "chasedown_reject",
+      "name": "追魂釘板大帽",
+      "artAsset": "chasedown_reject",
+      "bgStyle": "GRIT_MONO",
+      "speedLinesDensity": 74,
+      "hitstopMs": 165,
+      "screenShake": 13,
+      "voiceLine": "「想喺我頭頂得分？早十年啦！」",
+      "sfx": "BLOCK_THUNDER"
+    },
+    {
+      "id": "perimeter_closeout",
+      "name": "飛身撲防・封鎖外線",
+      "artAsset": "def_perimeter_contest",
+      "bgStyle": "GRIT_MONO",
+      "speedLinesDensity": 76,
+      "hitstopMs": 145,
+      "screenShake": 11,
+      "voiceLine": "「休想喺我面前輕鬆出手！」",
+      "sfx": "BLOCK_THUNDER"
+    },
+    {
+      "id": "zone_awakening",
+      "name": "🔥 ZONE 無我境界",
+      "artAsset": "zone_awakening",
+      "bgStyle": "ZONE_LIGHTNING",
+      "speedLinesDensity": 110,
+      "hitstopMs": 210,
+      "screenShake": 18,
+      "voiceLine": "「全場嘅時間——靜止啦！」",
+      "sfx": "ZONE_IGNITE"
+    }
+  ]
+}
