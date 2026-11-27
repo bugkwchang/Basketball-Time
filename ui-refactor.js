@@ -818,6 +818,12 @@ window.BTUI = (() => {
       `;
     }
 
+    const codexSub = document.getElementById("btnOpenSkillCodexSub");
+    if (codexSub && typeof window.getActiveSynergies === "function") {
+      const ownedCnt = (season.equippedTraits || []).length;
+      const synCnt = window.getActiveSynergies(season.equippedTraits || []).length;
+      codexSub.textContent = `已擁有 ${ownedCnt} 項技能 · 啟動 ${synCnt} 組 A＋B 隱藏聯動`;
+    }
     const trainBtnTitle = document.getElementById("btnOpenTrainTitle");
     const trainBtnSub = document.getElementById("btnOpenTrainSub");
     if (trainBtnTitle) trainBtnTitle.textContent = `🏋️ 場外養成（剩餘 ${p.ap} AP）`;
@@ -1427,6 +1433,92 @@ window.BTUI = (() => {
   }
 
   /* -------------------- 6. TITLE SCREEN & 3-STEP ONBOARDING + TUTORIAL MATCH -------------------- */
+  let activeCodexTab = "unlocks";
+
+  function openSkillCodex(tab = "unlocks") {
+    const modal = document.getElementById("skillCodexModal");
+    if (!modal) return;
+    activeCodexTab = tab || "unlocks";
+    renderSkillCodexTab(activeCodexTab);
+    modal.classList.remove("hidden");
+  }
+
+  function renderSkillCodexTab(tab) {
+    const season = getSeason();
+    const db = getDB();
+    const body = document.getElementById("codexBody");
+    if (!body || !season || !db || !db.skills) return;
+    activeCodexTab = tab;
+    document.querySelectorAll("#codexTabBar .osr-tab").forEach(b => b.classList.toggle("active", b.dataset.codexTab === tab));
+
+    const owned = new Set(season.equippedTraits || []);
+    const allSkills = db.skills.skills || [];
+    const skMap = new Map(allSkills.map(s => [s.id, s]));
+    const prog = typeof window.ensureSkillProgress === "function" ? window.ensureSkillProgress(season) : {};
+    const chains = window.SKILL_UNLOCK_CHAINS || [];
+    const syns = window.SKILL_SYNERGIES || [];
+
+    if (tab === "unlocks") {
+      body.innerHTML = chains.map(ch => {
+        const sk = skMap.get(ch.skillId);
+        const name = sk ? sk.name : ch.skillId;
+        const isDone = owned.has(ch.skillId);
+        const cur = Math.min(ch.target, prog[ch.metric] || 0);
+        const pct = isDone ? 100 : Math.round((cur / Math.max(1, ch.target)) * 100);
+        return `
+          <div class="codex-card ${isDone ? "unlocked" : ""}">
+            <div class="osr-team-top">
+              <strong>${name}</strong>
+              <span class="tag ${isDone ? "gold" : ""}">${isDone ? "✅ 已領悟" : `${cur} / ${ch.target}`}</span>
+            </div>
+            <div style="font-size:11.5px; color:var(--ink); font-weight:800;">條件：${ch.condText}</div>
+            <div class="codex-prog-track"><div class="codex-prog-fill ${isDone ? "done" : ""}" style="width:${pct}%;"></div></div>
+            <div class="codex-story">${ch.story}</div>
+          </div>`;
+      }).join("");
+    } else if (tab === "synergies") {
+      body.innerHTML = syns.map(syn => {
+        const hasA = owned.has(syn.req[0]);
+        const hasB = owned.has(syn.req[1]);
+        const active = hasA && hasB;
+        const skA = skMap.get(syn.req[0]);
+        const skB = skMap.get(syn.req[1]);
+        const statusTag = active
+          ? `<span class="tag gold">🔥 已啟動聯動</span>`
+          : ((hasA || hasB) ? `<span class="tag win">差 1 項即可啟動</span>` : `<span class="tag">未啟動</span>`);
+        return `
+          <div class="codex-card ${active ? "synergy-active" : ""}">
+            <div class="osr-team-top">
+              <strong>${syn.name}</strong>
+              ${statusTag}
+            </div>
+            <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap; margin:5px 0;">
+              <span class="tag ${hasA ? "win" : ""}">${hasA ? "✓ " : ""}${skA ? skA.name : syn.req[0]}</span>
+              <span style="font-weight:900;">＋</span>
+              <span class="tag ${hasB ? "win" : ""}">${hasB ? "✓ " : ""}${skB ? skB.name : syn.req[1]}</span>
+            </div>
+            <div style="font-size:12px; font-weight:900; color:var(--crimson);">隱藏效果：${syn.desc}</div>
+            <div class="codex-story">${syn.story}</div>
+          </div>`;
+      }).join("");
+    } else {
+      const visible = allSkills.filter(s => s.category !== "SYSTEM");
+      body.innerHTML = visible.map(sk => {
+        const has = owned.has(sk.id);
+        const story = typeof window.getSkillStory === "function" ? window.getSkillStory(sk) : "";
+        return `
+          <div class="codex-card ${has ? "unlocked" : ""}">
+            <div class="osr-team-top">
+              <strong>${sk.name}</strong>
+              <span class="tag ${has ? "gold" : (sk.category === "RED_TRAIT" ? "loss" : "")}">${has ? "已裝備" : (sk.category === "RED_TRAIT" ? "負面特質" : "未擁有")}</span>
+            </div>
+            <div style="font-size:11.5px; color:var(--ink); margin-top:2px;">${sk.desc || ""}</div>
+            <div class="codex-story">${story}</div>
+          </div>`;
+      }).join("");
+    }
+  }
+
   let activeOsrTab = "myteam";
 
   function openOffseasonReport(tab = "myteam") {
@@ -2272,6 +2364,18 @@ window.BTUI = (() => {
       });
     }
 
+    const codexOpenBtn = document.getElementById("btnOpenSkillCodex");
+    if (codexOpenBtn) codexOpenBtn.addEventListener("click", () => openSkillCodex("unlocks"));
+    const codexCloseBtn = document.getElementById("btnCloseSkillCodex");
+    if (codexCloseBtn) codexCloseBtn.addEventListener("click", () => { const m = document.getElementById("skillCodexModal"); if (m) m.classList.add("hidden"); });
+    const codexTabBar = document.getElementById("codexTabBar");
+    if (codexTabBar) {
+      codexTabBar.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-codex-tab]");
+        if (b) renderSkillCodexTab(b.dataset.codexTab);
+      });
+    }
+
     const osrOpenBtn = document.getElementById("btnOpenOffseasonReport");
     if (osrOpenBtn) osrOpenBtn.addEventListener("click", () => openOffseasonReport("myteam"));
     const osrCloseBtn = document.getElementById("btnCloseOffseasonReport");
@@ -2349,10 +2453,12 @@ window.BTUI = (() => {
     showEventSettlement,
     showTitleScreen,
     openOffseasonReport,
+    openSkillCodex,
     setCreateStep,
     launchTutorialMatch,
     handleTutorialMatchEnd,
     isTutorialActive: () => isTutorialMatch,
+    resetTutorialFlag: () => { isTutorialMatch = false; },
     bindRefactorEvents
   };
 })();

@@ -762,6 +762,11 @@
             <span class="hub-drawer-arrow">›</span>
           </button>
 
+          <button type="button" class="hub-drawer-btn" id="btnOpenSkillCodex">
+            <span>📖 技能圖鑑・解鎖進度與組合聯動<span class="hub-drawer-btn-sub" id="btnOpenSkillCodexSub">查看實戰解鎖條件、漫畫故事與 A＋B 隱藏聯動</span></span>
+            <span class="hub-drawer-arrow">›</span>
+          </button>
+
           <button type="button" class="hub-drawer-btn" id="btnOpenRivalModal">
             <span>🔥 宿敵檔案與近期人生經歷<span class="hub-drawer-btn-sub">宿敵熱度、稱號與事件紀錄</span></span>
             <span class="hub-drawer-arrow">›</span>
@@ -1140,6 +1145,28 @@
   </div>
 
   <!-- ===== CLICKABLE PLAYER DETAIL CARD MODAL ===== -->
+  <!-- ==================== SKILL CODEX, UNLOCK CHAINS & SYNERGY MODAL ==================== -->
+  <div class="modal-backdrop hidden" id="skillCodexModal" style="z-index:101;">
+    <div class="modal-sheet cr-editorial-modal" style="max-width:580px; padding:0; overflow:hidden;">
+      <div class="cr-hero-banner" style="background:linear-gradient(135deg, #181614 0%, #1E293B 65%, #92400E 100%);">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <span class="stamp" style="background:var(--gold-bright); color:var(--ink);">📖 球員技能圖鑑殿堂</span>
+          <button type="button" class="manga-btn" id="btnCloseSkillCodex" style="padding:4px 10px; font-size:12px;">✕ 關閉</button>
+        </div>
+        <div class="cr-hero-title" id="codexHeaderTitle">實戰領悟・技能故事・A＋B 隱藏聯動</div>
+        <div class="cr-hero-desc" id="codexHeaderSub">達成賽場傳奇條件解鎖稀有技能，同時裝備指定組合觸發隱藏加成！</div>
+      </div>
+      <div class="cr-modal-body" style="padding-top:10px;">
+        <div class="codex-tabs" id="codexTabBar">
+          <button type="button" class="osr-tab active" data-codex-tab="unlocks">🔓 實戰解鎖</button>
+          <button type="button" class="osr-tab" data-codex-tab="synergies">✨ 組合聯動</button>
+          <button type="button" class="osr-tab" data-codex-tab="library">📚 全圖鑑</button>
+        </div>
+        <div id="codexBody" class="osr-body"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== INJURY NARRATIVE CHOICE MODAL ==================== -->
   <div class="modal-backdrop hidden" id="injuryChoiceModal" style="z-index:102;">
     <div class="modal-sheet cr-editorial-modal" style="max-width:520px; padding:0; overflow:hidden;">
@@ -3554,8 +3581,8 @@
 
     function stepOtherTeamsLOD0(userMatchResult) {
       const league = DB.leagues.leagues.find(l => l.id === Season.leagueId);
-      const userTeam = Season.standings.find(t => t.isUserTeam);
-      const oppTeam = Season.standings.find(t => t.id === userMatchResult.oppId);
+      const userTeam = Season.standings.find(t => t.isUserTeam) || Season.standings[0];
+      const oppTeam = Season.standings.find(t => t.id === userMatchResult.oppId) || Season.standings.find(t => !t.isUserTeam) || { id: userMatchResult.oppId, name: userMatchResult.oppName || "對手", ovr: 78, w: 0, l: 0, pf: 0, pa: 0 };
 
       // Record user match into standings
       userTeam.pf += userMatchResult.userScore; userTeam.pa += userMatchResult.oppScore;
@@ -3704,12 +3731,19 @@
     }
 
     function simCurrentRoundQuick() {
-      if (Season.currentRoundIdx >= Season.schedule.length) return;
+      if (!Season || !Array.isArray(Season.schedule)) return;
+      // 若 currentRoundIdx 誤指向已完賽輪次，自動對齊到下一場未賽場次
+      if (Season.schedule[Season.currentRoundIdx] && Season.schedule[Season.currentRoundIdx].played) {
+        const nextUnplayed = Season.schedule.findIndex(x => x && !x.played);
+        Season.currentRoundIdx = nextUnplayed >= 0 ? nextUnplayed : Season.schedule.length;
+      }
+      if (Season.currentRoundIdx >= Season.schedule.length) { renderHub(); return; }
+      clearMatchCheckpoint();
       syncUserTeamRole(false);
       const g = Season.schedule[Season.currentRoundIdx];
-      const league = DB.leagues.leagues.find(l => l.id === Season.leagueId);
-      const userTeam = Season.standings.find(t => t.isUserTeam);
-      const oppTeam = Season.standings.find(t => t.id === g.oppId);
+      const league = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
+      const userTeam = Season.standings.find(t => t.isUserTeam) || Season.standings[0];
+      const oppTeam = Season.standings.find(t => t.id === g.oppId) || Season.standings.find(t => !t.isUserTeam) || { id: g.oppId, name: g.oppName || "對手", ovr: 78, ace: g.oppAce || "王牌", w: 0, l: 0, pf: 0, pa: 0 };
       userTeam.ovr = calcTeamStrength(Season.userRoster);
       const base = league.quarterMinutes * 9.4;
       let us = Math.round(base + (userTeam.ovr - 84) * 1.15 + (Math.random() - 0.5) * 15);
@@ -3845,6 +3879,18 @@
       Season.seasonTotals.pts += pts; Season.seasonTotals.reb += reb;
       Season.seasonTotals.ast += ast; Season.seasonTotals.stl += stl; Season.seasonTotals.blk += blk;
       Season.seasonTotals.mvps = (Season.seasonTotals.mvps || 0) + (userIsMvp ? 1 : 0);
+      if (!isForcedDnp) {
+        const uBoxSim = g.boxScore && g.boxScore.homeTeam ? g.boxScore.homeTeam.find(x => x.isUser) : null;
+        trackSkillProgressAndUnlock({
+          careerThrees: (uBoxSim && uBoxSim.tpm) || 0,
+          paintFinishes: Math.floor((pts || 0) / 10),
+          careerAssists: ast || 0,
+          careerBlocks: blk || 0,
+          careerSteals: stl || 0,
+          careerMvps: userIsMvp ? 1 : 0,
+          highLoadGames: (rotWin && rotWin.targetPct >= 0.60) ? 1 : 0
+        });
+      }
 
       recordRivalryAndHistory(g, { pts, oreb: Math.floor(reb * 0.3), dreb: Math.ceil(reb * 0.7), ast }, us > os);
       if (!g.stage) stepOtherTeamsLOD0(g);
@@ -4288,6 +4334,186 @@
       evalAll(conds, ctx) { return !conds || conds.every(c => this.evalOne(c, ctx)); }
     };
 
+    // ---------- Phase 4 深度技能生態：實戰條件解鎖、漫畫分鏡故事與 A＋B 隱藏組合聯動 ----------
+    const SKILL_UNLOCK_CHAINS = [
+      {
+        skillId: "big_heart", metric: "clutchMakes", target: 5,
+        condText: "於關鍵時刻（第 4 節最後 3 分鐘或延長賽）累計命中 5 球",
+        story: "【分鏡】計時器紅燈閃爍，全場鴉雀無聲。你深吸一口氣拔起出手——越是窒息的讀秒時刻，你的心跳反而越沉靜。"
+      },
+      {
+        skillId: "buzzer_assassin", metric: "clutchPerfects", target: 3,
+        condText: "於關鍵時刻完成 3 次 QTE「完美鎖定」並進球",
+        story: "【分鏡】球離手瞬間，全場觀眾屏息仰望高拋弧線——刷網聲與終場蜂鳴器同時炸響！"
+      },
+      {
+        skillId: "deadeye_three_t4", metric: "careerThrees", target: 25,
+        condText: "生涯實戰累計命中 25 記三分球",
+        story: "【分鏡】無數個深夜體育館的空心刷網聲，終於讓你的雙手刻下無視封阻的致命外線記憶。"
+      },
+      {
+        skillId: "posterizer_t3", metric: "paintFinishes", target: 15,
+        condText: "生涯累計完成 15 次禁區強攻／暴扣得分",
+        story: "【分鏡】面對禁區高塔雙手封阻，你毫不猶豫騰空起飛，用雷霆萬鈞的灌籃震碎對手防線！"
+      },
+      {
+        skillId: "dimer_general_t3", metric: "careerAssists", target: 45,
+        condText: "生涯累計送出 45 次助攻",
+        story: "【分鏡】雙眼掃過半場五名防守者的重心偏移，一記不看人擊地妙傳撕裂整道鐵桶陣！"
+      },
+      {
+        skillId: "rim_eraser_t4", metric: "careerBlocks", target: 18,
+        condText: "生涯累計送出 18 次阻攻火鍋",
+        story: "【分鏡】對手以為上籃已十拿九穩，身後卻驟然罩下一片陰影——「這片禁區，禁止通行！」"
+      },
+      {
+        skillId: "glove_steal_t4", metric: "careerSteals", target: 20,
+        condText: "生涯累計完成 20 次抄截",
+        story: "【分鏡】精準讀懂對手換手運球的半拍空檔，指尖如電光般點飛皮球，瞬間發動快攻！"
+      },
+      {
+        skillId: "iron_lungs", metric: "highLoadGames", target: 10,
+        condText: "累計完成 10 場高強度出賽（單場上場時間 ≥ 60%）",
+        story: "【分鏡】第四節所有人雙手撐膝大口喘氣時，唯有你依然保持標準防守滑步，步履如飛。"
+      },
+      {
+        skillId: "alpha_dog", metric: "careerMvps", target: 5,
+        condText: "生涯累計榮膺 5 次單場 MVP",
+        story: "【分鏡】每當球隊陷入得分荒，所有隊友的視線都會不自覺望向你——因為你就是這支球隊的定海神針。"
+      },
+      {
+        skillId: "ice_in_veins", metric: "gritHeroMakes", target: 3,
+        condText: "於帶傷死戰或低體能（<30%）逆境中命中 3 球",
+        story: "【分鏡】汗水模糊視線、雙腿沉重如鉛，你卻露出冷冽微笑：「比賽現在才真正開始。」"
+      }
+    ];
+
+    const SKILL_SYNERGIES = [
+      {
+        id: "syn_clutch_sniper", name: "🎯 冷血狙擊網",
+        req: ["deadeye_three_t4", "big_heart"],
+        desc: "關鍵時刻三分命中率額外 +6%、QTE 黃金區 +10%",
+        story: "結合頂級外線準度與鋼鐵心臟，讀秒三分宛如死神降臨。",
+        when: (ctx) => !ctx || ctx.shotZone === "THREE" || (ctx.quarter >= 4 && ctx.timeLeftSec <= 180),
+        effects: [{ target: "shootPct", op: "ADD", value: 6 }, { target: "qtePerfectWidth", op: "ADD", value: 10 }]
+      },
+      {
+        id: "syn_fastbreak_storm", name: "⚡ 神速反擊流",
+        req: ["fastbreak_king", "posterizer_t3"],
+        desc: "禁區終結命中率額外 +5%、體力消耗降低 10%",
+        story: "全場奔襲接騰空暴扣，用最狂野的轉換進攻摧毀對手士氣。",
+        when: (ctx) => !ctx || ctx.shotZone === "PAINT" || ctx.possession === "OFFENSE",
+        effects: [{ target: "shootPct", op: "ADD", value: 5 }, { target: "staminaDrain", op: "MUL", value: 0.90 }]
+      },
+      {
+        id: "syn_floor_commander", name: "🧠 球場總司令",
+        req: ["dimer_general_t3", "floor_iq"],
+        desc: "組織傳球成功率額外 +7%、QTE 黃金區 +12%",
+        story: "洞悉全場十人跑位的球場大腦，每一次分球都如外科手術般精準。",
+        when: (ctx) => !ctx || ctx.shotZone === "PASS" || ctx.possession === "OFFENSE",
+        effects: [{ target: "shootPct", op: "ADD", value: 7 }, { target: "qtePerfectWidth", op: "ADD", value: 12 }]
+      },
+      {
+        id: "syn_perimeter_prison", name: "🛡️ 外線鐵血監獄",
+        req: ["perimeter_lockdown_t3", "glove_steal_t4"],
+        desc: "外線防守與抄截判定額外 +7%、完美加成 +4%",
+        story: "如影隨形的死亡纏繞，讓對方王牌連運球過半場都舉步維艱。",
+        when: (ctx) => !ctx || ctx.possession === "DEFENSE",
+        effects: [{ target: "defenseRating", op: "ADD", value: 7 }, { target: "perfectBonusPct", op: "ADD", value: 4 }]
+      },
+      {
+        id: "syn_no_fly_zone", name: "🏔️ 禁區禁飛巨塔",
+        req: ["rim_eraser_t4", "glass_cleaner_t3"],
+        desc: "護框封阻與籃板爭搶判定額外 +7%",
+        story: "遮天蔽日的禁區統治力，火鍋與籃板全數收入囊中。",
+        when: (ctx) => !ctx || ctx.possession === "DEFENSE" || ctx.shotZone === "PAINT",
+        effects: [{ target: "defenseRating", op: "ADD", value: 7 }, { target: "shootPct", op: "ADD", value: 3 }]
+      },
+      {
+        id: "syn_iso_assassin", name: "🔥 孤膽中投王",
+        req: ["alpha_dog", "midrange_maestro_t3"],
+        desc: "中距離單打命中率額外 +6%、完美加成 +5%",
+        story: "清空一側交給王牌單打，標誌性急停後仰讓防守者望球興嘆。",
+        when: (ctx) => !ctx || ctx.shotZone === "MID",
+        effects: [{ target: "shootPct", op: "ADD", value: 6 }, { target: "perfectBonusPct", op: "ADD", value: 5 }]
+      },
+      {
+        id: "syn_limitless_heat", name: "🌌 無限射程領域",
+        req: ["limitless_range_t4", "microwave"],
+        desc: "三分火力全面點燃，外線命中率額外 +5%",
+        story: "只要剛過半場 Logo 就進入射程，一球入網即刻點燃整座球館。",
+        when: (ctx) => !ctx || ctx.shotZone === "THREE",
+        effects: [{ target: "shootPct", op: "ADD", value: 5 }]
+      },
+      {
+        id: "syn_iron_will", name: "🦾 不屈鋼鐵意志",
+        req: ["iron_lungs", "ice_in_veins"],
+        desc: "體力消耗降低 14%、逆境命中率額外 +5%",
+        story: "打滿四節依然面不改色，越到極限時刻越能發揮驚人統治力。",
+        when: (ctx) => !ctx || (ctx.staminaPct !== undefined && ctx.staminaPct < 55) || (ctx.quarter >= 4),
+        effects: [{ target: "staminaDrain", op: "MUL", value: 0.86 }, { target: "shootPct", op: "ADD", value: 5 }]
+      }
+    ];
+
+    function getSkillStory(sk) {
+      if (!sk) return "";
+      const chain = SKILL_UNLOCK_CHAINS.find(c => c.skillId === sk.id);
+      if (chain) return chain.story;
+      if (sk.category === "RED_TRAIT") return "【分鏡】成長路上的陣痛與考驗——唯有透過極限特訓頓悟，才能親手打破這道枷鎖。";
+      if (sk.category === "PHYSICAL") return "【分鏡】與生俱來的靜態天賦，讓你踏上球場的第一步便成為球探目光焦點。";
+      if (sk.category === "BADGE") return `【分鏡】日復一日的千次打磨，將「${sk.name.replace(/^[^\s]+\s*/, "")}」刻入身體本能。`;
+      return `【分鏡】無數次激戰沉澱出的賽場特質，在關鍵瞬間化作扭轉戰局的武器。`;
+    }
+
+    function ensureSkillProgress(targetSeason = Season) {
+      if (!targetSeason) return {};
+      if (!targetSeason.skillProgress || typeof targetSeason.skillProgress !== "object") {
+        targetSeason.skillProgress = {
+          clutchMakes: 0, clutchPerfects: 0, careerThrees: 0, paintFinishes: 0,
+          careerAssists: 0, careerBlocks: 0, careerSteals: 0,
+          highLoadGames: 0, careerMvps: 0, gritHeroMakes: 0
+        };
+      }
+      if (!Array.isArray(targetSeason.skillUnlockLog)) targetSeason.skillUnlockLog = [];
+      return targetSeason.skillProgress;
+    }
+
+    function getActiveSynergies(eqIds) {
+      const set = eqIds instanceof Set ? eqIds : new Set(eqIds || []);
+      return SKILL_SYNERGIES.filter(syn => syn.req.every(id => set.has(id)));
+    }
+
+    function trackSkillProgressAndUnlock(deltas) {
+      if (!Season || !Season.player || !deltas) return [];
+      const prog = ensureSkillProgress(Season);
+      for (const [k, v] of Object.entries(deltas)) {
+        if (Number(v) > 0) prog[k] = (prog[k] || 0) + Number(v);
+      }
+      if (!Array.isArray(Season.equippedTraits)) Season.equippedTraits = [];
+      const newlyUnlocked = [];
+      for (const ch of SKILL_UNLOCK_CHAINS) {
+        if (Season.equippedTraits.includes(ch.skillId)) continue;
+        if ((prog[ch.metric] || 0) >= ch.target) {
+          Season.equippedTraits.push(ch.skillId);
+          const skObj = DB && DB.skills && DB.skills.skills.find(s => s.id === ch.skillId);
+          const skName = skObj ? skObj.name : ch.skillId;
+          newlyUnlocked.push({ id: ch.skillId, name: skName, story: ch.story });
+          Season.skillUnlockLog.unshift(`第 ${Season.careerYear} 季 · 實戰達成條件解鎖【${skName}】`);
+          Season.skillUnlockLog = Season.skillUnlockLog.slice(0, 15);
+          if (typeof showToast === "function") {
+            showToast(`🌟 實戰條件達成！領悟稀有技能【${skName}】！（可至技能圖鑑查看解鎖故事）`);
+          }
+        }
+      }
+      return newlyUnlocked;
+    }
+    window.SKILL_UNLOCK_CHAINS = SKILL_UNLOCK_CHAINS;
+    window.SKILL_SYNERGIES = SKILL_SYNERGIES;
+    window.getSkillStory = getSkillStory;
+    window.ensureSkillProgress = ensureSkillProgress;
+    window.getActiveSynergies = getActiveSynergies;
+    window.trackSkillProgressAndUnlock = trackSkillProgressAndUnlock;
+
     const ModifierResolver = {
       resolve(baseStats, eqIds, ctx) {
         const stats = { ...baseStats };
@@ -4295,9 +4521,11 @@
         const active = DB.skills.skills.filter(s =>
           (s.category === "SYSTEM" || eqIds.has(s.id)) && ConditionEvaluator.evalAll(s.conditions, ctx)
         );
+        const activeSynergies = getActiveSynergies(eqIds).filter(syn => !syn.when || syn.when(ctx));
         const order = { SET: 1, ADD: 2, MUL: 3, UNLOCK_ACTION: 4 };
         const mods = [];
         for (const sk of active) for (const m of sk.modifiers) mods.push(m);
+        for (const syn of activeSynergies) for (const m of syn.effects) mods.push(m);
         mods.sort((a, b) => (order[a.op] || 9) - (order[b.op] || 9));
         for (const m of mods) {
           if (m.op === "UNLOCK_ACTION") { unlockedActions.add(m.value); continue; }
@@ -4306,7 +4534,7 @@
           else if (m.op === "ADD") stats[m.target] += m.value;
           else if (m.op === "MUL") stats[m.target] = Number((stats[m.target] * m.value).toFixed(2));
         }
-        return { finalStats: stats, unlockedActions, triggeredSkills: active };
+        return { finalStats: stats, unlockedActions, triggeredSkills: active, activeSynergies };
       }
     };
 
@@ -4417,6 +4645,9 @@
         perfectsTotal: Match.perfectsTotal,
         isZone: Match.isZone,
         zonePossessionsLeft: Match.zonePossessionsLeft,
+        zoneGauge: Match.zoneGauge || 0,
+        zoneUsedCount: Match.zoneUsedCount || 0,
+        playingThroughInjury: Boolean(Match.playingThroughInjury),
         isGrit: Match.isGrit,
         recentActionIds: [...(Match.recentActionIds || [])],
         commHistory: (Match.commHistory || []).slice(0, 60),
@@ -4489,8 +4720,13 @@
       Match.missStreak = snap.missStreak || 0;
       Match.perfectStreak = snap.perfectStreak || 0;
       Match.perfectsTotal = snap.perfectsTotal || 0;
+      if (window.BTUI && typeof BTUI.resetTutorialFlag === "function") BTUI.resetTutorialFlag();
+      Match._historyView = null;
       Match.isZone = Boolean(snap.isZone);
       Match.zonePossessionsLeft = snap.zonePossessionsLeft || 0;
+      Match.zoneGauge = snap.zoneGauge || 0;
+      Match.zoneUsedCount = snap.zoneUsedCount || 0;
+      Match.playingThroughInjury = Boolean(snap.playingThroughInjury);
       Match.isGrit = Boolean(snap.isGrit);
       Match.recentActionIds = Array.isArray(snap.recentActionIds) ? snap.recentActionIds : [];
       Match.commHistory = Array.isArray(snap.commHistory) ? snap.commHistory : [];
@@ -4657,6 +4893,8 @@
       Match.league = league;
       Match.homeName = userTeamObj.name;
       Match.awayName = oppTeamObj.name;
+      if (window.BTUI && typeof BTUI.resetTutorialFlag === "function") BTUI.resetTutorialFlag();
+      Match._historyView = null;
       syncUserTeamRole(false);
       Match.homeTeam = Season.userRoster.map(p => createPlayer(p, "HOME"));
       Match.awayTeam = buildOpponentRoster(oppTeamObj).map(p => createPlayer(p, "AWAY"));
@@ -5192,6 +5430,14 @@
           Season.seasonTotals.pts += u.pts; Season.seasonTotals.reb += (u.oreb + u.dreb);
           Season.seasonTotals.ast += u.ast; Season.seasonTotals.stl += u.stl; Season.seasonTotals.blk += u.blk;
           Season.seasonTotals.mvps = (Season.seasonTotals.mvps || 0) + (bestP.isUser ? 1 : 0);
+          trackSkillProgressAndUnlock({
+            careerThrees: u.tpm || 0,
+            careerAssists: u.ast || 0,
+            careerBlocks: u.blk || 0,
+            careerSteals: u.stl || 0,
+            careerMvps: bestP.isUser ? 1 : 0,
+            highLoadGames: ((u.secPlayed || 0) / Math.max(1, Match.totalGameSec)) >= 0.60 ? 1 : 0
+          });
           recordRivalryAndHistory(g, u, Match.homeScore > Match.awayScore);
           if (!g.stage) stepOtherTeamsLOD0(g);
           else if (window.BTUI && g.boxScore) {
@@ -5223,6 +5469,7 @@
           const focusResult = window.BTUI ? BTUI.evaluateCoachFocusPostMatch(u) : null;
           clearMatchCheckpoint();
           SaveManager.save(Season);
+          renderHub();
           if (window.BTUI) {
             const hlEntry = Match.commHistory.find(e => e.hl) || Match.commHistory[0];
             BTUI.showPostMatchSettlement({
@@ -5434,7 +5681,7 @@
         return {
           ...a,
           qteType: assignedQte,
-          side, cutinId, triggeredSkills: positiveTriggered,
+          side, cutinId, triggeredSkills: positiveTriggered, activeSynergies: res.activeSynergies || [],
           rate, feel, perfectRate, relStat,
           riskLevel, gritBonusPct, isCoachPlay, trustWin, trustFail, rewardTxt, riskTxt,
           qteWidthMul: (res.finalStats.qtePerfectWidth / 100) * statQteScale,
@@ -5830,6 +6077,16 @@
       const u = Match.userPlayer, r = Match.rivalPlayer;
       const home5 = activeLineup(Match.homeTeam), away5 = activeLineup(Match.awayTeam);
       const isCrunchNow = Match.quarter >= 4 && Match.timeLeftSec <= 180;
+      if (success && card) {
+        const pDeltas = {};
+        if (isCrunchNow && card.side === "OFFENSE" && card.statType !== "ASSIST") {
+          pDeltas.clutchMakes = 1;
+          if (grade === "PERFECT") pDeltas.clutchPerfects = 1;
+        }
+        if (card.zone === "PAINT" && card.side === "OFFENSE" && card.statType !== "ASSIST") pDeltas.paintFinishes = 1;
+        if ((Match.playingThroughInjury || (u.stamina || 100) < 30) && card.side === "OFFENSE" && card.statType !== "ASSIST") pDeltas.gritHeroMakes = 1;
+        if (Object.keys(pDeltas).length) trackSkillProgressAndUnlock(pDeltas);
+      }
       if (grade === "PERFECT") {
         Match.perfectsTotal += 1; Match.perfectStreak += 1;
         triggerMatchJuice(success ? "BIG" : "MISS");
@@ -7739,6 +7996,8 @@
         const savedTraits = [...Season.equippedTraits];
         const prevHist = ensureCareerHistory(Season);
         const prevNatHist = Array.isArray(Season.nationalTeamHistory) ? [...Season.nationalTeamHistory] : [];
+        const prevSkillProg = Season.skillProgress ? JSON.parse(JSON.stringify(Season.skillProgress)) : ensureSkillProgress(Season);
+        const prevSkillLog = Array.isArray(Season.skillUnlockLog) ? [...Season.skillUnlockLog] : [];
         const prevRotKey = Season.rotationKey || "ROOKIE";
         const prevSt = Season.seasonTotals || { gp: 1, pts: 0 };
         const prevPpg = prevSt.pts / Math.max(1, prevSt.gp);
@@ -7773,6 +8032,8 @@
         const osReport = evolveAllLeagueTeams(tempSeasonCtx, target, targetUserTeam, growthLogs);
         createNewCareer(target, nextArc, Season.careerYear + 1, nextRoster, savedP, savedTraits, prevHist, nextOps, tempSeasonCtx.leagueRosters, osReport, targetUserTeam);
         Season.nationalTeamHistory = prevNatHist;
+        Season.skillProgress = prevSkillProg;
+        Season.skillUnlockLog = prevSkillLog;
         SaveManager.save(Season);
         showToast(`🏀 邁入第 ${Season.careerYear} 季！全聯賽完成休賽季換血與王牌更新！`);
         if (window.BTUI && typeof BTUI.openOffseasonReport === "function") {
@@ -8015,8 +8276,8 @@
       }
       const hasSavedCareer = Boolean(saved && saved.schedule && saved.standings && saved.player);
       if (hasSavedCareer) {
-        Season = saved;
-        ensureLeagueRosters(Season, Season.leagueId);
+        Season = normalizeLoadedSeason(saved);
+        syncUserTeamRole(false);
         document.getElementById("idbStatusTag").textContent = `存檔槽 ${SaveManager.getActiveSlot()} 已載入`;
         renderHub();
       } else {
@@ -8033,21 +8294,63 @@
       requestAnimationFrame(gameLoop);
     }
 
+    function normalizeLoadedSeason(targetSeason) {
+      if (!targetSeason || !targetSeason.player) return targetSeason;
+      if (!targetSeason.seasonTotals || typeof targetSeason.seasonTotals !== "object") {
+        targetSeason.seasonTotals = { gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, mvps: 0 };
+      }
+      if (!targetSeason.leaguePlayerTotals || typeof targetSeason.leaguePlayerTotals !== "object") {
+        targetSeason.leaguePlayerTotals = {};
+      }
+      if (!Array.isArray(targetSeason.archive)) targetSeason.archive = [];
+      if (!Array.isArray(targetSeason.equippedTraits)) targetSeason.equippedTraits = [];
+      if (!Array.isArray(targetSeason.schedule)) targetSeason.schedule = [];
+      if (!Array.isArray(targetSeason.standings) || !targetSeason.standings.length) {
+        const lg = DB.leagues.leagues.find(l => l.id === targetSeason.leagueId) || DB.leagues.leagues[0];
+        targetSeason.standings = lg.teams.map(t => ({
+          id: t.id, name: t.name, ovr: t.ovr, ace: t.ace, coach: t.coach || "總教練",
+          isUserTeam: Boolean(t.isUserTeam), w: 0, l: 0, pf: 0, pa: 0
+        }));
+      }
+      if (!targetSeason.standings.some(t => t && t.isUserTeam)) {
+        targetSeason.standings[0].isUserTeam = true;
+      }
+      // 同步 currentRoundIdx 與 schedule.played（徹底杜絕讀檔後指向已完賽輪次導致無法記錄新比賽！）
+      const firstUnplayed = targetSeason.schedule.findIndex(g => g && !g.played);
+      targetSeason.currentRoundIdx = firstUnplayed >= 0 ? firstUnplayed : targetSeason.schedule.length;
+      // 修復賽程中任何失效的 oppId（避免舊存檔跨版本升級時快速模擬崩潰）
+      const fallbackOpp = targetSeason.standings.find(t => !t.isUserTeam) || targetSeason.standings[0];
+      targetSeason.schedule.forEach(g => {
+        if (g && !g.played && !targetSeason.standings.some(t => t.id === g.oppId) && fallbackOpp) {
+          g.oppId = fallbackOpp.id;
+          g.oppName = fallbackOpp.name;
+          g.oppAce = fallbackOpp.ace;
+        }
+      });
+      targetSeason.userRoster = ensureRosterProfiles(targetSeason.userRoster || []);
+      ensureLeagueRosters(targetSeason, targetSeason.leagueId);
+      ensureCareerHistory(targetSeason);
+      ensureTeamOps(targetSeason);
+      return targetSeason;
+    }
+
     async function loadCareerFromSlot(slotNum) {
       SaveManager.setActiveSlot(slotNum);
       const data = await SaveManager.load(slotNum);
       if (!data || !data.player || !data.standings) return false;
       clearPendingEventTimer();
-      if (typeof Match !== "undefined") Match.phase = "IDLE";
-      ["crossroadsModal", "eventModal", "offseasonReportModal", "playerDetailModal", "sectionDrawerModal", "boxScoreModal", "unifiedSettlementModal"].forEach(id => {
+      pendingMatchAction = null;
+      if (window.BTUI && typeof BTUI.resetTutorialFlag === "function") BTUI.resetTutorialFlag();
+      if (typeof Match !== "undefined") {
+        Match.phase = "IDLE";
+        Match.fastSimming = false;
+        Match._historyView = null;
+      }
+      ["crossroadsModal", "eventModal", "offseasonReportModal", "playerDetailModal", "sectionDrawerModal", "boxScoreModal", "unifiedSettlementModal", "preMatchFocusModal", "apReminderModal", "injuryChoiceModal"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add("hidden");
       });
-      Season = data;
-      Season.userRoster = ensureRosterProfiles(Season.userRoster || []);
-      ensureLeagueRosters(Season, Season.leagueId);
-      ensureCareerHistory(Season);
-      ensureTeamOps(Season);
+      Season = normalizeLoadedSeason(data);
       syncUserTeamRole(false);
       const tag = document.getElementById("idbStatusTag");
       if (tag) tag.textContent = `存檔槽 ${slotNum} 已載入`;
