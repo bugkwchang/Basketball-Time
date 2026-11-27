@@ -537,7 +537,8 @@ window.BTUI = (() => {
     const sDelta = (!pl.isUser && typeof pl.seasonOvrStart === "number") ? (ovr - pl.seasonOvrStart) : 0;
     const sDeltaStr = sDelta > 0 ? ` · 本季▲+${sDelta}` : (sDelta < 0 ? ` · 本季▼${sDelta}` : "");
     document.getElementById("pdHeroName").textContent = `#${pl.num !== undefined ? pl.num : "--"} ${pl.name}`;
-    document.getElementById("pdHeroSub").textContent = `${teamName || "所屬球隊"} · ${pl.pos || "SG"} · ${roleTxt} · ${pl.heightCm || 185}cm${pl.age ? ` · ${pl.age}歲` : ""}${potStr}${gtStr}${sDeltaStr}`;
+    const displayAge = (pl.isUser && getSeason() && getSeason().player) ? getSeason().player.age : pl.age;
+    document.getElementById("pdHeroSub").textContent = `${teamName || "所屬球隊"} · ${pl.pos || "SG"} · ${roleTxt} · ${pl.heightCm || 185}cm${displayAge ? ` · ${displayAge}歲` : ""}${potStr}${gtStr}${sDeltaStr}`;
     document.getElementById("pdOvrVal").textContent = ovr;
     document.getElementById("pdOvrCmp").textContent = `均${avgOvr} (${diff >= 0 ? "+" : ""}${diff})${rankStr ? ` · ${rankStr}` : ""}`;
 
@@ -650,7 +651,7 @@ window.BTUI = (() => {
             <div class="rpc-meta">
               <span class="tag">${pl.pos}</span>
               <span class="tag ${isStarter ? "gold" : ""}">${roleTxt}</span>
-              <span>${pl.heightCm || 185}cm${pl.age ? ` · ${pl.age}歲` : ""}</span>
+              <span>${pl.heightCm || 185}cm${(pl.isUser && season.player ? season.player.age : pl.age) ? ` · ${pl.isUser && season.player ? season.player.age : pl.age}歲` : ""}</span>
               ${potBadge}
             </div>
           </div>
@@ -1726,7 +1727,7 @@ window.BTUI = (() => {
       if (!totals[key]) {
         totals[key] = {
           name: pl.name, teamId, teamName, pos: pl.pos || "SG",
-          age: pl.age || 17, ovr: pl.ovr || 70, isUser: Boolean(pl.isUser),
+          age: (pl.isUser && season.player ? season.player.age : (pl.age || 17)), ovr: pl.ovr || 70, isUser: Boolean(pl.isUser),
           gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0
         };
       }
@@ -1734,7 +1735,8 @@ window.BTUI = (() => {
       rec.teamName = teamName;
       rec.isUser = Boolean(pl.isUser);
       if (pl.ovr) rec.ovr = pl.ovr;
-      if (pl.age) rec.age = pl.age;
+      const resolvedAge = (pl.isUser && season.player) ? season.player.age : pl.age;
+      if (resolvedAge) rec.age = resolvedAge;
       rec.gp += 1;
       rec.pts += (pl.pts || 0);
       rec.reb += ((pl.oreb || 0) + (pl.dreb || 0));

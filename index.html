@@ -974,6 +974,7 @@
       <div class="live-micro-compact">
         <div class="live-core-stats">
           <span class="mini-meter">⚡<span class="mini-track"><span class="mini-fill" id="hudStaminaBar" style="width:100%;"></span></span> <span id="hudStaminaTxt">100%</span></span>
+          <span class="mini-meter zone-meter" title="ZONE 領域能量">🔥<span class="mini-track"><span class="mini-fill zone-fill" id="hudZoneBar" style="width:0%;"></span></span> <span id="hudZoneTxt">0%</span></span>
           <span id="hudBoxLine" style="display:inline-flex; gap:6px; align-items:center;"><span>PTS 0</span><span>REB 0</span><span>AST 0</span></span>
           <span id="hudStateBadges" style="display:inline-flex; gap:4px; align-items:center; flex-wrap:wrap;"></span>
         </div>
@@ -1005,6 +1006,7 @@
           <div class="dock-head" style="width:100%; max-width:540px; margin-bottom:0;">
             <span class="sit-stamp" id="qteTitle">🎯 動作判定</span>
             <span style="font-size:11.5px; font-weight:900;" id="qteSub">按 [SPACE] 或點擊鎖定</span>
+            <span id="qteFeedbackPill" class="qte-feedback-pill" style="display:none;"></span>
           </div>
           <div class="qte-arena" id="qteArena"><canvas id="qteCanvas"></canvas></div>
           <button class="qte-fire-btn" id="btnQteAction" type="button">🔥 鎖定 (SPACE)</button>
@@ -1093,12 +1095,16 @@
 
   <!-- ===== GRADUATION CROSSROADS / TRANSFER / HOF MODAL ===== -->
   <div class="modal-backdrop hidden" id="crossroadsModal">
-    <div class="modal-sheet" style="max-width:640px;">
-      <div class="stamp" id="crStamp">18 歲畢業分岔口</div>
-      <div style="font-size:20px; font-weight:900; margin:6px 0;" id="crTitle">選擇你嘅下一個舞台</div>
-      <div style="font-size:12.5px; color:var(--ink-soft); margin-bottom:10px;" id="crDesc"></div>
-      <div id="crGrowthStoryBox" style="margin-bottom:12px;"></div>
-      <div id="crOptionsBox" style="display:flex; flex-direction:column; gap:8px;"></div>
+    <div class="modal-sheet cr-editorial-modal" style="max-width:580px; padding:0; overflow:hidden;">
+      <div class="cr-hero-banner">
+        <span class="stamp" style="background:var(--gold-bright); color:var(--ink);" id="crStamp">🎓 18 歲畢業選秀大會</span>
+        <div class="cr-hero-title" id="crTitle">選擇你的下一個舞台</div>
+        <div class="cr-hero-desc" id="crDesc"></div>
+      </div>
+      <div class="cr-modal-body">
+        <div id="crGrowthStoryBox" style="margin-bottom:10px;"></div>
+        <div id="crOptionsBox" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
     </div>
   </div>
 
@@ -1134,6 +1140,48 @@
   </div>
 
   <!-- ===== CLICKABLE PLAYER DETAIL CARD MODAL ===== -->
+  <!-- ==================== INJURY NARRATIVE CHOICE MODAL ==================== -->
+  <div class="modal-backdrop hidden" id="injuryChoiceModal" style="z-index:102;">
+    <div class="modal-sheet cr-editorial-modal" style="max-width:520px; padding:0; overflow:hidden;">
+      <div class="cr-hero-banner" style="background:linear-gradient(135deg, #181614 0%, #7F1D1D 100%);">
+        <span class="stamp" style="background:#FCA5A5; color:#181614;" id="injChoiceStamp">🩹 賽前傷病臨場抉擇</span>
+        <div class="cr-hero-title" id="injChoiceTitle">帶傷硬撐，還是乖乖休養？</div>
+        <div class="cr-hero-desc" id="injChoiceDesc">隊醫警告你的傷勢尚未痊癒，但全場觀眾與隊友都在等你踏上球場……</div>
+      </div>
+      <div class="cr-modal-body" style="display:flex; flex-direction:column; gap:10px;">
+        <button type="button" class="choice-btn cr-offer-card tier-contender" id="btnInjPushThrough">
+          <div class="cr-offer-inner">
+            <div class="cr-offer-top">
+              <div>
+                <span class="cr-tier-pill" style="background:#C81E1E; color:#FFF;">🔥 熱血抉擇・燃燒意志</span>
+                <div class="cr-offer-team">綁上繃帶・硬撐上場！</div>
+              </div>
+              <span class="tag loss">高風險</span>
+            </div>
+            <div style="font-size:12px; color:var(--ink-soft); margin-top:5px; line-height:1.45;">
+              啟動<strong>腎上腺素爆發</strong>暫時壓下痛楚，關鍵回合觸發<strong>「🩹 帶傷死戰」專屬漫畫 Cut-in 與意志判定</strong>（成功命中 +18%、名氣與信任大漲）；但賽後額外疲勞 -10%，且有高機率惡化為嚴重拉傷並留下舊患！
+            </div>
+          </div>
+        </button>
+        <button type="button" class="choice-btn cr-offer-card tier-rebuild" id="btnInjRestRehab">
+          <div class="cr-offer-inner">
+            <div class="cr-offer-top">
+              <div>
+                <span class="cr-tier-pill" style="background:#15803D; color:#FFF;">🧊 理智復健・蓄力長遠</span>
+                <div class="cr-offer-team">聽從隊醫・乖乖輪休復健</div>
+              </div>
+              <span class="tag win">保護生涯</span>
+            </div>
+            <div style="font-size:12px; color:var(--ink-soft); margin-top:5px; line-height:1.45;">
+              本場由隊友代打模擬，你的<strong>傷勢降級且狀態大幅回復 +24%</strong>；場邊觀看錄影帶覆盤穩定提升<strong>球商／意志</strong>，並有機會（每季至多 1 次）在沉澱中領悟全新技能！
+            </div>
+          </div>
+        </button>
+        <button type="button" class="choice-btn" id="btnInjCancel" style="background:#F7F4EC; justify-content:center;"><span>⬅️ 先返回主畫面安排理療</span></button>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== OFFSEASON LEAGUE REPORT MODAL ==================== -->
   <div class="modal-backdrop hidden" id="offseasonReportModal" style="z-index:98;">
     <div class="modal-card" style="max-width:560px; padding:14px;">
@@ -1387,6 +1435,9 @@
         };
       }
 
+      const mirrorKey = (slot) => `bt_save_mirror_slot_${Math.max(1, Math.min(SLOT_COUNT, Number(slot) || activeSlot))}`;
+      const isValidCareerState = (st) => Boolean(st && st.player && st.player.stats && Array.isArray(st.standings) && Array.isArray(st.schedule));
+
       return {
         SLOT_COUNT,
         getActiveSlot() { return activeSlot; },
@@ -1397,65 +1448,97 @@
           return activeSlot;
         },
         async save(stateObj, slot = null) {
+          // 防護：絕不把尚未完成創角的空狀態（player === null）寫入存檔槽覆蓋既有進度！
+          if (!isValidCareerState(stateObj)) return false;
           const targetSlot = slot ? Math.max(1, Math.min(SLOT_COUNT, Number(slot))) : activeSlot;
-          if (stateObj && typeof stateObj === "object") stateObj._savedAt = Date.now();
+          let cleanCopy;
+          try {
+            stateObj._savedAt = Date.now();
+            cleanCopy = JSON.parse(JSON.stringify(stateObj));
+          } catch (_) {
+            return false;
+          }
+          // 雙重備援：同步寫入 localStorage 備份（避免私密瀏覽或 IndexedDB 異常掉檔）
+          let lsOk = false;
+          try {
+            localStorage.setItem(mirrorKey(targetSlot), JSON.stringify(cleanCopy));
+            lsOk = true;
+          } catch (_) {}
+
           const db = await openDB();
-          if (!db) return false;
+          if (!db) return lsOk;
           return new Promise((resolve) => {
             try {
               const tx = db.transaction(STORE, "readwrite");
-              tx.objectStore(STORE).put(stateObj, slotKey(targetSlot));
+              tx.objectStore(STORE).put(cleanCopy, slotKey(targetSlot));
               tx.oncomplete = () => resolve(true);
-              tx.onerror = () => resolve(false);
-            } catch (_) { resolve(false); }
+              tx.onerror = () => resolve(lsOk);
+              tx.onabort = () => resolve(lsOk);
+            } catch (_) { resolve(lsOk); }
           });
         },
         async load(slot = null) {
           const targetSlot = slot ? Math.max(1, Math.min(SLOT_COUNT, Number(slot))) : activeSlot;
+          let idbData = null;
           const db = await openDB();
-          if (!db) return null;
-          return new Promise((resolve) => {
-            try {
-              const tx = db.transaction(STORE, "readonly");
-              const req = tx.objectStore(STORE).get(slotKey(targetSlot));
-              req.onsuccess = () => resolve(req.result || null);
-              req.onerror = () => resolve(null);
-            } catch (_) { resolve(null); }
-          });
+          if (db) {
+            idbData = await new Promise((resolve) => {
+              try {
+                const tx = db.transaction(STORE, "readonly");
+                const req = tx.objectStore(STORE).get(slotKey(targetSlot));
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => resolve(null);
+              } catch (_) { resolve(null); }
+            });
+          }
+          let lsData = null;
+          try {
+            const raw = localStorage.getItem(mirrorKey(targetSlot));
+            if (raw) lsData = JSON.parse(raw);
+          } catch (_) {}
+
+          const idbOk = isValidCareerState(idbData);
+          const lsOk = isValidCareerState(lsData);
+          if (idbOk && lsOk) {
+            return (Number(lsData._savedAt || 0) > Number(idbData._savedAt || 0)) ? lsData : idbData;
+          }
+          return idbOk ? idbData : (lsOk ? lsData : null);
         },
         async listSlots() {
           const out = [];
           for (let s = 1; s <= SLOT_COUNT; s++) {
             const data = await this.load(s);
-            out.push({ slot: s, empty: !Boolean(data && data.player && data.standings), meta: buildMeta(data, s) });
+            const valid = isValidCareerState(data);
+            out.push({ slot: s, empty: !valid, meta: valid ? buildMeta(data, s) : null });
           }
           return out;
         },
         async clear(slot = null) {
           const targetSlot = slot ? Math.max(1, Math.min(SLOT_COUNT, Number(slot))) : activeSlot;
+          try {
+            localStorage.removeItem(mirrorKey(targetSlot));
+            localStorage.removeItem(`bt_match_checkpoint_slot_${targetSlot}`);
+          } catch (_) {}
           const db = await openDB();
-          if (!db) return;
+          if (!db) return true;
           return new Promise((resolve) => {
             try {
               const tx = db.transaction(STORE, "readwrite");
               tx.objectStore(STORE).delete(slotKey(targetSlot));
-              tx.oncomplete = () => {
-                try { localStorage.removeItem(`bt_match_checkpoint_slot_${targetSlot}`); } catch (_) {}
-                resolve(true);
-              };
+              tx.oncomplete = () => resolve(true);
               tx.onerror = () => resolve(false);
             } catch (_) { resolve(false); }
           });
         },
         async exportSlotJson(slot = null) {
           const data = await this.load(slot);
-          if (!data) return null;
+          if (!isValidCareerState(data)) return null;
           return JSON.stringify({ format: "BasketballTimeSave", version: 2, exportedAt: new Date().toISOString(), season: data }, null, 2);
         },
         async importSlotJson(slot, jsonText) {
           const parsed = JSON.parse(jsonText);
           const candidate = parsed && parsed.season ? parsed.season : parsed;
-          if (!candidate || !candidate.player || !Array.isArray(candidate.standings) || !Array.isArray(candidate.schedule)) {
+          if (!isValidCareerState(candidate)) {
             throw new Error("檔案格式不符，請確認為《Basketball Time》匯出的存檔備份");
           }
           await this.save(candidate, slot);
@@ -1656,6 +1739,7 @@
             ...p,
             name: Season.player.name,
             pos: Season.player.pos,
+            age: Season.player.age,
             heightCm: Season.player.heightCm,
             stats: { ...Season.player.stats },
             skills: [...(Season.equippedTraits || [])],
@@ -1766,7 +1850,7 @@
 
       return {
         year: Season.careerYear,
-        age: p ? p.age : (14 + Season.careerYear),
+        age: (rec && typeof rec.playedAge === "number") ? rec.playedAge : (p ? p.age : (14 + Season.careerYear)),
         leagueName: league ? league.name : "",
         teamName: (rec && rec.teamName) || (uTeam && uTeam.name) || "",
         ovr: curOvr,
@@ -2599,6 +2683,8 @@
       const p = Season.player;
       if (typeof p.coachTrust !== "number") p.coachTrust = 35;
       const ovr = calcOVR(p.stats, p.pos, Season.equippedTraits);
+      const _uAgeSlot = (Season.userRoster || []).find(x => x && x.isUser);
+      if (_uAgeSlot) { _uAgeSlot.age = p.age; _uAgeSlot.ovr = ovr; }
       const curLeague = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
       const lgAvg = curLeague.teams.reduce((s, t) => s + (t.ovr || 75), 0) / Math.max(1, curLeague.teams.length);
       const prevKey = Season.rotationKey;
@@ -3062,14 +3148,22 @@
                 if (sp.length) pl.skills.push(sp[Math.floor(Math.random() * sp.length)]);
               }
             } else if (pl.age <= 29) {
-              const gBase = (gt === "LATE" && pl.age <= 27 && pot >= 3) ? 3 : (Math.random() < 0.65 ? 2 : 1);
-              focus.filter(k => !PHYSICAL_STAT_KEYS.has(k)).slice(0, 3).forEach(k => {
+              // 20季長線平衡阻尼：已高於聯盟均線 +3 的巔峰球星放緩成長，防止長期通膨
+              const aboveAvg = (pl.ovr || 75) >= (lgAvgOvr + 3);
+              const gBase = aboveAvg
+                ? (Math.random() < 0.32 ? 1 : 0)
+                : ((gt === "LATE" && pl.age <= 27 && pot >= 3) ? 2 : (Math.random() < 0.55 ? 1 : 0));
+              focus.filter(k => !PHYSICAL_STAT_KEYS.has(k)).slice(0, 2).forEach(k => {
                 if (gBase > 0 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + gBase);
               });
             } else {
-              const drop = pl.age >= 34 ? 2 : 1;
-              ["speed", "vertical"].forEach(k => { if (pl.stats[k] !== undefined) pl.stats[k] = Math.max(42, pl.stats[k] - drop); });
-              if (Math.random() < 0.45 && pl.stats.iq !== undefined) pl.stats.iq = Math.min(98, pl.stats.iq + 1);
+              // 30+ 歲自然老化（31歲起逐步衰退，維持 20 季聯盟均線穩定）
+              const drop = pl.age >= 34 ? 3 : (pl.age >= 32 ? 2 : 1);
+              ["speed", "vertical", "strength"].forEach((k, i) => {
+                if (pl.stats[k] !== undefined && (i < 2 || pl.age >= 32)) pl.stats[k] = Math.max(42, pl.stats[k] - drop);
+              });
+              if (pl.age >= 33 && Math.random() < 0.45 && pl.stats.perimDef !== undefined) pl.stats.perimDef = Math.max(45, pl.stats.perimDef - 1);
+              if (Math.random() < 0.40 && pl.stats.iq !== undefined) pl.stats.iq = Math.min(98, pl.stats.iq + 1);
             }
             pl.ovr = calcOVR(pl.stats, pl.pos, pl.skills);
             pl.seasonOvrStart = pl.ovr;
@@ -3391,6 +3485,7 @@
         playerObj.jerseyNum = assignedNum;
         uSlot.name = playerObj.name;
         uSlot.pos = playerObj.pos;
+        uSlot.age = playerObj.age;
         uSlot.heightCm = playerObj.heightCm;
         uSlot.ovr = calcOVR(playerObj.stats, playerObj.pos, Season ? Season.equippedTraits : []);
       }
@@ -3453,8 +3548,7 @@
       ensureLeagueRosters(Season, league.id);
       ensureCareerHistory(Season);
       ensureTeamOps(Season);
-      if (Season.player) syncUserTeamRole(false);
-      SaveManager.save(Season);
+      if (Season.player) { syncUserTeamRole(false); SaveManager.save(Season); }
       renderHub();
     }
 
@@ -3632,7 +3726,7 @@
       const pSim = Season.player;
       const injLvSim = getInjuryLevel(pSim);
       const simCondProf = pSim ? getConditionProfile(pSim.condition, injLvSim) : { simPerfMul: 1, simFgPenalty: 0, simTovAdd: 0 };
-      const isForcedDnp = injLvSim >= 3;
+      const isForcedDnp = injLvSim >= 3 || Boolean(window._rehabRestSimRound);
       const minScale = isForcedDnp ? 0 : Math.max(0.15, rotWin.targetPct / 0.80);
       const uOvr = pSim ? calcOVR(pSim.stats, pSim.pos, Season.equippedTraits) : 72;
       const leagueAvgOvr = league.teams.reduce((s, t) => s + (t.ovr || 85), 0) / Math.max(1, league.teams.length);
@@ -4441,11 +4535,113 @@
       showToast(`🔄 已自動恢復比賽：${Match.homeName} ${Match.homeScore} - ${Match.awayScore} ${Match.awayName}`);
     }
 
-    function launchSeasonMatch() {
+    function triggerMatchJuice(type = "SCORE") {
+      try {
+        if (navigator && typeof navigator.vibrate === "function") {
+          if (type === "ZONE" || type === "BIG") navigator.vibrate([25, 30, 45]);
+          else if (type === "MISS") navigator.vibrate(35);
+          else navigator.vibrate(16);
+        }
+      } catch (_) {}
+      const stage = document.querySelector(".stage-shell");
+      if (stage && (type === "BIG" || type === "ZONE" || type === "GRIT")) {
+        stage.classList.remove("juice-shake");
+        void stage.offsetWidth;
+        stage.classList.add("juice-shake");
+        setTimeout(() => stage.classList.remove("juice-shake"), 340);
+      }
+    }
+
+    function calcThreePtPreference(shS, shSkills) {
+      const tp = (shS && shS.threePt) || 60;
+      const ins = (shS && shS.inside) || 65;
+      const has3Sk = shSkills.has("deadeye_three_t4") || shSkills.has("limitless_range_t4");
+      const hasCorner = shSkills.has("corner_specialist_t3");
+      if (tp < 55) return Math.max(0.01, Math.min(0.04, 0.015 + Math.max(0, tp - 40) * 0.0015));
+      if (tp < 68) return Math.max(0.04, Math.min(0.16, 0.05 + (tp - 55) * 0.008 + (hasCorner ? 0.03 : 0)));
+      return Math.max(0.16, Math.min(0.54, 0.19 + (tp - 68) * 0.013 + (tp - ins) * 0.0035 + (has3Sk ? 0.08 : 0) + (hasCorner ? 0.04 : 0)));
+    }
+
+    function buildAdaptiveZoneCard(p) {
+      const s = (p && p.stats) || {};
+      const tp = s.threePt || 65, ins = s.inside || 65, mid = s.midRange || 65;
+      if (tp >= 74 && tp >= ins - 2) {
+        return {
+          id: "act_zone_hidden", name: "🔥 ZONE 無我三分", side: "OFFENSE", zone: "THREE",
+          qteType: "RING_TIMING", cutinId: "zone_awakening", rate: 93,
+          feel: { text: "領域支配", tone: "#FACC15" },
+          riskLevel: "LOW", gritBonusPct: 0, isCoachPlay: false, trustWin: 3, trustFail: 0,
+          rewardTxt: "🔥+3分 🤝+3", riskTxt: "極低風險",
+          perfectRate: 98, pts: 3, statType: "SHOT", qteWidthMul: 1.48, isZoneCard: true, zoneTag: "ZONE"
+        };
+      }
+      if (ins >= mid) {
+        return {
+          id: "act_zone_dunk", name: "🔥 ZONE 霸王戰斧暴扣", side: "OFFENSE", zone: "PAINT",
+          qteType: "DOUBLE_RING", cutinId: "tomahawk_poster", rate: 94,
+          feel: { text: "禁區絕對統治", tone: "#FACC15" },
+          riskLevel: "LOW", gritBonusPct: 0, isCoachPlay: false, trustWin: 3, trustFail: 0,
+          rewardTxt: "🔥+2+1 🤝+3", riskTxt: "極低風險",
+          perfectRate: 98, pts: 2, statType: "AND1", qteWidthMul: 1.48, isZoneCard: true, zoneTag: "ZONE"
+        };
+      }
+      return {
+        id: "act_zone_mid", name: "🔥 ZONE 絕對後仰中投", side: "OFFENSE", zone: "MID",
+        qteType: "RING_TIMING", cutinId: "fadeaway_phantom", rate: 94,
+        feel: { text: "無解中距離", tone: "#FACC15" },
+        riskLevel: "LOW", gritBonusPct: 0, isCoachPlay: false, trustWin: 3, trustFail: 0,
+        rewardTxt: "🔥+2分 🤝+3", riskTxt: "極低風險",
+        perfectRate: 98, pts: 2, statType: "SHOT", qteWidthMul: 1.48, isZoneCard: true, zoneTag: "ZONE"
+      };
+    }
+
+    function executeInjuredRestRehab() {
+      const p = Season && Season.player;
+      if (!p) return;
+      const prevLv = getInjuryLevel(p);
+      p.injuryLevel = Math.max(0, prevLv - 1);
+      p.injured = p.injuryLevel > 0;
+      p.condition = Math.min(100, (typeof p.condition === "number" ? p.condition : 40) + 24);
+      // 場邊錄影帶覆盤成長（球商／意志）＋ 每季限 1 次 15% 復健頓悟新技能
+      const statKey = Math.random() < 0.6 ? "iq" : "grit";
+      const r = addScaledProtagonistStat(p, statKey, 1.35, true, "EVENT");
+      const statLbl = statKey === "iq" ? "球商" : "意志";
+      let skillMsg = "";
+      Season._rehabSkillCount = Season._rehabSkillCount || 0;
+      if (Season._rehabSkillCount < 1 && Math.random() < 0.15) {
+        const pool = (DB.skills && DB.skills.skills || []).filter(s => (s.category === "BLUE_TRAIT" || s.category === "BADGE") && !(Season.equippedTraits || []).includes(s.id));
+        if (pool.length) {
+          const picked = pool[Math.floor(Math.random() * pool.length)];
+          Season.equippedTraits.push(picked.id);
+          Season._rehabSkillCount += 1;
+          skillMsg = `｜✨ 復健沉澱頓悟全新技能【${picked.name}】！`;
+        }
+      }
+      // 標記本輪由隊友代打模擬（暫時強制休戰模式跑完本輪）
+      window._rehabRestSimRound = true;
+      simCurrentRoundQuick();
+      window._rehabRestSimRound = false;
+      showToast(`🧊 輪休復健完成！傷勢緩解、狀態 +24%、${statLbl}${r.gained > 0 ? ` +${r.gained}` : "熟練度提升"}${skillMsg}`);
+    }
+
+    function launchSeasonMatch(bypassInjChoice = false) {
       if (Season.currentRoundIdx >= Season.schedule.length || Season.retired) return;
-      if (Season.player && getInjuryLevel(Season.player) >= 3) {
-        showToast("🏥 隊醫強制休戰中！請先至場外養成進行理療降級，或使用「快速模擬本輪」由隊友代打。");
-        return;
+      if (Season.player) {
+        const injLv = getInjuryLevel(Season.player);
+        if (injLv >= 3) {
+          showToast("🏥 隊醫強制休戰中！請先至場外養成進行理療降級，或使用「快速模擬本輪」由隊友代打。");
+          return;
+        }
+        if (!bypassInjChoice && (injLv === 1 || injLv === 2)) {
+          const modal = document.getElementById("injuryChoiceModal");
+          if (modal) {
+            const prof = getConditionProfile(Season.player.condition, injLv);
+            document.getElementById("injChoiceStamp").textContent = `🩹 傷病臨場抉擇 · ${prof.label}`;
+            document.getElementById("injChoiceTitle").textContent = `目前處於【${prof.label}】（體能 ${Season.player.condition}%），要硬撐上場嗎？`;
+            modal.classList.remove("hidden");
+            return;
+          }
+        }
       }
       clearPendingEventTimer();
       hideSkillPopover();
@@ -4483,7 +4679,9 @@
       Match.qScoresHome = [0,0,0,0]; Match.qScoresAway = [0,0,0,0];
       Match.benchReason = Match.userPlayer.onFloor ? "" : `${rotWin.label}待命`; Match.totalGameSec = 0; Match.tension = 26; Match.cooldownSec = 0; Match.userSubCooldownSec = Match.userPlayer.onFloor ? 120 : 75;
       Match.rivalHardTriggersThisQ = 0; Match.makeStreak = 0; Match.missStreak = 0; Match.perfectStreak = 0;
-      Match.perfectsTotal = 0; Match.isZone = false; Match.zonePossessionsLeft = 0; Match.isGrit = false;
+      Match.perfectsTotal = 0; Match.isZone = false; Match.zonePossessionsLeft = 0; Match.zoneGauge = 0; Match.zoneUsedCount = 0; Match.isGrit = false;
+      Match.playingThroughInjury = Boolean(window._pendingPlayThroughInjury);
+      window._pendingPlayThroughInjury = false;
       Match.recentActionIds = []; Match.commHistory = []; Match.shotAnim = null; Match.activeScenario = null; Match.pendingPostCutIn = null;
       Match.coachFocus = window.BTUI ? BTUI.getActiveCoachFocus() : null;
 
@@ -4849,7 +5047,7 @@
         if (m) addScore(right ? "HOME" : "AWAY", m);
         broadcast(Commentary.foulFT(fl.name, shooter.name, m));
       } else {
-        const threePref = Math.max(0.08, Math.min(0.60, 0.28 + ((shS.threePt || 70) - (shS.inside || 70)) * 0.0085 + (hasSk(shooter, "deadeye_three_t4") || hasSk(shooter, "limitless_range_t4") ? 0.11 : 0) + (hasSk(shooter, "corner_specialist_t3") ? 0.06 : 0)));
+        const threePref = calcThreePtPreference(shS, shSkills);
         const is3 = Math.random() < threePref, pts = is3 ? 3 : 2;
         const shotZone = is3 ? "THREE" : (Math.random() < 0.55 ? "PAINT" : "MID");
         shooter.fga += 1; if (is3) shooter.tpa += 1;
@@ -4868,8 +5066,11 @@
         const focusMakeMod = ((shooter.isUser && Match.coachFocus && Match.coachFocus.id === "SCORE_ATTACK") ? 0.035
           : ((!shooter.isUser && right && Match.coachFocus && Match.coachFocus.id === "PLAYMAKE_LINK") ? 0.03
           : ((defender.isUser && Match.coachFocus && Match.coachFocus.id === "LOCKDOWN_DEF") ? -0.035 : 0))) + defyDrag;
-        const userCondShotMod = (shooter.isUser && Season && Season.player) ? (getConditionProfile(Season.player.condition, getInjuryLevel(Season.player)).shotRateAdj / 100) : 0;
-        const makeProb = Math.max(0.08, Math.min(0.72, (is3 ? 0.34 : 0.47) + (offRating - defRating) * 0.0072 + heightEdge + skillEdge + staminaPenalty + focusMakeMod + userCondShotMod));
+        let userCondShotMod = (shooter.isUser && Season && Season.player) ? (getConditionProfile(Season.player.condition, getInjuryLevel(Season.player)).shotRateAdj / 100) : 0;
+        // 帶傷硬撐「腎上腺素爆發」：暫時抵銷大部分傷病命中懲罰，讓硬撐上場有機會打出高光表現（代價於賽後結算）
+        if (shooter.isUser && Match.playingThroughInjury && userCondShotMod < 0) userCondShotMod = Math.min(0, userCondShotMod * 0.25);
+        const zoneMakeBonus = (shooter.isUser && Match.isZone) ? 0.10 : 0;
+        const makeProb = Math.max(0.08, Math.min(0.76, (is3 ? 0.34 : 0.47) + (offRating - defRating) * 0.0072 + heightEdge + skillEdge + staminaPenalty + focusMakeMod + userCondShotMod + zoneMakeBonus));
 
         if (Math.random() < blkProb) {
           rimProtector.blk += 1;
@@ -4878,7 +5079,7 @@
           broadcast(Commentary.block(rimProtector.name, shooter.name));
         } else if (Math.random() < makeProb) {
           shooter.fgm += 1; if (is3) shooter.tpm += 1; shooter.pts += pts; addScore(right ? "HOME" : "AWAY", pts);
-          if (shooter.isUser) { Match.makeStreak += 1; Match.missStreak = 0; }
+          if (shooter.isUser) { Match.makeStreak += 1; Match.missStreak = 0; if (!Match.isZone && (Match.zoneUsedCount < 1 || Match.quarter >= 5)) Match.zoneGauge = Math.min(100, (Match.zoneGauge || 0) + 6); }
           let astN = null;
           if (Math.random() < 0.58) {
             const ms = off5.filter(p => p !== shooter);
@@ -4890,7 +5091,7 @@
           if (!right && shooter.isRival && (is3 || Math.abs(Match.homeScore - Match.awayScore) <= 3)) { rivalBig = true; broadcast(Commentary.rivalBig(shooter.name, pts), true); }
           else broadcast(is3 ? Commentary.score3(shooter.name, astN) : Commentary.score2(shooter.name, astN));
         } else {
-          if (shooter.isUser) { Match.makeStreak = 0; Match.missStreak += 1; }
+          if (shooter.isUser) { Match.makeStreak = 0; Match.missStreak += 1; if (!Match.isZone) Match.zoneGauge = Math.max(0, (Match.zoneGauge || 0) - 5); }
           const offRebPow = off5.reduce((s, p) => s + (p.stats ? p.stats.rebound : 70) + ((p.heightCm || 188) - 180) * 0.8, 0);
           const defRebPow = def5.reduce((s, p) => s + (p.stats ? p.stats.rebound : 70) + ((p.heightCm || 188) - 180) * 0.8, 0);
           const orebProb = Math.max(0.16, Math.min(0.36, 0.24 + (offRebPow - defRebPow) * 0.0008));
@@ -5004,7 +5205,10 @@
             Season.player.ap = 2;
             const minRatio = u.secPlayed / Math.max(1, Match.totalGameSec);
             const isHighIntensity = Boolean(g.stage) || Math.abs(Match.homeScore - Match.awayScore) <= 6;
-            const fatRes = applyPostMatchFatigueAndInjury(Season.player, minRatio, isHighIntensity);
+            if (Match.playingThroughInjury) {
+              Season.player.condition = Math.max(0, (typeof Season.player.condition === "number" ? Season.player.condition : 30) - 10);
+            }
+            const fatRes = applyPostMatchFatigueAndInjury(Season.player, minRatio + (Match.playingThroughInjury ? 0.35 : 0), isHighIntensity || Match.playingThroughInjury);
             if (fatRes && fatRes.escalated) {
               showToast(`🚑 過勞出賽導致傷勢惡化為【${fatRes.label}】！請立即安排理療休養。`);
             }
@@ -5095,16 +5299,22 @@
       const pool = DB.actions.actions.filter(a => a.scenarios.includes(scenario.id));
       const scoreActionFit = (a) => {
         let s = (Match.recentActionIds.includes(a.id) ? -3.2 : 0) + Math.random() * 1.6;
+        const uThree = (p.stats && p.stats.threePt) || 60;
         if (side === "OFFENSE") {
+          // 不分位置：低三分能力嚴格壓低三分卡，高三分能力適度加權但不過度單一
+          if (a.zone === "THREE") {
+            if (uThree < 55) s -= 6.5;
+            else if (uThree < 68) s -= 2.4;
+            else if (uThree >= 80) s += 1.2;
+          }
           if (isBig) {
             if (a.zone === "PAINT" || a.statType === "OREB_PUTBACK" || a.statType === "AND1") s += 3.2;
-            if (a.zone === "THREE" && !isStretchBig) s -= 4.8; // 非空間型長人大幅壓低三分卡出現率
             if (uPos === "C" && a.zone === "PASS") s -= 1.2;
           } else if (isGuard) {
-            if (a.zone === "THREE" || a.zone === "MID" || a.zone === "PASS") s += 1.6;
+            if (a.zone === "MID" || a.zone === "PASS" || (a.zone === "THREE" && uThree >= 70)) s += 1.4;
             if (a.statType === "OREB_PUTBACK") s -= 2.4;
           }
-          if (lead <= -4 && Match.quarter >= 3 && (a.zone === "THREE" || a.statType === "AND1")) s += 2.0;
+          if (lead <= -4 && Match.quarter >= 3 && ((a.zone === "THREE" && uThree >= 68) || a.statType === "AND1")) s += 1.8;
           if (lead >= 4 && Match.quarter >= 4 && (a.zone === "PASS" || a.zone === "MID")) s += 1.8;
           if (stamina < 45 && (a.zone === "PASS" || a.zone === "MID")) s += 1.6;
           if (trust < 32 && a.zone === "PASS") s += 1.8;
@@ -5117,7 +5327,20 @@
         }
         return s;
       };
-      let picked = pool.map(a => ({ a, s: scoreActionFit(a) })).sort((x, y) => y.s - x.s).slice(0, 3).map(x => x.a);
+      // 子彈時間三卡「分區多樣性保底」：最多 1 張三分卡，確保切入／中投／傳導／外線策略豐富
+      const rankedPool = pool.map(a => ({ a, s: scoreActionFit(a) })).sort((x, y) => y.s - x.s);
+      let picked = [];
+      let threePicked = 0;
+      for (const item of rankedPool) {
+        if (picked.length >= 3) break;
+        if (side === "OFFENSE" && item.a.zone === "THREE" && threePicked >= 1) continue;
+        picked.push(item.a);
+        if (item.a.zone === "THREE") threePicked++;
+      }
+      for (const item of rankedPool) {
+        if (picked.length >= 3) break;
+        if (!picked.includes(item.a)) picked.push(item.a);
+      }
       // 強制保底至少三選一：若情境池不足 3 張，自動從同攻守端補齊不重複動作
       if (picked.length < 3) {
         const pickedIds = new Set(picked.map(x => x.id));
@@ -5156,7 +5379,8 @@
         const leagueDiffPenalty = ((Match.league && Match.league.difficultyTier) || 1) * 5;
         const condProf = getConditionProfile(p.condition, getInjuryLevel(p));
         const staminaPen = stamina < 30 ? -14 : (stamina < 55 ? -6 : 0);
-        const statAdj = Math.round((relStat - oppVal) * 0.92) + heightAdj - leagueDiffPenalty + staminaPen + condProf.shotRateAdj;
+        const effCondAdj = (Match.playingThroughInjury && condProf.shotRateAdj < 0) ? Math.round(condProf.shotRateAdj * 0.25) : condProf.shotRateAdj;
+        const statAdj = Math.round((relStat - oppVal) * 0.92) + heightAdj - leagueDiffPenalty + staminaPen + effCondAdj + (Match.isZone ? 10 : 0);
         const baseSkillRate = (side === "DEFENSE" ? res.finalStats.defenseRating : res.finalStats.shootPct) - 8;
         // 相關能力值過低時設真實命中天花板（避免 50 三分中鋒亂投高命中）
         const statCeiling = Math.max(24, Math.min(86, Math.round(relStat * 0.90 + 6)));
@@ -5220,14 +5444,7 @@
       });
 
       if (side === "OFFENSE" && Match.isZone) {
-        cards.push({
-          id: "act_zone_hidden", name: "🔥 ZONE 無我三分", side: "OFFENSE", zone: "THREE",
-          qteType: "RING_TIMING", cutinId: "zone_awakening", rate: 95,
-          feel: { text: "絕對支配", tone: "#FACC15" },
-          riskLevel: "LOW", gritBonusPct: 0, isCoachPlay: false, trustWin: 3, trustFail: 0,
-          rewardTxt: "🔥+3分 🤝+3", riskTxt: "極低風險",
-          perfectRate: 99, pts: 3, statType: "SHOT", qteWidthMul: 1.55, isZoneCard: true, zoneTag: "ZONE"
-        });
+        cards.push(buildAdaptiveZoneCard(p));
       }
 
       const sitTags = [];
@@ -5396,8 +5613,28 @@
       if (Match.phase !== "QTE" || !Match.qte || performance.now() < Match.qte.readyAt) return;
       const q = Match.qte;
       if (q.awaitingStart) { beginActiveQTE(); return; }
-      if (q.type === "SHOT_ARC") finishQTE((q.pos >= q.perfStart && q.pos <= q.perfEnd) ? "PERFECT" : (q.pos >= q.goodStart && q.pos <= q.goodEnd) ? "GOOD" : "MISS");
-      else if (q.type === "RING_TIMING") { const d = Math.abs(q.ringR - q.targetR); finishQTE(d <= q.perfTol ? "PERFECT" : d <= q.goodTol ? "GOOD" : "MISS"); }
+      const showTimingFb = (txt, tone) => {
+        const fb = document.getElementById("qteFeedbackPill");
+        if (!fb) return;
+        fb.textContent = txt;
+        fb.className = `qte-feedback-pill ${tone}`;
+        fb.style.display = "inline-block";
+        setTimeout(() => { fb.style.display = "none"; }, 950);
+      };
+      if (q.type === "SHOT_ARC") {
+        const mid = (q.perfStart + q.perfEnd) / 2;
+        const gr = (q.pos >= q.perfStart && q.pos <= q.perfEnd) ? "PERFECT" : (q.pos >= q.goodStart && q.pos <= q.goodEnd) ? "GOOD" : "MISS";
+        const fbTxt = gr === "PERFECT" ? "✨ 完美鎖定！" : (q.pos < mid ? (gr === "GOOD" ? "⏱️ 略早" : "⚠️ 過早失手") : (gr === "GOOD" ? "⏱️ 略晚" : "⚠️ 過晚失手"));
+        showTimingFb(fbTxt, gr === "PERFECT" ? "perf" : (gr === "GOOD" ? "good" : "miss"));
+        finishQTE(gr, fbTxt);
+      } else if (q.type === "RING_TIMING") {
+        const diff = q.ringR - q.targetR; // > 0 means ring still big (early), < 0 means ring shrunk past target (late)
+        const d = Math.abs(diff);
+        const gr = d <= q.perfTol ? "PERFECT" : d <= q.goodTol ? "GOOD" : "MISS";
+        const fbTxt = gr === "PERFECT" ? "✨ 完美鎖定！" : (diff > 0 ? (gr === "GOOD" ? "⏱️ 略早" : "⚠️ 過早失手") : (gr === "GOOD" ? "⏱️ 略晚" : "⚠️ 過晚失手"));
+        showTimingFb(fbTxt, gr === "PERFECT" ? "perf" : (gr === "GOOD" ? "good" : "miss"));
+        finishQTE(gr, fbTxt);
+      }
       else if (q.type === "DOUBLE_RING") {
         const d = Math.abs(q.ringR - q.targetR);
         const g = d <= q.perfTol ? "PERFECT" : d <= q.goodTol ? "GOOD" : "MISS";
@@ -5515,17 +5752,43 @@
       }
     }
 
-    function finishQTE(grade) {
+    function finishQTE(grade, timingLabel = "") {
       setDockMode("NONE");
       const card = Match.selectedAction;
-      const prob = grade === "PERFECT" ? (card.perfectRate || Math.min(90, card.rate + 14)) : (grade === "GOOD" ? Math.round(card.rate * 0.72) : Math.max(4, Math.round(card.rate * 0.20)));
+      const p = Season && Season.player;
+      let prob = grade === "PERFECT" ? (card.perfectRate || Math.min(92, card.rate + 14)) : (grade === "GOOD" ? Math.round(card.rate * 0.75) : Math.max(4, Math.round(card.rate * 0.20)));
+      // 帶傷硬撐「意志判定 (Grit Check)」：判定成功觸發專屬【帶傷死戰】Cut-in ＋ 命中 +18%！
+      let injuredGritTriggered = false;
+      if (Match.playingThroughInjury && p && getInjuryLevel(p) >= 1) {
+        const gritVal = (p.stats && p.stats.grit) || 68;
+        const gritWinP = Math.max(0.22, Math.min(0.88, 0.38 + (gritVal - 50) * 0.011 - (getInjuryLevel(p) >= 2 ? 0.08 : 0)));
+        if (Math.random() < gritWinP) {
+          prob = Math.min(95, prob + 18);
+          injuredGritTriggered = true;
+        } else {
+          prob = Math.max(6, prob - 10);
+          broadcast(`🩹 傷處劇痛襲來……#${Match.userPlayer.num} ${Match.userPlayer.name} 咬緊牙關強行出手！`);
+        }
+      }
       const success = (Math.random() * 100) < prob;
       Match.qte = null;
+      Match._lastTimingLabel = timingLabel;
 
-      // Guaranteed Cut-In whenever action SUCCEEDS and triggers ZONE, Signature/Badge Cut-in, OR any Positive Skill/Trait!
       let cData = null;
       if (success) {
-        if (card.isZoneCard || Match.isZone) {
+        if (injuredGritTriggered) {
+          cData = {
+            id: "injured_grit_cutin",
+            name: "🩹 帶傷死戰・意志燃燒！",
+            artAsset: card.zone === "PAINT" ? "tomahawk_poster" : (card.zone === "THREE" ? "corner_sniper" : "fadeaway_phantom"),
+            bgStyle: "GRIT_MONO",
+            speedLinesDensity: 86, hitstopMs: 165, screenShake: 14,
+            voiceLine: "「就算雙腿發抖——這一球也絕對不交出去！」",
+            sfx: "SLASH_BOOM"
+          };
+          triggerMatchJuice("GRIT");
+          if (p) { p.reputation = Math.min(100, (p.reputation || 50) + 2); adjustCoachTrustLive(2, "帶傷死戰的鋼鐵意志震撼全場！"); }
+        } else if (card.isZoneCard || Match.isZone) {
           cData = { ...DB.cutins.cutins.find(c => c.id === "zone_awakening"), name: `🔥 ZONE・${card.name}` };
         } else if (card.cutinId) {
           cData = DB.cutins.cutins.find(c => c.id === card.cutinId);
@@ -5566,10 +5829,32 @@
     function applyActionOutcome(card, grade, success, hadCutIn = false) {
       const u = Match.userPlayer, r = Match.rivalPlayer;
       const home5 = activeLineup(Match.homeTeam), away5 = activeLineup(Match.awayTeam);
+      const isCrunchNow = Match.quarter >= 4 && Match.timeLeftSec <= 180;
       if (grade === "PERFECT") {
         Match.perfectsTotal += 1; Match.perfectStreak += 1;
-        if (Match.perfectStreak >= 2 && !Match.isZone) { Match.isZone = true; Match.zonePossessionsLeft = 2; broadcast(`🔥🔥 不可思議！#${u.num} ${u.name} 踏入【ZONE 領域】！`, true); }
-      } else Match.perfectStreak = 0;
+        triggerMatchJuice(success ? "BIG" : "MISS");
+      } else {
+        Match.perfectStreak = 0;
+        triggerMatchJuice(success ? "SCORE" : "MISS");
+      }
+      // 完整 Zone 能量條累積與覺醒判定（每場限觸發 1 次，延長賽重置）
+      if (!Match.isZone) {
+        if (success) {
+          const gain = (grade === "PERFECT" ? 28 : 10) + (isCrunchNow ? 8 : 0);
+          Match.zoneGauge = Math.min(100, (Match.zoneGauge || 0) + gain);
+        } else {
+          Match.zoneGauge = Math.max(0, (Match.zoneGauge || 0) - 16);
+        }
+        const canAwaken = (Match.zoneUsedCount < 1 || Match.quarter >= 5) && (u.stamina || 0) >= 28;
+        if (Match.zoneGauge >= 100 && canAwaken) {
+          Match.isZone = true;
+          Match.zonePossessionsLeft = 3;
+          Match.zoneGauge = 0;
+          Match.zoneUsedCount = (Match.zoneUsedCount || 0) + 1;
+          triggerMatchJuice("ZONE");
+          broadcast(`🔥🔥 領域覺醒！#${u.num} ${u.name} 雙眼閃耀金光，正式踏入【ZONE 領域】（持續 3 回合）！`, true);
+        }
+      }
 
       const hoopX = card.side === "OFFENSE" ? 0.945 : 0.055;
       let splash = { art: "result_swish", head: "結果結算", sub: "", good: success };
@@ -5643,7 +5928,14 @@
         }
       }
 
-      if (Match.isZone) { Match.zonePossessionsLeft -= 1; if (Match.zonePossessionsLeft <= 0) Match.isZone = false; }
+      if (Match.isZone) {
+        Match.zonePossessionsLeft -= 1;
+        if (Match.zonePossessionsLeft <= 0) {
+          Match.isZone = false;
+          u.stamina = Math.max(8, (u.stamina || 30) - 14);
+          broadcast(`😮‍💨 #${u.num} ${u.name} 退出 ZONE 領域，高強度專注帶來體力透支 (-14%)！`);
+        }
+      }
       // 依卡片風險／報酬即時微調教練信任並給出對話回饋
       if (card && typeof card.trustWin === "number") {
         if (success && card.trustWin > 0) {
@@ -5680,10 +5972,18 @@
         const st = Math.round(u.stamina);
         document.getElementById("hudStaminaTxt").textContent = `${st}%`;
         const sb = document.getElementById("hudStaminaBar"); sb.style.width = `${st}%`; sb.classList.toggle("low", st < 25);
+        const zBar = document.getElementById("hudZoneBar");
+        const zTxt = document.getElementById("hudZoneTxt");
+        const zPct = Match.isZone ? 100 : Math.round(Match.zoneGauge || 0);
+        if (zBar) zBar.style.width = `${zPct}%`;
+        if (zTxt) zTxt.textContent = Match.isZone ? `ZONE(${Match.zonePossessionsLeft})` : `${zPct}%`;
+        const vmEl = document.getElementById("viewMatch");
+        if (vmEl) vmEl.classList.toggle("zone-active-aura", Boolean(Match.isZone));
         document.getElementById("hudBoxLine").innerHTML = `<span><strong>PTS ${u.pts}</strong></span><span>REB ${u.oreb + u.dreb}</span><span>AST ${u.ast}</span>`;
       }
       const badges = [];
-      if (Match.isZone) badges.push(`<span class="s-badge zone">🔥 ZONE 覺醒</span>`);
+      if (Match.isZone) badges.push(`<span class="s-badge zone">🔥 ZONE 覺醒(${Match.zonePossessionsLeft || 1})</span>`);
+      if (Match.playingThroughInjury) badges.push(`<span class="s-badge" style="background:#FEE2E2; color:#991B1B; border-color:#C81E1E;">🩹 帶傷死戰</span>`);
       if (Match.isGrit) badges.push(`<span class="s-badge grit">⚡ 極限意志</span>`);
       if (u && !u.onFloor) badges.push(`<span class="s-badge bench">🪑 板凳休戰</span>`);
       if (Match.makeStreak >= 2) badges.push(`<span class="s-badge hot">🔥 手感火熱</span>`);
@@ -6432,7 +6732,7 @@
       const customRoster = JSON.parse(JSON.stringify(DB.leagues.defaultUserRoster));
       const u = customRoster.find(p => p.isUser);
       const rookieNum = pickUnusedJerseyNumber(customRoster, null);
-      if (u) { u.num = rookieNum; u.name = createDraft.name; u.pos = createDraft.pos; u.ovr = calcOVR(createDraft.stats, createDraft.pos, createDraft.skills); }
+      if (u) { u.num = rookieNum; u.name = createDraft.name; u.pos = createDraft.pos; u.age = 15; u.ovr = calcOVR(createDraft.stats, createDraft.pos, createDraft.skills); }
       createNewCareer("hs_nationals", [], 1, customRoster);
       const trustByRarity = { mortal: 18, regional_gem: 28, generational: 40, once_in_century: 52 };
       const initTrust = trustByRarity[createDraft.rarity.id] || 32;
@@ -7070,7 +7370,7 @@
             if (uSlot) {
               const newNum = pickUnusedJerseyNumber(newRoster, null);
               uSlot.num = newNum; p.jerseyNum = newNum;
-              uSlot.name = p.name; uSlot.pos = p.pos; uSlot.heightCm = p.heightCm;
+              uSlot.name = p.name; uSlot.pos = p.pos; uSlot.age = p.age; uSlot.heightCm = p.heightCm;
               uSlot.ovr = calcOVR(p.stats, p.pos, Season.equippedTraits);
             }
             Season.userRoster = newRoster;
@@ -7130,8 +7430,9 @@
       if (isScoringChamp) awards.push("🎯 得分王");
       if (isRoy) awards.push("🏅 最佳新秀");
 
+      const playedAge = Season._seasonGrowthApplied ? Math.max(15, p.age - 1) : p.age;
       const rec = {
-        year: Season.careerYear, leagueName: league.name, teamName: uTeam.name,
+        year: Season.careerYear, playedAge, leagueName: league.name, teamName: uTeam.name,
         wl: `${uTeam.w}勝${uTeam.l}負 (第${rank}名)`, gp: st.gp,
         ptsTotal: st.pts, rebTotal: st.reb, astTotal: st.ast,
         ppg: ppgNum.toFixed(1), rpg: (st.reb / gp).toFixed(1), apg: (st.ast / gp).toFixed(1),
@@ -7163,12 +7464,14 @@
             if (r.gained > 0) seasonBreakDeltas[k] = (seasonBreakDeltas[k] || 0) + r.gained;
           });
           msgParts.push(`🌱 青春發育：身高 +${cm}cm（現 ${p.heightCm}cm）`);
-        } else if (p.age >= 30) {
-          const drop = p.age >= 34 ? -2 : -1;
-          applyPlayerDelta({ speed: drop, vertical: drop });
-          const iqR = addScaledProtagonistStat(p, "iq", 1.3, false, "SEASON_END");
+        } else if (p.age >= 31) {
+          // 31歲起真實老將體能遞減曲線（31-33歲 -1~-2，34+歲 -2~-3），球商與投射維持高檔
+          const physDrop = p.age >= 34 ? -3 : (p.age >= 32 ? -2 : -1);
+          const strDrop = p.age >= 33 ? -1 : 0;
+          applyPlayerDelta({ speed: physDrop, vertical: physDrop, strength: strDrop });
+          const iqR = addScaledProtagonistStat(p, "iq", 1.4, false, "SEASON_END");
           if (iqR.gained > 0) seasonBreakDeltas.iq = (seasonBreakDeltas.iq || 0) + iqR.gained;
-          msgParts.push(`⏳ 邁入 ${p.age} 歲老將階段：速度/彈跳 ${drop}，老將經驗轉化為球場智慧`);
+          msgParts.push(`⏳ 邁入 ${p.age} 歲老將階段：速度/彈跳 ${physDrop}${strDrop ? `、力量 ${strDrop}` : ""}，老將經驗昇華為球場智慧`);
         } else {
           msgParts.push(`邁入 ${p.age} 歲黃金球齡`);
         }
@@ -7244,7 +7547,7 @@
       }
       recordSeasonTimelineEntry(rec);
       const crStory = document.getElementById("crGrowthStoryBox");
-      if (crStory) crStory.innerHTML = renderMangaGrowthStoryHtml(true);
+      if (crStory) { crStory.style.display = "block"; crStory.innerHTML = renderMangaGrowthStoryHtml(true); }
       optsBox._nextArchive = nextArchive;
       optsBox._lastRec = rec;
       optsBox._draftScore = draftScore;
@@ -7259,7 +7562,21 @@
       _uiEventsBound = true;
 
       // Phase 3 Creation, AP, EventEngine & Crossroads Listeners
-      document.getElementById("btnNewCareerFlow").addEventListener("click", openCareerCreation);
+      document.getElementById("btnNewCareerFlow").addEventListener("click", async () => {
+        if (Season && Season.player) await SaveManager.save(Season);
+        const slots = await SaveManager.listSlots();
+        const emptySlot = slots.find(s => s.empty);
+        if (emptySlot) {
+          SaveManager.setActiveSlot(emptySlot.slot);
+          showToast(`已自動切換至空白【存檔槽 ${emptySlot.slot}】建立新旅程！`);
+          openCareerCreation();
+        } else if (window.BTUI && typeof BTUI.showTitleScreen === "function") {
+          showToast("三個存檔槽皆已使用，請於標題畫面選擇要覆寫或清空的槽位！");
+          await BTUI.showTitleScreen(true);
+        } else {
+          openCareerCreation();
+        }
+      });
       document.getElementById("inpOriginMode").addEventListener("change", (e) => {
         document.getElementById("createCustomBox").style.display = e.target.value === "CUSTOM_MODE" ? "flex" : "none";
         buildCreationDraft(false);
@@ -7314,17 +7631,44 @@
         }
         while (picks.length < Math.min(3, scored.length)) pickUnique(scored);
 
-        document.getElementById("crStamp").textContent = `📩 ${tLeague.name}・球隊加盟邀約`;
-        document.getElementById("crTitle").textContent = `共有 ${picks.length} 支球隊向你遞出正式合約，請選擇加盟！`;
-        document.getElementById("crDesc").textContent = `豪門爭冠競爭激烈但曝光高；重建球隊則承諾更多球權與先發培養空間。`;
+        document.getElementById("crStamp").textContent = `📩 ${tLeague.name}・正式加盟邀約`;
+        document.getElementById("crTitle").textContent = `收到 ${picks.length} 份正式球隊合約報價`;
+        document.getElementById("crDesc").textContent = `球團總管已評估你的場上表現與潛力——豪門爭冠舞台曝光最高，重建勁旅則給予更多球權與先發培養空間。`;
+        const crStoryBox = document.getElementById("crGrowthStoryBox");
+        if (crStoryBox) crStoryBox.style.display = "none";
         optsBox.innerHTML = picks.map((tm, i) => {
-          const rolePromise = tm.ovr <= curOvr + 1 ? "⭐ 承諾重點核心" : (tm.ovr <= curOvr + 5 ? "🏀 競爭先發主力" : "🔥 豪門爭冠輪換");
-          const pitch = i === 0 && tm.ovr >= scored[0].ovr - 2 ? "冠軍競爭者" : (tm.ovr <= scored[scored.length - 1].ovr + 3 ? "重建核心培養" : "季後賽勁旅");
-          return `<button type="button" class="choice-btn" data-cr-commit-league="${targetLeagueId}" data-cr-commit-team="${tm.id}">
-            <span><strong>${tm.name}</strong>（戰力 ${tm.ovr} · 現任王牌：${tm.aceName}）<br/><small style="color:var(--ink-soft);">${pitch} ｜ ${rolePromise}</small></span>
-            <span class="tag gold">簽約加盟</span>
-          </button>`;
-        }).join("") + `<button type="button" class="choice-btn" data-cr-back="1" style="background:#F7F4EC;"><span>⬅️ 返回重選聯賽</span><span class="tag">返回</span></button>`;
+          const isContender = tm.ovr >= scored[0].ovr - 2;
+          const isRebuild = !isContender && tm.ovr <= scored[scored.length - 1].ovr + 3;
+          const tierCls = isContender ? "tier-contender" : (isRebuild ? "tier-rebuild" : "tier-playoff");
+          const tierLabel = isContender ? "🏆 冠軍爭奪豪門" : (isRebuild ? "🌱 重建核心培養" : "⚔️ 季後賽勁旅");
+          const rolePromise = tm.ovr <= curOvr + 1 ? "⭐ 承諾建隊核心與大量球權" : (tm.ovr <= curOvr + 5 ? "🏀 優先競爭先發主力位置" : "🔥 高強度爭冠輪換磨練");
+          const tmCoach = (tLeague.teams.find(x => x.id === tm.id) || {}).coach || "總教練";
+          const powerPct = Math.max(35, Math.min(100, Math.round((tm.ovr - 60) * 2.5)));
+          return `
+            <button type="button" class="choice-btn cr-offer-card ${tierCls}" data-cr-commit-league="${targetLeagueId}" data-cr-commit-team="${tm.id}">
+              <div class="cr-offer-inner">
+                <div class="cr-offer-top">
+                  <div>
+                    <span class="cr-tier-pill">${tierLabel}</span>
+                    <div class="cr-offer-team">${tm.name}</div>
+                  </div>
+                  <div class="cr-offer-ovr-box">
+                    <div class="cr-offer-ovr-lbl">球隊戰力</div>
+                    <div class="cr-offer-ovr-num">${tm.ovr}</div>
+                  </div>
+                </div>
+                <div class="cr-power-track"><div class="cr-power-fill" style="width:${powerPct}%;"></div></div>
+                <div class="cr-offer-meta">
+                  <span>👑 王牌：<strong>${tm.aceName}</strong></span>
+                  <span>📋 教頭：${tmCoach}</span>
+                </div>
+                <div class="cr-offer-foot">
+                  <span class="cr-role-promise">${rolePromise}</span>
+                  <span class="tag gold">✍️ 簽約加盟</span>
+                </div>
+              </div>
+            </button>`;
+        }).join("") + `<button type="button" class="choice-btn" data-cr-back="1" style="background:#F7F4EC; justify-content:center;"><span>⬅️ 返回重選目標聯賽</span></button>`;
       }
 
       document.getElementById("crOptionsBox").addEventListener("click", (e) => {
@@ -7565,8 +7909,36 @@
         else if (Match.phase === "QTE" && Match.qte && Match.qte.type === "DIRECTION_SNAP" && (e.code === "ArrowUp" || e.code === "KeyW")) { e.preventDefault(); handleQteDirection(1); }
         else if (Match.phase === "QTE" && Match.qte && Match.qte.type === "DIRECTION_SNAP" && (e.code === "ArrowRight" || e.code === "KeyD")) { e.preventDefault(); handleQteDirection(2); }
         else if (e.code === "Space" && Match.phase === "RESULT_SPLASH") { e.preventDefault(); Match.resultSplash = null; Match.phase = "PLAYING"; }
+        else if (Match.phase === "BULLET" && ["Digit1", "Digit2", "Digit3", "Digit4"].includes(e.code)) {
+          const idx = Number(e.code.replace("Digit", "")) - 1;
+          const cards = (document.getElementById("bulletCardGrid") || {})._cards || [];
+          if (cards[idx]) { e.preventDefault(); chooseBulletCard(cards[idx]); }
+        }
         else if (e.code === "Escape" && Match.phase !== "IDLE") { if (Match.phase === "PAUSED_MENU") closePauseCenter(); else openPauseCenter(Match.phase === "ENDED"); }
       });
+
+      // Injury Narrative Choice Modal bindings
+      const injPush = document.getElementById("btnInjPushThrough");
+      const injRest = document.getElementById("btnInjRestRehab");
+      const injCancel = document.getElementById("btnInjCancel");
+      if (injPush) {
+        injPush.addEventListener("click", () => {
+          document.getElementById("injuryChoiceModal").classList.add("hidden");
+          window._pendingPlayThroughInjury = true;
+          launchSeasonMatch(true);
+        });
+      }
+      if (injRest) {
+        injRest.addEventListener("click", () => {
+          document.getElementById("injuryChoiceModal").classList.add("hidden");
+          executeInjuredRestRehab();
+        });
+      }
+      if (injCancel) {
+        injCancel.addEventListener("click", () => {
+          document.getElementById("injuryChoiceModal").classList.add("hidden");
+        });
+      }
       window.addEventListener("resize", () => { if (Match.phase !== "IDLE") { resizeCanvas(); if (Match.phase === "QTE") resizeQteCanvas(); } });
       if (typeof ResizeObserver !== "undefined") {
         const stageShell = document.querySelector(".stage-shell");
@@ -7665,8 +8037,18 @@
       SaveManager.setActiveSlot(slotNum);
       const data = await SaveManager.load(slotNum);
       if (!data || !data.player || !data.standings) return false;
+      clearPendingEventTimer();
+      if (typeof Match !== "undefined") Match.phase = "IDLE";
+      ["crossroadsModal", "eventModal", "offseasonReportModal", "playerDetailModal", "sectionDrawerModal", "boxScoreModal", "unifiedSettlementModal"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+      });
       Season = data;
+      Season.userRoster = ensureRosterProfiles(Season.userRoster || []);
       ensureLeagueRosters(Season, Season.leagueId);
+      ensureCareerHistory(Season);
+      ensureTeamOps(Season);
+      syncUserTeamRole(false);
       const tag = document.getElementById("idbStatusTag");
       if (tag) tag.textContent = `存檔槽 ${slotNum} 已載入`;
       renderHub();
