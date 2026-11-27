@@ -1504,13 +1504,39 @@
         stats[k] = Math.max(38, Math.min(99, Math.round(rawStats[k] + shift)));
       }
       const finalOvr = calcOVR(stats, pos, uniqueSkills);
-      return {
+      return ensureNpcGrowthDNA({
         ...p,
         stats,
         heightCm,
         skills: uniqueSkills,
         ovr: finalOvr
-      };
+      });
+    }
+
+    function ensureNpcGrowthDNA(pl) {
+      if (!pl || pl.isUser) return pl;
+      const seed = (pl.num || 7) * 17 + (pl.name ? pl.name.split("").reduce((a, c) => a + c.charCodeAt(0), 0) : 31);
+      if (typeof pl.potential !== "number") {
+        const age = typeof pl.age === "number" ? pl.age : 18;
+        const ovr = pl.ovr || 74;
+        let pot = 3;
+        if (ovr >= 86 || pl.isRival) pot = 5;
+        else if (ovr >= 80 || (age <= 17 && ovr >= 74)) pot = 4;
+        else if (ovr <= 68 && age >= 22) pot = 2;
+        if (age <= 19 && (seed % 5 === 0)) pot = Math.min(5, pot + 1);
+        pl.potential = Math.max(1, Math.min(5, pot));
+      }
+      if (!pl.growthType) {
+        const types = ["EARLY", "NORMAL", "NORMAL", "LATE"];
+        pl.growthType = types[seed % types.length];
+      }
+      if (typeof pl.seasonOvrStart !== "number") {
+        pl.seasonOvrStart = pl.ovr || 74;
+      }
+      if (!Array.isArray(pl.seasonGrowthLog)) {
+        pl.seasonGrowthLog = [];
+      }
+      return pl;
     }
 
     function ensureRosterProfiles(roster) {
@@ -1527,7 +1553,8 @@
             ovr: calcOVR(Season.player.stats, Season.player.pos, Season.equippedTraits)
           };
         }
-        return (p.stats && p.heightCm && Array.isArray(p.skills)) ? p : generateNpcProfile(p);
+        const prof = (p.stats && p.heightCm && Array.isArray(p.skills)) ? p : generateNpcProfile(p);
+        return ensureNpcGrowthDNA(prof);
       });
     }
 
@@ -1821,6 +1848,204 @@
       return targetSeason.teamOps;
     }
 
+    // ---------- Phase 1 核心引擎：疲勞連動、主角成長曲線與隊友動態養成 ----------
+    const PHYSICAL_STAT_KEYS = new Set(["speed", "vertical", "strength"]);
+    const POS_GROWTH_FOCUS = {
+      PG: ["playmaking", "iq", "threePt", "speed", "perimDef"],
+      SG: ["threePt", "midRange", "speed", "perimDef", "inside"],
+      SF: ["inside", "midRange", "perimDef", "vertical", "threePt"],
+      PF: ["rebound", "inside", "intDef", "strength", "midRange"],
+      C:  ["rebound", "intDef", "inside", "strength", "vertical"]
+    };
+    const POS_SKILL_POOL = {
+      PG: ["dimer_general_t3", "floor_iq", "clutch_stealer", "deadeye_three_t4", "fastbreak_king"],
+      SG: ["deadeye_three_t4", "midrange_maestro_t3", "microwave", "big_heart", "perimeter_lockdown_t3"],
+      SF: ["perimeter_lockdown_t3", "fastbreak_king", "big_heart", "posterizer_t3", "midrange_maestro_t3"],
+      PF: ["glass_cleaner_t3", "posterizer_t3", "paint_beast_t3", "rim_eraser_t4", "big_heart"],
+      C:  ["paint_beast_t3", "rim_eraser_t4", "glass_cleaner_t3", "posterizer_t3"]
+    };
+
+    function getConditionProfile(condition = 80, injured = false) {
+      const c = Math.max(0, Math.min(100, Number(condition) || 0));
+      if (injured) {
+        return {
+          tier: "INJURED", label: "輕微拉傷", shortEffect: "命中-12% · 體力耗+38%",
+          color: "#C81E1E", shotRateAdj: -12, staminaDrainMul: 1.38, qteScaleAdj: 0.82,
+          trainGreatBonus: -0.12, trainFailBonus: 0.28, matchInjuryChance: 0.14
+        };
+      }
+      if (c >= 85) {
+        return {
+          tier: "PEAK", label: "狀態巔峰", shortEffect: "命中+3% · 體力耗-10%",
+          color: "#15803D", shotRateAdj: 3, staminaDrainMul: 0.90, qteScaleAdj: 1.04,
+          trainGreatBonus: 0.08, trainFailBonus: 0, matchInjuryChance: 0
+        };
+      }
+      if (c >= 60) {
+        return {
+          tier: "GOOD", label: "狀態良好", shortEffect: "正常發揮 · 零過勞風險",
+          color: "#15803D", shotRateAdj: 0, staminaDrainMul: 1.00, qteScaleAdj: 1.00,
+          trainGreatBonus: 0, trainFailBonus: 0, matchInjuryChance: 0
+        };
+      }
+      if (c >= 40) {
+        return {
+          tier: "TIRED", label: "疲勞累積", shortEffect: "命中-5% · 體力耗+18%",
+          color: "#B45309", shotRateAdj: -5, staminaDrainMul: 1.18, qteScaleAdj: 0.92,
+          trainGreatBonus: -0.06, trainFailBonus: 0.14, matchInjuryChance: 0.04
+        };
+      }
+      return {
+        tier: "EXHAUSTED", label: "過勞警戒", shortEffect: "命中-10% · 易拉傷",
+        color: "#C81E1E", shotRateAdj: -10, staminaDrainMul: 1.30, qteScaleAdj: 0.86,
+        trainGreatBonus: -0.10, trainFailBonus: 0.26, matchInjuryChance: 0.10
+      };
+    }
+    window.getConditionProfile = getConditionProfile;
+
+    function getSeasonGrowthBudget(age = 16, leagueId = "hs_nationals") {
+      const a = Number(age) || 16;
+      let base = a <= 18 ? 26 : (a <= 22 ? 22 : (a <= 27 ? 15 : (a <= 30 ? 9 : 5)));
+      if (leagueId === "nba_prime" || leagueId === "euro_elite" || leagueId === "asia_pro") {
+        base += 2; // 職業長賽季略增總額，避免後段完全停滯
+      }
+      return base;
+    }
+
+    function addScaledProtagonistStat(p, k, rawGain = 1.0, isGreat = false, source = "TRAIN") {
+      if (!p || !p.stats || p.stats[k] === undefined || rawGain <= 0) return { gained: 0, xpPct: 0 };
+      const cap = p.cap || 95;
+      const cur = p.stats[k];
+      if (cur >= cap) return { gained: 0, xpPct: 0 };
+
+      if (!p.statXp || typeof p.statXp !== "object") p.statXp = {};
+      if (typeof p.seasonStatGain !== "number") p.seasonStatGain = 0;
+
+      // 1) 當前數值區間遞減
+      let bracketMul = 1.0;
+      if (cur < 68) bracketMul = 1.12;
+      else if (cur <= 76) bracketMul = 0.88;
+      else if (cur <= 84) bracketMul = 0.62;
+      else if (cur <= 90) bracketMul = 0.35;
+      else bracketMul = 0.16;
+
+      // 2) 年齡 × 屬性類型曲線（身體素質 21 歲後明顯放緩；技術與球商 29 歲前穩步精進）
+      const age = p.age || 16;
+      const isPhys = PHYSICAL_STAT_KEYS.has(k);
+      let ageMul = 1.0;
+      if (isPhys) {
+        ageMul = age <= 19 ? 1.02 : (age <= 23 ? 0.72 : (age <= 27 ? 0.42 : 0.18));
+      } else {
+        ageMul = age <= 18 ? 0.96 : (age <= 24 ? 1.04 : (age <= 29 ? 0.82 : 0.55));
+      }
+
+      // 3) 單季成長軟上限（防止單季狂刷訓練暴漲）
+      const budget = getSeasonGrowthBudget(age, Season ? Season.leagueId : "hs_nationals");
+      const ratio = p.seasonStatGain / Math.max(1, budget);
+      let seasonMul = 1.0;
+      if (ratio >= 1.05) seasonMul = 0.20;
+      else if (ratio >= 0.75) seasonMul = 0.50;
+      else if (ratio >= 0.50) seasonMul = 0.78;
+
+      // 來源微調（事件與季末突破不受過嚴壓抑）
+      const srcMul = source === "SEASON_END" ? 1.25 : (source === "EVENT" ? 1.05 : (source === "EXTREME" ? 1.12 : 1.0));
+      const greatMul = isGreat ? 1.35 : 1.0;
+
+      const deltaXp = Math.max(0.12, rawGain * bracketMul * ageMul * seasonMul * srcMul * greatMul);
+      const prevXp = Number(p.statXp[k] || 0);
+      let totalXp = prevXp + deltaXp;
+      let gained = 0;
+      while (totalXp >= 1.0 && p.stats[k] < cap) {
+        totalXp -= 1.0;
+        p.stats[k] += 1;
+        gained += 1;
+        p.seasonStatGain += 1;
+      }
+      if (p.stats[k] >= cap) totalXp = 0;
+      p.statXp[k] = Number(totalXp.toFixed(3));
+      return { gained, xpPct: Math.round(deltaXp * 100), curXpPct: Math.round(p.statXp[k] * 100) };
+    }
+
+    function stepMidSeasonTeammateGrowth() {
+      if (!Season || !Array.isArray(Season.userRoster) || !Season.seasonTotals) return [];
+      const gp = Season.seasonTotals.gp || 0;
+      // 每 3 場或季後賽開打節點結算一次隊友季中成長
+      if (gp < 3 || gp % 3 !== 0) return [];
+      const ops = ensureTeamOps(Season);
+      const chem = (ops && ops.chemistry) || 65;
+      const chemBonus = chem >= 75 ? 0.16 : (chem < 45 ? -0.10 : 0);
+      const uTeam = (Season.standings || []).find(t => t.isUserTeam);
+      const totals = Season.leaguePlayerTotals || {};
+      const notes = [];
+
+      for (const pl of Season.userRoster) {
+        if (!pl || pl.isUser || !pl.stats) continue;
+        ensureNpcGrowthDNA(pl);
+        const age = typeof pl.age === "number" ? pl.age : 17;
+        const pot = pl.potential || 3;
+        const gt = pl.growthType || "NORMAL";
+        const key = uTeam ? `${uTeam.id}__${pl.name}` : "";
+        const rec = (key && totals[key]) ? totals[key] : null;
+        const ppg = rec && rec.gp ? rec.pts / rec.gp : 0;
+        const rpg = rec && rec.gp ? rec.reb / rec.gp : 0;
+        const apg = rec && rec.gp ? rec.ast / rec.gp : 0;
+
+        // 計算季中成長機率（結合年齡、潛力、成長型態、表現與化學反應）
+        let growP = 0.16 + (pot - 3) * 0.08 + chemBonus;
+        if (age <= 20) growP += (gt === "EARLY" ? 0.16 : 0.10);
+        else if (age <= 25) growP += (gt === "LATE" ? 0.16 : 0.08);
+        else if (age <= 29) growP += (gt === "LATE" ? 0.08 : 0.02);
+        else growP -= 0.18;
+
+        if (pl.role === "STARTER") growP += 0.06;
+        if (ppg >= 14 || apg >= 4.5 || rpg >= 6.5) growP += 0.10;
+
+        if (Math.random() < Math.max(0.05, Math.min(0.68, growP))) {
+          const focusList = POS_GROWTH_FOCUS[pl.pos] || POS_GROWTH_FOCUS.SG;
+          // 依據實際賽場數據挑出最貼合的成長項目
+          let k1 = focusList[Math.floor(Math.random() * Math.min(3, focusList.length))];
+          if (ppg >= 16 && Math.random() < 0.5) k1 = pl.pos === "C" || pl.pos === "PF" ? "inside" : "threePt";
+          else if (apg >= 4.5 && Math.random() < 0.5) k1 = "playmaking";
+          else if (rpg >= 6.5 && Math.random() < 0.5) k1 = "rebound";
+
+          const prevOvr = pl.ovr || calcOVR(pl.stats, pl.pos, pl.skills);
+          const cap = Math.min(97, 74 + pot * 4 + (pl.isRival ? 3 : 0));
+          const gains = [];
+          if (pl.stats[k1] !== undefined && pl.stats[k1] < cap) {
+            pl.stats[k1] = Math.min(cap, pl.stats[k1] + 1);
+            gains.push(k1);
+          }
+          if (pot >= 4 && age <= 23 && Math.random() < 0.45) {
+            const k2 = focusList.find(x => x !== k1 && pl.stats[x] < cap) || "iq";
+            if (pl.stats[k2] !== undefined && pl.stats[k2] < cap) {
+              pl.stats[k2] = Math.min(cap, pl.stats[k2] + 1);
+              gains.push(k2);
+            }
+          }
+          if (gains.length) {
+            pl.ovr = calcOVR(pl.stats, pl.pos, pl.skills);
+            const statDefs = (DB.origins && DB.origins.statDefs) || [];
+            const lbl = (k) => (statDefs.find(d => d.k === k) || { l: k }).l;
+            const gText = gains.map(k => `${lbl(k)}+1`).join("、");
+            const ovrDiff = pl.ovr - prevOvr;
+            const entry = `第${gp}場成長：${gText}${ovrDiff > 0 ? `（評級 +${ovrDiff} → ${pl.ovr}）` : ""}`;
+            pl.seasonGrowthLog.unshift(entry);
+            pl.seasonGrowthLog = pl.seasonGrowthLog.slice(0, 5);
+            if (pl.role === "STARTER" || ovrDiff > 0) {
+              notes.push(`${pl.name} ${gText}${ovrDiff > 0 ? ` → ${pl.ovr}` : ""}`);
+            }
+          }
+        }
+      }
+
+      if (notes.length) {
+        if (uTeam) uTeam.ovr = calcTeamStrength(Season.userRoster);
+        if (!Array.isArray(ops.midseasonLog)) ops.midseasonLog = [];
+        ops.midseasonLog = [...notes.slice(0, 3), ...ops.midseasonLog].slice(0, 8);
+      }
+      return notes;
+    }
+
     function evolveRosterAgesAndRatings(roster, leagueId) {
       if (!Array.isArray(roster)) return [];
       const logs = [];
@@ -1843,23 +2068,76 @@
         return chosen;
       };
 
+      const statDefs = (DB.origins && DB.origins.statDefs) || [];
+      const lblOf = (k) => (statDefs.find(d => d.k === k) || { l: k }).l;
+
       for (const pl of roster) {
         if (!pl || pl.isUser) continue;
+        ensureNpcGrowthDNA(pl);
         pl.age = (typeof pl.age === "number" ? pl.age : (isHs ? 16 : (isNcaa ? 20 : 25))) + 1;
-        let delta = 0;
-        if (pl.age <= 23) delta = Math.random() < 0.72 ? (Math.random() < 0.35 ? 2 : 1) : 0;
-        else if (pl.age <= 29) delta = Math.random() < 0.28 ? 1 : (Math.random() < 0.15 ? -1 : 0);
-        else delta = Math.random() < 0.70 ? -(Math.random() < 0.35 ? 2 : 1) : 0;
+        const prevOvr = pl.ovr || 72;
+        const pot = pl.potential || 3;
+        const gt = pl.growthType || "NORMAL";
+        const cap = Math.min(97, 74 + pot * 4 + (pl.isRival ? 3 : 0));
+        const focus = POS_GROWTH_FOCUS[pl.pos] || POS_GROWTH_FOCUS.SG;
+        let skillAwakened = null;
 
-        if (delta !== 0) {
-          pl.ovr = Math.max(55, Math.min(96, (pl.ovr || 70) + delta));
-          if (pl.stats) {
-            for (const k of Object.keys(pl.stats)) {
-              pl.stats[k] = Math.max(40, Math.min(98, pl.stats[k] + delta));
+        if (pl.stats) {
+          if (pl.age <= 22) {
+            // 成長期：依潛力與成長型態，針對主打位置核心屬性成長
+            const isBreakout = pot >= 4 && Math.random() < (gt === "EARLY" ? 0.42 : 0.28);
+            const primaryGain = isBreakout ? 3 : (pot >= 4 ? 2 : 1);
+            const secGain = isBreakout ? 2 : 1;
+            focus.slice(0, 3).forEach((k, idx) => {
+              const g = idx === 0 ? primaryGain : (Math.random() < 0.72 ? secGain : 0);
+              if (g > 0 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + g);
+            });
+            // 身體發育
+            if (pl.age <= 19) {
+              ["speed", "vertical", "strength"].forEach(k => {
+                if (Math.random() < 0.55 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + 1);
+              });
             }
+            // 高潛力年輕球員有機會領悟新技能
+            if (isBreakout && Array.isArray(pl.skills) && pl.skills.length < 3 && Math.random() < 0.35) {
+              const pool = (POS_SKILL_POOL[pl.pos] || POS_SKILL_POOL.SG).filter(id => !pl.skills.includes(id));
+              if (pool.length) {
+                const newSkId = pool[Math.floor(Math.random() * pool.length)];
+                pl.skills.push(newSkId);
+                const skObj = DB.skills && DB.skills.skills.find(s => s.id === newSkId);
+                skillAwakened = skObj ? skObj.name : newSkId;
+              }
+            }
+          } else if (pl.age <= 29) {
+            // 巔峰期：技術與球商穩步精進（晚熟型在 23-27 仍有爆發）
+            const lateBloom = gt === "LATE" && pl.age <= 27 && pot >= 3;
+            const gBase = lateBloom ? 2 : (Math.random() < 0.55 ? 1 : 0);
+            focus.filter(k => !PHYSICAL_STAT_KEYS.has(k)).slice(0, 2).forEach(k => {
+              if (gBase > 0 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + gBase);
+            });
+            if (Math.random() < 0.45 && pl.stats.iq !== undefined) pl.stats.iq = Math.min(98, pl.stats.iq + 1);
+          } else {
+            // 老將期（30+）：爆發體能自然衰退，但球商／投射維持或微幅精進
+            const ageDrop = pl.age >= 34 ? 2 : 1;
+            ["speed", "vertical"].forEach(k => {
+              if (pl.stats[k] !== undefined) pl.stats[k] = Math.max(42, pl.stats[k] - (Math.random() < 0.80 ? ageDrop : 1));
+            });
+            if (pl.age >= 33 && Math.random() < 0.60 && pl.stats.strength !== undefined) {
+              pl.stats.strength = Math.max(45, pl.stats.strength - 1);
+            }
+            if (Math.random() < 0.45 && pl.stats.iq !== undefined) pl.stats.iq = Math.min(98, pl.stats.iq + 1);
+            if (Math.random() < 0.30 && pl.stats.grit !== undefined) pl.stats.grit = Math.min(98, pl.stats.grit + 1);
           }
-          if (pl.role === "STARTER" || Math.abs(delta) >= 2) {
-            logs.push(`${pl.name}(${pl.age}歲) ${delta > 0 ? `▲成長 +${delta}` : `▼老化 ${delta}`} → OVR ${pl.ovr}`);
+          pl.ovr = calcOVR(pl.stats, pl.pos, pl.skills);
+        }
+
+        const delta = (pl.ovr || prevOvr) - prevOvr;
+        pl.seasonOvrStart = pl.ovr || prevOvr;
+        pl.seasonGrowthLog = [];
+        if (delta !== 0 || skillAwakened) {
+          const skNote = skillAwakened ? ` · 領悟【${skillAwakened}】` : "";
+          if (pl.role === "STARTER" || Math.abs(delta) >= 2 || skillAwakened) {
+            logs.push(`${pl.name}(${pl.age}歲) ${delta > 0 ? `▲成長 +${delta}` : (delta < 0 ? `▼老化 ${delta}` : "✨技術突破")} → 評級 ${pl.ovr}${skNote}`);
           }
         }
       }
@@ -1867,10 +2145,8 @@
       const nonUsers = roster.filter(p => p && !p.isUser);
       let departing = [];
       if (isHs) {
-        // 嚴格只讓剛打完高三（升至 18 歲）的學長畢業離隊，絕不誤送高一／高二球員
         departing = nonUsers.filter(p => p.age >= 18).sort((a, b) => b.age - a.age || b.ovr - a.ovr).slice(0, 4);
       } else if (isNcaa) {
-        // 大四生（升至 22 歲以上）畢業投入選秀
         departing = nonUsers.filter(p => p.age >= 22).sort((a, b) => b.age - a.age || b.ovr - a.ovr).slice(0, 4);
       } else {
         const retirees = nonUsers.filter(p => p.age >= 35).slice(0, 2);
@@ -1886,18 +2162,29 @@
         if (idx < 0) continue;
         const reason = isHs ? "🎓畢業離隊" : (isNcaa ? "🎓畢業投身選秀" : (oldPl.age >= 35 ? "🏛️光榮退役" : "✈️約滿轉會離隊"));
         const newAge = isHs ? 15 : (isNcaa ? 18 : (19 + Math.floor(Math.random() * 4)));
+        const isSuperRookie = Math.random() < 0.14;
         const newOvr = isHs
-          ? Math.max(60, Math.min(75, lgAvgOvr - 6 + Math.floor(Math.random() * 9)))
-          : Math.max(66, Math.min(86, lgAvgOvr - 4 + Math.floor(Math.random() * 9)));
+          ? Math.max(60, Math.min(79, lgAvgOvr - 6 + Math.floor(Math.random() * 9) + (isSuperRookie ? 5 : 0)))
+          : Math.max(66, Math.min(88, lgAvgOvr - 4 + Math.floor(Math.random() * 9) + (isSuperRookie ? 5 : 0)));
         const newName = pickFreshName();
         const newNum = pickUnusedJerseyNumber(roster, null);
-        const newLabel = isHs ? "🌱新高一生" : (isNcaa ? "🌱大一新秀" : (newAge <= 20 ? "🌟選秀新秀" : "🤝自由新援"));
+        const newPos = oldPl.pos || "SG";
+        const newLabel = isSuperRookie ? "🌟天選超級新人" : (isHs ? "🌱新高一生" : (isNcaa ? "🌱大一新秀" : (newAge <= 20 ? "🌟選秀新秀" : "🤝自由新援")));
+        const skPool = POS_SKILL_POOL[newPos] || POS_SKILL_POOL.SG;
+        const randSkills = [];
+        if (isSuperRookie) {
+          randSkills.push(skPool[0], skPool[1 + Math.floor(Math.random() * Math.max(1, skPool.length - 1))]);
+        } else if (Math.random() < 0.82) {
+          randSkills.push(skPool[Math.floor(Math.random() * skPool.length)]);
+        }
 
         const incoming = generateNpcProfile({
-          num: newNum, name: newName, pos: oldPl.pos || "SG", age: newAge,
-          role: "BENCH", ovr: newOvr, skills: []
+          num: newNum, name: newName, pos: newPos, age: newAge,
+          role: "BENCH", ovr: newOvr, skills: Array.from(new Set(randSkills)),
+          potential: isSuperRookie ? 5 : (2 + Math.floor(Math.random() * 3))
         });
         incoming.age = newAge;
+        incoming.seasonOvrStart = incoming.ovr;
         roster[idx] = incoming;
 
         if (oldPl.role === "STARTER") {
@@ -1905,10 +2192,10 @@
             || roster.filter(p => p && !p.isUser && p.role !== "STARTER").sort((a, b) => b.ovr - a.ovr)[0];
           if (cand) cand.role = "STARTER";
         }
-        logs.unshift(`${reason}：${oldPl.name}(${oldPl.pos}) → ${newLabel} #${newNum} ${newName}(${incoming.pos} · OVR ${incoming.ovr}) 加盟`);
+        logs.unshift(`${reason}：${oldPl.name}(${oldPl.pos}) → ${newLabel} #${newNum} ${newName}(${incoming.pos} · 評級 ${incoming.ovr}) 加盟`);
       }
 
-      return logs.slice(0, 6);
+      return logs.slice(0, 8);
     }
 
     function getActiveTactic() {
@@ -3517,7 +3804,7 @@
       Match.rivalPlayer = Match.awayTeam.find(p => p.isRival) || Match.awayTeam[2];
       const rotWin = getEffectiveRotationWindow();
       if (Season.player) {
-        const startSt = Math.max(55, Math.min(100, Season.player.condition || 100));
+        const startSt = Math.max(40, Math.min(100, Season.player.condition || 100));
         Match.userPlayer.stamina = startSt;
         Match.userPlayer.maxStaminaCap = startSt;
         // If injured/exhausted forced bench start even as starter, swap cleanly with top bench player
@@ -3836,7 +4123,8 @@
           p.secPlayed += actual;
           p.maxStaminaCap = Math.max(34, p.maxStaminaCap - capDecayPerPos);
           const focusDrain = (p.isUser && Match.coachFocus && Match.coachFocus.id === "SCORE_ATTACK") ? 1.06 : 1;
-          p.stamina = Math.max(6, p.stamina - (p.isUser ? drainMod * focusDrain : 1.55));
+          const _condDrainMul = (p.isUser && Season && Season.player) ? getConditionProfile(Season.player.condition, Season.player.injured).staminaDrainMul : 1.0;
+            p.stamina = Math.max(6, p.stamina - (p.isUser ? drainMod * focusDrain * _condDrainMul : 1.55));
         } else {
           p.stamina = Math.min(p.maxStaminaCap, p.stamina + 5.2);
         }
@@ -4050,12 +4338,23 @@
           if (Season.player) {
             Season.player.ap = 2;
             const minRatio = u.secPlayed / Math.max(1, Match.totalGameSec);
-            const condLoss = Math.round(8 + minRatio * 10); // 依實際上場時間扣除 8% ~ 18%
-            Season.player.condition = Math.max(25, Season.player.condition - condLoss);
+            const preCondProf = getConditionProfile(Season.player.condition, Season.player.injured);
+            const isHighIntensity = Boolean(g.stage) || Math.abs(Match.homeScore - Match.awayScore) <= 6;
+            const condLoss = Math.round(9 + minRatio * 12 + (isHighIntensity ? 4 : 0)); // 依上場時間與強度扣除 9% ~ 25%
+            Season.player.condition = Math.max(20, Season.player.condition - condLoss);
+            // 疲勞出賽實質受傷風險檢定
+            if (!Season.player.injured && preCondProf.matchInjuryChance > 0 && minRatio >= 0.45 && Math.random() < preCondProf.matchInjuryChance) {
+              Season.player.injured = true;
+              showToast("🚑 過勞出賽導致賽後小腿輕微拉傷！建議立即安排冰浴理療。");
+            }
             Season.player.eventTriggeredThisRound = false;
             checkPeriodicHeightGrowth();
             const perf = u.pts * 1.2 + (u.oreb + u.dreb) * 1.2 + u.ast * 1.4 + u.stl * 2 + u.blk * 2 - u.tov * 1.5;
             evaluatePostMatchTrust(perf, Match.homeScore > Match.awayScore, u);
+            const tmGrowthNotes = stepMidSeasonTeammateGrowth();
+            if (tmGrowthNotes.length) {
+              showToast(`🌱 隊友實戰成長：${tmGrowthNotes[0]}`);
+            }
           }
           const focusResult = window.BTUI ? BTUI.evaluateCoachFocusPostMatch(u) : null;
           clearMatchCheckpoint();
@@ -4195,8 +4494,9 @@
         const oH = (oppDef && oppDef.heightCm) || 188;
         const heightAdj = (a.zone === "PAINT" || a.statType === "BLOCK" || a.statType === "BOXOUT_DREB" || a.statType === "OREB_PUTBACK") ? Math.round((uH - oH) * 0.42) : Math.round((uH - oH) * 0.14);
         const leagueDiffPenalty = ((Match.league && Match.league.difficultyTier) || 1) * 5;
+        const condProf = getConditionProfile(p.condition, p.injured);
         const staminaPen = stamina < 30 ? -14 : (stamina < 55 ? -6 : 0);
-        const statAdj = Math.round((relStat - oppVal) * 0.92) + heightAdj - leagueDiffPenalty + staminaPen - (p.injured ? 12 : 0);
+        const statAdj = Math.round((relStat - oppVal) * 0.92) + heightAdj - leagueDiffPenalty + staminaPen + condProf.shotRateAdj;
         const baseSkillRate = (side === "DEFENSE" ? res.finalStats.defenseRating : res.finalStats.shootPct) - 8;
         // 相關能力值過低時設真實命中天花板（避免 50 三分中鋒亂投高命中）
         const statCeiling = Math.max(24, Math.min(86, Math.round(relStat * 0.90 + 6)));
@@ -4225,7 +4525,7 @@
         const perfCeiling = Math.max(30, Math.min(92, Math.round(relStat * 0.95 + 10)));
         const perfectRate = Math.max(12, Math.min(perfCeiling, Math.round(rate + perfBonus)));
         // 能力值直接影響 QTE 黃金區寬度（0.44x ~ 1.16x）與移動速度（低能力更急促、高能力更從容）
-        const statQteScale = Math.max(0.44, Math.min(1.16, 0.48 + (relStat - 50) * 0.0155 - (((Match.league && Match.league.difficultyTier) || 1) - 1) * 0.06)) * gritQteBoost;
+        const statQteScale = Math.max(0.42, Math.min(1.18, 0.48 + (relStat - 50) * 0.0155 - (((Match.league && Match.league.difficultyTier) || 1) - 1) * 0.06)) * gritQteBoost * condProf.qteScaleAdj;
         const qteSpeedMul = relStat < 58 ? 1.34 : (relStat < 70 ? 1.16 : (relStat >= 86 ? 0.90 : 1.03));
         const feel = describeSuccessFeel(rate, Season.careerYear, eqSet, stamina);
 
@@ -5512,15 +5812,18 @@
       }
     }
 
-    // 4-Tier Training Outcome Calculator (GREAT / SUCCESS / FAIL / INJURY driven by Condition + Grit)
+    // 4-Tier Training Outcome Calculator (GREAT / SUCCESS / FAIL / INJURY driven by ConditionProfile + Grit)
     function evalTrainingOutcome(condition, grit, isLowRisk = false) {
+      const prof = getConditionProfile(condition, false);
       if (isLowRisk) {
-        const greatP = Math.min(0.45, 0.14 + (condition / 100) * 0.18 + (grit - 65) * 0.003);
+        const failLowP = condition < 40 ? 0.18 : (condition < 55 ? 0.07 : 0);
+        if (Math.random() < failLowP) return "FAIL";
+        const greatP = Math.max(0.04, Math.min(0.42, 0.12 + (condition / 100) * 0.16 + (grit - 65) * 0.0025 + prof.trainGreatBonus));
         return Math.random() < greatP ? "GREAT" : "SUCCESS";
       }
-      let injuryP = condition < 45 ? (45 - condition) * 0.011 : 0;
-      let failP = condition < 75 ? (75 - condition) * 0.009 : 0.04;
-      let greatP = condition >= 75 ? (0.16 + (condition - 75) * 0.008 + Math.max(0, grit - 65) * 0.003) : 0.06;
+      let injuryP = condition < 50 ? Math.min(0.38, (50 - condition) * 0.012 + (condition < 35 ? 0.08 : 0)) : 0;
+      let failP = Math.max(0.03, (condition < 75 ? (75 - condition) * 0.0095 : 0.03) + prof.trainFailBonus);
+      let greatP = Math.max(0.03, (condition >= 60 ? (0.09 + (condition - 60) * 0.0055 + Math.max(0, grit - 65) * 0.0025) : 0.04) + prof.trainGreatBonus);
       const r = Math.random();
       if (r < injuryP) return "INJURY";
       if (r < injuryP + failP) return "FAIL";
@@ -5623,18 +5926,21 @@
       document.getElementById("apPipsBox").innerHTML = [0, 1].map(i => `<span class="ap-pip ${i >= p.ap ? "used" : ""}"></span>`).join("");
 
       const riskBanner = document.getElementById("trainRiskBanner");
+      const _cProf = getConditionProfile(p.condition, p.injured);
+      const _sBudget = getSeasonGrowthBudget(p.age, Season.leagueId);
+      const _sGain = p.seasonStatGain || 0;
+      const _paceTxt = _sGain >= _sBudget ? "｜本季已達高負荷成長瓶頸（建議側重恢復與實戰）" : `｜本季成長進度 ${_sGain}/${_sBudget}`;
+      riskBanner.style.color = _cProf.color;
       if (p.injured) {
-        riskBanner.style.color = "#C81E1E";
-        riskBanner.textContent = `🚑 目前處於【輕微拉傷】狀態（體能 ${p.condition}%）！強烈建議先用 1 AP「🧊 冰浴理療」康復，否則訓練極易失敗。`;
-      } else if (p.condition >= 80) {
-        riskBanner.style.color = "#15803D";
-        riskBanner.textContent = `✨ 賽季狀態極佳 (${p.condition}%)：訓練高機率觸發【大成功】雙倍成長，零受傷風險！`;
-      } else if (p.condition >= 55) {
-        riskBanner.style.color = "#B45309";
-        riskBanner.textContent = `⚠️ 略顯疲勞 (${p.condition}%)：高強度訓練存在失敗機率，請斟酌安排恢復。`;
+        riskBanner.textContent = `🚑 【${_cProf.label}】體能 ${p.condition}%（比賽${_cProf.shortEffect}）！強烈建議先用 1 行動點進行冰浴理療康復。`;
+      } else if (_cProf.tier === "PEAK") {
+        riskBanner.textContent = `✨ 【${_cProf.label}】${p.condition}%（比賽${_cProf.shortEffect}）：訓練大成功機率提升，零過勞風險${_paceTxt}`;
+      } else if (_cProf.tier === "GOOD") {
+        riskBanner.textContent = `✅ 【${_cProf.label}】${p.condition}%（${_cProf.shortEffect}）：可安心安排各項特訓${_paceTxt}`;
+      } else if (_cProf.tier === "TIRED") {
+        riskBanner.textContent = `⚠️ 【${_cProf.label}】${p.condition}%（比賽${_cProf.shortEffect}）：高強度訓練失敗率上升，建議穿插恢復${_paceTxt}`;
       } else {
-        riskBanner.style.color = "#C81E1E";
-        riskBanner.textContent = `🚨 過勞紅燈 (${p.condition}%)：強行訓練有高機率失敗甚至拉傷！建議立即理療。`;
+        riskBanner.textContent = `🚨 【${_cProf.label}】${p.condition}%（比賽${_cProf.shortEffect}）：強行訓練或出賽極易拉傷，請立即安排理療！`;
       }
 
       document.querySelectorAll("#apActionsGrid .ap-card").forEach(btn => {
@@ -5682,23 +5988,26 @@
       p.ap -= 1;
 
       const batchDelta = {};
+      const batchXpNotes = [];
       const addSt = (k, d) => { const prev = p.stats[k]; p.stats[k] = Math.min(cap, Math.max(40, prev + d)); if (p.stats[k] !== prev) batchDelta[k] = (batchDelta[k] || 0) + (p.stats[k] - prev); };
-      // 區間遞減成長曲線（70 以下穩步成長、70~82 放緩、83~90 瓶頸、91+ 極限突破）
+      // 統一採用「區間遞減 × 年齡曲線 × 單季軟上限 × 累積熟練度」成長引擎
       const addScaled = (k, rawGain, isGreat = false) => {
-        const cur = p.stats[k] || 60;
-        let g = 0;
-        if (cur < 70) g = isGreat ? Math.min(2, rawGain) : Math.min(1, rawGain);
-        else if (cur <= 82) g = isGreat ? (rawGain >= 2 ? 2 : 1) : (Math.random() < 0.85 ? 1 : 0);
-        else if (cur <= 90) g = isGreat ? 1 : (Math.random() < 0.52 ? 1 : 0);
-        else g = isGreat ? (Math.random() < 0.68 ? 1 : 0) : (Math.random() < 0.22 ? 1 : 0);
-        if (g > 0) addSt(k, g);
+        const r = addScaledProtagonistStat(p, k, rawGain * 0.95, isGreat, "TRAIN");
+        if (r.gained > 0) batchDelta[k] = (batchDelta[k] || 0) + r.gained;
+        else if (r.xpPct > 0) {
+          const lbl = (DB.origins.statDefs.find(d => d.k === k) || { l: k }).l;
+          batchXpNotes.push(`${lbl}熟練度 ${r.curXpPct}%`);
+        }
       };
       const fmtBatch = () => {
         const entries = Object.entries(batchDelta).map(([k, v]) => {
           const lbl = (DB.origins.statDefs.find(d => d.k === k) || { l: k }).l;
           return `${lbl} ${v > 0 ? "+" + v : v}`;
         });
-        return entries.length ? entries.join("、") : "瓶頸期穩固手感（未突破上限）";
+        if (entries.length) {
+          return entries.join("、") + (batchXpNotes.length ? `（另累積 ${batchXpNotes.slice(0, 2).join("、")}）` : "");
+        }
+        return batchXpNotes.length ? `累積熟練度（${batchXpNotes.slice(0, 2).join("、")}，達 100% 即突破 +1）` : "已達個人天賦上限";
       };
 
       if (act === "recover") {
@@ -5844,12 +6153,21 @@
             Season.equippedTraits.push(locked.id);
             showTrainBanner("GREAT", `🌟 超低機率覺醒！領悟全新技能【${locked.name}】！`, "電光火石間打通任督二脈，極罕有技能正式刻入肌肉記憶！（狀態 -12）");
           } else {
-            const statKeys = ["threePt", "midRange", "inside", "playmaking", "perimDef", "intDef", "rebound", "speed", "vertical", "strength", "iq"];
-            const k1 = statKeys[Math.floor(Math.random() * statKeys.length)];
-            const k2 = statKeys[(statKeys.indexOf(k1) + 3) % statKeys.length];
-            applyPlayerDelta({ [k1]: 2, [k2]: 2, grit: 2 });
+            const focusPool = POS_GROWTH_FOCUS[p.pos] || ["threePt", "midRange", "inside", "playmaking", "perimDef"];
+            const k1 = focusPool[Math.floor(Math.random() * focusPool.length)];
+            const k2 = focusPool[(focusPool.indexOf(k1) + 1) % focusPool.length];
+            const r1 = addScaledProtagonistStat(p, k1, 1.55, true, "EXTREME");
+            const r2 = addScaledProtagonistStat(p, k2, 1.35, true, "EXTREME");
+            const r3 = addScaledProtagonistStat(p, "grit", 1.15, true, "EXTREME");
             const lbl = (k) => (DB.origins.statDefs.find(d => d.k === k) || { l: k }).l;
-            showTrainBanner("SUCCESS", "🔥 極限特訓成功！（未觸發技能覺醒）", `成功鎖定金環！${lbl(k1)} +2、${lbl(k2)} +2、意志 +2（技能領悟為超低機率事件，狀態 -12）。`);
+            const qteRec = {};
+            const parts = [];
+            [[k1, r1], [k2, r2], ["grit", r3]].forEach(([k, r]) => {
+              if (r.gained > 0) { qteRec[k] = (qteRec[k] || 0) + r.gained; parts.push(`${lbl(k)} +${r.gained}`); }
+              else if (r.xpPct > 0) parts.push(`${lbl(k)}熟練度 ${r.curXpPct}%`);
+            });
+            if (Object.keys(qteRec).length) p.lastDelta = qteRec;
+            showTrainBanner("SUCCESS", "🔥 極限特訓成功！", `精準鎖定金環！實際收穫：${parts.join("、") || "技術純度提升"}（狀態 -12）。`);
           }
         }
       } else {
@@ -6039,11 +6357,14 @@
       for (const [k, v] of Object.entries(out.eff || {})) {
         if (k === "heightCm") { const prevH = p.heightCm; const hCap = POS_HEIGHT_CAP[p.pos] || 212; p.heightCm = Math.min(hCap, Math.max(165, p.heightCm + v)); if (p.heightCm !== prevH) evtDeltas.heightCm = p.heightCm - prevH; }
         else if (p.stats[k] !== undefined) {
-          const prev = p.stats[k];
-          // 高能力值區間事件增幅適度收斂，維持跨季真實成長曲線
-          const scaledV = (v > 0 && prev >= 80) ? Math.max(1, Math.round(v * 0.65)) : v;
-          p.stats[k] = Math.min(p.cap, Math.max(40, prev + scaledV));
-          if (p.stats[k] !== prev) evtDeltas[k] = p.stats[k] - prev;
+          if (v > 0) {
+            const r = addScaledProtagonistStat(p, k, v * 0.78, v >= 2, "EVENT");
+            if (r.gained > 0) evtDeltas[k] = (evtDeltas[k] || 0) + r.gained;
+          } else {
+            const prev = p.stats[k];
+            p.stats[k] = Math.min(p.cap, Math.max(40, prev + v));
+            if (p.stats[k] !== prev) evtDeltas[k] = p.stats[k] - prev;
+          }
         }
         else if (k === "condition") p.condition = Math.min(100, Math.max(20, p.condition + v));
         else if (k === "reputation") p.reputation = Math.min(100, Math.max(0, p.reputation + v));
@@ -6149,13 +6470,52 @@
       if (!Season._seasonGrowthApplied) {
         Season._seasonGrowthApplied = true;
         p.age += 1;
+        const statDefs = (DB.origins && DB.origins.statDefs) || [];
+        const lblOf = (k) => (statDefs.find(d => d.k === k) || { l: k }).l;
+        const msgParts = [];
+        const seasonBreakDeltas = {};
+
+        // 1) 年齡自然曲線（發育期溫和抽高；30 歲以上體能微降但老將球商提升）
         if (p.age <= 18) {
-          const cm = 1 + Math.floor(Math.random() * 3) + (p.flags.includes("late_growth_spurt") ? 2 : 0);
-          applyPlayerDelta({ heightCm: cm, vertical: 2, speed: 2, strength: 2, inside: 2 });
-          growthMsg = `🌱 身體自然發育：身高 +${cm}cm（現 ${p.heightCm}cm），速度/彈跳/力量/內線各 +2！`;
+          const cm = 1 + Math.floor(Math.random() * 2) + (p.flags && p.flags.includes("late_growth_spurt") ? 1 : 0);
+          applyPlayerDelta({ heightCm: cm });
+          const physPick = ["speed", "vertical", "strength"].sort(() => Math.random() - 0.5).slice(0, 2);
+          physPick.forEach(k => {
+            const r = addScaledProtagonistStat(p, k, 1.25, false, "SEASON_END");
+            if (r.gained > 0) seasonBreakDeltas[k] = (seasonBreakDeltas[k] || 0) + r.gained;
+          });
+          msgParts.push(`🌱 青春發育：身高 +${cm}cm（現 ${p.heightCm}cm）`);
+        } else if (p.age >= 30) {
+          const drop = p.age >= 34 ? -2 : -1;
+          applyPlayerDelta({ speed: drop, vertical: drop });
+          const iqR = addScaledProtagonistStat(p, "iq", 1.3, false, "SEASON_END");
+          if (iqR.gained > 0) seasonBreakDeltas.iq = (seasonBreakDeltas.iq || 0) + iqR.gained;
+          msgParts.push(`⏳ 邁入 ${p.age} 歲老將階段：速度/彈跳 ${drop}，老將經驗轉化為球場智慧`);
         } else {
-          growthMsg = `邁入 ${p.age} 歲，大賽經驗累積令臨場判斷進一步昇華！`;
+          msgParts.push(`邁入 ${p.age} 歲黃金球齡`);
         }
+
+        // 2) 賽場實戰表現連動季末突破（表現越好，對應領域獲得合理突破）
+        const rpgNum = st.reb / gp;
+        const apgNum = st.ast / gp;
+        const defNum = (st.stl + st.blk) / gp;
+        const perfTargets = [];
+        if (ppgNum >= 18) perfTargets.push(p.pos === "C" || p.pos === "PF" ? "inside" : "threePt", "midRange");
+        else if (ppgNum >= 12) perfTargets.push(p.pos === "C" ? "inside" : "midRange");
+        if (apgNum >= 5.0) perfTargets.push("playmaking", "iq");
+        if (rpgNum >= 7.0) perfTargets.push("rebound");
+        if (defNum >= 2.2) perfTargets.push(p.pos === "C" || p.pos === "PF" ? "intDef" : "perimDef");
+        if (isChamp || isSeasonMvp || (st.mvps || 0) >= 2) perfTargets.push("grit");
+
+        const uniquePerf = Array.from(new Set(perfTargets)).slice(0, 3);
+        uniquePerf.forEach(k => {
+          const r = addScaledProtagonistStat(p, k, isSeasonMvp || isChamp ? 1.55 : 1.20, isSeasonMvp, "SEASON_END");
+          if (r.gained > 0) seasonBreakDeltas[k] = (seasonBreakDeltas[k] || 0) + r.gained;
+        });
+
+        const gainStr = Object.entries(seasonBreakDeltas).map(([k, v]) => `${lblOf(k)} +${v}`).join("、");
+        if (gainStr) msgParts.push(`🔥 實戰突破：${gainStr}`);
+        growthMsg = msgParts.join(" ｜ ") + "！";
       } else {
         growthMsg = `目前 ${p.age} 歲，大賽經驗持續累積！`;
       }
@@ -6250,6 +6610,7 @@
         }
         const savedP = {
           ...Season.player, ap: 2, condition: 100, injured: false, eventTriggeredThisRound: false,
+          seasonStatGain: 0,
           rivalHeat: Math.max(15, Math.round((Season.player.rivalHeat || 30) * 0.80))
         };
         const savedTraits = [...Season.equippedTraits];

@@ -531,8 +531,13 @@ window.BTUI = (() => {
     }
 
     const roleTxt = pl.isUser ? "★ 主角球員" : (pl.role === "STARTER" ? "先發主力" : "替補輪換");
+    const gtMap = { EARLY: "早熟型", NORMAL: "標準型", LATE: "晚熟型" };
+    const potStr = (!pl.isUser && pl.potential) ? ` · 潛力${"★".repeat(pl.potential)}` : "";
+    const gtStr = (!pl.isUser && pl.growthType) ? `(${gtMap[pl.growthType] || "標準型"})` : "";
+    const sDelta = (!pl.isUser && typeof pl.seasonOvrStart === "number") ? (ovr - pl.seasonOvrStart) : 0;
+    const sDeltaStr = sDelta > 0 ? ` · 本季▲+${sDelta}` : (sDelta < 0 ? ` · 本季▼${sDelta}` : "");
     document.getElementById("pdHeroName").textContent = `#${pl.num !== undefined ? pl.num : "--"} ${pl.name}`;
-    document.getElementById("pdHeroSub").textContent = `${teamName || "所屬球隊"} · ${pl.pos || "SG"} · ${roleTxt} · ${pl.heightCm || 185}cm${pl.age ? ` · ${pl.age}歲` : ""}`;
+    document.getElementById("pdHeroSub").textContent = `${teamName || "所屬球隊"} · ${pl.pos || "SG"} · ${roleTxt} · ${pl.heightCm || 185}cm${pl.age ? ` · ${pl.age}歲` : ""}${potStr}${gtStr}${sDeltaStr}`;
     document.getElementById("pdOvrVal").textContent = ovr;
     document.getElementById("pdOvrCmp").textContent = `均${avgOvr} (${diff >= 0 ? "+" : ""}${diff})${rankStr ? ` · ${rankStr}` : ""}`;
 
@@ -632,15 +637,21 @@ window.BTUI = (() => {
       const roleTxt = pl.isUser ? `${rotWin.label}` : (isStarter ? "先發" : "替補");
       const diff = (pl.ovr || 72) - avgOvr;
       const diffStr = diff > 0 ? `均+${diff}` : (diff < 0 ? `均${diff}` : "持平");
+      const sDelta = (!pl.isUser && typeof pl.seasonOvrStart === "number") ? ((pl.ovr || 72) - pl.seasonOvrStart) : 0;
+      const growthTag = sDelta > 0
+        ? `<span class="tag win" style="font-size:10px; padding:1px 5px;">▲+${sDelta}</span>`
+        : (sDelta < 0 ? `<span class="tag loss" style="font-size:10px; padding:1px 5px;">▼${sDelta}</span>` : "");
+      const potBadge = (!pl.isUser && pl.potential) ? `<span style="font-size:10px; color:#92400E; font-weight:800;">潛${"★".repeat(pl.potential)}</span>` : "";
 
       return `
         <article class="roster-player-card ${pl.isUser ? "is-user" : (!isStarter ? "is-bench" : "")}" data-player-card-name="${escAttr(pl.name)}" data-player-card-team="${escAttr(teamName)}">
           <div class="rpc-left">
-            <div class="rpc-name">${playerNameLinkHtml(pl.name, teamName, `#${pl.num} ${pl.name}${pl.isUser ? " ★" : ""}`)}</div>
+            <div class="rpc-name">${playerNameLinkHtml(pl.name, teamName, `#${pl.num} ${pl.name}${pl.isUser ? " ★" : ""}`)} ${growthTag}</div>
             <div class="rpc-meta">
               <span class="tag">${pl.pos}</span>
               <span class="tag ${isStarter ? "gold" : ""}">${roleTxt}</span>
               <span>${pl.heightCm || 185}cm${pl.age ? ` · ${pl.age}歲` : ""}</span>
+              ${potBadge}
             </div>
           </div>
           <div class="rpc-right">
@@ -779,8 +790,13 @@ window.BTUI = (() => {
         </div>
         <div class="ovr-kpi-card">
           <div class="ovr-kpi-lbl">賽季狀態</div>
-          <div class="ovr-kpi-val" style="color:${p.condition < 55 ? "var(--crimson)" : "var(--ok-green)"};">${p.condition}%</div>
-          <div class="ovr-kpi-cmp">${p.injured ? "🚑 輕微拉傷" : "均線 75%"}</div>
+          ${(() => {
+            const cp = typeof window.getConditionProfile === "function"
+              ? window.getConditionProfile(p.condition, p.injured)
+              : { label: p.injured ? "輕微拉傷" : "狀態良好", color: p.condition < 55 ? "var(--crimson)" : "var(--ok-green)", shortEffect: "" };
+            return `<div class="ovr-kpi-val" style="color:${cp.color};">${p.condition}%</div>
+          <div class="ovr-kpi-cmp" style="color:${cp.color};">${cp.label}</div>`;
+          })()}
         </div>`;
     }
 
