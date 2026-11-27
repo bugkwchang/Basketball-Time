@@ -21,8 +21,8 @@
           "ok": {
             "text": "手臂麻痺但出手點完全定型！三分 +3、中投 +2、狀態 -10。",
             "eff": {
-              "threePt": 3,
-              "midRange": 2,
+              "threePt": 2,
+              "midRange": 1,
               "condition": -10
             },
             "flags": [
@@ -40,13 +40,13 @@
         {
           "label": "改做錄影覆盤與冰敷拉伸",
           "stat": "iq",
-          "base": 0.86,
+          "base": 0.72,
           "w": 0.002,
           "ok": {
             "text": "睇穿對手擋拆習慣！球商 +3、組織 +2、狀態 +12。",
             "eff": {
-              "iq": 3,
-              "playmaking": 2,
+              "iq": 2,
+              "playmaking": 1,
               "condition": 12
             },
             "flags": [
@@ -85,9 +85,8 @@
           "ok": {
             "text": "茅塞頓開！中投 +4、內線 +3、球商 +2！",
             "eff": {
-              "midRange": 4,
-              "inside": 3,
-              "iq": 2
+              "midRange": 2,
+              "inside": 1
             },
             "flags": [
               "mentor_blessed"
@@ -125,8 +124,8 @@
           "ok": {
             "text": "全隊士氣炸裂！意志 +3、外防 +2、名氣 +6、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味飆升！",
             "eff": {
-              "grit": 3,
-              "perimDef": 2,
+              "grit": 2,
+              "perimDef": 1,
               "reputation": 6,
               "rivalHeat": 28
             },
@@ -148,12 +147,12 @@
         {
           "label": "冷笑轉身保持冷靜",
           "stat": "iq",
-          "base": 0.9,
+          "base": 0.76,
           "w": 0.0025,
           "ok": {
             "text": "完全唔受挑釁影響！球商 +3、狀態 +6。",
             "eff": {
-              "iq": 3,
+              "iq": 2,
               "condition": 6
             },
             "flags": [
@@ -192,9 +191,8 @@
           "ok": {
             "text": "激戰至凌晨！最後一球絕殺贏低宿敵 {{rivalName}}（{{rivalTeam}}）！速度 +3、外防 +3、彈跳 +2、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味 +25！",
             "eff": {
-              "speed": 3,
-              "perimDef": 3,
-              "vertical": 2,
+              "speed": 2,
+              "perimDef": 1,
               "rivalHeat": 25,
               "condition": -12
             },
@@ -279,8 +277,8 @@
           "ok": {
             "text": "驚人身體素質扛過負荷！意志 +4、力量 +3、狀態 -10。",
             "eff": {
-              "grit": 4,
-              "strength": 3,
+              "grit": 2,
+              "strength": 1,
               "condition": -10
             },
             "flags": [
@@ -305,7 +303,7 @@
     {
       "id": "evt_midseason_transfer",
       "title": "季中豪門密會・重磅轉會挖角！",
-      "stage": "ANY",
+      "stage": "PRO",
       "desc": "聯盟勁旅領隊私下接觸你嘅經紀人／教練 {{coachName}}，開出主力核心地位，邀請你即刻轉會加盟衝擊總冠軍！",
       "conditions": [
         {
@@ -341,14 +339,14 @@
         {
           "label": "🛡️ 拒絕挖角，誓與原隊友並肩作戰！",
           "stat": "grit",
-          "base": 0.92,
+          "base": 0.78,
           "w": 0.0025,
           "ok": {
             "text": "忠誠宣言感動全城！更衣室士氣爆棚，意志 +4、名氣 +8、球商 +2！",
             "eff": {
-              "grit": 4,
+              "grit": 2,
               "reputation": 8,
-              "iq": 2
+              "iq": 1
             },
             "flags": [
               "franchise_loyal"
@@ -382,8 +380,8 @@
           "ok": {
             "text": "雙人組合威力大增！組織 +3、球商 +2、名氣 +5！",
             "eff": {
-              "playmaking": 3,
-              "iq": 2,
+              "playmaking": 2,
+              "iq": 1,
               "reputation": 5
             },
             "flags": [
@@ -406,9 +404,8 @@
           "ok": {
             "text": "絕對王牌氣場震懾更衣室！三分 +2、內線 +2、意志 +3！",
             "eff": {
-              "threePt": 2,
-              "inside": 2,
-              "grit": 3
+              "threePt": 1,
+              "grit": 2
             },
             "flags": [
               "alpha_dog"
@@ -428,14 +425,14 @@
     {
       "id": "evt_brand_deal",
       "title": "運動品牌球鞋代言邀約",
-      "stage": "ANY",
+      "stage": "PRO",
       "desc": "知名日系運動品牌睇中你嘅熱血球風，邀請你拍攝週末宣傳廣告並送出定制戰靴。",
       "conditions": [],
       "choices": [
         {
           "label": "答應拍攝，打響全城知名度",
           "stat": "iq",
-          "base": 0.85,
+          "base": 0.71,
           "w": 0.002,
           "ok": {
             "text": "廣告大獲好評！名氣 +12、獲得頂級戰靴（彈跳 +2），但拍攝令狀態 -8。",
@@ -460,14 +457,13 @@
         {
           "label": "婉拒商業活動，專注球場力量特訓",
           "stat": "grit",
-          "base": 0.88,
+          "base": 0.74,
           "w": 0.002,
           "ok": {
             "text": "心無旁騖！力量 +3、護框 +2、籃板 +2！",
             "eff": {
-              "strength": 3,
-              "intDef": 2,
-              "rebound": 2
+              "strength": 2,
+              "intDef": 1
             },
             "flags": []
           },
@@ -498,7 +494,7 @@
         {
           "label": "高鈣飲食配合深層伸展（穩健抽高）",
           "stat": "iq",
-          "base": 0.85,
+          "base": 0.71,
           "w": 0.002,
           "ok": {
             "text": "骨骼健康拉長，身高 +2 cm、籃板 +2、護框 +1！",
@@ -529,8 +525,8 @@
             "text": "大突破！身體完美適應新高度：身高 +3 cm、彈跳 +3、內線 +2！",
             "eff": {
               "heightCm": 3,
-              "vertical": 3,
-              "inside": 2,
+              "vertical": 2,
+              "inside": 1,
               "condition": -8
             },
             "flags": [
@@ -570,8 +566,8 @@
           "ok": {
             "text": "球探頻頻點頭記低你個名！組織 +3、球商 +3、名氣 +10！",
             "eff": {
-              "playmaking": 3,
-              "iq": 3,
+              "playmaking": 2,
+              "iq": 1,
               "reputation": 10
             },
             "flags": [
@@ -595,8 +591,8 @@
           "ok": {
             "text": "炸裂演出登上歐洲籃球論壇熱搜！內線 +3、彈跳 +2、名氣 +14！",
             "eff": {
-              "inside": 3,
-              "vertical": 2,
+              "inside": 2,
+              "vertical": 1,
               "reputation": 14
             },
             "flags": []
@@ -628,8 +624,8 @@
           "ok": {
             "text": "教練 {{coachName}}大讚你眼光獨到！外防 +3、球商 +2、教練 {{coachName}}信任度大幅上升！",
             "eff": {
-              "perimDef": 3,
-              "iq": 2,
+              "perimDef": 2,
+              "iq": 1,
               "coachTrust": 8
             },
             "flags": []
@@ -646,7 +642,7 @@
         {
           "label": "專注筆記並提早返宿舍保持體能",
           "stat": "grit",
-          "base": 0.85,
+          "base": 0.71,
           "w": 0.002,
           "ok": {
             "text": "效率與休息兼顧！球商 +2、狀態 +10。",
@@ -688,9 +684,8 @@
           "ok": {
             "text": "吸收世界級對抗強度！中投 +3、力量 +3、意志 +3、名氣 +10（狀態 -12）！",
             "eff": {
-              "midRange": 3,
-              "strength": 3,
-              "grit": 3,
+              "midRange": 2,
+              "strength": 1,
               "reputation": 10,
               "condition": -12
             },
@@ -734,8 +729,8 @@
     {
       "id": "evt_street_legend",
       "stage": "ANY",
-      "title": "🌃 前職業控衛傳奇 {{legendName}}嘅運球與節奏課",
-      "desc": "返屋企途中經過燈火通明嘅籠式球場，一位膝蓋綁滿護具嘅前街球王邀請你打一節半場步法課。",
+      "title": "🌃 傳奇前輩 {{legendName}} 嘅深夜運球與節奏課",
+      "desc": "返屋企途中經過燈火通明嘅室外球場，偶遇退役名宿 {{legendName}}！佢睇中你嘅腳步天賦，主動邀請你打一節半場節奏指導課。",
       "conditions": [],
       "choices": [
         {
@@ -746,9 +741,8 @@
           "ok": {
             "text": "領悟「慢三拍」節奏精髓！中投 +3、速度 +2、組織 +2！",
             "eff": {
-              "midRange": 3,
-              "speed": 2,
-              "playmaking": 2
+              "midRange": 2,
+              "speed": 1
             },
             "flags": []
           },
@@ -769,8 +763,8 @@
           "ok": {
             "text": "夢幻腳步初見雛形！內線 +3、力量 +2！",
             "eff": {
-              "inside": 3,
-              "strength": 2
+              "inside": 2,
+              "strength": 1
             },
             "flags": []
           },
@@ -801,7 +795,7 @@
           "ok": {
             "text": "全網沸騰！意志 +4、名氣 +12、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味 +15！",
             "eff": {
-              "grit": 4,
+              "grit": 2,
               "reputation": 12,
               "rivalHeat": 15
             },
@@ -819,7 +813,7 @@
         {
           "label": "低調把功勞歸給隊友與教練 {{coachName}}團",
           "stat": "iq",
-          "base": 0.85,
+          "base": 0.71,
           "w": 0.002,
           "ok": {
             "text": "更衣室掌聲雷動！教練 {{coachName}}信任 +8、組織 +2、名氣 +5。",
@@ -844,8 +838,8 @@
     {
       "id": "evt_vet_mentorship",
       "stage": "ANY",
-      "title": "🤝 隊內老將 {{vetName}}主動帶你加練防守站位",
-      "desc": "訓練結束後，隊中資深老將拉住你講解點樣用最省力嘅方式卡位同封死對方第一拍。",
+      "title": "🤝 {{vetRoleLabel}} {{vetName}} 主動帶你加練防守站位",
+      "desc": "訓練結束後，隊中經驗最豐富嘅{{vetRoleLabel}} {{vetName}} 拉住你，親自講解點樣用最省力嘅方式卡位同封死對方第一拍。",
       "conditions": [],
       "choices": [
         {
@@ -856,9 +850,9 @@
           "ok": {
             "text": "功力大增！外防 +2、護框 +2、籃板 +2、教練 {{coachName}}信任 +5！",
             "eff": {
-              "perimDef": 2,
-              "intDef": 2,
-              "rebound": 2,
+              "perimDef": 1,
+              "intDef": 1,
+              "rebound": 1,
               "coachTrust": 5
             },
             "flags": []
@@ -875,7 +869,7 @@
         {
           "label": "順便請教老將點樣保養身體打滿長賽季",
           "stat": "iq",
-          "base": 0.88,
+          "base": 0.74,
           "w": 0.002,
           "ok": {
             "text": "學會頂級賽後恢復習慣！狀態 +16、球商 +2、清走疲勞隱患。",
@@ -912,7 +906,7 @@
           "ok": {
             "text": "全隊士氣爆棚！意志 +3、教練 {{coachName}}信任 +6、狀態 +8！",
             "eff": {
-              "grit": 3,
+              "grit": 2,
               "coachTrust": 6,
               "condition": 8
             },
@@ -935,8 +929,8 @@
           "ok": {
             "text": "手感發燙！三分 +3、中投 +2（狀態 -6）。",
             "eff": {
-              "threePt": 3,
-              "midRange": 2,
+              "threePt": 2,
+              "midRange": 1,
               "condition": -6
             },
             "flags": []
@@ -968,7 +962,7 @@
           "ok": {
             "text": "驚險過關！球商 +3、教練 {{coachName}}信任 +5（狀態 -8）。",
             "eff": {
-              "iq": 3,
+              "iq": 2,
               "coachTrust": 5,
               "condition": -8
             },
@@ -990,8 +984,8 @@
           "ok": {
             "text": "奇蹟過關仲順便加練咗 100 球三分！三分 +3、意志 +2！",
             "eff": {
-              "threePt": 3,
-              "grit": 2
+              "threePt": 2,
+              "grit": 1
             },
             "flags": []
           },
@@ -1022,9 +1016,8 @@
           "ok": {
             "text": "突破極限！三分 +4、中投 +4、意志 +3（狀態 -14）！",
             "eff": {
-              "threePt": 4,
-              "midRange": 4,
-              "grit": 3,
+              "threePt": 2,
+              "midRange": 1,
               "condition": -14
             },
             "flags": [
@@ -1043,14 +1036,14 @@
         {
           "label": "科學分配組數，配合冰敷穩步完成",
           "stat": "iq",
-          "base": 0.84,
+          "base": 0.7,
           "w": 0.002,
           "ok": {
             "text": "高質完成！三分 +2、中投 +2、球商 +2、狀態 -4。",
             "eff": {
-              "threePt": 2,
-              "midRange": 2,
-              "iq": 2,
+              "threePt": 1,
+              "midRange": 1,
+              "iq": 1,
               "condition": -4
             },
             "flags": []
@@ -1081,9 +1074,8 @@
           "ok": {
             "text": "腳感絕配！速度 +3、外防 +2、彈跳 +2！",
             "eff": {
-              "speed": 3,
-              "perimDef": 2,
-              "vertical": 2
+              "speed": 2,
+              "perimDef": 1
             },
             "flags": []
           },
@@ -1099,13 +1091,13 @@
         {
           "label": "用自己積蓄買更輕便嘅低筒後衛鞋",
           "stat": "iq",
-          "base": 0.86,
+          "base": 0.72,
           "w": 0.002,
           "ok": {
             "text": "輕盈如風！速度 +2、組織 +2、狀態 +6。",
             "eff": {
-              "speed": 2,
-              "playmaking": 2,
+              "speed": 1,
+              "playmaking": 1,
               "condition": 6
             },
             "flags": []
@@ -1137,7 +1129,7 @@
           "ok": {
             "text": "十投九中震懾對手！三分 +3、名氣 +10、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味 +18！",
             "eff": {
-              "threePt": 3,
+              "threePt": 2,
               "reputation": 10,
               "rivalHeat": 18
             },
@@ -1155,12 +1147,12 @@
         {
           "label": "冷靜拒絕：「聽日正式賽場見真章！」",
           "stat": "iq",
-          "base": 0.82,
+          "base": 0.68,
           "w": 0.002,
           "ok": {
             "text": "氣場全開！球商 +3、教練 {{coachName}}信任 +6、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味 +10。",
             "eff": {
-              "iq": 3,
+              "iq": 2,
               "coachTrust": 6,
               "rivalHeat": 10
             },
@@ -1198,7 +1190,7 @@
           "ok": {
             "text": "全場驚呼！垂直彈跳刷新紀錄！彈跳 +4、名氣 +12、身高體測 +1cm！",
             "eff": {
-              "vertical": 4,
+              "vertical": 2,
               "reputation": 12,
               "heightCm": 1
             },
@@ -1221,8 +1213,8 @@
           "ok": {
             "text": "全能表現征服球探！組織 +3、外防 +3、名氣 +10！",
             "eff": {
-              "playmaking": 3,
-              "perimDef": 3,
+              "playmaking": 2,
+              "perimDef": 1,
               "reputation": 10
             },
             "flags": []
@@ -1254,9 +1246,8 @@
           "ok": {
             "text": "核心對抗肉眼可見變厚！力量 +4、內線 +2、籃板 +2！",
             "eff": {
-              "strength": 4,
-              "inside": 2,
-              "rebound": 2
+              "strength": 2,
+              "inside": 1
             },
             "flags": []
           },
@@ -1277,8 +1268,8 @@
           "ok": {
             "text": "步頻更快更輕盈！速度 +3、彈跳 +2、狀態 +8！",
             "eff": {
-              "speed": 3,
-              "vertical": 2,
+              "speed": 2,
+              "vertical": 1,
               "condition": 8
             },
             "flags": []
@@ -1338,7 +1329,7 @@
           "ok": {
             "text": "靠驚人意志克服不適！意志 +4、教練 {{coachName}}信任 +6（狀態 -10）。",
             "eff": {
-              "grit": 4,
+              "grit": 2,
               "coachTrust": 6,
               "condition": -10
             },
@@ -1371,7 +1362,7 @@
           "ok": {
             "text": "隊友重拾笑容！組織 +3、教練 {{coachName}}信任 +7、名氣 +6！",
             "eff": {
-              "playmaking": 3,
+              "playmaking": 2,
               "coachTrust": 7,
               "reputation": 6
             },
@@ -1394,9 +1385,8 @@
           "ok": {
             "text": "激戰一場雙雙爆發！內線 +2、外防 +2、意志 +3！",
             "eff": {
-              "inside": 2,
-              "perimDef": 2,
-              "grit": 3
+              "inside": 1,
+              "grit": 2
             },
             "flags": []
           },
@@ -1445,13 +1435,13 @@
         {
           "label": "婉拒封面拍攝，只留 15 分鐘簡短訪問即刻練波",
           "stat": "grit",
-          "base": 0.82,
+          "base": 0.68,
           "w": 0.002,
           "ok": {
             "text": "記者大讚你純粹熱愛籃球！意志 +2、三分 +2、名氣 +6。",
             "eff": {
-              "grit": 2,
-              "threePt": 2,
+              "grit": 1,
+              "threePt": 1,
               "reputation": 6
             },
             "flags": []
@@ -1477,13 +1467,13 @@
         {
           "label": "耐心手把手教小朋友運球與投籃手型",
           "stat": "iq",
-          "base": 0.86,
+          "base": 0.72,
           "w": 0.002,
           "ok": {
             "text": "教學相長！投籃與傳球節奏更清晰：組織 +2、球商 +2、名氣 +10！",
             "eff": {
-              "playmaking": 2,
-              "iq": 2,
+              "playmaking": 1,
+              "iq": 1,
               "reputation": 10
             },
             "flags": []
@@ -1505,7 +1495,7 @@
           "ok": {
             "text": "小朋友視你為偶像！彈跳 +3、名氣 +12！",
             "eff": {
-              "vertical": 3,
+              "vertical": 2,
               "reputation": 12
             },
             "flags": []
@@ -1532,13 +1522,13 @@
         {
           "label": "認真跟足 90 分鐘核心與腳踝強化課",
           "stat": "iq",
-          "base": 0.88,
+          "base": 0.74,
           "w": 0.002,
           "ok": {
             "text": "身體協調性大增！速度 +2、彈跳 +2、狀態 +12、治癒輕傷！",
             "eff": {
-              "speed": 2,
-              "vertical": 2,
+              "speed": 1,
+              "vertical": 1,
               "condition": 12,
               "clearInjury": 1
             },
@@ -1560,8 +1550,8 @@
           "ok": {
             "text": "過人第一步大幅提速！速度 +3、外防 +2！",
             "eff": {
-              "speed": 3,
-              "perimDef": 2
+              "speed": 2,
+              "perimDef": 1
             },
             "flags": []
           },
@@ -1608,13 +1598,13 @@
         {
           "label": "只簽商業代言協議，繼續忠誠留隊帶隊爭冠",
           "stat": "grit",
-          "base": 0.85,
+          "base": 0.71,
           "w": 0.002,
           "ok": {
             "text": "贏盡球會上下敬重！教練 {{coachName}}信任 +10、意志 +3、名氣 +8！",
             "eff": {
               "coachTrust": 10,
-              "grit": 3,
+              "grit": 2,
               "reputation": 8
             },
             "flags": []
@@ -1647,7 +1637,7 @@
             "text": "管理層拍板確立你為非賣品核心！教練 {{coachName}}信任 +12、意志 +3！",
             "eff": {
               "coachTrust": 12,
-              "grit": 3
+              "grit": 2
             },
             "flags": []
           },
@@ -1667,8 +1657,8 @@
           "ok": {
             "text": "用實力令質疑者收聲！內線 +3、三分 +2、教練 {{coachName}}信任 +8！",
             "eff": {
-              "inside": 3,
-              "threePt": 2,
+              "inside": 2,
+              "threePt": 1,
               "coachTrust": 8
             },
             "flags": []
@@ -1706,8 +1696,8 @@
           "ok": {
             "text": "奪得三分王獎盃！三分 +4、中投 +2、名氣 +16！",
             "eff": {
-              "threePt": 4,
-              "midRange": 2,
+              "threePt": 2,
+              "midRange": 1,
               "reputation": 16
             },
             "flags": []
@@ -1729,8 +1719,8 @@
           "ok": {
             "text": "評委全體舉起 50 分滿分！彈跳 +4、內線 +3、名氣 +18！",
             "eff": {
-              "vertical": 4,
-              "inside": 3,
+              "vertical": 2,
+              "inside": 1,
               "reputation": 18
             },
             "flags": []
@@ -1762,8 +1752,8 @@
           "ok": {
             "text": "完美滑翔單手劈扣！彈跳 +4、內線 +2、全隊士氣大振（狀態 +6）！",
             "eff": {
-              "vertical": 4,
-              "inside": 2,
+              "vertical": 2,
+              "inside": 1,
               "condition": 6
             },
             "flags": []
@@ -1785,8 +1775,8 @@
           "ok": {
             "text": "創意滿分！內線 +2、組織 +2、名氣 +6！",
             "eff": {
-              "inside": 2,
-              "playmaking": 2,
+              "inside": 1,
+              "playmaking": 1,
               "reputation": 6
             },
             "flags": []
@@ -1817,9 +1807,8 @@
           "ok": {
             "text": "下盤穩如磐石！護框 +3、力量 +3、籃板 +2（狀態 -10）！",
             "eff": {
-              "intDef": 3,
-              "strength": 3,
-              "rebound": 2,
+              "intDef": 2,
+              "strength": 1,
               "condition": -10
             },
             "flags": []
@@ -1841,8 +1830,8 @@
           "ok": {
             "text": "外線防守密不透風！外防 +4、速度 +2（狀態 -8）！",
             "eff": {
-              "perimDef": 4,
-              "speed": 2,
+              "perimDef": 2,
+              "speed": 1,
               "condition": -8
             },
             "flags": []
@@ -1874,8 +1863,8 @@
           "ok": {
             "text": "兩罰全中全場歡呼！中投 +3、意志 +3、教練 {{coachName}}信任 +7！",
             "eff": {
-              "midRange": 3,
-              "grit": 3,
+              "midRange": 2,
+              "grit": 1,
               "coachTrust": 7
             },
             "flags": []
@@ -1897,9 +1886,8 @@
           "ok": {
             "text": "心理素質脫胎換骨！意志 +4、三分 +2、中投 +2！",
             "eff": {
-              "grit": 4,
-              "threePt": 2,
-              "midRange": 2
+              "grit": 2,
+              "threePt": 1
             },
             "flags": []
           },
@@ -1946,7 +1934,7 @@
         {
           "label": "轉發並標記全隊隊友強調團隊籃球",
           "stat": "iq",
-          "base": 0.88,
+          "base": 0.74,
           "w": 0.002,
           "ok": {
             "text": "更衣室氣氛爆表！教練 {{coachName}}信任 +8、組織 +2、名氣 +8！",
@@ -1984,9 +1972,8 @@
           "ok": {
             "text": "心肺與意志大幅進化！速度 +2、力量 +2、意志 +4（狀態 -6）！",
             "eff": {
-              "speed": 2,
-              "strength": 2,
-              "grit": 4,
+              "speed": 1,
+              "grit": 2,
               "condition": -6
             },
             "flags": []
@@ -2003,13 +1990,13 @@
         {
           "label": "改去室內暖氣健身房做爆發力深蹲跳",
           "stat": "vertical",
-          "base": 0.78,
+          "base": 0.64,
           "w": 0.002,
           "ok": {
             "text": "安全高效！彈跳 +3、力量 +2！",
             "eff": {
-              "vertical": 3,
-              "strength": 2
+              "vertical": 2,
+              "strength": 1
             },
             "flags": []
           },
@@ -2039,8 +2026,8 @@
           "ok": {
             "text": "棋逢敵手互相進步！球商 +3、外防 +2、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味 +12！",
             "eff": {
-              "iq": 3,
-              "perimDef": 2,
+              "iq": 2,
+              "perimDef": 1,
               "rivalHeat": 12
             },
             "flags": []
@@ -2062,8 +2049,8 @@
           "ok": {
             "text": "戰意燃爆全場！意志 +4、三分 +2、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味 +20！",
             "eff": {
-              "grit": 4,
-              "threePt": 2,
+              "grit": 2,
+              "threePt": 1,
               "rivalHeat": 20
             },
             "flags": []
@@ -2095,8 +2082,8 @@
           "ok": {
             "text": "視野豁然開朗！組織 +4、球商 +3、教練 {{coachName}}信任 +6！",
             "eff": {
-              "playmaking": 4,
-              "iq": 3,
+              "playmaking": 2,
+              "iq": 1,
               "coachTrust": 6
             },
             "flags": []
@@ -2118,9 +2105,8 @@
           "ok": {
             "text": "接球投射快如閃電！三分 +3、中投 +2、速度 +1！",
             "eff": {
-              "threePt": 3,
-              "midRange": 2,
-              "speed": 1
+              "threePt": 2,
+              "midRange": 1
             },
             "flags": []
           },
@@ -2150,9 +2136,8 @@
           "ok": {
             "text": "籃板嗅覺大覺醒！籃板 +4、彈跳 +2、力量 +2！",
             "eff": {
-              "rebound": 4,
-              "vertical": 2,
-              "strength": 2
+              "rebound": 2,
+              "vertical": 1
             },
             "flags": []
           },
@@ -2173,8 +2158,8 @@
           "ok": {
             "text": "內線威懾力飆升！護框 +4、籃板 +2！",
             "eff": {
-              "intDef": 4,
-              "rebound": 2
+              "intDef": 2,
+              "rebound": 1
             },
             "flags": []
           },
@@ -2204,8 +2189,8 @@
           "ok": {
             "text": "教練 {{coachName}}大為激賞！球商 +3、組織 +2、教練 {{coachName}}信任 +10！",
             "eff": {
-              "iq": 3,
-              "playmaking": 2,
+              "iq": 2,
+              "playmaking": 1,
               "coachTrust": 10
             },
             "flags": []
@@ -2221,14 +2206,14 @@
         {
           "label": "主動請纓擔當誘餌幫射手創造空位",
           "stat": "playmaking",
-          "base": 0.8,
+          "base": 0.66,
           "w": 0.002,
           "ok": {
             "text": "無私格局感動全隊！教練 {{coachName}}信任 +9、外防 +2、組織 +2！",
             "eff": {
               "coachTrust": 9,
-              "perimDef": 2,
-              "playmaking": 2
+              "perimDef": 1,
+              "playmaking": 1
             },
             "flags": []
           },
@@ -2259,7 +2244,7 @@
         {
           "label": "嚴格十點熄燈深層睡眠＋高鈣營養餐",
           "stat": "iq",
-          "base": 0.8,
+          "base": 0.66,
           "w": 0.002,
           "ok": {
             "text": "奇蹟抽高！身高 +2 cm、狀態 +12、籃板 +2！",
@@ -2290,8 +2275,8 @@
             "text": "骨骼拉長配爆發力升級！身高 +3 cm、彈跳 +3、護框 +2！",
             "eff": {
               "heightCm": 3,
-              "vertical": 3,
-              "intDef": 2
+              "vertical": 2,
+              "intDef": 1
             },
             "flags": [
               "late_growth_spurt"
@@ -2330,8 +2315,8 @@
           "ok": {
             "text": "選秀行情急升！三分 +3、外防 +3、名氣 +15！",
             "eff": {
-              "threePt": 3,
-              "perimDef": 3,
+              "threePt": 2,
+              "perimDef": 1,
               "reputation": 15
             },
             "flags": []
@@ -2348,12 +2333,12 @@
         {
           "label": "沉住氣照常打好團隊體系唔受干擾",
           "stat": "iq",
-          "base": 0.82,
+          "base": 0.68,
           "w": 0.002,
           "ok": {
             "text": "球探高度評價你嘅成熟心態！球商 +3、教練 {{coachName}}信任 +8、名氣 +8！",
             "eff": {
-              "iq": 3,
+              "iq": 2,
               "coachTrust": 8,
               "reputation": 8
             },
@@ -2386,8 +2371,8 @@
           "ok": {
             "text": "徹底睇穿對手重心！中投 +4、球商 +2、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味 +12！",
             "eff": {
-              "midRange": 4,
-              "iq": 2,
+              "midRange": 2,
+              "iq": 1,
               "rivalHeat": 12
             },
             "flags": []
@@ -2409,9 +2394,8 @@
           "ok": {
             "text": "硬漢氣場拉滿！力量 +3、內線 +3、意志 +3！",
             "eff": {
-              "strength": 3,
-              "inside": 3,
-              "grit": 3
+              "strength": 2,
+              "inside": 1
             },
             "flags": []
           },
@@ -2448,9 +2432,9 @@
           "ok": {
             "text": "國際大賽洗禮令你全面進化！三分 +2、內線 +2、外防 +2、名氣 +16！",
             "eff": {
-              "threePt": 2,
-              "inside": 2,
-              "perimDef": 2,
+              "threePt": 1,
+              "inside": 1,
+              "perimDef": 1,
               "reputation": 16
             },
             "flags": [
@@ -2506,9 +2490,8 @@
           "ok": {
             "text": "垂直爆發再上層樓！彈跳 +3、速度 +2、護框 +2！",
             "eff": {
-              "vertical": 3,
-              "speed": 2,
-              "intDef": 2
+              "vertical": 2,
+              "speed": 1
             },
             "flags": []
           },
@@ -2524,12 +2507,12 @@
         {
           "label": "重點強化橫移減速與落地護膝機制",
           "stat": "perimDef",
-          "base": 0.8,
+          "base": 0.66,
           "w": 0.002,
           "ok": {
             "text": "橫移更穩健並徹底治癒拉傷！外防 +3、狀態 +12、治癒輕傷！",
             "eff": {
-              "perimDef": 3,
+              "perimDef": 2,
               "condition": 12,
               "clearInjury": 1
             },
@@ -2562,9 +2545,8 @@
           "ok": {
             "text": "投籃手感刻入靈魂！三分 +3、中投 +3、意志 +2！",
             "eff": {
-              "threePt": 3,
-              "midRange": 3,
-              "grit": 2
+              "threePt": 2,
+              "midRange": 1
             },
             "flags": []
           },
@@ -2623,7 +2605,7 @@
           "ok": {
             "text": "更衣室士氣瞬間炸裂！意志 +3、名氣 +6、教練 {{coachName}} 信任 +5！",
             "eff": {
-              "grit": 3,
+              "grit": 2,
               "reputation": 6,
               "coachTrust": 5
             },
@@ -2648,8 +2630,8 @@
           "ok": {
             "text": "全隊眼神重新聚焦！球商 +3、組織 +2、教練 {{coachName}} 信任 +6！",
             "eff": {
-              "iq": 3,
-              "playmaking": 2,
+              "iq": 2,
+              "playmaking": 1,
               "coachTrust": 6
             },
             "flags": [
@@ -2714,13 +2696,13 @@
         {
           "label": "婉拒外地拍攝，全力留在球館加練備戰",
           "stat": "grit",
-          "base": 0.82,
+          "base": 0.68,
           "w": 0.002,
           "ok": {
             "text": "純粹的籃球態度登上校報頭條！中投 +2、外防 +2、教練 {{coachName}} 信任 +7！",
             "eff": {
-              "midRange": 2,
-              "perimDef": 2,
+              "midRange": 1,
+              "perimDef": 1,
               "coachTrust": 7
             },
             "flags": [
@@ -2790,8 +2772,8 @@
           "ok": {
             "text": "球探盛讚「即戰力等級球商」！組織 +2、外防 +2、名氣 +7、教練信任 +5！",
             "eff": {
-              "playmaking": 2,
-              "perimDef": 2,
+              "playmaking": 1,
+              "perimDef": 1,
               "reputation": 7,
               "coachTrust": 5
             },
@@ -2837,7 +2819,7 @@
           "ok": {
             "text": "高分過關！教務與球隊雙雙滿意，球商 +3、教練 {{coachName}} 信任 +5、狀態 -7。",
             "eff": {
-              "iq": 3,
+              "iq": 2,
               "coachTrust": 5,
               "condition": -7
             },
@@ -2898,8 +2880,8 @@
           "ok": {
             "text": "熱血沸騰！全場攝影機捕捉經典一幕：意志 +3、速度 +2、宿敵火藥味 +15、名氣 +6！",
             "eff": {
-              "grit": 3,
-              "speed": 2,
+              "grit": 2,
+              "speed": 1,
               "rivalHeat": 15,
               "reputation": 6
             },
@@ -2924,8 +2906,8 @@
           "ok": {
             "text": "精準鎖定他的慣用手習慣！外防 +3、球商 +2、教練信任 +4。",
             "eff": {
-              "perimDef": 3,
-              "iq": 2,
+              "perimDef": 2,
+              "iq": 1,
               "coachTrust": 4
             },
             "flags": []
@@ -2963,8 +2945,8 @@
           "ok": {
             "text": "打到最後兩人大笑擊掌！雙人擋拆默契暴增：組織 +3、內線 +2、教練 {{coachName}} 信任 +7！",
             "eff": {
-              "playmaking": 3,
-              "inside": 2,
+              "playmaking": 2,
+              "inside": 1,
               "coachTrust": 7
             },
             "flags": [
@@ -2988,8 +2970,8 @@
           "ok": {
             "text": "{{coachName}} 當場拍板採用！組織 +3、球商 +2、教練信任 +6！",
             "eff": {
-              "playmaking": 3,
-              "iq": 2,
+              "playmaking": 2,
+              "iq": 1,
               "coachTrust": 6
             },
             "flags": []
@@ -3052,13 +3034,13 @@
         {
           "label": "果斷表態忠誠留隊，先把本季總冠軍帶回主場",
           "stat": "grit",
-          "base": 0.84,
+          "base": 0.7,
           "w": 0.002,
           "ok": {
             "text": "全城球迷沸騰！教練 {{coachName}} 信任 +10、意志 +3、名氣 +7！",
             "eff": {
               "coachTrust": 10,
-              "grit": 3,
+              "grit": 2,
               "reputation": 7
             },
             "flags": [
@@ -3103,9 +3085,8 @@
           "ok": {
             "text": "極致專注！外防 +2、中投 +2、意志 +3、名氣 +6！",
             "eff": {
-              "perimDef": 2,
-              "midRange": 2,
-              "grit": 3,
+              "perimDef": 1,
+              "grit": 2,
               "reputation": 6
             },
             "flags": []
@@ -3194,7 +3175,7 @@
           "ok": {
             "text": "硬漢精神震撼全隊！意志 +4、教練 {{coachName}} 信任 +7、狀態 -6。",
             "eff": {
-              "grit": 4,
+              "grit": 2,
               "coachTrust": 7,
               "condition": -6
             },
@@ -3240,8 +3221,8 @@
           "ok": {
             "text": "突破亞洲對抗天花板！力量 +3、內防 +2、名氣 +8、狀態 -6！",
             "eff": {
-              "strength": 3,
-              "intDef": 2,
+              "strength": 2,
+              "intDef": 1,
               "reputation": 8,
               "condition": -6
             },
@@ -3267,8 +3248,8 @@
           "ok": {
             "text": "收穫現代空間籃球精髓！三分 +2、球商 +3、名氣 +5！",
             "eff": {
-              "threePt": 2,
-              "iq": 3,
+              "threePt": 1,
+              "iq": 2,
               "reputation": 5
             },
             "flags": [
@@ -3308,8 +3289,8 @@
           "ok": {
             "text": "大心臟震懾全歐！意志 +4、三分 +2、名氣 +8！",
             "eff": {
-              "grit": 4,
-              "threePt": 2,
+              "grit": 2,
+              "threePt": 1,
               "reputation": 8
             },
             "flags": [
@@ -3333,8 +3314,8 @@
           "ok": {
             "text": "如機器般精準拆解全場壓迫！球商 +3、組織 +3、教練 {{coachName}} 信任 +6！",
             "eff": {
-              "iq": 3,
-              "playmaking": 3,
+              "iq": 2,
+              "playmaking": 1,
               "coachTrust": 6
             },
             "flags": []
@@ -3377,8 +3358,8 @@
           "ok": {
             "text": "隔天演練零失誤！{{coachName}} 罕見露出笑容：球商 +3、組織 +2、教練信任 +9！",
             "eff": {
-              "iq": 3,
-              "playmaking": 2,
+              "iq": 2,
+              "playmaking": 1,
               "coachTrust": 9
             },
             "flags": [
@@ -3402,8 +3383,8 @@
           "ok": {
             "text": "隊內對抗賽連砍 10 分說服名帥！中投 +3、意志 +3、教練信任 +4！",
             "eff": {
-              "midRange": 3,
-              "grit": 3,
+              "midRange": 2,
+              "grit": 1,
               "coachTrust": 4
             },
             "flags": []
@@ -3466,7 +3447,7 @@
         {
           "label": "接受核心長約，立志先奪歐洲聯賽冠軍與 MVP",
           "stat": "grit",
-          "base": 0.84,
+          "base": 0.7,
           "w": 0.002,
           "ok": {
             "text": "球團將你樹立為歐陸王牌！教練 {{coachName}} 信任 +9、名氣 +7、中投 +2！",
@@ -3507,14 +3488,13 @@
         {
           "label": "請教無球反跑與假動作造犯規技巧",
           "stat": "iq",
-          "base": 0.78,
+          "base": 0.64,
           "w": 0.0025,
           "ok": {
             "text": "老狐狸絕學到手！球商 +3、中投 +2、組織 +2、教練信任 +4！",
             "eff": {
-              "iq": 3,
-              "midRange": 2,
-              "playmaking": 2,
+              "iq": 2,
+              "midRange": 1,
               "coachTrust": 4
             },
             "flags": [
@@ -3533,7 +3513,7 @@
         {
           "label": "請教長賽季的身體保養與冥想恢復法",
           "stat": "grit",
-          "base": 0.84,
+          "base": 0.7,
           "w": 0.002,
           "ok": {
             "text": "身心煥然一新！狀態 +15、意志 +2、清除疲勞傷患！",
@@ -3576,8 +3556,8 @@
           "ok": {
             "text": "鐵血宣言燃爆整個歐洲籃壇！外防 +3、意志 +3、宿敵火藥味 +18、名氣 +8！",
             "eff": {
-              "perimDef": 3,
-              "grit": 3,
+              "perimDef": 2,
+              "grit": 1,
               "rivalHeat": 18,
               "reputation": 8
             },
@@ -3596,13 +3576,13 @@
         {
           "label": "微笑回應：「計分板會說話。」轉身拉隊友加練協防",
           "stat": "iq",
-          "base": 0.78,
+          "base": 0.64,
           "w": 0.0025,
           "ok": {
             "text": "大師級風度！內防 +2、外防 +2、教練 {{coachName}} 信任 +6、名氣 +5！",
             "eff": {
-              "intDef": 2,
-              "perimDef": 2,
+              "intDef": 1,
+              "perimDef": 1,
               "coachTrust": 6,
               "reputation": 5
             },
@@ -3641,7 +3621,7 @@
         {
           "label": "展現奪冠格局，適度降薪換取球隊補強與絕對核心承諾",
           "stat": "iq",
-          "base": 0.78,
+          "base": 0.64,
           "w": 0.0025,
           "ok": {
             "text": "全美讚譽「鄧肯級領袖格局」！教練 {{coachName}} 信任 +10、名氣 +9、組織 +2！",
@@ -3672,7 +3652,7 @@
             "text": "管理層被迫奉上超級頂薪！名氣 +12、意志 +3、霸氣震動全聯盟！",
             "eff": {
               "reputation": 12,
-              "grit": 3
+              "grit": 2
             },
             "flags": [
               "supermax_alpha"
@@ -3717,8 +3697,8 @@
           "ok": {
             "text": "管理層緊急出面闢謠「絕對非賣品」！意志 +3、內線 +2、教練信任 +8、名氣 +6！",
             "eff": {
-              "grit": 3,
-              "inside": 2,
+              "grit": 2,
+              "inside": 1,
               "coachTrust": 8,
               "reputation": 6
             },
@@ -3789,8 +3769,8 @@
             "text": "新世代王牌霸氣回擊引爆全網！名氣 +10、意志 +3、中投 +2！",
             "eff": {
               "reputation": 10,
-              "grit": 3,
-              "midRange": 2
+              "grit": 2,
+              "midRange": 1
             },
             "flags": [
               "media_killer"
@@ -3814,7 +3794,7 @@
           "ok": {
             "text": "高情商回應＋紮實苦練贏得全聯盟敬重！力量 +3、教練信任 +6、名氣 +5！",
             "eff": {
-              "strength": 3,
+              "strength": 2,
               "coachTrust": 6,
               "reputation": 5
             },
@@ -3853,14 +3833,14 @@
         {
           "label": "預約球隊運動心理師與睡眠恢復艙，徹底重整節奏",
           "stat": "iq",
-          "base": 0.82,
+          "base": 0.68,
           "w": 0.0025,
           "ok": {
             "text": "心靈與體能雙雙重啟！狀態 +18、球商 +2、意志 +2！",
             "eff": {
               "condition": 18,
-              "iq": 2,
-              "grit": 2
+              "iq": 1,
+              "grit": 1
             },
             "flags": [
               "mental_fortress"
@@ -3882,8 +3862,8 @@
           "ok": {
             "text": "一記記空心刷網掃空陰霾！中投 +3、意志 +3、教練信任 +5、狀態 +4！",
             "eff": {
-              "midRange": 3,
-              "grit": 3,
+              "midRange": 2,
+              "grit": 1,
               "coachTrust": 5,
               "condition": 4
             },
@@ -3930,9 +3910,8 @@
           "ok": {
             "text": "黑化覺醒模式啟動！速度 +2、三分 +2、意志 +4、宿敵火藥味 +16！",
             "eff": {
-              "speed": 2,
-              "threePt": 2,
-              "grit": 4,
+              "speed": 1,
+              "grit": 2,
               "rivalHeat": 16
             },
             "flags": [
@@ -3951,7 +3930,7 @@
         {
           "label": "淡定受訪：「我只在乎六月那座總冠軍獎盃。」",
           "stat": "iq",
-          "base": 0.8,
+          "base": 0.66,
           "w": 0.0025,
           "ok": {
             "text": "頂級巨星氣度圈粉無數！名氣 +9、教練 {{coachName}} 信任 +7、球商 +2！",
@@ -4000,8 +3979,8 @@
           "ok": {
             "text": "全場腎上腺素狂飆！外防 +3、意志 +3、名氣 +7、宿敵火藥味 +14！",
             "eff": {
-              "perimDef": 3,
-              "grit": 3,
+              "perimDef": 2,
+              "grit": 1,
               "reputation": 7,
               "rivalHeat": 14
             },
@@ -4025,8 +4004,8 @@
           "ok": {
             "text": "進入冰冷殺手模式！內線 +3、中投 +2、狀態 +5！",
             "eff": {
-              "inside": 3,
-              "midRange": 2,
+              "inside": 2,
+              "midRange": 1,
               "condition": 5
             },
             "flags": []
@@ -4064,8 +4043,8 @@
           "ok": {
             "text": "國家英雄氣場覺醒！意志 +4、速度 +2、名氣 +10、狀態 +6！",
             "eff": {
-              "grit": 4,
-              "speed": 2,
+              "grit": 2,
+              "speed": 1,
               "reputation": 10,
               "condition": 6
             },
@@ -4085,13 +4064,13 @@
         {
           "label": "轉頭與身旁每位國家隊隊友擊掌，凝聚整體防線",
           "stat": "playmaking",
-          "base": 0.8,
+          "base": 0.66,
           "w": 0.0025,
           "ok": {
             "text": "團隊向心力滿格！組織 +3、外防 +2、教練 {{coachName}} 信任 +8！",
             "eff": {
-              "playmaking": 3,
-              "perimDef": 2,
+              "playmaking": 2,
+              "perimDef": 1,
               "coachTrust": 8
             },
             "flags": [
@@ -4131,9 +4110,8 @@
           "ok": {
             "text": "完美破解 FIBA 禁區鐵桶陣！中投 +3、三分 +2、球商 +2！",
             "eff": {
-              "midRange": 3,
-              "threePt": 2,
-              "iq": 2
+              "midRange": 2,
+              "threePt": 1
             },
             "flags": [
               "fiba_floater_master"
@@ -4155,9 +4133,8 @@
           "ok": {
             "text": "硬撼世界級高塔毫不退縮！力量 +3、內線 +3、意志 +2、狀態 -5！",
             "eff": {
-              "strength": 3,
-              "inside": 3,
-              "grit": 2,
+              "strength": 2,
+              "inside": 1,
               "condition": -5
             },
             "flags": []
@@ -4202,7 +4179,7 @@
             "text": "全國球迷動容落淚！名氣 +12、意志 +4、國家隊教練 {{coachName}} 信任 +9、狀態 -5！",
             "eff": {
               "reputation": 12,
-              "grit": 4,
+              "grit": 2,
               "coachTrust": 9,
               "condition": -5
             },
@@ -4223,7 +4200,7 @@
         {
           "label": "與國家隊隊醫協商科學輪換，關鍵時刻再全力燃燒",
           "stat": "iq",
-          "base": 0.8,
+          "base": 0.66,
           "w": 0.0025,
           "ok": {
             "text": "兩邊皆大歡喜！狀態 +12、球商 +2、教練信任 +4！",
@@ -4266,9 +4243,8 @@
           "ok": {
             "text": "全隊雙眼燃起藍色火焰！意志 +4、彈跳 +2、三分 +2、名氣 +8！",
             "eff": {
-              "grit": 4,
-              "vertical": 2,
-              "threePt": 2,
+              "grit": 2,
+              "vertical": 1,
               "reputation": 8
             },
             "flags": [
@@ -4292,8 +4268,8 @@
           "ok": {
             "text": "神級奇兵戰術成形！球商 +3、外防 +3、教練信任 +7！",
             "eff": {
-              "iq": 3,
-              "perimDef": 3,
+              "iq": 2,
+              "perimDef": 1,
               "coachTrust": 7
             },
             "flags": []
@@ -4337,8 +4313,8 @@
             "text": "國際賽場大放異彩！名氣 +10、球商 +2、意志 +3、狀態 -5！",
             "eff": {
               "reputation": 10,
-              "iq": 2,
-              "grit": 3,
+              "iq": 1,
+              "grit": 2,
               "condition": -5
             },
             "flags": [
@@ -4403,8 +4379,8 @@
           "ok": {
             "text": "徹底跨過心理高牆！彈跳 +2、意志 +3、狀態 +12、清除傷病陰影！",
             "eff": {
-              "vertical": 2,
-              "grit": 3,
+              "vertical": 1,
+              "grit": 2,
               "condition": 12,
               "clearInjury": 1
             },
@@ -4424,14 +4400,13 @@
         {
           "label": "順勢轉型「地板流」，精研假動作、節奏變速與外線投射",
           "stat": "iq",
-          "base": 0.78,
+          "base": 0.64,
           "w": 0.0028,
           "ok": {
             "text": "因禍得福進化成全能大師！球商 +3、三分 +2、中投 +2、狀態 +10！",
             "eff": {
-              "iq": 3,
-              "threePt": 2,
-              "midRange": 2,
+              "iq": 2,
+              "threePt": 1,
               "condition": 10
             },
             "flags": [
@@ -4472,7 +4447,7 @@
             "text": "真正的領袖風範！全隊握手言和，教練 {{coachName}} 信任 +9、意志 +3、名氣 +5！",
             "eff": {
               "coachTrust": 9,
-              "grit": 3,
+              "grit": 2,
               "reputation": 5
             },
             "flags": [
@@ -4496,8 +4471,8 @@
           "ok": {
             "text": "數據與畫面讓兩人心服口服！球商 +3、內防 +2、教練信任 +7！",
             "eff": {
-              "iq": 3,
-              "intDef": 2,
+              "iq": 2,
+              "intDef": 1,
               "coachTrust": 7
             },
             "flags": []
@@ -4540,8 +4515,8 @@
           "ok": {
             "text": "首發當日全球秒殺！速度 +2、彈跳 +2、名氣 +12！",
             "eff": {
-              "speed": 2,
-              "vertical": 2,
+              "speed": 1,
+              "vertical": 1,
               "reputation": 12
             },
             "flags": [
@@ -4562,7 +4537,7 @@
         {
           "label": "主打「鐵血對抗與腳踝保護」，並捐出千雙球鞋給基層校隊",
           "stat": "reputation",
-          "base": 0.8,
+          "base": 0.66,
           "w": 0.0025,
           "ok": {
             "text": "公益與專業兼具，成為萬千少年偶像！名氣 +11、力量 +2、教練信任 +5！",
@@ -4611,12 +4586,12 @@
         {
           "label": "碰杯冰水約定：「明天全力以赴，誰都不許留手！」",
           "stat": "grit",
-          "base": 0.78,
+          "base": 0.64,
           "w": 0.0028,
           "ok": {
             "text": "漫畫般的頂尖對決預告！意志 +3、狀態 +8、宿敵火藥味 +12、名氣 +6！",
             "eff": {
-              "grit": 3,
+              "grit": 2,
               "condition": 8,
               "rivalHeat": 12,
               "reputation": 6
@@ -4642,9 +4617,8 @@
           "ok": {
             "text": "唯有頂尖對手最懂你的盲點！球商 +3、中投 +2、外防 +2！",
             "eff": {
-              "iq": 3,
-              "midRange": 2,
-              "perimDef": 2
+              "iq": 2,
+              "midRange": 1
             },
             "flags": [
               "rival_respect"
@@ -4657,6 +4631,411 @@
               "condition": 5
             },
             "flags": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_neg_shooting_slump",
+      "stage": "ANY",
+      "tone": "NEGATIVE",
+      "title": "🥶 外線手冷低潮期：連續打鐵信心動搖",
+      "desc": "這兩天隊內對抗賽你外線手感跌落谷底，連空檔投籃都不斷彈框而出，場邊隊友也開始猶豫要不要把球傳給你。",
+      "conditions": [],
+      "choices": [
+        {
+          "label": "加練 500 球定點投籃強行找回手感",
+          "stat": "grit",
+          "base": 0.42,
+          "w": 0.005,
+          "ok": {
+            "text": "咬牙投到雙臂發酸，終於在最後一組找回出手弧度！意志 +1、狀態 -10。",
+            "eff": {
+              "grit": 1,
+              "condition": -10
+            }
+          },
+          "fail": {
+            "text": "越投越急導致動作徹底走樣，手感沒找回還累壞了手臂！三分 -1、狀態 -14。",
+            "eff": {
+              "threePt": -1,
+              "condition": -14
+            }
+          }
+        },
+        {
+          "label": "暫停強投，專注看錄像調整節奏與防守",
+          "stat": "iq",
+          "base": 0.58,
+          "w": 0.004,
+          "ok": {
+            "text": "冷靜分析後發現是下肢起跳節奏太快，及時止血並穩定心態。球商 +1、狀態 -4。",
+            "eff": {
+              "iq": 1,
+              "condition": -4
+            }
+          },
+          "fail": {
+            "text": "想得太多反而在訓練賽畏手畏腳，中投 -1、教練信任 -3。",
+            "eff": {
+              "midRange": -1,
+              "coachTrust": -3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_neg_late_practice",
+      "stage": "ANY",
+      "tone": "NEGATIVE",
+      "title": "⏰ 晨操集合遲到風波",
+      "desc": "因為昨晚沒設好鬧鐘加上交通延誤，你比全隊晚了 15 分鐘才衝進球館，{{coachName}} 鐵青著臉看著手錶。",
+      "conditions": [],
+      "choices": [
+        {
+          "label": "誠懇認錯並主動加跑折返跑受罰",
+          "stat": "grit",
+          "base": 0.55,
+          "w": 0.004,
+          "ok": {
+            "text": "你二話不說跑完十組折返跑，{{coachName}} 臉色稍緩，但仍扣了少許信任。狀態 -12、教練信任 -2。",
+            "eff": {
+              "condition": -12,
+              "coachTrust": -2
+            }
+          },
+          "fail": {
+            "text": "體力不支跑到最後一組差點抽筋，既丟了面子又傷狀態！狀態 -16、教練信任 -5。",
+            "eff": {
+              "condition": -16,
+              "coachTrust": -5
+            }
+          }
+        },
+        {
+          "label": "硬著頭皮解釋交通塞車希望能網開一面",
+          "stat": "reputation",
+          "base": 0.35,
+          "w": 0.004,
+          "ok": {
+            "text": "教練勉強接受理由，但提醒下次絕不輕饒。教練信任 -3。",
+            "eff": {
+              "coachTrust": -3
+            }
+          },
+          "fail": {
+            "text": "{{coachName}} 怒斥你只會找藉口，全隊氣氛陷入冰點！教練信任 -7、名氣 -4。",
+            "eff": {
+              "coachTrust": -7,
+              "reputation": -4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_neg_media_critique",
+      "stage": "ANY",
+      "tone": "NEGATIVE",
+      "title": "📰 球評點名批評：防守漏人太致命",
+      "desc": "本地籃球專欄剪輯了你近期幾次漏防的畫面，標題直指「只看數據不看防守，關鍵時刻容易成漏洞」，引發不少討論。",
+      "conditions": [
+        {
+          "field": "reputation",
+          "op": "gte",
+          "value": 45
+        }
+      ],
+      "choices": [
+        {
+          "label": "虛心接受批評，找 {{coachName}} 加練防守輪轉",
+          "stat": "perimDef",
+          "base": 0.48,
+          "w": 0.005,
+          "ok": {
+            "text": "你把剪輯影片當作教材逐一修正站位，外防 +1、狀態 -8、名氣 -2。",
+            "eff": {
+              "perimDef": 1,
+              "condition": -8,
+              "reputation": -2
+            }
+          },
+          "fail": {
+            "text": "輿論壓力讓你訓練時頻頻犯規失位，名氣 -6、教練信任 -3。",
+            "eff": {
+              "reputation": -6,
+              "coachTrust": -3
+            }
+          }
+        },
+        {
+          "label": "在社群強硬回擊「場上見真章」",
+          "stat": "grit",
+          "base": 0.4,
+          "w": 0.005,
+          "ok": {
+            "text": "霸氣回應點燃話題熱度，但對手也把你當成頭號目標！宿敵熱度 +10、意志 +1、名氣 -2。",
+            "eff": {
+              "rivalHeat": 10,
+              "grit": 1,
+              "reputation": -2
+            }
+          },
+          "fail": {
+            "text": "回嗆引發更多酸民圍攻，口碑與更衣室氣氛雙雙受挫！名氣 -8、教練信任 -4。",
+            "eff": {
+              "reputation": -8,
+              "coachTrust": -4
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_neg_fatigue_cramps",
+      "stage": "ANY",
+      "tone": "NEGATIVE",
+      "title": "⚡ 密集賽程警訊：小腿深夜抽筋",
+      "desc": "高強度訓練加上連續對抗，半夜小腿突然劇烈抽筋痛醒，隔天早上雙腿仍顯沉重。",
+      "conditions": [],
+      "choices": [
+        {
+          "label": "向隊醫報備減量訓練、專心拉伸冰敷",
+          "stat": "iq",
+          "base": 0.65,
+          "w": 0.003,
+          "ok": {
+            "text": "及時止損避免拉傷惡化，但仍損失部分狀態。狀態 -6。",
+            "eff": {
+              "condition": -6
+            }
+          },
+          "fail": {
+            "text": "肌肉疲勞比想像中深層，狀態 -12、速度 -1。",
+            "eff": {
+              "condition": -12,
+              "speed": -1
+            }
+          }
+        },
+        {
+          "label": "瞞著隊醫照常參加高強度對抗賽",
+          "stat": "strength",
+          "base": 0.36,
+          "w": 0.005,
+          "ok": {
+            "text": "硬撐完成全套課表，{{coachName}} 欣賞你的鬥志但狀態大幅下滑。教練信任 +2、狀態 -15。",
+            "eff": {
+              "coachTrust": 2,
+              "condition": -15
+            }
+          },
+          "fail": {
+            "text": "起跳落地瞬間小腿劇痛拉傷！陷入輕微拉傷、狀態 -18、速度 -1。",
+            "eff": {
+              "setInjury": 1,
+              "condition": -18,
+              "speed": -1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_neg_teammate_clash",
+      "stage": "ANY",
+      "tone": "NEGATIVE",
+      "title": "💢 隊內對抗賽擦槍走火",
+      "desc": "分組對抗賽中你與 {{teammateName}} 因為一次強硬身體碰撞與傳球選擇爆發口角，氣氛一度十分緊張。",
+      "conditions": [],
+      "choices": [
+        {
+          "label": "練完後主動找 {{teammateName}} 握手溝通",
+          "stat": "iq",
+          "base": 0.56,
+          "w": 0.004,
+          "ok": {
+            "text": "兩人把戰術跑位講開，化干戈為玉帛，但剛才的衝突仍讓教練皺眉。組織 +1、教練信任 -2。",
+            "eff": {
+              "playmaking": 1,
+              "coachTrust": -2
+            }
+          },
+          "fail": {
+            "text": "對方仍在氣頭上不領情，更衣室陷入冷戰！教練信任 -5、名氣 -3。",
+            "eff": {
+              "coachTrust": -5,
+              "reputation": -3
+            }
+          }
+        },
+        {
+          "label": "誰也不讓誰，用 1v1 單挑解決分歧",
+          "stat": "inside",
+          "base": 0.42,
+          "w": 0.005,
+          "ok": {
+            "text": "你靠硬實力贏下單挑折服隊友，但體能消耗不小。意志 +1、狀態 -10、教練信任 -3。",
+            "eff": {
+              "grit": 1,
+              "condition": -10,
+              "coachTrust": -3
+            }
+          },
+          "fail": {
+            "text": "單挑落敗還被教練嚴厲訓斥破壞團結！教練信任 -7、狀態 -10。",
+            "eff": {
+              "coachTrust": -7,
+              "condition": -10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_neg_flu_bug",
+      "stage": "ANY",
+      "tone": "NEGATIVE",
+      "title": "🤒 季節感冒突襲：發燒頭暈乏力",
+      "desc": "換季溫差太大，早上起床喉嚨痛又微微發燒，全身提不起勁。",
+      "conditions": [],
+      "choices": [
+        {
+          "label": "乖乖吃藥休養一天，避免病情惡化",
+          "stat": "iq",
+          "base": 0.68,
+          "w": 0.003,
+          "ok": {
+            "text": "及時休息壓住了高燒，只掉了少許體能狀態。狀態 -8。",
+            "eff": {
+              "condition": -8
+            }
+          },
+          "fail": {
+            "text": "感冒拖了兩天才好轉，體能與手感雙雙下滑。狀態 -14、三分 -1。",
+            "eff": {
+              "condition": -14,
+              "threePt": -1
+            }
+          }
+        },
+        {
+          "label": "吃退燒藥硬撐出勤練球",
+          "stat": "grit",
+          "base": 0.34,
+          "w": 0.004,
+          "ok": {
+            "text": "展現驚人毅力撐完基礎訓練，但身體非常虛弱。意志 +1、狀態 -16。",
+            "eff": {
+              "grit": 1,
+              "condition": -16
+            }
+          },
+          "fail": {
+            "text": "練到一半頭暈目眩被送去保健室，狀態 -20、力量 -1！",
+            "eff": {
+              "condition": -20,
+              "strength": -1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_neg_pro_foul_habit",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "🦓 裁判尺度收緊：犯規麻煩纏身",
+      "desc": "聯盟近期嚴抓手部接觸犯規，你連續幾場還沒打完半場就背上三次犯規，被迫提前下場。",
+      "conditions": [],
+      "choices": [
+        {
+          "label": "反覆研究吹判規則並收斂下手習慣",
+          "stat": "iq",
+          "base": 0.52,
+          "w": 0.004,
+          "ok": {
+            "text": "適應新尺度後減少無謂犯規，外防 +1、狀態 -6。",
+            "eff": {
+              "perimDef": 1,
+              "condition": -6
+            }
+          },
+          "fail": {
+            "text": "防守綁手綁腳反而失去侵略性，外防 -1、教練信任 -4。",
+            "eff": {
+              "perimDef": -1,
+              "coachTrust": -4
+            }
+          }
+        },
+        {
+          "label": "場上向裁判據理力爭抗議尺度不公",
+          "stat": "reputation",
+          "base": 0.32,
+          "w": 0.004,
+          "ok": {
+            "text": "引起聯盟關注稍微平衡了吹判，但仍領到技術犯規警告。名氣 -3、教練信任 -2。",
+            "eff": {
+              "reputation": -3,
+              "coachTrust": -2
+            }
+          },
+          "fail": {
+            "text": "直接吃下技術犯規與聯盟罰款，形象受損！名氣 -7、教練信任 -6。",
+            "eff": {
+              "reputation": -7,
+              "coachTrust": -6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "evt_neg_pro_road_fatigue",
+      "stage": "PRO",
+      "tone": "NEGATIVE",
+      "title": "✈️ 魔鬼客場背靠背：長途飛行耗盡電量",
+      "desc": "連續四場客場加上凌晨紅眼班機延誤，全隊抵達飯店時早已筋疲力盡。",
+      "conditions": [],
+      "choices": [
+        {
+          "label": "放棄額外投籃，全力補眠與冷熱水浴",
+          "stat": "iq",
+          "base": 0.62,
+          "w": 0.003,
+          "ok": {
+            "text": "保住基本體能底線，狀態僅小幅下降。狀態 -7。",
+            "eff": {
+              "condition": -7
+            }
+          },
+          "fail": {
+            "text": "時差完全睡不著，隔天依舊精神萎靡。狀態 -14。",
+            "eff": {
+              "condition": -14
+            }
+          }
+        },
+        {
+          "label": "照舊去飯店健身房維持重訓課表",
+          "stat": "strength",
+          "base": 0.38,
+          "w": 0.004,
+          "ok": {
+            "text": "高度自律維持住對抗強度，力量 +1、狀態 -14。",
+            "eff": {
+              "strength": 1,
+              "condition": -14
+            }
+          },
+          "fail": {
+            "text": "過度疲勞引發腰背緊繃，狀態 -18、彈跳 -1！",
+            "eff": {
+              "condition": -18,
+              "vertical": -1
+            }
           }
         }
       ]
