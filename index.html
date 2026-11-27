@@ -1465,18 +1465,8 @@
       const tpl = (DB.origins && DB.origins.posTemplates && DB.origins.posTemplates[pos]) || {
         threePt: 65, midRange: 68, inside: 68, playmaking: 64, perimDef: 66, intDef: 64, rebound: 65, speed: 68, vertical: 68, strength: 66, iq: 66, grit: 66
       };
-      const baseAvg = Object.values(tpl).reduce((a, b) => a + b, 0) / 12;
       const targetOvr = p.ovr || 78;
-      const shift = targetOvr - baseAvg;
       const seed = (p.num || 7) * 13 + (p.name ? p.name.charCodeAt(0) : 17);
-      const stats = {};
-      let i = 0;
-      const bias = p.statBias || {};
-      for (const k of Object.keys(tpl)) {
-        const jitter = (((seed + i * 7) % 5) - 2);
-        stats[k] = Math.max(38, Math.min(99, Math.round(tpl[k] + shift + (bias[k] || 0) + jitter)));
-        i++;
-      }
       const heightCm = p.heightCm || ((POS_HEIGHT_BASE[pos] || 186) + ((seed % 7) - 3));
       const skills = Array.isArray(p.skills) && p.skills.length ? [...p.skills] : [];
       if (!skills.length) {
@@ -1497,12 +1487,29 @@
           skills.push(pos === "PG" ? "floor_iq" : (pos === "C" ? "glass_cleaner_t3" : "microwave"));
         }
       }
+      const uniqueSkills = Array.from(new Set(skills));
+      const bias = p.statBias || {};
+      const keys = Object.keys(tpl);
+      // 1) Build raw stats with moderated archetype bias, then align to targetOvr via the EXACT SAME position-weighted calcOVR formula used for the user!
+      const rawStats = {};
+      keys.forEach((k, i) => {
+        const jitter = (((seed + i * 7) % 5) - 2);
+        const modBias = Math.round((bias[k] || 0) * 0.65);
+        rawStats[k] = tpl[k] + modBias + jitter;
+      });
+      const rawOvrWithSkills = calcOVR(rawStats, pos, uniqueSkills);
+      const shift = targetOvr - rawOvrWithSkills;
+      const stats = {};
+      for (const k of keys) {
+        stats[k] = Math.max(38, Math.min(99, Math.round(rawStats[k] + shift)));
+      }
+      const finalOvr = calcOVR(stats, pos, uniqueSkills);
       return {
         ...p,
         stats,
         heightCm,
-        skills: Array.from(new Set(skills)),
-        ovr: Math.round(Object.values(stats).reduce((a, b) => a + b, 0) / 12)
+        skills: uniqueSkills,
+        ovr: finalOvr
       };
     }
 
