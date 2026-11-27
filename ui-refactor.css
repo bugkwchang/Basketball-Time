@@ -1,0 +1,966 @@
+/* =========================================================================
+   《Basketball Time》UI Refactor Layer (Mobile 390px First · ≥44px Touch Targets)
+   Preserves exact manga palette: --paper, --paper-card, --ink, --crimson, --gold, --ok-green
+   ========================================================================= */
+
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Global Touch Target Floor: >= 44px on interactive controls */
+.manga-btn,
+.nav-tab,
+.ap-card,
+.choice-btn,
+.action-card,
+.qte-fire-btn,
+.qte-dir-btn,
+.field-sel,
+.ui-cta-btn,
+.pos-pick-card,
+.focus-card,
+.roster-toggle-btn {
+  min-height: 44px;
+}
+
+.manga-btn {
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+/* ==================== 1. STICKY HEADER + BIG TOP CTA + 3-TAB NAV ==================== */
+.top-bar.refactored-top {
+  padding: 8px 10px 8px;
+  position: sticky;
+  top: 0;
+  z-index: 60;
+}
+
+.top-bar-row {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.top-brand-col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.top-brand-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.top-brand-line .brand-name {
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-brand-col .season-meta {
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-tools-compact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.icon-tool-btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* Sticky Big CTA Bar right inside top-bar */
+.top-cta-wrap {
+  max-width: 1120px;
+  margin: 8px auto 0;
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.top-big-cta {
+  flex: 1;
+  min-height: 48px;
+  padding: 10px 14px;
+  background: var(--crimson);
+  color: #FFFFFF;
+  border: 2.5px solid #FAF7F0;
+  box-shadow: 3px 3px 0 var(--gold-bright);
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+}
+
+.top-big-cta:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--gold-bright);
+}
+
+.top-big-cta.gold-mode {
+  background: var(--gold-bright);
+  color: var(--ink);
+  border-color: var(--ink);
+  box-shadow: 3px 3px 0 var(--crimson);
+}
+
+.top-cta-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.top-cta-title {
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.top-cta-sub {
+  font-size: 11px;
+  font-weight: 800;
+  opacity: 0.92;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-cta-arrow {
+  font-size: 18px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+/* Secondary utility drawer */
+.util-drawer {
+  max-width: 1120px;
+  margin: 8px auto 0;
+  padding-top: 8px;
+  border-top: 1.5px dashed rgba(250, 247, 240, 0.3);
+  display: none;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.util-drawer.open {
+  display: flex;
+}
+
+/* 3-Tab Navigation Bar */
+.hub-nav.three-tabs {
+  padding: 0;
+  position: relative;
+  z-index: 45;
+  background: var(--paper-card);
+  border-bottom: 2.5px solid var(--ink);
+}
+
+.hub-nav.three-tabs .hub-nav-inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  overflow: visible;
+}
+
+.hub-nav.three-tabs .nav-tab {
+  min-height: 46px;
+  padding: 8px 6px;
+  font-size: 14px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-right: 1.5px solid rgba(17, 17, 17, 0.14);
+}
+
+.hub-nav.three-tabs .nav-tab:last-child {
+  border-right: none;
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--crimson);
+  color: #FFF;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 1px 6px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+}
+
+/* ==================== 2. UNIFIED SETTLEMENT MODAL ==================== */
+.settlement-sheet {
+  max-width: 560px !important;
+  padding: 16px 14px !important;
+}
+
+.settlement-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2.5px solid var(--ink);
+}
+
+.mvp-moment-card {
+  background: linear-gradient(135deg, #181614 0%, #2C1414 100%);
+  color: #FAF7F0;
+  border: 2.5px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--crimson);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.mvp-moment-badge {
+  display: inline-block;
+  background: var(--gold-bright);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border: 1.5px solid var(--ink);
+  transform: skewX(-6deg);
+  margin-bottom: 6px;
+}
+
+.mvp-moment-title {
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1.3;
+  color: #FFF;
+}
+
+.mvp-moment-sub {
+  font-size: 12.5px;
+  color: #FDE68A;
+  margin-top: 4px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.focus-verdict-pill {
+  margin-top: 8px;
+  padding: 6px 9px;
+  border: 1.5px solid #FAF7F0;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.focus-verdict-pill.met {
+  border-color: #86EFAC;
+  background: rgba(21, 128, 61, 0.28);
+  color: #DCFCE7;
+}
+
+.focus-verdict-pill.missed {
+  border-color: #FCA5A5;
+  background: rgba(200, 30, 30, 0.25);
+  color: #FEE2E2;
+}
+
+.progress-3-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.progress-item-card {
+  background: #FFFDF7;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-sm);
+  padding: 9px 7px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.progress-item-label {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--ink-soft);
+}
+
+.progress-item-val {
+  font-size: 13.5px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.progress-item-val.up { color: var(--ok-green); }
+.progress-item-val.down { color: var(--crimson); }
+.progress-item-val.flat { color: var(--ink); }
+
+.progress-item-note {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+.next-goal-box {
+  background: #FEFCE8;
+  border: 2.5px solid var(--ink);
+  border-left: 6px solid var(--crimson);
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.next-goal-head {
+  font-size: 11.5px;
+  font-weight: 900;
+  color: var(--crimson);
+  margin-bottom: 3px;
+}
+
+.next-goal-text {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.settlement-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settlement-continue-btn {
+  width: 100%;
+  min-height: 50px;
+  font-size: 15px;
+  font-weight: 900;
+  position: relative;
+  overflow: hidden;
+}
+
+.unlock-progress-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  background: var(--gold-bright);
+  width: 0%;
+  transition: width 0.42s linear;
+}
+
+/* ==================== 3. PRE-MATCH COACH FOCUS 3-CHOICE MODAL ==================== */
+.focus-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.focus-card {
+  width: 100%;
+  text-align: left;
+  background: #FFFDF7;
+  border: 2.5px solid var(--ink);
+  box-shadow: var(--shadow-sm);
+  padding: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: transform 0.1s ease, background 0.12s ease;
+}
+
+.focus-card:hover,
+.focus-card:active {
+  background: #FEF2F2;
+  border-color: var(--crimson);
+  transform: translate(-1px, -1px);
+}
+
+.focus-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.focus-card-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.focus-card-tag {
+  font-size: 10.5px;
+  font-weight: 900;
+  padding: 2px 7px;
+  border: 1.5px solid var(--ink);
+  background: var(--gold-bright);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.focus-card-quote {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--crimson);
+}
+
+.focus-card-fx {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+.focus-card-reward {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--ok-green);
+  border-top: 1px dashed rgba(17, 17, 17, 0.22);
+  padding-top: 4px;
+  margin-top: 2px;
+}
+
+/* ==================== 4. 12-MAN ROSTER CARDS (DEFAULT STARTERS 5) ==================== */
+.roster-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.roster-player-card {
+  background: #FFFDF7;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-sm);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.roster-player-card.is-user {
+  background: #FEF2F2;
+  border: 2.5px solid var(--crimson);
+  box-shadow: 3px 3px 0 var(--crimson);
+}
+
+.roster-player-card.is-bench {
+  background: #F6F3EB;
+}
+
+.rpc-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.rpc-name {
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.rpc-meta {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.rpc-ovr-box {
+  background: var(--ink);
+  color: var(--gold-bright);
+  padding: 4px 8px;
+  text-align: center;
+  border: 1.5px solid var(--ink);
+  flex-shrink: 0;
+}
+
+.rpc-ovr-num {
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.rpc-ovr-cmp {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #FAF7F0;
+  margin-top: 2px;
+}
+
+.rpc-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.rpc-stat-pill {
+  background: #FFF;
+  border: 1.5px solid var(--ink);
+  padding: 3px 4px;
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.rpc-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.roster-toggle-btn {
+  width: 100%;
+  margin-top: 10px;
+  min-height: 46px;
+  font-size: 13.5px;
+}
+
+/* ==================== 5. BENCHMARK / COMPARISON CHIPS ==================== */
+.cmp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border: 1.5px solid var(--ink);
+  background: var(--paper-dark);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.cmp-badge.pos {
+  background: #DCFCE7;
+  color: var(--ok-green);
+  border-color: var(--ok-green);
+}
+
+.cmp-badge.neg {
+  background: #FEE2E2;
+  color: var(--crimson);
+  border-color: var(--crimson);
+}
+
+.cmp-badge.gold {
+  background: #FEF08A;
+  color: #92400E;
+  border-color: #92400E;
+}
+
+.ovr-hero-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ovr-kpi-card {
+  background: #FFFDF7;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-sm);
+  padding: 8px 6px;
+  text-align: center;
+}
+
+.ovr-kpi-card.highlight {
+  background: linear-gradient(180deg, #FFFDF7 0%, #FEF9C3 100%);
+  border-color: var(--crimson);
+}
+
+.ovr-kpi-lbl {
+  font-size: 10.5px;
+  font-weight: 900;
+  color: var(--ink-soft);
+}
+
+.ovr-kpi-val {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.ovr-kpi-cmp {
+  font-size: 10px;
+  font-weight: 900;
+  margin-top: 2px;
+  line-height: 1.25;
+}
+
+.stat-mini-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 7px;
+}
+
+.stat-mini-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-mini-cmp {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+
+.stat-mini-cmp.up { color: var(--ok-green); }
+.stat-mini-cmp.down { color: var(--crimson); }
+
+/* ==================== 6. TITLE START SCREEN & 3-STEP ONBOARDING ==================== */
+#viewTitle.active {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 12px;
+}
+
+.title-shell {
+  width: 100%;
+  max-width: 480px;
+  background: var(--paper-card);
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  overflow: hidden;
+}
+
+.title-hero {
+  position: relative;
+  min-height: 220px;
+  background: #141210;
+  color: #FAF7F0;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-bottom: 3px solid var(--crimson);
+}
+
+.title-hero img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  opacity: 0.36;
+  pointer-events: none;
+}
+
+.title-hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.title-logo-main {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  margin: 8px 0 4px;
+  text-shadow: 3px 3px 0 #111;
+}
+
+.title-logo-sub {
+  font-size: 13px;
+  font-weight: 800;
+  color: #FDE68A;
+  line-height: 1.45;
+}
+
+.title-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.title-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.title-feat-pill {
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  padding: 7px 5px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+.title-primary-btn {
+  width: 100%;
+  min-height: 54px;
+  font-size: 16px;
+  font-weight: 900;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.title-secondary-btn {
+  width: 100%;
+  min-height: 46px;
+  font-size: 13.5px;
+  font-weight: 900;
+}
+
+.title-save-pill {
+  background: #FEFCE8;
+  border: 2px solid var(--ink);
+  padding: 9px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+/* 3-Step Onboarding Stepper */
+.onboard-stepper {
+  max-width: 860px;
+  margin: 10px auto 0;
+  padding: 0 12px;
+}
+
+.stepper-track {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.step-pill {
+  background: var(--paper-card);
+  border: 2px solid var(--ink);
+  padding: 8px 6px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--ink-soft);
+}
+
+.step-pill.active {
+  background: var(--crimson);
+  color: #FFF;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.step-pill.done {
+  background: #DCFCE7;
+  color: var(--ok-green);
+  border-color: var(--ok-green);
+}
+
+.pos-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pos-pick-card {
+  border: 2.5px solid var(--ink);
+  background: #FFFDF7;
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pos-pick-card.selected {
+  background: #FEF2F2;
+  border-color: var(--crimson);
+  box-shadow: 3px 3px 0 var(--crimson);
+}
+
+.pos-pick-code {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--crimson);
+}
+
+.pos-pick-desc {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+
+.tutorial-tip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.tutorial-tip-item {
+  background: #FFFDF7;
+  border: 2px solid var(--ink);
+  padding: 10px;
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+/* ==================== MOBILE 390px RESPONSIVE HARDENING ==================== */
+@media (max-width: 640px) {
+  .hub-wrap {
+    padding: 10px 8px 24px;
+  }
+
+  .comic-card {
+    padding: 10px;
+  }
+
+  .card-title {
+    font-size: 14px;
+  }
+
+  .roster-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-3-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-item-card {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    padding: 9px 10px;
+  }
+
+  .ovr-hero-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .ovr-kpi-val {
+    font-size: 18px;
+  }
+
+  .ap-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pos-pick-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .next-match-hero {
+    padding: 11px;
+  }
+
+  .vs-line {
+    font-size: 17px;
+  }
+
+  .sched-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 11.5px;
+  }
+
+  /* Match HUD compact on 390px */
+  .match-hud-bar .top-inner {
+    gap: 5px;
+  }
+
+  .team-score {
+    padding: 2px 6px;
+  }
+
+  .team-score .t-name {
+    max-width: 72px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .team-score .t-pts {
+    font-size: 16px;
+  }
+
+  .match-hud-bar .manga-btn {
+    min-height: 44px;
+    padding: 6px 8px;
+    font-size: 11.5px;
+  }
+
+  /* Compact standings table on 390px inside scroll box without breaking page width */
+  .data-table {
+    font-size: 11px;
+    min-width: 420px;
+  }
+
+  .modal-backdrop {
+    padding: 8px;
+  }
+
+  .modal-sheet {
+    padding: 12px;
+    max-height: 90dvh;
+  }
+
+  .trophy-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
