@@ -2052,6 +2052,21 @@
     window.getConditionProfile = getConditionProfile;
     window.getInjuryLevel = getInjuryLevel;
 
+    function inflictChronicInjuryTrait(p) {
+      if (!Season || !Array.isArray(Season.equippedTraits)) return null;
+      const candidates = ["glass_ankles", "glass_body"];
+      const toAdd = candidates.find(id => !Season.equippedTraits.includes(id));
+      if (!toAdd) return null;
+      Season.equippedTraits.push(toAdd);
+      if (p && Array.isArray(p.flags) && !p.flags.includes("ankle_history")) p.flags.push("ankle_history");
+      const sk = DB && DB.skills && DB.skills.skills.find(s => s.id === toAdd);
+      const name = sk ? sk.name : "舊患體質";
+      if (typeof showToast === "function") {
+        showToast(`⚠️ 嚴重傷勢留下舊患！獲得負面特質【${name}】（須於極限特訓頓悟或休養克服）`);
+      }
+      return name;
+    }
+
     function applyPostMatchFatigueAndInjury(p, minRatio, isHighIntensity = false) {
       if (!p) return null;
       const curInj = getInjuryLevel(p);
@@ -2070,8 +2085,10 @@
         const nextLv = Math.min(3, curInj + 1);
         p.injuryLevel = nextLv;
         p.injured = true;
+        let chronicAdded = null;
+        if (nextLv >= 3) chronicAdded = inflictChronicInjuryTrait(p);
         const injNames = { 1: "輕微拉傷", 2: "中度扭傷", 3: "嚴重拉傷（隊醫強制休戰）" };
-        return { escalated: true, level: nextLv, label: injNames[nextLv], condLoss };
+        return { escalated: true, level: nextLv, label: injNames[nextLv], condLoss, chronicAdded };
       }
       return { escalated: false, level: curInj, label: "", condLoss };
     }
@@ -2257,18 +2274,17 @@
 
         if (pl.stats) {
           if (pl.age <= 22) {
-            // 成長期：依潛力與成長型態，針對主打位置核心屬性成長
-            const isBreakout = pot >= 4 && Math.random() < (gt === "EARLY" ? 0.42 : 0.28);
-            const primaryGain = isBreakout ? 3 : (pot >= 4 ? 2 : 1);
-            const secGain = isBreakout ? 2 : 1;
-            focus.slice(0, 3).forEach((k, idx) => {
-              const g = idx === 0 ? primaryGain : (Math.random() < 0.72 ? secGain : 0);
+            // 成長期：讓年輕隊友每季有感成長（高潛力 +2~+5 OVR，一般年輕球員 +1~+3 OVR）
+            const isBreakout = pot >= 4 && Math.random() < (gt === "EARLY" ? 0.52 : 0.36);
+            const primaryGain = isBreakout ? 4 : (pot >= 4 ? 3 : 2);
+            const secGain = isBreakout ? 3 : (pot >= 3 ? 2 : 1);
+            focus.forEach((k, idx) => {
+              const g = idx < 2 ? primaryGain : (Math.random() < 0.80 ? secGain : 1);
               if (g > 0 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + g);
             });
-            // 身體發育
-            if (pl.age <= 19) {
-              ["speed", "vertical", "strength"].forEach(k => {
-                if (Math.random() < 0.55 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + 1);
+            if (pl.age <= 20) {
+              ["speed", "vertical", "strength", "iq", "grit"].forEach(k => {
+                if (Math.random() < (isBreakout ? 0.82 : 0.62) && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + (isBreakout ? 2 : 1));
               });
             }
             // 高潛力年輕球員有機會領悟新技能
@@ -2349,6 +2365,8 @@
         logs.unshift(`${reason}：${oldPl.name}(${oldPl.pos}) → ${newLabel} #${incoming.num} ${incoming.name}(${incoming.pos} · 評級 ${incoming.ovr}${incoming.archetypeTag ? ` · ${incoming.archetypeTag}` : ""}${skCount ? ` · ${skCount}技` : ""}) 加盟`);
       }
 
+      const uIsSt = Boolean(Season && (Season.rotationKey === "STARTER" || Season.rotationKey === "STAR"));
+      rebalanceStartingLineup(roster, uIsSt);
       return logs.slice(0, 8);
     }
 
@@ -2744,24 +2762,24 @@
         givens: ["健", "翔太", "翼", "陸", "陽斗", "隼人", "悠馬", "大輝", "颯", "蓮", "海斗", "拓海", "蒼太", "悠真", "奏汰", "樹", "律", "朝陽", "大和", "湊"]
       },
       ncaa_madness: {
-        surnames: ["Carter", "Brooks", "Harper", "Coleman", "Foster", "Jenkins", "Morales", "Bennett", "Hayes", "Sanders", "Price", "Bryant", "Griffin", "Diaz", "Russell", "Simmons", "Wallace", "Woods", "Cole", "West"],
-        givens: ["J.", "M.", "T.", "D.", "K.", "R.", "A.", "C.", "B.", "E.", "L.", "N.", "S.", "Z."]
+        surnames: ["卡特", "布魯克斯", "哈珀", "科爾曼", "福斯特", "詹金斯", "莫拉萊斯", "班奈特", "海耶斯", "桑德斯", "普萊斯", "布萊恩", "格里芬", "羅素", "西蒙斯", "華萊士", "伍茲", "科爾", "韋斯特", "特納"],
+        givens: ["傑登", "馬庫斯", "泰勒", "德文", "凱文", "萊恩", "艾瑞克", "卡梅隆", "布萊斯", "伊桑", "盧卡斯", "諾亞", "肖恩", "札克"]
       },
       asia_pro: {
         surnames: ["陳", "林", "張", "王", "李", "劉", "黃", "吳", "周", "徐", "高", "郭", "何", "鄭", "佐藤", "田中", "金", "朴"],
-        givens: ["柏宇", "冠廷", "哲維", "俊凱", "浩然", "承翰", "家豪", "宇軒", "彥廷", "子豪", "拓海", "健太", "泰宇", "敏俊", "智훈", "信宏"]
+        givens: ["柏宇", "冠廷", "哲維", "俊凱", "浩然", "承翰", "家豪", "宇軒", "彥廷", "子豪", "拓海", "健太", "泰宇", "敏俊", "智勳", "信宏"]
       },
       euro_elite: {
-        surnames: ["Novak", "Petrovic", "Kovacs", "Rossi", "Navarro", "Popovic", "Lindqvist", "Babic", "Vukovic", "Moretti", "Silva", "Keller", "Jankovic", "Molina", "Bauer", "Savic"],
-        givens: ["L.", "M.", "A.", "D.", "F.", "N.", "E.", "S.", "I.", "V.", "K.", "T."]
+        surnames: ["諾瓦克", "佩特羅維奇", "科瓦奇", "羅西", "納瓦羅", "波波維奇", "林德奎斯特", "巴比奇", "武科維奇", "莫雷蒂", "席爾瓦", "凱勒", "揚科維奇", "莫利納", "鮑爾", "薩維奇"],
+        givens: ["盧卡", "馬爾科", "亞歷克斯", "達里奧", "費利佩", "尼古拉", "艾米爾", "斯特凡", "伊萬", "維克多", "克里斯", "托馬斯"]
       },
       nba_prime: {
-        surnames: ["Holloway", "Vance", "Mercer", "Sterling", "Thornton", "Langford", "Caldwell", "Braxton", "Kensington", "Malone", "Rivers", "Harden", "Tatum", "Booker", "Edwards", "Bridges", "Porter", "Green", "Barnes", "Grant"],
-        givens: ["Z.", "C.", "J.", "K.", "D.", "T.", "B.", "A.", "M.", "R.", "S.", "L.", "Q.", "V."]
+        surnames: ["霍洛威", "范斯", "莫瑟", "史特林", "桑頓", "蘭福德", "考德威爾", "布萊克斯頓", "馬龍", "瑞佛斯", "布里奇斯", "波特", "巴恩斯", "格蘭特", "華盛頓", "蒙羅", "麥克斯韋", "哈里斯", "沃克", "傑克森"],
+        givens: ["札克", "凱爾", "賈馬爾", "凱文", "達米安", "特雷", "布蘭登", "安東尼", "邁爾斯", "雷吉", "史考特", "拉梅洛", "昆汀", "文森"]
       },
       fiba_world: {
-        surnames: ["Silva", "Fernandez", "Diallo", "Bogic", "Sato", "Martin", "Gomez", "Kone", "Ivanov", "Mendes", "Costa", "Ndiaye", "Alvarez", "Bianchi"],
-        givens: ["M.", "R.", "A.", "L.", "K.", "T.", "D.", "P.", "J.", "E."]
+        surnames: ["席爾瓦", "費南德茲", "迪亞洛", "博吉奇", "佐藤", "馬丁", "戈麥斯", "科內", "伊凡諾夫", "門德斯", "科斯塔", "恩迪亞耶", "阿爾瓦雷斯", "比安奇"],
+        givens: ["馬特奧", "拉斐爾", "安德烈", "盧卡", "健太", "提姆", "丹尼爾", "保羅", "若昂", "艾利亞斯"]
       }
     };
 
@@ -2799,7 +2817,7 @@
       for (let attempt = 0; attempt < 40; attempt++) {
         const sn = pool.surnames[Math.floor(Math.random() * pool.surnames.length)];
         const gn = pool.givens[Math.floor(Math.random() * pool.givens.length)];
-        const full = isAsianOrder ? `${sn} ${gn}` : `${gn} ${sn}`;
+        const full = isAsianOrder ? `${sn} ${gn}` : `${gn}・${sn}`;
         if (!usedNamesSet.has(full)) {
           usedNamesSet.add(full);
           return full;
@@ -2904,13 +2922,71 @@
     }
     window.getLiveTeamRoster = getLiveTeamRoster;
 
-    function resolveTeamAce(roster) {
-      const valid = (roster || []).filter(p => p && !p.isUser);
-      if (!valid.length) return { name: "球隊王牌", ovr: 75, player: null };
-      const sorted = [...valid].sort((a, b) => (b.ovr || 70) - (a.ovr || 70));
+    function rebalanceStartingLineup(roster, userIsStarter = false) {
+      if (!Array.isArray(roster) || !roster.length) return roster;
+      const positions = ["PG", "SG", "SF", "PF", "C"];
+      const picked = new Set();
+      roster.forEach(p => { if (p) p.role = "BENCH"; });
+
+      // 若主角已穩居先發／王牌地位，優先鎖定主角在其主打位置先發
+      const userPl = roster.find(p => p && p.isUser);
+      if (userPl && userIsStarter) {
+        userPl.role = "STARTER";
+        picked.add(userPl);
+      }
+
+      // 依序為五個位置挑選該位置 OVR 最高的球員擔任先發（避免同位置重複或低評級新人亂頂先發）
+      for (const pos of positions) {
+        if (Array.from(picked).some(p => p.pos === pos)) continue;
+        const cand = roster
+          .filter(p => p && !picked.has(p) && !p.isUser && p.pos === pos)
+          .sort((a, b) => (b.ovr || 70) - (a.ovr || 70))[0];
+        if (cand) {
+          cand.role = "STARTER";
+          picked.add(cand);
+        }
+      }
+
+      // 若某位置剛好缺人，由剩餘非主角最強球員遞補至滿 5 位先發
+      if (picked.size < 5) {
+        const fillers = roster
+          .filter(p => p && !picked.has(p) && !p.isUser)
+          .sort((a, b) => (b.ovr || 70) - (a.ovr || 70))
+          .slice(0, 5 - picked.size);
+        fillers.forEach(p => { p.role = "STARTER"; picked.add(p); });
+      }
+      return roster;
+    }
+
+    function resolveTeamAce(roster, opts = null) {
+      const valid = (roster || []).filter(Boolean);
+      if (!valid.length) return { name: "球隊王牌", ovr: 75, pos: "SF", player: null };
+      const allowUser = Boolean(opts && opts.includeUser);
+      const candidates = allowUser ? valid : valid.filter(p => !p.isUser);
+      if (!candidates.length) return { name: valid[0].name, ovr: valid[0].ovr || 75, pos: valid[0].pos || "SF", player: valid[0] };
+
+      const scoreOf = (p) => {
+        let sc = p.ovr || 70;
+        if (p.role === "STARTER") sc += 2.5;
+        if (p.isUser && opts) {
+          // 主角必須真正靠場上表現、球隊地位與教練信任贏得王牌頭銜，表現差或替補不會硬搶王牌！
+          const rot = opts.rotationKey || "ROOKIE";
+          const ppg = Number(opts.ppg || 0);
+          const trust = Number(opts.coachTrust || 35);
+          if (rot === "STAR") sc += 4;
+          else if (rot === "STARTER") sc += 1;
+          else sc -= 9;
+          sc += Math.max(-8, Math.min(6, (ppg - 13) * 0.45));
+          sc += Math.max(-5, Math.min(4, (trust - 55) * 0.10));
+        }
+        return sc;
+      };
+      const sorted = [...candidates].sort((a, b) => scoreOf(b) - scoreOf(a));
       const ace = sorted[0];
-      valid.forEach(p => { p.isRival = (p === ace); });
-      return { name: ace.name, ovr: ace.ovr || 75, player: ace };
+      if (!allowUser) {
+        candidates.forEach(p => { p.isRival = (p === ace); });
+      }
+      return { name: ace.name, ovr: ace.ovr || 75, pos: ace.pos || "SF", player: ace };
     }
 
     function evolveAllLeagueTeams(targetSeason, leagueId, userTeamId, userTeamLogs = []) {
@@ -2931,28 +3007,37 @@
       const allRookies = [];
       const aceBoard = [];
 
-      // 先處理玩家自己球隊的摘要
+      // 先以「實力＋地位＋實戰表現」評定玩家球隊的真實王牌（並同步至開季戰績表！）
       const uTmObj = lg.teams.find(t => t.id === userTeamId) || lg.teams[0];
       const uTeamOvr = calcTeamStrength(targetSeason.userRoster || []);
-      const uBestAll = [...(targetSeason.userRoster || [])].sort((a, b) => (b.ovr || 70) - (a.ovr || 70))[0];
+      const prevUserAce = (targetSeason.prevUserTeamAce) || uTmObj.ace;
+      const uAce = resolveTeamAce(targetSeason.userRoster || [], {
+        includeUser: true,
+        rotationKey: targetSeason.prevRotationKey || (Season && Season.rotationKey) || "ROOKIE",
+        ppg: targetSeason.prevPpg || 0,
+        coachTrust: targetSeason.prevCoachTrust || 35
+      });
+      targetSeason.resolvedUserTeamAce = uAce.name;
       aceBoard.push({
         teamId: uTmObj.id, teamName: uTmObj.name, isUserTeam: true,
-        teamOvr: uTeamOvr, aceName: uBestAll ? uBestAll.name : uTmObj.ace,
-        aceOvr: uBestAll ? uBestAll.ovr : uTeamOvr, acePos: uBestAll ? uBestAll.pos : "SG",
-        aceChanged: false, oldAce: uTmObj.ace
+        teamOvr: uTeamOvr, aceName: uAce.name,
+        aceOvr: uAce.ovr, acePos: uAce.pos,
+        aceChanged: uAce.name !== prevUserAce, oldAce: prevUserAce
       });
 
-      // 遍歷聯賽內其餘每一支球隊，真實演進、離隊、補進隨機新人、重算王牌！
+      // 遍歷聯賽內其餘每一支球隊，真實演進（有感成長／老化）、離隊、補進隨機新人、嚴格 5 位置先發重排、重算王牌！
       for (const tm of (lg.teams || [])) {
         if (tm.id === userTeamId) continue;
         const roster = map[tm.id] || buildFallbackTeamRoster(tm);
         const prevAceObj = roster.find(p => p && p.isRival) || [...roster].sort((a, b) => (b.ovr || 70) - (a.ovr || 70))[0];
         const oldAceName = prevAceObj ? prevAceObj.name : tm.ace;
+        const teamGrowths = [];
 
-        // 1) 年齡 +1 與差異化成長／老化
+        // 1) 年齡 +1 與有感差異化成長／老化
         for (const pl of roster) {
           if (!pl) continue;
           ensureNpcGrowthDNA(pl);
+          const prevOvr = pl.ovr || 72;
           pl.age = (typeof pl.age === "number" ? pl.age : (isHs ? 16 : (isNcaa ? 20 : 25))) + 1;
           const pot = pl.potential || 3;
           const gt = pl.growthType || "NORMAL";
@@ -2960,18 +3045,25 @@
           const focus = POS_GROWTH_FOCUS[pl.pos] || POS_GROWTH_FOCUS.SG;
           if (pl.stats) {
             if (pl.age <= 22) {
-              const isBreakout = pot >= 4 && Math.random() < (gt === "EARLY" ? 0.42 : 0.28);
-              focus.slice(0, 3).forEach((k, idx) => {
-                const g = idx === 0 ? (isBreakout ? 3 : (pot >= 4 ? 2 : 1)) : (Math.random() < 0.70 ? (isBreakout ? 2 : 1) : 0);
+              const isBreakout = pot >= 4 && Math.random() < (gt === "EARLY" ? 0.52 : 0.36);
+              const pGain = isBreakout ? 4 : (pot >= 4 ? 3 : 2);
+              const sGain = isBreakout ? 3 : (pot >= 3 ? 2 : 1);
+              focus.forEach((k, idx) => {
+                const g = idx < 2 ? pGain : (Math.random() < 0.78 ? sGain : 1);
                 if (g > 0 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + g);
               });
+              if (pl.age <= 20) {
+                ["speed", "vertical", "strength", "iq"].forEach(k => {
+                  if (Math.random() < (isBreakout ? 0.80 : 0.58) && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + (isBreakout ? 2 : 1));
+                });
+              }
               if (isBreakout && Array.isArray(pl.skills) && pl.skills.length < 3 && Math.random() < 0.35) {
                 const sp = (POS_SKILL_POOL[pl.pos] || POS_SKILL_POOL.SG).filter(id => !pl.skills.includes(id));
                 if (sp.length) pl.skills.push(sp[Math.floor(Math.random() * sp.length)]);
               }
             } else if (pl.age <= 29) {
-              const gBase = (gt === "LATE" && pl.age <= 27 && pot >= 3) ? 2 : (Math.random() < 0.50 ? 1 : 0);
-              focus.filter(k => !PHYSICAL_STAT_KEYS.has(k)).slice(0, 2).forEach(k => {
+              const gBase = (gt === "LATE" && pl.age <= 27 && pot >= 3) ? 3 : (Math.random() < 0.65 ? 2 : 1);
+              focus.filter(k => !PHYSICAL_STAT_KEYS.has(k)).slice(0, 3).forEach(k => {
                 if (gBase > 0 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + gBase);
               });
             } else {
@@ -2981,6 +3073,8 @@
             }
             pl.ovr = calcOVR(pl.stats, pl.pos, pl.skills);
             pl.seasonOvrStart = pl.ovr;
+            const dOvr = pl.ovr - prevOvr;
+            if (dOvr >= 2) teamGrowths.push({ name: pl.name, pos: pl.pos, age: pl.age, delta: dOvr, ovr: pl.ovr });
           }
         }
 
@@ -3020,13 +3114,8 @@
           });
         }
 
-        // 3) 確保 5 位最強／各位置先發，並重算球隊戰力與新任王牌！
-        const startersNow = roster.filter(p => p.role === "STARTER");
-        if (startersNow.length > 5) {
-          startersNow.sort((a, b) => b.ovr - a.ovr).slice(5).forEach(p => { p.role = "BENCH"; });
-        } else if (startersNow.length < 5) {
-          roster.filter(p => p.role !== "STARTER").sort((a, b) => b.ovr - a.ovr).slice(0, 5 - startersNow.length).forEach(p => { p.role = "STARTER"; });
-        }
+        // 3) 嚴格依 5 位置（PG/SG/SF/PF/C）重排先發與替補，並重算球隊戰力與新任王牌！
+        rebalanceStartingLineup(roster, false);
         const newAce = resolveTeamAce(roster);
         const newTeamOvr = calcTeamStrength(roster);
         const aceChanged = newAce.name !== oldAceName;
@@ -3035,7 +3124,8 @@
         leagueMoves.push({
           teamId: tm.id, teamName: tm.name, teamOvr: newTeamOvr,
           oldAce: oldAceName, newAce: newAce.name, newAceOvr: newAce.ovr, newAcePos: newAce.player ? newAce.player.pos : "SF",
-          aceChanged, departures: depLogs, arrivals: arrLogs
+          aceChanged, departures: depLogs, arrivals: arrLogs,
+          growths: teamGrowths.sort((a, b) => b.delta - a.delta).slice(0, 3)
         });
         aceBoard.push({
           teamId: tm.id, teamName: tm.name, isUserTeam: false,
@@ -3283,12 +3373,15 @@
       if (Season && Season.player) Season.player.jerseyNum = assigned;
     }
 
-    function buildLeagueUserRoster(leagueId, playerObj) {
-      const tLeague = DB.leagues.leagues.find(l => l.id === leagueId) || DB.leagues.leagues[0];
-      const uTeamObj = tLeague.teams.find(t => t.isUserTeam) || tLeague.teams[0];
-      let roster = (uTeamObj && Array.isArray(uTeamObj.roster))
-        ? JSON.parse(JSON.stringify(uTeamObj.roster))
-        : buildOpponentRoster(uTeamObj);
+    function buildLeagueUserRoster(leagueId, playerObj, chosenTeamId = null) {
+      const lg = DB.leagues.leagues.find(l => l.id === leagueId) || DB.leagues.leagues[0];
+      const uTeamObj = (chosenTeamId && lg.teams.find(t => t.id === chosenTeamId)) || lg.teams.find(t => t.isUserTeam) || lg.teams[0];
+      const liveMap = Season && Season.leagueRosters && Season.leagueRosters[leagueId];
+      let roster = (liveMap && uTeamObj && Array.isArray(liveMap[uTeamObj.id]) && liveMap[uTeamObj.id].length >= 5)
+        ? JSON.parse(JSON.stringify(liveMap[uTeamObj.id]))
+        : ((uTeamObj && Array.isArray(uTeamObj.roster))
+          ? JSON.parse(JSON.stringify(uTeamObj.roster))
+          : JSON.parse(JSON.stringify(DB.leagues.defaultUserRoster)));
       roster = roster.map(pl => ({ ...pl, isRival: false }));
       if (!roster.some(pl => pl.isUser)) roster[1].isUser = true;
       const uSlot = roster.find(p => p.isUser);
@@ -3304,17 +3397,23 @@
       return roster;
     }
 
-    function createNewCareer(leagueId = "hs_nationals", keepArchive = [], yearNum = 1, customRoster = null, preservedPlayer = null, preservedTraits = null, keepHistory = null, keepTeamOps = null, keepLeagueRosters = null, keepOffseasonReport = null) {
+    function createNewCareer(leagueId = "hs_nationals", keepArchive = [], yearNum = 1, customRoster = null, preservedPlayer = null, preservedTraits = null, keepHistory = null, keepTeamOps = null, keepLeagueRosters = null, keepOffseasonReport = null, chosenUserTeamId = null) {
       const league = DB.leagues.leagues.find(l => l.id === leagueId) || DB.leagues.leagues[0];
       const persistedRosters = keepLeagueRosters ? JSON.parse(JSON.stringify(keepLeagueRosters)) : {};
       const liveMap = persistedRosters[league.id] || null;
+      const resolvedUserTeamId = chosenUserTeamId || ((league.teams.find(t => t.isUserTeam) || league.teams[0]).id);
+      const userAceFromReport = (keepOffseasonReport && Array.isArray(keepOffseasonReport.aceBoard))
+        ? (keepOffseasonReport.aceBoard.find(x => x.isUserTeam) || null)
+        : null;
       const standings = league.teams.map(t => {
-        const liveR = liveMap && Array.isArray(liveMap[t.id]) && liveMap[t.id].length >= 5 ? liveMap[t.id] : null;
+        const isUT = (t.id === resolvedUserTeamId);
+        const liveR = !isUT && liveMap && Array.isArray(liveMap[t.id]) && liveMap[t.id].length >= 5 ? liveMap[t.id] : null;
         const liveAce = liveR ? resolveTeamAce(liveR) : null;
         const liveOvr = liveR ? calcTeamStrength(liveR) : t.ovr;
         return {
-          id: t.id, name: t.name, ovr: liveOvr, ace: liveAce ? liveAce.name : t.ace,
-          coach: t.coach || "總教練", isUserTeam: Boolean(t.isUserTeam),
+          id: t.id, name: t.name, ovr: liveOvr,
+          ace: isUT && userAceFromReport ? userAceFromReport.aceName : (liveAce ? liveAce.name : t.ace),
+          coach: t.coach || "總教練", isUserTeam: isUT,
           w: 0, l: 0, pf: 0, pa: 0
         };
       });
@@ -6508,7 +6607,7 @@
       document.querySelectorAll("#apActionsGrid .ap-card").forEach(btn => {
         const act = btn.dataset.apAct;
         const need = act === "extreme_qte" ? 2 : 1;
-        const blockedBySevereInj = _injNow >= 3 && act !== "recover" && act !== "social" && act !== "train_iq";
+        const blockedBySevereInj = _injNow >= 3 && act !== "recover";
         btn.disabled = p.ap < need || blockedBySevereInj;
       });
 
@@ -6546,6 +6645,10 @@
     function executeApAction(act) {
       ensureCareerPlayerObj();
       const p = Season.player, cap = p.cap;
+      if (getInjuryLevel(p) >= 3 && act !== "recover") {
+        showToast("🏥 嚴重拉傷強制休養中！無法進行特訓或公開活動，請先使用「冰浴理療」復健。");
+        return;
+      }
       if (act === "extreme_qte") { if (p.ap < 2) return; p.ap -= 2; startExtremeTrainQTE(); return; }
       if (p.ap < 1) return;
       const _trainBeforeSnap = window.BTUI ? BTUI.takePlayerSnapshot() : null;
@@ -6611,9 +6714,11 @@
           const nextLv = Math.min(3, curInjLv + 1);
           p.injuryLevel = nextLv; p.injured = true;
           p.condition = Math.max(0, (p.condition || 0) - 18); addSt("speed", -1);
+          const chronicName = nextLv >= 3 ? inflictChronicInjuryTrait(p) : null;
           SoundFX.clank();
           const injLbl = getConditionProfile(p.condition, nextLv).label;
-          showTrainBanner("INJURY", `🚑 過勞訓練導致【${injLbl}】！`, `身體負荷超標導致動作失衡！陷入【${injLbl}】（狀態 -18、速度 -1），請立即安排理療復健！`);
+          const chronicHint = chronicName ? `並留下舊患【${chronicName}】！` : "";
+          showTrainBanner("INJURY", `🚑 過勞訓練導致【${injLbl}】！`, `身體負荷超標導致動作失衡！陷入【${injLbl}】（狀態 -18、速度 -1）${chronicHint}請立即安排理療復健！`);
         } else if (res === "FAIL") {
           p.condition = Math.max(0, (p.condition || 0) - 13);
           SoundFX.clank();
@@ -7106,27 +7211,34 @@
       const canEuro = p.stars >= 3 || curOvr >= 77;
       const canFiba = p.stars >= 4 || (p.reputation || 0) >= 75 || curOvr >= 80;
       const optsBox = document.getElementById("crOptionsBox");
+      const natBanner = (p.age >= 18 && canFiba && !Season._fibaDoneThisOffseason)
+        ? `<button type="button" class="choice-btn" data-cr-fiba="1" style="background:#FEFCE8; border-color:var(--crimson);"><span>🏅 接受國家隊夏季徵召（獨立國際賽榮譽・不影響俱樂部行程）</span><span class="tag gold">國家隊徵召</span></button>`
+        : (Season._fibaDoneThisOffseason && Season._fibaLastSummary
+          ? `<div style="background:#FEFCE8; border:2px solid var(--ink); padding:7px 10px; font-size:12px; font-weight:800; margin-bottom:4px;">🏅 本季國家隊紀錄：${Season._fibaLastSummary}</div>`
+          : "");
+
       if (p.age === 18 && Season.leagueId === "hs_nationals") {
         document.getElementById("crStamp").textContent = "🎓 18 歲畢業選秀大會";
-        document.getElementById("crTitle").textContent = `高三畢業！球探評級 ${"★".repeat(p.stars)}（OVR ${curOvr}）— 選秀行情`;
-        document.getElementById("crDesc").textContent = `${growthMsg} 本季榮譽：${rec.honor}。📋 全球球探選秀預測：【${draftPickLabel}】！`;
+        document.getElementById("crTitle").textContent = `高三畢業！球探評級 ${"★".repeat(p.stars)}（評級 ${curOvr}）— 選擇目標聯賽`;
+        document.getElementById("crDesc").textContent = `${growthMsg} 本季榮譽：${rec.honor}。📋 全球球探選秀預測：【${draftPickLabel}】！（點選聯賽後可從 3 支邀約球隊中自由挑選加盟）`;
         optsBox.innerHTML = `
-          <button type="button" class="choice-btn" data-cr-league="nba_prime" ${canNBA ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🇺🇸 衝擊北美頂級聯賽 NBA 選秀</span><span class="tag ${canNBA ? "gold" : "loss"}">${canNBA ? "已獲選秀邀請" : "需 4★ 或 OVR 84"}</span></button>
-          <button type="button" class="choice-btn" data-cr-league="euro_elite" ${canEuro ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🇪🇺 登陸歐洲頂級聯賽 EuroLeague</span><span class="tag ${canEuro ? "" : "loss"}">${canEuro ? "歐洲豪門合約" : "需 3★ 或 OVR 78"}</span></button>
-          <button type="button" class="choice-btn" data-cr-league="ncaa_madness"><span>🎓 遠赴美國大學聯賽 NCAA（瘋狂三月磨練）</span><span class="tag win">獎學金錄取</span></button>
-          <button type="button" class="choice-btn" data-cr-league="asia_pro"><span>🌏 簽約亞洲職業聯賽 (B.League / CBA / NBL)</span><span class="tag win">職業合約</span></button>
-          <button type="button" class="choice-btn" data-cr-league="fiba_world" ${canFiba ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🏆 徵召出征 FIBA 世界盃男籃殿堂</span><span class="tag ${canFiba ? "gold" : "loss"}">${canFiba ? "國家隊徵召" : "需 4★ 或 OVR 82"}</span></button>
+          ${natBanner}
+          <button type="button" class="choice-btn" data-cr-league="nba_prime" ${canNBA ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🇺🇸 衝擊北美頂級聯賽 NBA（查看 3 隊選秀邀約）</span><span class="tag ${canNBA ? "gold" : "loss"}">${canNBA ? "已獲 3 隊邀約" : "需 4★ 或評級 82"}</span></button>
+          <button type="button" class="choice-btn" data-cr-league="euro_elite" ${canEuro ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🇪🇺 登陸歐洲頂級聯賽 EuroLeague（查看 3 隊邀約）</span><span class="tag ${canEuro ? "gold" : "loss"}">${canEuro ? "已獲 3 隊邀約" : "需 3★ 或評級 77"}</span></button>
+          <button type="button" class="choice-btn" data-cr-league="ncaa_madness"><span>🎓 遠赴美國大學聯賽 NCAA（查看 3 校獎學金邀約）</span><span class="tag win">3 校邀約</span></button>
+          <button type="button" class="choice-btn" data-cr-league="asia_pro"><span>🌏 簽約亞洲職業聯賽（查看 3 隊合約邀約）</span><span class="tag win">3 隊邀約</span></button>
         `;
       } else {
         document.getElementById("crStamp").textContent = `第 ${Season.careerYear} 季結束 · 休賽季動向`;
-        document.getElementById("crTitle").textContent = `${p.name}（${p.age} 歲 · OVR ${curOvr}）休賽季決策`;
+        document.getElementById("crTitle").textContent = `${p.name}（${p.age} 歲 · 評級 ${curOvr}）休賽季決策`;
         document.getElementById("crDesc").textContent = `${growthMsg} 本季榮譽：${rec.honor}（場均 ${rec.ppg} 分 · ${rec.mvps} 次單場 MVP）。`;
         optsBox.innerHTML = `
+          ${natBanner}
           <button type="button" class="choice-btn" data-cr-league="${Season.leagueId}"><span>🏀 留隊續戰 ${league.name}（邁入第 ${Season.careerYear + 1} 年）</span><span class="tag win">續約留隊</span></button>
-          ${Season.leagueId !== "nba_prime" && p.age >= 18 ? `<button type="button" class="choice-btn" data-cr-league="nba_prime" ${canNBA ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🇺🇸 跨海轉會登陸北美 NBA</span><span class="tag ${canNBA ? "gold" : "loss"}">${canNBA ? "已達 NBA 門檻" : "需 4★ 或 OVR 84"}</span></button>` : ""}
-          ${Season.leagueId !== "euro_elite" && p.age >= 18 ? `<button type="button" class="choice-btn" data-cr-league="euro_elite" ${canEuro ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🇪🇺 轉戰歐洲頂級聯賽 EuroLeague</span><span class="tag ${canEuro ? "" : "loss"}">${canEuro ? "歐洲轉會" : "需 3★ 或 OVR 78"}</span></button>` : ""}
-          ${Season.leagueId !== "asia_pro" && p.age >= 18 ? `<button type="button" class="choice-btn" data-cr-league="asia_pro"><span>🌏 轉戰亞洲職業聯賽</span><span class="tag">轉會</span></button>` : ""}
-          ${Season.leagueId !== "fiba_world" && p.age >= 18 ? `<button type="button" class="choice-btn" data-cr-league="fiba_world" ${canFiba ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🏆 披上國家隊戰袍出征 FIBA 世界盃</span><span class="tag ${canFiba ? "gold" : "loss"}">${canFiba ? "國家隊徵召" : "需 4★ 或 OVR 82"}</span></button>` : ""}
+          ${Season.leagueId !== "nba_prime" && p.age >= 18 ? `<button type="button" class="choice-btn" data-cr-league="nba_prime" ${canNBA ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🇺🇸 轉戰北美 NBA（查看 3 隊邀約）</span><span class="tag ${canNBA ? "gold" : "loss"}">${canNBA ? "3 隊邀約" : "需 4★ 或評級 82"}</span></button>` : ""}
+          ${Season.leagueId !== "euro_elite" && p.age >= 18 ? `<button type="button" class="choice-btn" data-cr-league="euro_elite" ${canEuro ? "" : "disabled style='opacity:0.48; cursor:not-allowed;'"}><span>🇪🇺 轉戰歐洲頂級聯賽（查看 3 隊邀約）</span><span class="tag ${canEuro ? "gold" : "loss"}">${canEuro ? "3 隊邀約" : "需 3★ 或評級 77"}</span></button>` : ""}
+          ${Season.leagueId !== "asia_pro" && p.age >= 18 ? `<button type="button" class="choice-btn" data-cr-league="asia_pro"><span>🌏 轉戰亞洲職業聯賽（查看 3 隊邀約）</span><span class="tag">3 隊邀約</span></button>` : ""}
+          ${Season.leagueId !== "hs_nationals" && p.age >= 18 ? `<button type="button" class="choice-btn" data-cr-league="${Season.leagueId}" data-cr-freeagent="1"><span>✈️ 投入本聯賽自由市場（另挑 3 隊報價）</span><span class="tag">自由轉隊</span></button>` : ""}
           <button type="button" class="choice-btn" data-cr-league="RETIRE"><span>🏛️ 功成身退・進入名人堂結算</span><span class="tag loss">退役結算</span></button>
         `;
       }
@@ -7134,6 +7246,8 @@
       const crStory = document.getElementById("crGrowthStoryBox");
       if (crStory) crStory.innerHTML = renderMangaGrowthStoryHtml(true);
       optsBox._nextArchive = nextArchive;
+      optsBox._lastRec = rec;
+      optsBox._draftScore = draftScore;
       document.getElementById("crossroadsModal").classList.remove("hidden");
     }
 
@@ -7165,12 +7279,94 @@
       });
       document.getElementById("btnCloseEvent").addEventListener("click", () => document.getElementById("eventModal").classList.add("hidden"));
 
+      function renderClubOfferPicker(targetLeagueId) {
+        const optsBox = document.getElementById("crOptionsBox");
+        const tLeague = DB.leagues.leagues.find(l => l.id === targetLeagueId) || DB.leagues.leagues[0];
+        const p = Season.player;
+        const curOvr = calcOVR(p.stats, p.pos, Season.equippedTraits);
+        const uStandNow = (Season.standings || []).find(t => t.isUserTeam);
+        const liveMap = ensureLeagueRosters(Season, targetLeagueId);
+        let pool = (tLeague.teams || []).filter(t => !(targetLeagueId === Season.leagueId && uStandNow && t.id === uStandNow.id));
+        if (pool.length < 3) pool = [...(tLeague.teams || [])];
+
+        // 依球隊戰力排序，按玩家表現挑出 3 支定位鮮明的邀約球隊（勁旅／中游／重建核心）
+        const scored = pool.map(t => {
+          const r = liveMap[t.id] || t.roster || [];
+          const ovr = r.length ? calcTeamStrength(r) : (t.ovr || 78);
+          const aceObj = r.length ? resolveTeamAce(r) : { name: t.ace, ovr: ovr + 3 };
+          return { id: t.id, name: t.name, ovr, aceName: aceObj.name, aceOvr: aceObj.ovr };
+        }).sort((a, b) => b.ovr - a.ovr);
+
+        const picks = [];
+        const pickUnique = (arr) => {
+          const avail = arr.filter(x => !picks.some(k => k.id === x.id));
+          if (!avail.length) return;
+          picks.push(avail[Math.floor(Math.random() * avail.length)]);
+        };
+        if (curOvr >= 80 || p.stars >= 4) {
+          pickUnique(scored.slice(0, Math.max(2, Math.ceil(scored.length * 0.35))));
+          pickUnique(scored.slice(Math.floor(scored.length * 0.3), Math.ceil(scored.length * 0.7)));
+          pickUnique(scored.slice(Math.floor(scored.length * 0.6)));
+        } else {
+          pickUnique(scored.slice(Math.floor(scored.length * 0.25), Math.ceil(scored.length * 0.65)));
+          pickUnique(scored.slice(Math.floor(scored.length * 0.55)));
+          pickUnique(scored);
+        }
+        while (picks.length < Math.min(3, scored.length)) pickUnique(scored);
+
+        document.getElementById("crStamp").textContent = `📩 ${tLeague.name}・球隊加盟邀約`;
+        document.getElementById("crTitle").textContent = `共有 ${picks.length} 支球隊向你遞出正式合約，請選擇加盟！`;
+        document.getElementById("crDesc").textContent = `豪門爭冠競爭激烈但曝光高；重建球隊則承諾更多球權與先發培養空間。`;
+        optsBox.innerHTML = picks.map((tm, i) => {
+          const rolePromise = tm.ovr <= curOvr + 1 ? "⭐ 承諾重點核心" : (tm.ovr <= curOvr + 5 ? "🏀 競爭先發主力" : "🔥 豪門爭冠輪換");
+          const pitch = i === 0 && tm.ovr >= scored[0].ovr - 2 ? "冠軍競爭者" : (tm.ovr <= scored[scored.length - 1].ovr + 3 ? "重建核心培養" : "季後賽勁旅");
+          return `<button type="button" class="choice-btn" data-cr-commit-league="${targetLeagueId}" data-cr-commit-team="${tm.id}">
+            <span><strong>${tm.name}</strong>（戰力 ${tm.ovr} · 現任王牌：${tm.aceName}）<br/><small style="color:var(--ink-soft);">${pitch} ｜ ${rolePromise}</small></span>
+            <span class="tag gold">簽約加盟</span>
+          </button>`;
+        }).join("") + `<button type="button" class="choice-btn" data-cr-back="1" style="background:#F7F4EC;"><span>⬅️ 返回重選聯賽</span><span class="tag">返回</span></button>`;
+      }
+
       document.getElementById("crOptionsBox").addEventListener("click", (e) => {
         const b = e.target.closest(".choice-btn"); if (!b || b.disabled) return;
-        const target = b.dataset.crLeague;
-        const nextArc = document.getElementById("crOptionsBox")._nextArchive || Season.archive;
-        document.getElementById("crossroadsModal").classList.add("hidden");
+        const optsBox = document.getElementById("crOptionsBox");
+
+        // A) 獨立國家隊夏季徵召事件（不退出俱樂部聯賽！）
+        if (b.dataset.crFiba) {
+          const p = Season.player;
+          const curOvr = calcOVR(p.stats, p.pos, Season.equippedTraits);
+          const roll = Math.random() + (curOvr - 80) * 0.025;
+          const finish = roll >= 0.92 ? "🏆 FIBA 世界盃金牌" : (roll >= 0.72 ? "🥈 國際賽銀牌" : (roll >= 0.48 ? "🥉 國際賽銅牌" : "🌏 世界盃八強歷練"));
+          const intlPpg = (11 + Math.max(0, curOvr - 75) * 0.65 + Math.random() * 5).toFixed(1);
+          const isIntlMvp = roll >= 0.92 && curOvr >= 85;
+          const summary = `第 ${Season.careerYear} 年夏季代表國家隊出征：${finish}（場均 ${intlPpg} 分${isIntlMvp ? " · 🏅國際賽 MVP" : ""}）`;
+          if (!Array.isArray(Season.nationalTeamHistory)) Season.nationalTeamHistory = [];
+          Season.nationalTeamHistory.unshift({ year: Season.careerYear, age: p.age, finish, ppg: intlPpg, mvp: isIntlMvp, summary });
+          Season._fibaDoneThisOffseason = true;
+          Season._fibaLastSummary = summary;
+          p.reputation = Math.min(100, (p.reputation || 50) + 10);
+          addScaledProtagonistStat(p, "grit", 1.2, true, "EVENT");
+          addScaledProtagonistStat(p, "iq", 1.1, false, "EVENT");
+          if (Array.isArray(p.flags) && !p.flags.includes("national_team_vet")) p.flags.push("national_team_vet");
+          if (optsBox._lastRec) optsBox._lastRec.honor = `${optsBox._lastRec.honor} · ${finish}`;
+          SoundFX.swish();
+          showToast(`🏅 國家隊征戰完成！${finish}，名氣 +10，已寫入生涯國家隊紀錄！`);
+          openSeasonEndCrossroads();
+          return;
+        }
+
+        if (b.dataset.crBack) {
+          openSeasonEndCrossroads();
+          return;
+        }
+
+        const nextArc = optsBox._nextArchive || Season.archive;
+        const target = b.dataset.crCommitLeague || b.dataset.crLeague;
+        const chosenTeamId = b.dataset.crCommitTeam || null;
+        const isFreeAgentSwitch = Boolean(b.dataset.crFreeagent);
+
         if (target === "RETIRE") {
+          document.getElementById("crossroadsModal").classList.add("hidden");
           Season.archive = nextArc;
           Season.retired = true;
           SaveManager.save(Season);
@@ -7181,6 +7377,16 @@
           showToast(`🏛️ 傳奇謝幕！共征戰 ${Season.careerYear} 季，已永久記入名人堂履歷！`);
           return;
         }
+
+        // B) 若是畢業轉戰新聯賽或自由市場換隊，先呈現 3 支邀約球隊讓玩家自由挑選！
+        const sameLeagueStay = (target === Season.leagueId && !isFreeAgentSwitch && !chosenTeamId);
+        if (!sameLeagueStay && !chosenTeamId) {
+          renderClubOfferPicker(target);
+          return;
+        }
+
+        // C) 確認簽約／續約，推進下一季並演進全聯賽！
+        document.getElementById("crossroadsModal").classList.add("hidden");
         const savedP = {
           ...Season.player, ap: 2, condition: 100, injured: false, injuryLevel: 0, eventTriggeredThisRound: false,
           seasonStatGain: 0,
@@ -7188,26 +7394,42 @@
         };
         const savedTraits = [...Season.equippedTraits];
         const prevHist = ensureCareerHistory(Season);
-        const sameLeague = target === Season.leagueId;
-        const nextRoster = sameLeague ? JSON.parse(JSON.stringify(Season.userRoster)) : buildLeagueUserRoster(target, savedP);
-        const growthLogs = sameLeague ? evolveRosterAgesAndRatings(nextRoster, target) : ["加入新球隊，全員重新磨合！"];
+        const prevNatHist = Array.isArray(Season.nationalTeamHistory) ? [...Season.nationalTeamHistory] : [];
+        const prevRotKey = Season.rotationKey || "ROOKIE";
+        const prevSt = Season.seasonTotals || { gp: 1, pts: 0 };
+        const prevPpg = prevSt.pts / Math.max(1, prevSt.gp);
+        const prevTrust = (Season.player && Season.player.coachTrust) || 35;
+        const uStandNow = (Season.standings || []).find(t => t.isUserTeam);
+
+        const nextRoster = sameLeagueStay
+          ? JSON.parse(JSON.stringify(Season.userRoster))
+          : buildLeagueUserRoster(target, savedP, chosenTeamId);
+        const growthLogs = sameLeagueStay
+          ? evolveRosterAgesAndRatings(nextRoster, target)
+          : [`簽約加盟新球隊！全員重新展開季前磨合。`];
+        if (!sameLeagueStay) rebalanceStartingLineup(nextRoster, prevRotKey === "STARTER" || prevRotKey === "STAR");
+
         const prevOps = ensureTeamOps(Season);
         const tLeague = DB.leagues.leagues.find(l => l.id === target) || DB.leagues.leagues[0];
         const lgAvg = Math.round(tLeague.teams.reduce((s, t) => s + (t.ovr || 75), 0) / Math.max(1, tLeague.teams.length));
         const nextOps = {
-          chemistry: sameLeague ? Math.min(92, (prevOps.chemistry || 65) + 5) : 58,
-          tacticId: sameLeague ? prevOps.tacticId : (target === "euro_elite" ? "TEAM_MOTION" : (target === "nba_prime" ? "PACE_SPACE" : "GRIT_DEF")),
+          chemistry: sameLeagueStay ? Math.min(92, (prevOps.chemistry || 65) + 5) : 58,
+          tacticId: sameLeagueStay ? prevOps.tacticId : (target === "euro_elite" ? "TEAM_MOTION" : (target === "nba_prime" ? "PACE_SPACE" : "GRIT_DEF")),
           movesLeft: target === "hs_nationals" ? 0 : 2,
           freeAgents: target === "hs_nationals" ? [] : generateProFreeAgents(target, lgAvg),
           offseasonLog: growthLogs
         };
-        // 全聯賽持久化陣容跨季演進（各隊舊人離隊、新人加入、動態重算每隊王牌）
         const carryRosters = Season.leagueRosters ? JSON.parse(JSON.stringify(Season.leagueRosters)) : {};
-        const uStandNow = (Season.standings || []).find(t => t.isUserTeam);
-        const targetUserTeam = sameLeague && uStandNow ? uStandNow.id : ((tLeague.teams.find(t => t.isUserTeam) || tLeague.teams[0]).id);
-        const tempSeasonCtx = { careerYear: Season.careerYear + 1, leagueId: target, leagueRosters: carryRosters, userRoster: nextRoster };
+        const targetUserTeam = chosenTeamId || (sameLeagueStay && uStandNow ? uStandNow.id : ((tLeague.teams.find(t => t.isUserTeam) || tLeague.teams[0]).id));
+        const tempSeasonCtx = {
+          careerYear: Season.careerYear + 1, leagueId: target, leagueRosters: carryRosters, userRoster: nextRoster,
+          prevRotationKey: prevRotKey, prevPpg, prevCoachTrust: prevTrust,
+          prevUserTeamAce: uStandNow ? uStandNow.ace : null
+        };
         const osReport = evolveAllLeagueTeams(tempSeasonCtx, target, targetUserTeam, growthLogs);
-        createNewCareer(target, nextArc, Season.careerYear + 1, nextRoster, savedP, savedTraits, prevHist, nextOps, tempSeasonCtx.leagueRosters, osReport);
+        createNewCareer(target, nextArc, Season.careerYear + 1, nextRoster, savedP, savedTraits, prevHist, nextOps, tempSeasonCtx.leagueRosters, osReport, targetUserTeam);
+        Season.nationalTeamHistory = prevNatHist;
+        SaveManager.save(Season);
         showToast(`🏀 邁入第 ${Season.careerYear} 季！全聯賽完成休賽季換血與王牌更新！`);
         if (window.BTUI && typeof BTUI.openOffseasonReport === "function") {
           setTimeout(() => BTUI.openOffseasonReport("myteam"), 160);

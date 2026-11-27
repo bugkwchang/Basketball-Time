@@ -96,7 +96,7 @@ window.BTUI = (() => {
           },
           applyReward: (p) => {
             p.coachTrust = Math.min(100, (p.coachTrust || 35) + 4);
-            p.condition = Math.min(100, (p.condition || 80) + 4);
+            p.condition = Math.min(100, (typeof p.condition === "number" ? p.condition : 80) + 4);
             return "教練信任 +4、狀態回復 +4%";
           }
         };
@@ -1203,7 +1203,7 @@ window.BTUI = (() => {
     preMatchSnapshot = {
       ovr: calcOVR(p.stats, p.pos, season.equippedTraits),
       trust: p.coachTrust || 35,
-      condition: p.condition || 100,
+      condition: typeof p.condition === "number" ? p.condition : 100,
       reputation: p.reputation || 45,
       heightCm: p.heightCm || 185,
       stats: { ...(p.stats || {}) },
@@ -1218,7 +1218,7 @@ window.BTUI = (() => {
     return {
       ovr: calcOVR(p.stats, p.pos, season.equippedTraits),
       trust: p.coachTrust || 35,
-      condition: p.condition || 100,
+      condition: typeof p.condition === "number" ? p.condition : 100,
       reputation: p.reputation || 45,
       rivalHeat: p.rivalHeat || 35,
       heightCm: p.heightCm || 185,
@@ -1478,6 +1478,7 @@ window.BTUI = (() => {
             </div>
             <div class="osr-move-line"><span class="osr-lbl">離隊：</span>${depHtml}</div>
             <div class="osr-move-line"><span class="osr-lbl">加盟：</span>${arrHtml}</div>
+            ${(m.growths && m.growths.length) ? `<div class="osr-move-line"><span class="osr-lbl">成長：</span>${m.growths.map(g => `<span class="tag" style="margin:2px 3px 2px 0; background:#EFF6FF; color:#1D4ED8;">▲${playerNameLinkHtml(g.name, m.teamName, `${g.name}+${g.delta}→${g.ovr}`)}</span>`).join("")}</div>` : ""}
           </div>`;
       }).join("") || `<div class="osr-empty">本季無聯賽異動紀錄。</div>`;
     } else if (tab === "rookies") {
