@@ -2530,6 +2530,7 @@
         standings,
         worldLod,
         seasonTotals: { gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, mvps: 0 },
+        leaguePlayerTotals: {},
         archive: keepArchive,
         careerHistory: keepHistory ? JSON.parse(JSON.stringify(keepHistory)) : { rivalries: {}, classicMoments: [] },
         teamOps: keepTeamOps ? JSON.parse(JSON.stringify(keepTeamOps)) : null
@@ -2552,6 +2553,10 @@
       oppTeam.pf += userMatchResult.oppScore; oppTeam.pa += userMatchResult.userScore;
       if (userMatchResult.userScore > userMatchResult.oppScore) { userTeam.w += 1; oppTeam.l += 1; }
       else { userTeam.l += 1; oppTeam.w += 1; }
+      if (window.BTUI && userMatchResult.boxScore) {
+        BTUI.recordMatchToLeagueTotals(userTeam.id, userTeam.name, userMatchResult.boxScore.homeTeam || []);
+        BTUI.recordMatchToLeagueTotals(oppTeam.id, oppTeam.name, userMatchResult.boxScore.awayTeam || []);
+      }
 
       // LOD 0: Simulate remaining pairs in user's league for this round
       const rest = Season.standings.filter(t => t.id !== userTeam.id && t.id !== oppTeam.id);
@@ -2563,6 +2568,10 @@
         if (sa === sb) sa += 2;
         a.pf += sa; a.pa += sb; b.pf += sb; b.pa += sa;
         if (sa > sb) { a.w += 1; b.l += 1; } else { b.w += 1; a.l += 1; }
+        if (window.BTUI) {
+          BTUI.recordSimulatedTeamGame(a.id, a.name, sa, league);
+          BTUI.recordSimulatedTeamGame(b.id, b.name, sb, league);
+        }
       }
 
       // LOD 1: True pairwise round settlement for overseas leagues (strict W+L conservation, true #1 leader!)
@@ -4031,6 +4040,11 @@
           Season.seasonTotals.mvps = (Season.seasonTotals.mvps || 0) + (bestP.isUser ? 1 : 0);
           recordRivalryAndHistory(g, u, Match.homeScore > Match.awayScore);
           if (!g.stage) stepOtherTeamsLOD0(g);
+          else if (window.BTUI && g.boxScore) {
+            const ut = Season.standings.find(t => t.isUserTeam);
+            if (ut) BTUI.recordMatchToLeagueTotals(ut.id, ut.name, g.boxScore.homeTeam || []);
+            BTUI.recordMatchToLeagueTotals(g.oppId, g.oppName, g.boxScore.awayTeam || []);
+          }
           Season.currentRoundIdx += 1;
           advancePlayoffBracketIfNeeded(g);
           if (Season.player) {

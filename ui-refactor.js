@@ -1561,83 +1561,188 @@ window.BTUI = (() => {
   let activeLeaderCat = "ppg";
   let awardsProceedCb = null;
 
-  function computeLeagueStatLeaders() {
+  function ensureLeaguePlayerTotals() {
     const season = getSeason();
+    if (!season) return {};
+    if (!season.leaguePlayerTotals || typeof season.leaguePlayerTotals !== "object") {
+      season.leaguePlayerTotals = {};
+    }
+    return season.leaguePlayerTotals;
+  }
+
+  function recordMatchToLeagueTotals(teamId, teamName, playerList) {
+    const totals = ensureLeaguePlayerTotals();
+    if (!Array.isArray(playerList)) return;
+    for (const pl of playerList) {
+      if (!pl || !pl.name) continue;
+      const key = `${teamId}::${pl.name}`;
+      if (!totals[key]) {
+        totals[key] = {
+          name: pl.name, teamId, teamName, pos: pl.pos || "SG",
+          age: pl.age || 17, ovr: pl.ovr || 70, isUser: Boolean(pl.isUser),
+          gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0
+        };
+      }
+      const rec = totals[key];
+      rec.teamName = teamName;
+      rec.isUser = Boolean(pl.isUser);
+      if (pl.ovr) rec.ovr = pl.ovr;
+      if (pl.age) rec.age = pl.age;
+      rec.gp += 1;
+      rec.pts += (pl.pts || 0);
+      rec.reb += ((pl.oreb || 0) + (pl.dreb || 0));
+      rec.ast += (pl.ast || 0);
+      rec.stl += (pl.stl || 0);
+      rec.blk += (pl.blk || 0);
+    }
+  }
+
+  function recordSimulatedTeamGame(teamId, teamName, teamPts, leagueObj) {
     const db = getDB();
-    if (!season || !db || !db.leagues) return [];
-    const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
-    const qScale = (league.quarterMinutes || 8) / 8;
-    const userSt = season.seasonTotals || { gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0 };
-    const roundsDone = Math.max(1, season.currentRoundIdx || 0);
-    const uTeamStand = (season.standings || []).find(t => t.isUserTeam) || { name: "我方", w: 0, l: 0 };
+    const lg = leagueObj || (db && db.leagues && db.leagues.leagues.find(l => l.id === (getSeason() && getSeason().leagueId)));
+    if (!lg) return;
+    const tm = (lg.teams || []).find(t => t.id === teamId);
+    if (!tm) return;
+    const rawRoster = (Array.isArray(tm.roster) && tm.roster.length)
+      ? tm.roster
+      : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
+    const profiled = rawRoster.map(pl =>
+      (!pl.stats || !pl.heightCm) && typeof generateNpcProfile === "function" ? generateNpcProfile({ ...pl }) : pl
+    );
+    const qScale = (lg.quarterMinutes || 8) / 8;
+    // Distribute exact integer teamPts across 12 players (sum === teamPts!), and realistic team reb/ast/stl/blk
+    const teamReb = Math.max(20, Math.round((24 + Math.random() * 10) * qScale));
+    const teamAst = Math.max(8, Math.round(teamPts * (0.22 + Math.random() * 0.08)));
+    const teamStl = Math.max(2, Math.round((4 + Math.random() * 4) * qScale));
+    const teamBlk = Math.max(1, Math.round((2 + Math.random() * 3.5) * qScale));
 
-    const standingMap = Object.fromEntries((season.standings || []).map(t => [t.id, t]));
-    const rows = [];
-
-    const hashNoise = (str, salt) => {
-      let h = salt + (season.careerYear || 1) * 97;
-      for (let i = 0; i < str.length; i++) h = ((h * 31) + str.charCodeAt(i)) % 10000;
-      return ((h % 100) / 100) - 0.5; // -0.5 .. +0.49
+    const distributeInt = (total, weights) => {
+      const sumW = weights.reduce((a, b) => a + b, 0) || 1;
+      const out = weights.map(w => Math.floor((total * w) / sumW));
+      let rem = total - out.reduce((a, b) => a + b, 0);
+      const order = weights.map((w, i) => ({ i, frac: ((total * w) / sumW) - out[i] })).sort((a, b) => b.frac - a.frac);
+      for (let k = 0; k < rem; k++) out[order[k % order.length].i] += 1;
+      return out;
     };
 
-    const addNpcRow = (pl, teamName, teamId) => {
-      if (!pl || pl.isUser) return;
-      const prof = (pl.stats && pl.heightCm) ? pl : (typeof generateNpcProfile === "function" ? generateNpcProfile({ ...pl }) : pl);
-      const st = prof.stats || {};
-      const ovr = prof.ovr || 74;
-      const isSt = prof.role === "STARTER";
-      const minMul = isSt ? 1.0 : 0.48;
-      const tmSt = standingMap[teamId] || { w: 0, l: 0 };
+    const ptsW = profiled.map(p => {
+      const s = p.stats || {};
+      const m = p.role === "STARTER" ? 1.85 : 0.45;
+      return Math.max(1, ((s.threePt || 60) + (s.midRange || 60) + (s.inside || 60) - 120 + (p.isRival ? 28 : 0)) * m * (0.75 + Math.random() * 0.5));
+    });
+    const rebW = profiled.map(p => {
+      const s = p.stats || {};
+      const m = p.role === "STARTER" ? 1.75 : 0.45;
+      return Math.max(1, ((s.rebound || 60) - 35 + Math.max(0, (p.heightCm || 185) - 178) * 1.2) * m * (0.75 + Math.random() * 0.5));
+    });
+    const astW = profiled.map(p => {
+      const s = p.stats || {};
+      const m = p.role === "STARTER" ? 1.8 : 0.42;
+      return Math.max(1, ((s.playmaking || 60) + (s.iq || 60) - 85 + (p.pos === "PG" ? 24 : 0)) * m * (0.7 + Math.random() * 0.6));
+    });
+    const stlW = profiled.map(p => {
+      const s = p.stats || {};
+      const m = p.role === "STARTER" ? 1.65 : 0.45;
+      return Math.max(1, ((s.perimDef || 60) + (s.speed || 60) - 90) * m * (0.6 + Math.random() * 0.8));
+    });
+    const blkW = profiled.map(p => {
+      const s = p.stats || {};
+      const m = p.role === "STARTER" ? 1.7 : 0.4;
+      return Math.max(1, ((s.intDef || 60) + (s.vertical || 60) - 95 + Math.max(0, (p.heightCm || 185) - 186) * 2.0) * m * (0.6 + Math.random() * 0.8));
+    });
+
+    const ptsArr = distributeInt(teamPts, ptsW);
+    const rebArr = distributeInt(teamReb, rebW);
+    const astArr = distributeInt(teamAst, astW);
+    const stlArr = distributeInt(teamStl, stlW);
+    const blkArr = distributeInt(teamBlk, blkW);
+
+    const boxList = profiled.map((p, i) => ({
+      name: p.name, pos: p.pos, age: p.age, ovr: p.ovr, isUser: false,
+      pts: ptsArr[i], oreb: Math.floor(rebArr[i] * 0.3), dreb: Math.ceil(rebArr[i] * 0.7),
+      ast: astArr[i], stl: stlArr[i], blk: blkArr[i]
+    }));
+    recordMatchToLeagueTotals(teamId, teamName, boxList);
+  }
+
+  function backfillTotalsFromLegacySave() {
+    const season = getSeason();
+    const db = getDB();
+    if (!season || !db || !db.leagues) return;
+    const totals = ensureLeaguePlayerTotals();
+    if (Object.keys(totals).length > 0) return;
+    const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
+    const uTeam = (season.standings || []).find(t => t.isUserTeam);
+    if (!uTeam) return;
+    // Replay actual recorded boxScores from schedule
+    for (const g of (season.schedule || [])) {
+      if (g.played && g.boxScore) {
+        recordMatchToLeagueTotals(uTeam.id, uTeam.name, g.boxScore.homeTeam || []);
+        recordMatchToLeagueTotals(g.oppId, g.oppName, g.boxScore.awayTeam || []);
+      }
+    }
+    // Backfill remaining teams up to their actual standings GP & PF
+    for (const st of (season.standings || [])) {
+      if (st.id === uTeam.id) continue;
+      const gpTarget = (st.w || 0) + (st.l || 0);
+      const existingRec = Object.values(totals).find(r => r.teamId === st.id);
+      const curGp = existingRec ? existingRec.gp : 0;
+      const curPf = Object.values(totals).filter(r => r.teamId === st.id).reduce((s, r) => s + r.pts, 0);
+      const remGp = Math.max(0, gpTarget - curGp);
+      let remPf = Math.max(0, (st.pf || 0) - curPf);
+      for (let k = 0; k < remGp; k++) {
+        const gamePts = k === remGp - 1 ? remPf : Math.max(30, Math.round(remPf / (remGp - k)));
+        remPf = Math.max(0, remPf - gamePts);
+        recordSimulatedTeamGame(st.id, st.name, gamePts, league);
+      }
+    }
+  }
+
+  function computeLeagueStatLeaders() {
+    const season = getSeason();
+    if (!season) return [];
+    backfillTotalsFromLegacySave();
+    const totals = ensureLeaguePlayerTotals();
+    const standingMap = Object.fromEntries((season.standings || []).map(t => [t.id, t]));
+    const uTeam = (season.standings || []).find(t => t.isUserTeam) || { id: "user", name: "我方", w: 0, l: 0 };
+
+    // Build profile lookup so OVR & age stay live
+    const bm = computeLeagueBenchmarks();
+    const rows = [];
+    for (const rec of Object.values(totals)) {
+      if (!rec || !rec.gp) continue;
+      const tmSt = standingMap[rec.teamId] || { w: 0, l: 0 };
       const tmGp = Math.max(1, (tmSt.w || 0) + (tmSt.l || 0));
       const winPct = tmGp ? (tmSt.w / tmGp) : 0.5;
 
-      const offIdx = ((st.threePt || ovr) + (st.midRange || ovr) + (st.inside || ovr)) / 3;
-      const ppg = Number(Math.max(2.0, ((offIdx - 48) * 0.54 + (prof.isRival ? 3.2 : 0) + hashNoise(prof.name, 11) * 3.0) * qScale * minMul).toFixed(1));
-      const rpg = Number(Math.max(0.8, (((st.rebound || ovr) - 46) * 0.22 + Math.max(0, ((prof.heightCm || 185) - 180) * 0.11) + hashNoise(prof.name, 23) * 1.4) * qScale * minMul).toFixed(1));
-      const apg = Number(Math.max(0.4, (((st.playmaking || ovr) * 0.65 + (st.iq || ovr) * 0.35 - 50) * 0.19 + (prof.pos === "PG" ? 1.4 : 0) + hashNoise(prof.name, 37) * 1.2) * qScale * minMul).toFixed(1));
-      const spg = Number(Math.max(0.1, (((st.perimDef || ovr) * 0.6 + (st.speed || ovr) * 0.4 - 52) * 0.055 + hashNoise(prof.name, 51) * 0.45) * qScale * minMul).toFixed(1));
-      const bpg = Number(Math.max(0.0, (((st.intDef || ovr) * 0.55 + (st.vertical || ovr) * 0.45 - 54) * 0.05 + Math.max(0, ((prof.heightCm || 185) - 190) * 0.04) + hashNoise(prof.name, 67) * 0.4) * qScale * minMul).toFixed(1));
-
-      const mvpScore = ppg * 1.15 + rpg * 0.95 + apg * 1.35 + spg * 2.2 + bpg * 2.0 + winPct * 12;
-      const dpoyScore = spg * 3.8 + bpg * 3.6 + rpg * 0.55 + ((st.perimDef || 70) + (st.intDef || 70)) * 0.08 + winPct * 4;
-      rows.push({
-        name: prof.name, teamName, pos: prof.pos || "SG", age: prof.age || 17, ovr, isUser: false,
-        ppg, rpg, apg, spg, bpg, mvpScore, dpoyScore, winPct
-      });
-    };
-
-    // Add user's teammates
-    for (const pl of (season.userRoster || [])) {
-      if (pl.isUser) continue;
-      if (pl.role === "STARTER" || (pl.ovr || 0) >= 66) addNpcRow(pl, uTeamStand.name, uTeamStand.id);
-    }
-
-    // Add all opponent teams' starters + top bench
-    for (const tm of (league.teams || [])) {
-      if (tm.id === uTeamStand.id) continue;
-      const r = (Array.isArray(tm.roster) && tm.roster.length) ? tm.roster : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
-      for (const pl of r) {
-        if (pl.role === "STARTER" || pl.isRival) addNpcRow(pl, tm.name, tm.id);
+      // For user, reconcile strictly with Season.seasonTotals if present
+      let gp = rec.gp, pts = rec.pts, reb = rec.reb, ast = rec.ast, stl = rec.stl, blk = rec.blk;
+      let ovr = rec.ovr || 70;
+      if (rec.isUser && season.player && season.seasonTotals && season.seasonTotals.gp > 0) {
+        gp = season.seasonTotals.gp;
+        pts = season.seasonTotals.pts;
+        reb = season.seasonTotals.reb;
+        ast = season.seasonTotals.ast;
+        stl = season.seasonTotals.stl;
+        blk = season.seasonTotals.blk;
+        ovr = calcOVR(season.player.stats, season.player.pos, season.equippedTraits);
+      } else if (bm && Array.isArray(bm.allPlayersSorted)) {
+        const matchP = bm.allPlayersSorted.find(x => x.name === rec.name);
+        if (matchP && matchP.ovr) ovr = matchP.ovr;
       }
-    }
 
-    // Add User with TRUE seasonTotals
-    if (season.player) {
-      const p = season.player;
-      const uGp = Math.max(1, userSt.gp || 0);
-      const uPpg = userSt.gp ? Number((userSt.pts / uGp).toFixed(1)) : 0.0;
-      const uRpg = userSt.gp ? Number((userSt.reb / uGp).toFixed(1)) : 0.0;
-      const uApg = userSt.gp ? Number((userSt.ast / uGp).toFixed(1)) : 0.0;
-      const uSpg = userSt.gp ? Number((userSt.stl / uGp).toFixed(1)) : 0.0;
-      const uBpg = userSt.gp ? Number((userSt.blk / uGp).toFixed(1)) : 0.0;
-      const uTmGp = Math.max(1, (uTeamStand.w || 0) + (uTeamStand.l || 0));
-      const uWinPct = uTmGp ? (uTeamStand.w / uTmGp) : 0.5;
-      const uOvr = calcOVR(p.stats, p.pos, season.equippedTraits);
-      const mvpScore = uPpg * 1.15 + uRpg * 0.95 + uApg * 1.35 + uSpg * 2.2 + uBpg * 2.0 + uWinPct * 12;
-      const dpoyScore = uSpg * 3.8 + uBpg * 3.6 + uRpg * 0.55 + ((p.stats.perimDef || 70) + (p.stats.intDef || 70)) * 0.08 + uWinPct * 4;
+      const ppg = Number((pts / gp).toFixed(1));
+      const rpg = Number((reb / gp).toFixed(1));
+      const apg = Number((ast / gp).toFixed(1));
+      const spg = Number((stl / gp).toFixed(1));
+      const bpg = Number((blk / gp).toFixed(1));
+      const mvpScore = ppg * 1.15 + rpg * 0.95 + apg * 1.35 + spg * 2.2 + bpg * 2.0 + winPct * 12;
+      const dpoyScore = spg * 3.8 + bpg * 3.6 + rpg * 0.55 + ovr * 0.12 + winPct * 4;
+
       rows.push({
-        name: p.name, teamName: uTeamStand.name, pos: p.pos || "SG", age: p.age || 15, ovr: uOvr, isUser: true,
-        ppg: uPpg, rpg: uRpg, apg: uApg, spg: uSpg, bpg: uBpg, mvpScore, dpoyScore, winPct: uWinPct
+        name: rec.name, teamName: rec.teamName || uTeam.name, pos: rec.pos || "SG",
+        age: rec.age || 17, ovr, isUser: Boolean(rec.isUser), gp,
+        ppg, rpg, apg, spg, bpg, mvpScore, dpoyScore, winPct
       });
     }
     return rows;
@@ -1989,6 +2094,8 @@ window.BTUI = (() => {
     openPlayerMatchStatsPopup,
     openPastMatchBoxScore,
     sanitizeResumePhase,
+    recordMatchToLeagueTotals,
+    recordSimulatedTeamGame,
     renderLeagueLeadersTab,
     openSeasonAwardsCeremony,
     switchHubTab,
