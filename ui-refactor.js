@@ -1,23 +1,29 @@
 /* =========================================================================
-   《Basketball Time》UI Refactor Controller (ui-refactor.js)
-   Implements 6 UX/UI upgrades without modifying core game math, DBs, or save schema:
-   1. Sticky Top Big CTA + 3-Tab Navigation (比賽 / 我 / 球隊)
-   2. Unified Settlement Modal (Post-Match / Training / Event: MVP Moment + 3 Gains + Next Goal + Continue)
-   3. Pre-Match Coach Directive & Focus 3-Choice (Real Match & Settlement Effects)
-   4. Mobile Card Roster (Default Starters 5, Expandable Bench 7)
-   5. Universal League Benchmarks & Comparisons (OVR avg, rank, stat vs pos avg, PPG/RPG/APG)
-   6. Title Start Screen + 3-Step New Player Onboarding (Position -> Talent -> Tutorial Match)
+   《Basketball Time》UI Refactor Controller v2 (ui-refactor.js)
+   - One-page mobile Hub with drill-down modals (Match / Me / Team)
+   - Compact Live Match HUD + floating Live Detailed Stats modal
+   - Pre-Match Coach Directive with real Trust & Chemistry defiance penalties
+   - Clickable Player Detail Cards everywhere
+   - Clean talent roll without avg diffs & robust tutorial match
    ========================================================================= */
 
 window.BTUI = (() => {
+  const getSeason = () => (typeof Season !== "undefined" ? Season : null);
+  const getDB = () => (typeof DB !== "undefined" ? DB : null);
+  const getMatch = () => (typeof Match !== "undefined" ? Match : null);
+  const getPosHeightBase = () =>
+    (typeof POS_HEIGHT_BASE !== "undefined" ? POS_HEIGHT_BASE : { PG: 178, SG: 185, SF: 192, PF: 198, C: 205 });
+
   let rosterExpanded = false;
   let currentCreateStep = 1;
-  let pendingFocusAction = null; // "PLAY" | "SIM"
-  let activeCoachFocus = null;   // { id, title, icon, targetLabel, targetVal, ... }
+  let pendingFocusAction = null;
+  let activeCoachFocus = null;
   let isTutorialMatch = false;
   let preMatchSnapshot = null;
   let settlementOnContinue = null;
   let settlementUnlockTimer = null;
+  let activeDrawerSectionId = null;
+  let phaseBeforeLiveDetail = null;
 
   const COACH_FOCUS_OPTIONS = [
     {
@@ -25,14 +31,15 @@ window.BTUI = (() => {
       icon: "🔥",
       title: "火力全開 · 進攻終結",
       tag: "得分專注",
-      quote: "教練指令：「拉開空間，這場你就是第一終結點！」",
-      fx: "比賽實效：進攻出手權重提升、投籃命中 +3.5%、張力累積 +15%（體力消耗微增 +6%）。",
-      buildGoal: (rotKey) => {
-        const target = (rotKey === "ACE" || rotKey === "STARTER") ? 16 : 10;
+      quote: "「拉開空間，這場你負責終結！」",
+      fx: "出手權重↑ · 命中 +3.5% · 張力 +15%（體力消耗 +6%）",
+      buildGoal: (rotKey, uOvr = 72) => {
+        const roleBase = rotKey === "ACE" ? 18 : (rotKey === "STAR" ? 16 : (rotKey === "STARTER" ? 14 : (rotKey === "ROTATION" ? 10 : 8)));
+        const target = Math.max(6, Math.round(roleBase + Math.max(-2, Math.min(4, (uOvr - 72) * 0.2))));
         return {
           target,
           label: `本場得分 ≥ ${target} 分`,
-          rewardText: "達標結算：教練信任 +4、個人名氣 +3",
+          rewardText: "達標：教練信任 +4、個人名氣 +3",
           check: (u) => (u.pts || 0) >= target,
           progressText: (u) => `得分 ${u.pts || 0} / ${target}`,
           applyReward: (p) => {
@@ -48,14 +55,15 @@ window.BTUI = (() => {
       icon: "🧠",
       title: "串聯全隊 · 戰術組織",
       tag: "組織專注",
-      quote: "教練指令：「多看弱側隊友空檔，用傳球撕開防線！」",
-      fx: "比賽實效：失誤率 -2.5%、隊友接球命中 +3%、助攻權重大幅提升。",
-      buildGoal: (rotKey) => {
-        const target = (rotKey === "ACE" || rotKey === "STARTER") ? 5 : 3;
+      quote: "「多看空檔，用傳球撕開防線！」",
+      fx: "失誤率 -2.5% · 隊友命中 +3% · 助攻權重↑",
+      buildGoal: (rotKey, uOvr = 72) => {
+        const roleBase = (rotKey === "ACE" || rotKey === "STAR") ? 6 : (rotKey === "STARTER" ? 5 : (rotKey === "ROTATION" ? 3 : 2));
+        const target = Math.max(2, roleBase);
         return {
           target,
           label: `本場助攻 ≥ ${target} 次且失誤 ≤ 3`,
-          rewardText: "達標結算：教練信任 +5、球隊化學反應 +2",
+          rewardText: "達標：教練信任 +5、球隊化學反應 +2",
           check: (u) => (u.ast || 0) >= target && (u.tov || 0) <= 3,
           progressText: (u) => `助攻 ${u.ast || 0}/${target} · 失誤 ${u.tov || 0}`,
           applyReward: (p, season) => {
@@ -72,14 +80,15 @@ window.BTUI = (() => {
       icon: "🛡️",
       title: "鐵血鎖死 · 防守籃板",
       tag: "防守專注",
-      quote: "教練指令：「貼緊對面王牌，每一個籃板和抄截都要拚下來！」",
-      fx: "比賽實效：對手對位命中 -3.5%、抄截／封阻／籃板權重提升。",
-      buildGoal: (rotKey) => {
-        const target = (rotKey === "ACE" || rotKey === "STARTER") ? 8 : 5;
+      quote: "「貼死對方王牌，拚下每個籃板！」",
+      fx: "對手命中 -3.5% · 抄截／封阻／籃板權重↑",
+      buildGoal: (rotKey, uOvr = 72) => {
+        const roleBase = (rotKey === "ACE" || rotKey === "STAR") ? 9 : (rotKey === "STARTER" ? 7 : (rotKey === "ROTATION" ? 5 : 4));
+        const target = Math.max(4, roleBase);
         return {
           target,
           label: `防守貢獻（板 + 抄×2 + 帽×2）≥ ${target}`,
-          rewardText: "達標結算：教練信任 +4、賽後體能額外保留 +4%",
+          rewardText: "達標：教練信任 +4、賽後體能額外保留 +4%",
           check: (u) => ((u.oreb || 0) + (u.dreb || 0) + (u.stl || 0) * 2 + (u.blk || 0) * 2) >= target,
           progressText: (u) => {
             const val = (u.oreb || 0) + (u.dreb || 0) + (u.stl || 0) * 2 + (u.blk || 0) * 2;
@@ -103,79 +112,315 @@ window.BTUI = (() => {
     { code: "C",  name: "中鋒 (C)",     desc: "內線支柱 · 身高壓制、護框封阻與禁區統治力" }
   ];
 
-  /* -------------------- 5. LEAGUE BENCHMARK COMPUTATION -------------------- */
-  function computeLeagueBenchmarks() {
-    if (!window.Season || !window.DB || !DB.leagues) return null;
-    const league = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
-    const pObj = Season.player;
-    const userOvr = pObj ? calcOVR(pObj.stats, pObj.pos, Season.equippedTraits) : 72;
-    const userTeamOvr = calcTeamStrength(Season.userRoster || []);
+  function escAttr(str) {
+    return String(str || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
 
-    // Team strength rankings
-    const teamOvrs = (Season.standings || []).map(t => ({
-      id: t.id,
-      name: t.name,
-      isUserTeam: Boolean(t.isUserTeam),
+  function playerNameLinkHtml(name, teamHint = "", extraLabel = "") {
+    const display = extraLabel || name;
+    return `<button type="button" class="player-name-link" data-player-name="${escAttr(name)}" data-player-team="${escAttr(teamHint)}">${display}</button>`;
+  }
+
+  /* -------------------- DRILL-DOWN SECTION MODAL (ONE-PAGE HUB) -------------------- */
+  function openSectionModal(title, badge, sectionId) {
+    const modal = document.getElementById("hubDetailModal");
+    const host = document.getElementById("hubDetailModalBody");
+    const shelf = document.getElementById("hubDrawerShelf");
+    const sec = document.getElementById(sectionId);
+    if (!modal || !host || !shelf || !sec) return;
+
+    // Return any previously mounted section back to shelf
+    if (activeDrawerSectionId && activeDrawerSectionId !== sectionId) {
+      const prev = document.getElementById(activeDrawerSectionId);
+      if (prev) shelf.appendChild(prev);
+    }
+    activeDrawerSectionId = sectionId;
+    document.getElementById("hubDetailModalTitle").textContent = title;
+    document.getElementById("hubDetailModalBadge").textContent = badge || "詳細資訊";
+    host.appendChild(sec);
+    modal.classList.remove("hidden");
+  }
+
+  function closeSectionModal() {
+    const modal = document.getElementById("hubDetailModal");
+    const shelf = document.getElementById("hubDrawerShelf");
+    if (activeDrawerSectionId && shelf) {
+      const prev = document.getElementById(activeDrawerSectionId);
+      if (prev) shelf.appendChild(prev);
+      activeDrawerSectionId = null;
+    }
+    if (modal) modal.classList.add("hidden");
+  }
+
+  function toggleBoxScoreFullMode(forceVal = null) {
+    const wrap = document.getElementById("bsRosterWrap");
+    const btn = document.getElementById("btnBsToggleFull");
+    if (!wrap) return;
+    const isFull = forceVal !== null ? Boolean(forceVal) : !wrap.classList.contains("bs-full-mode");
+    wrap.classList.toggle("bs-full-mode", isFull);
+    if (btn) {
+      btn.textContent = isFull ? "📱 切換精簡 6 欄" : "📊 展開詳盡 16 欄";
+      btn.className = `manga-btn ${isFull ? "gold" : ""}`;
+    }
+  }
+
+  function openPlayerMatchStatsPopup(pl, teamName, scoreSub = "") {
+    const modal = document.getElementById("liveDetailStatsModal");
+    if (!modal || !pl) return;
+    phaseBeforeLiveDetail = null;
+    document.getElementById("ldsSub").textContent = scoreSub || `${teamName || "單場詳盡數據"}`;
+    document.getElementById("ldsPlayerName").innerHTML = `${playerNameLinkHtml(pl.name, teamName, `#${pl.num !== undefined ? pl.num : "--"} ${pl.name} (${pl.pos || "SG"})`)} <span class="tag gold">${pl.role === "STARTER" ? "先發" : "替補"}</span>`;
+
+    const fgPct = pl.fga ? `${Math.round((pl.fgm / pl.fga) * 100)}%` : "—";
+    const tpPct = pl.tpa ? `${Math.round((pl.tpm / pl.tpa) * 100)}%` : "—";
+    const ftPct = pl.fta ? `${Math.round((pl.ftm / pl.fta) * 100)}%` : "—";
+    const reb = (pl.oreb || 0) + (pl.dreb || 0);
+    const minStr = typeof formatClock === "function" ? formatClock(pl.secPlayed || 0) : `${Math.round((pl.secPlayed || 0) / 60)}:00`;
+    document.getElementById("ldsStatGrid").innerHTML = `
+      <div class="live-stat-box"><div class="lbl">得分 PTS</div><div class="val">${pl.pts || 0}</div></div>
+      <div class="live-stat-box"><div class="lbl">籃板 (進/防)</div><div class="val" style="font-size:15px;">${reb} (${pl.oreb || 0}/${pl.dreb || 0})</div></div>
+      <div class="live-stat-box"><div class="lbl">助攻 AST</div><div class="val">${pl.ast || 0}</div></div>
+      <div class="live-stat-box"><div class="lbl">抄截 / 封阻</div><div class="val">${pl.stl || 0} / ${pl.blk || 0}</div></div>
+      <div class="live-stat-box"><div class="lbl">投籃 FG</div><div class="val" style="font-size:14.5px;">${pl.fgm || 0}/${pl.fga || 0} (${fgPct})</div></div>
+      <div class="live-stat-box"><div class="lbl">三分 3PT</div><div class="val" style="font-size:14.5px;">${pl.tpm || 0}/${pl.tpa || 0} (${tpPct})</div></div>
+      <div class="live-stat-box"><div class="lbl">罰球 FT</div><div class="val" style="font-size:14.5px;">${pl.ftm || 0}/${pl.fta || 0} (${ftPct})</div></div>
+      <div class="live-stat-box"><div class="lbl">失誤 / 犯規</div><div class="val">${pl.tov || 0} / ${pl.pf || 0}</div></div>
+      <div class="live-stat-box"><div class="lbl">上場 / +/-</div><div class="val" style="font-size:14.5px;">${minStr} · ${(pl.plusMinus || 0) > 0 ? "+" + pl.plusMinus : (pl.plusMinus || 0)}</div></div>
+    `;
+    const focusBox = document.getElementById("ldsFocusBox");
+    if (focusBox) focusBox.style.display = "none";
+    const fullBtn = document.getElementById("btnLiveOpenFullBox");
+    if (fullBtn) fullBtn.style.display = "none";
+    const closeBtn = document.getElementById("btnCloseLiveDetailStats");
+    if (closeBtn) closeBtn.textContent = "關閉單場詳盡數據";
+    modal.classList.remove("hidden");
+  }
+
+  function openPastMatchBoxScore(roundIdx) {
+    const season = getSeason();
+    const match = getMatch();
+    if (!season || !Array.isArray(season.schedule) || !match) return;
+    const g = season.schedule[roundIdx];
+    if (!g || !g.played) return;
+
+    closeSectionModal();
+    const userTeam = (season.standings || []).find(t => t.isUserTeam) || { name: "我方" };
+    const bs = g.boxScore;
+    if (!bs) {
+      if (typeof showToast === "function") {
+        showToast(`R${g.round} ${userTeam.name} ${g.userScore}-${g.oppScore} ${g.oppName}${g.mvp ? ` ｜ 🏆MVP：${g.mvp.name} (${g.mvp.line})` : ""}`);
+      }
+      return;
+    }
+
+    match._historyView = bs;
+    if (typeof activePauseTab !== "undefined") activePauseTab = "HOME";
+    const won = bs.homeScore > bs.awayScore;
+    const stageLbl = g.stageLabel || `第 ${g.round} 輪`;
+    document.getElementById("bsHeaderSub").textContent = `📜 歷史賽果回顧 · ${stageLbl}（${won ? "勝" : "負"}）`;
+    document.getElementById("bsHeaderScore").textContent = `${bs.homeName} ${bs.homeScore} - ${bs.awayScore} ${bs.awayName}`;
+
+    const stamp = document.getElementById("bsRankStamp");
+    if (stamp) stamp.style.display = "none";
+
+    const mvpEl = document.getElementById("bsMvpBanner");
+    if (mvpEl) {
+      if (bs.mvp) {
+        mvpEl.style.display = "flex";
+        mvpEl.innerHTML = `
+          <div>
+            <div style="font-size:11px; font-weight:900; color:#92400E;">🏆 本場最有價值球員 (MATCH MVP)</div>
+            <div style="font-size:15.5px; font-weight:900;">${playerNameLinkHtml(bs.mvp.name, bs.mvp.team)}（${bs.mvp.team}）${bs.mvp.isUser ? " ⭐" : ""}</div>
+          </div>
+          <div style="font-size:12px; font-weight:900; text-align:right;">${bs.mvp.line || ""}</div>`;
+      } else {
+        mvpEl.style.display = "none";
+      }
+    }
+
+    const qhArr = bs.qScoresHome || [bs.homeScore];
+    const qaArr = bs.qScoresAway || [bs.awayScore];
+    let qh = "<th>球隊</th>";
+    for (let i = 0; i < qhArr.length; i++) qh += `<th>${i < 4 ? "Q" + (i + 1) : "OT" + (i - 3)}</th>`;
+    qh += "<th>總分</th>";
+    document.getElementById("bsQuarterHead").innerHTML = qh;
+    document.getElementById("bsQuarterBody").innerHTML =
+      `<tr><td class="left">${bs.homeName}</td>${qhArr.map(v => `<td>${v}</td>`).join("")}<td><strong>${bs.homeScore}</strong></td></tr>` +
+      `<tr><td class="left">${bs.awayName}</td>${qaArr.map(v => `<td>${v}</td>`).join("")}<td><strong>${bs.awayScore}</strong></td></tr>`;
+
+    document.getElementById("btnBsHomeTab").textContent = `${bs.homeName} (${(bs.homeTeam || []).length}人)`;
+    document.getElementById("btnBsAwayTab").textContent = `${bs.awayName} (${(bs.awayTeam || []).length}人)`;
+    toggleBoxScoreFullMode(false);
+    if (typeof renderPauseTab === "function") renderPauseTab();
+
+    const footer = document.getElementById("bsFooterBtns");
+    if (footer) {
+      footer.innerHTML = `<button type="button" class="manga-btn primary" id="btnClosePastBoxScore" style="width:100%;">關閉賽果回顧</button>`;
+      document.getElementById("btnClosePastBoxScore").addEventListener("click", () => {
+        match._historyView = null;
+        document.getElementById("boxScoreModal").classList.add("hidden");
+      });
+    }
+    document.getElementById("boxScoreModal").classList.remove("hidden");
+  }
+
+  /* -------------------- COMPACT LIVE MATCH DETAILED STATS MODAL -------------------- */
+  function openLiveDetailStats() {
+    const match = getMatch();
+    const modal = document.getElementById("liveDetailStatsModal");
+    if (!match || !modal || match.phase === "IDLE") return;
+
+    if (match.phase !== "PAUSED_MENU" && match.phase !== "ENDED") {
+      phaseBeforeLiveDetail = match.phase;
+      match.phase = "PAUSED_MENU";
+    } else {
+      phaseBeforeLiveDetail = null;
+    }
+
+    const u = match.userPlayer || { num: 10, name: "主角", pts: 0, oreb: 0, dreb: 0, ast: 0, stl: 0, blk: 0, tov: 0, pf: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0, plusMinus: 0, secPlayed: 0, stamina: 100 };
+    const qLbl = match.quarter <= 4 ? `Q${match.quarter}` : `OT${match.quarter - 4}`;
+    document.getElementById("ldsSub").textContent = `${qLbl} · ${match.homeName} ${match.homeScore} - ${match.awayScore} ${match.awayName}`;
+    document.getElementById("ldsPlayerName").innerHTML = `${playerNameLinkHtml(u.name, match.homeName, `#${u.num} ${u.name}`)} <span class="tag gold">${u.onFloor ? "場上作戰" : "場下休息"}</span>`;
+
+    const fgPct = u.fga ? `${Math.round((u.fgm / u.fga) * 100)}%` : "—";
+    const tpPct = u.tpa ? `${Math.round((u.tpm / u.tpa) * 100)}%` : "—";
+    document.getElementById("ldsStatGrid").innerHTML = `
+      <div class="live-stat-box"><div class="lbl">得分 PTS</div><div class="val">${u.pts}</div></div>
+      <div class="live-stat-box"><div class="lbl">籃板 REB</div><div class="val">${(u.oreb || 0) + (u.dreb || 0)}</div></div>
+      <div class="live-stat-box"><div class="lbl">助攻 AST</div><div class="val">${u.ast}</div></div>
+      <div class="live-stat-box"><div class="lbl">抄截 / 封阻</div><div class="val">${u.stl} / ${u.blk}</div></div>
+      <div class="live-stat-box"><div class="lbl">投籃 FG</div><div class="val" style="font-size:15px;">${u.fgm}/${u.fga} (${fgPct})</div></div>
+      <div class="live-stat-box"><div class="lbl">三分 3PT</div><div class="val" style="font-size:15px;">${u.tpm}/${u.tpa} (${tpPct})</div></div>
+      <div class="live-stat-box"><div class="lbl">失誤 / 犯規</div><div class="val">${u.tov} / ${u.pf}</div></div>
+      <div class="live-stat-box"><div class="lbl">正負值 +/-</div><div class="val">${u.plusMinus > 0 ? "+" + u.plusMinus : u.plusMinus}</div></div>
+      <div class="live-stat-box"><div class="lbl">體力剩餘</div><div class="val">${Math.round(u.stamina || 0)}%</div></div>
+    `;
+
+    const focusBox = document.getElementById("ldsFocusBox");
+    const f = getActiveCoachFocus();
+    if (focusBox) {
+      if (f) {
+        const opt = COACH_FOCUS_OPTIONS.find(x => x.id === f.id);
+        const season = getSeason();
+        const goal = opt ? opt.buildGoal((season && season.rotationKey) || "ROOKIE") : null;
+        const met = goal ? goal.check(u) : false;
+        const prog = goal ? goal.progressText(u) : "";
+        focusBox.style.display = "block";
+        focusBox.innerHTML = `
+          <div style="font-weight:900; font-size:12px; color:${f.defied ? "#C81E1E" : "#111"};">
+            ${f.icon} 本場專注：${f.title} ${f.defied ? `<span class="tag loss">⚠️ 違背教練指示</span>` : `<span class="tag win">🎯 執行教練指令</span>`}
+          </div>
+          <div style="font-size:12px; margin-top:4px; font-weight:800; color:${met ? "#15803D" : "var(--ink-soft)"};">
+            進度：${prog}（目標：${f.label}）${met ? " ✅ 已達標！" : ""}
+          </div>`;
+      } else {
+        focusBox.style.display = "none";
+      }
+    }
+
+    const fullBtn = document.getElementById("btnLiveOpenFullBox");
+    if (fullBtn) fullBtn.style.display = "inline-flex";
+    const closeBtn = document.getElementById("btnCloseLiveDetailStats");
+    if (closeBtn) closeBtn.textContent = "▶ 繼續比賽";
+    modal.classList.remove("hidden");
+  }
+
+  function sanitizeResumePhase(candidatePhase) {
+    const match = getMatch();
+    if (!match) return "PLAYING";
+    let next = candidatePhase || "PLAYING";
+    if (next === "PAUSED_MENU" || next === "IDLE" || next === "ENDED") next = "PLAYING";
+    if (next === "BULLET" && !match.activeScenario) next = "PLAYING";
+    if (next === "QTE" && !match.qte) next = "PLAYING";
+    if (next === "CUTIN" && !match.activeCutIn) next = "PLAYING";
+    if (next === "RESULT_SPLASH" && !match.resultSplash) next = "PLAYING";
+    if (typeof setDockMode === "function") {
+      if (next === "BULLET") setDockMode("BULLET");
+      else if (next === "QTE") setDockMode("QTE");
+      else setDockMode("NONE");
+    }
+    return next;
+  }
+
+  function closeLiveDetailStats() {
+    const match = getMatch();
+    const modal = document.getElementById("liveDetailStatsModal");
+    if (modal) modal.classList.add("hidden");
+    const bsModal = document.getElementById("boxScoreModal");
+    const bsStillOpen = bsModal && !bsModal.classList.contains("hidden");
+    if (match && !bsStillOpen && match.phase === "PAUSED_MENU") {
+      match.phase = sanitizeResumePhase(phaseBeforeLiveDetail);
+    }
+    phaseBeforeLiveDetail = null;
+  }
+
+  /* -------------------- LEAGUE BENCHMARK COMPUTATION -------------------- */
+  function computeLeagueBenchmarks() {
+    const season = getSeason();
+    const db = getDB();
+    if (!season || !db || !db.leagues) return null;
+    const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
+    const pObj = season.player;
+    const userOvr = pObj ? calcOVR(pObj.stats, pObj.pos, season.equippedTraits) : 72;
+    const userTeamOvr = calcTeamStrength(season.userRoster || []);
+
+    const teamOvrs = (season.standings || []).map(t => ({
+      id: t.id, name: t.name, isUserTeam: Boolean(t.isUserTeam),
       ovr: t.isUserTeam ? userTeamOvr : (t.ovr || 78)
     })).sort((a, b) => b.ovr - a.ovr);
     const teamCount = Math.max(1, teamOvrs.length);
     const teamAvgOvr = Math.round(teamOvrs.reduce((s, t) => s + t.ovr, 0) / teamCount);
     const teamOvrRank = Math.max(1, teamOvrs.findIndex(t => t.isUserTeam) + 1);
 
-    // Standing rank
-    const sortedSt = [...(Season.standings || [])].sort((a, b) => (b.w - a.w) || ((b.pf - b.pa) - (a.pf - a.pa)));
+    const sortedSt = [...(season.standings || [])].sort((a, b) => (b.w - a.w) || ((b.pf - b.pa) - (a.pf - a.pa)));
     const standingRank = Math.max(1, sortedSt.findIndex(t => t.isUserTeam) + 1);
 
-    // All players OVR across league
     const allPlayers = [];
-    for (const pl of (Season.userRoster || [])) {
+    for (const pl of (season.userRoster || [])) {
       allPlayers.push({
-        ovr: pl.isUser ? userOvr : (pl.ovr || 72),
-        pos: pl.pos || "SG",
-        isUser: Boolean(pl.isUser),
+        name: pl.name, ovr: pl.isUser ? userOvr : (pl.ovr || 72),
+        pos: pl.pos || "SG", isUser: Boolean(pl.isUser),
         stats: pl.isUser && pObj ? pObj.stats : pl.stats
       });
     }
     for (const tm of (league.teams || [])) {
-      const isUT = Season.standings && Season.standings.some(s => s.isUserTeam && s.id === tm.id);
+      const isUT = season.standings && season.standings.some(s => s.isUserTeam && s.id === tm.id);
       if (isUT) continue;
-      const r = Array.isArray(tm.roster) && tm.roster.length ? tm.roster : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
+      const r = Array.isArray(tm.roster) && tm.roster.length
+        ? tm.roster
+        : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
       for (const pl of r) {
-        allPlayers.push({
-          ovr: pl.ovr || tm.ovr || 74,
-          pos: pl.pos || "SG",
-          isUser: false,
-          stats: pl.stats || null
-        });
+        allPlayers.push({ name: pl.name, ovr: pl.ovr || tm.ovr || 74, pos: pl.pos || "SG", isUser: false, stats: pl.stats || null });
       }
     }
 
     const totalPlayers = Math.max(1, allPlayers.length);
     const playerAvgOvr = Math.round(allPlayers.reduce((s, x) => s + x.ovr, 0) / totalPlayers);
     const sortedAll = [...allPlayers].sort((a, b) => b.ovr - a.ovr);
-    const playerOvrRank = Math.max(1, sortedAll.findIndex(x => x.isUser) + 1);
+    const getOverallRank = (val) => 1 + sortedAll.filter(x => x.ovr > val).length;
+    const getPosRank = (val, posCode) => {
+      const pool = allPlayers.filter(x => x.pos === posCode);
+      return { rank: 1 + pool.filter(x => x.ovr > val).length, total: Math.max(1, pool.length) };
+    };
+    const playerOvrRank = getOverallRank(userOvr);
 
     const userPos = (pObj && pObj.pos) || "SG";
     const samePos = allPlayers.filter(x => x.pos === userPos).sort((a, b) => b.ovr - a.ovr);
-    const posRank = Math.max(1, samePos.findIndex(x => x.isUser) + 1);
-    const posTotal = Math.max(1, samePos.length);
-    const posAvgOvr = Math.round(samePos.reduce((s, x) => s + x.ovr, 0) / posTotal);
+    const userPosRankObj = getPosRank(userOvr, userPos);
+    const posRank = userPosRankObj.rank;
+    const posTotal = userPosRankObj.total;
 
-    // Per-stat league benchmark (same position + league OVR scaling)
     const statAvgs = {};
-    const posTpl = (DB.origins && DB.origins.posTemplates && DB.origins.posTemplates[userPos]) || {};
+    const posTpl = (db.origins && db.origins.posTemplates && db.origins.posTemplates[userPos]) || {};
     const leagueShift = Math.round((playerAvgOvr - 72) * 0.72);
-    for (const d of (DB.origins ? DB.origins.statDefs : [])) {
+    for (const d of (db.origins ? db.origins.statDefs : [])) {
       const k = d.k;
       const samples = samePos.filter(x => x.stats && typeof x.stats[k] === "number").map(x => x.stats[k]);
-      if (samples.length >= 4) {
-        statAvgs[k] = Math.round(samples.reduce((a, b) => a + b, 0) / samples.length);
-      } else {
-        statAvgs[k] = Math.max(50, Math.min(92, (posTpl[k] || 66) + leagueShift));
-      }
+      statAvgs[k] = samples.length >= 4
+        ? Math.round(samples.reduce((a, b) => a + b, 0) / samples.length)
+        : Math.max(50, Math.min(92, (posTpl[k] || 66) + leagueShift));
     }
 
-    // Per-game starter baseline scaled by league quarter minutes
     const qScale = (league.quarterMinutes || 8) / 8;
     const avgBase = {
       ppg: Number((12.5 * qScale).toFixed(1)),
@@ -187,30 +432,111 @@ window.BTUI = (() => {
 
     return {
       leagueName: league.name,
-      userOvr,
-      playerAvgOvr,
-      playerOvrDiff: userOvr - playerAvgOvr,
-      playerOvrRank,
-      totalPlayers,
-      userPos,
-      posRank,
-      posTotal,
-      posAvgOvr,
-      userTeamOvr,
-      teamAvgOvr,
-      teamOvrDiff: userTeamOvr - teamAvgOvr,
-      teamOvrRank,
-      teamCount,
-      standingRank,
-      statAvgs,
-      avgBase
+      userOvr, playerAvgOvr, playerOvrDiff: userOvr - playerAvgOvr, playerOvrRank, totalPlayers,
+      allPlayersSorted: sortedAll, getOverallRank, getPosRank, userPos, posRank, posTotal,
+      userTeamOvr, teamAvgOvr, teamOvrDiff: userTeamOvr - teamAvgOvr, teamOvrRank, teamCount, standingRank,
+      statAvgs, avgBase
     };
   }
 
-  function formatDiffSpan(diff, unit = "") {
-    if (diff > 0) return `<span class="cmp-badge pos">+${diff}${unit} 高於均線</span>`;
-    if (diff < 0) return `<span class="cmp-badge neg">${diff}${unit} 低於均線</span>`;
-    return `<span class="cmp-badge">持平聯盟均值</span>`;
+  /* -------------------- CLICKABLE PLAYER DETAIL CARD MODAL -------------------- */
+  function findPlayerRecord(name, teamHint = "") {
+    const season = getSeason();
+    const db = getDB();
+    const match = getMatch();
+    if (!name) return null;
+    const target = name.trim();
+
+    if (match && match.phase !== "IDLE") {
+      for (const pl of [...(match.homeTeam || []), ...(match.awayTeam || [])]) {
+        if (pl && pl.name === target) return { player: pl, teamName: pl.team === "HOME" ? match.homeName : match.awayName };
+      }
+    }
+    if (season && Array.isArray(season.userRoster)) {
+      const ut = (season.standings || []).find(t => t.isUserTeam);
+      for (const pl of season.userRoster) {
+        if (pl && pl.name === target) {
+          const merged = pl.isUser && season.player
+            ? { ...pl, stats: season.player.stats, heightCm: season.player.heightCm, skills: season.equippedTraits, ovr: calcOVR(season.player.stats, season.player.pos, season.equippedTraits), age: season.player.age }
+            : pl;
+          return { player: merged, teamName: ut ? ut.name : "本隊" };
+        }
+      }
+    }
+    if (season && db && db.leagues) {
+      const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
+      const orderedTeams = [...(league.teams || [])].sort((a, b) => (a.name === teamHint ? -1 : (b.name === teamHint ? 1 : 0)));
+      for (const tm of orderedTeams) {
+        const list = (Array.isArray(tm.roster) && tm.roster.length)
+          ? tm.roster
+          : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
+        const found = list.find(pl => pl && pl.name === target);
+        if (found) {
+          const profiled = (found.stats && found.heightCm) ? found : (typeof generateNpcProfile === "function" ? generateNpcProfile({ ...found }) : found);
+          return { player: profiled, teamName: tm.name };
+        }
+        if (tm.ace === target) {
+          const aceObj = list.find(pl => pl.isRival) || list[0];
+          if (aceObj) {
+            const profiled = (aceObj.stats && aceObj.heightCm) ? aceObj : (typeof generateNpcProfile === "function" ? generateNpcProfile({ ...aceObj, name: target }) : aceObj);
+            return { player: { ...profiled, name: target }, teamName: tm.name };
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  function openPlayerCardByName(name, teamHint = "") {
+    const rec = findPlayerRecord(name, teamHint);
+    if (!rec) {
+      if (typeof showToast === "function") showToast(`暫無 ${name} 的詳細球探檔案`);
+      return;
+    }
+    openPlayerCard(rec.player, rec.teamName);
+  }
+
+  function openPlayerCard(pl, teamName = "") {
+    const modal = document.getElementById("playerDetailModal");
+    const db = getDB();
+    if (!modal || !pl || !db) return;
+
+    const bm = computeLeagueBenchmarks();
+    const ovr = pl.ovr || 74;
+    const avgOvr = bm ? bm.playerAvgOvr : 74;
+    const diff = ovr - avgOvr;
+    let rankStr = "";
+    if (bm && typeof bm.getOverallRank === "function") {
+      const rAll = bm.getOverallRank(ovr);
+      const rPos = bm.getPosRank(ovr, pl.pos || "SG");
+      rankStr = `聯盟 #${rAll}/${bm.totalPlayers} · ${pl.pos || "SG"} #${rPos.rank}/${rPos.total}`;
+    }
+
+    const roleTxt = pl.isUser ? "★ 主角球員" : (pl.role === "STARTER" ? "先發主力" : "替補輪換");
+    document.getElementById("pdHeroName").textContent = `#${pl.num !== undefined ? pl.num : "--"} ${pl.name}`;
+    document.getElementById("pdHeroSub").textContent = `${teamName || "所屬球隊"} · ${pl.pos || "SG"} · ${roleTxt} · ${pl.heightCm || 185}cm${pl.age ? ` · ${pl.age}歲` : ""}`;
+    document.getElementById("pdOvrVal").textContent = ovr;
+    document.getElementById("pdOvrCmp").textContent = `均${avgOvr} (${diff >= 0 ? "+" : ""}${diff})${rankStr ? ` · ${rankStr}` : ""}`;
+
+    const stats = pl.stats || {};
+    const statDefs = (db.origins && db.origins.statDefs) || [];
+    document.getElementById("pdStatsGrid").innerHTML = statDefs.map(d => {
+      const v = stats[d.k] || 70;
+      const pct = Math.max(8, Math.min(100, v));
+      const barCls = v >= 85 ? "high" : (v >= 75 ? "good" : "");
+      return `
+        <div class="pdetail-stat-row">
+          <div class="pdetail-stat-top"><span>${d.l}</span><span style="color:${v >= 85 ? "#C81E1E" : "#111"};">${v}</span></div>
+          <div class="pdetail-bar-track"><div class="pdetail-bar-fill ${barCls}" style="width:${pct}%;"></div></div>
+        </div>`;
+    }).join("");
+
+    const skills = Array.isArray(pl.skills) ? pl.skills : [];
+    document.getElementById("pdSkillsBox").innerHTML = skills.length
+      ? skills.map(id => renderSkillChip(id, "font-size:11px; padding:3px 7px;")).join("")
+      : `<span class="s-badge">基礎球風（無特殊徽章）</span>`;
+
+    modal.classList.remove("hidden");
   }
 
   /* -------------------- 1. TOP STICKY CTA & 3-TAB CONTROLLER -------------------- */
@@ -226,21 +552,23 @@ window.BTUI = (() => {
   }
 
   function updateTopStickyCTA() {
+    const season = getSeason();
+    const db = getDB();
     const btn = document.getElementById("btnTopBigCta");
     const titleEl = document.getElementById("topCtaTitle");
     const subEl = document.getElementById("topCtaSub");
-    if (!btn || !titleEl || !subEl || !window.Season) return;
+    if (!btn || !titleEl || !subEl || !season || !db) return;
 
-    const league = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
-    const userTeam = Season.standings.find(t => t.isUserTeam) || { name: "我方", w: 0, l: 0 };
-    const seasonDone = Season.currentRoundIdx >= Season.schedule.length;
-    const apLeft = (Season.player && typeof Season.player.ap === "number") ? Season.player.ap : 0;
+    const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
+    const userTeam = season.standings.find(t => t.isUserTeam) || { name: "我方", w: 0, l: 0 };
+    const seasonDone = season.currentRoundIdx >= season.schedule.length;
+    const apLeft = (season.player && typeof season.player.ap === "number") ? season.player.ap : 0;
 
     btn.classList.remove("gold-mode");
-    if (Season.retired) {
+    if (season.retired) {
       btn.classList.add("gold-mode");
       titleEl.textContent = "✨ 開啟全新球員生涯";
-      subEl.textContent = `傳奇已謝幕（共 ${Season.careerYear} 季）· 點擊重新創角`;
+      subEl.textContent = `傳奇已謝幕（共 ${season.careerYear} 季）· 點擊重新創角`;
       btn.dataset.ctaMode = "NEW_CAREER";
     } else if (seasonDone) {
       btn.classList.add("gold-mode");
@@ -248,7 +576,7 @@ window.BTUI = (() => {
       subEl.textContent = `${league.name} 戰績 ${userTeam.w}勝${userTeam.l}負 · 進入休賽季抉擇`;
       btn.dataset.ctaMode = "NEXT_SEASON";
     } else {
-      const nextG = Season.schedule[Season.currentRoundIdx];
+      const nextG = season.schedule[season.currentRoundIdx];
       const stageTxt = nextG.stageLabel || `第 ${nextG.round} 輪`;
       titleEl.textContent = "🏀 開始下一場比賽";
       subEl.textContent = `${stageTxt} · ${userTeam.name} VS ${nextG.oppName}${apLeft > 0 ? `（尚餘 ${apLeft} AP 可訓練）` : ""}`;
@@ -262,14 +590,17 @@ window.BTUI = (() => {
     }
   }
 
-  /* -------------------- 4. 12-MAN ROSTER CARDS (DEFAULT 5 STARTERS) -------------------- */
+  /* -------------------- 4. COMPACT 12-MAN ROSTER CARDS (DEFAULT 5 STARTERS) -------------------- */
   function renderRosterCards(bm) {
+    const season = getSeason();
     const wrap = document.getElementById("hubTeamRosterCards");
     const toggleBtn = document.getElementById("btnToggleBenchRoster");
-    if (!wrap || !window.Season) return;
+    if (!wrap || !season) return;
 
     const rotWin = getEffectiveRotationWindow();
-    const rosterSorted = [...Season.userRoster].sort((a, b) =>
+    const ut = (season.standings || []).find(t => t.isUserTeam);
+    const teamName = ut ? ut.name : "本隊";
+    const rosterSorted = [...(season.userRoster || [])].sort((a, b) =>
       (a.role === "STARTER" ? 0 : 1) - (b.role === "STARTER" ? 0 : 1) || b.ovr - a.ovr
     );
 
@@ -279,41 +610,28 @@ window.BTUI = (() => {
     const avgOvr = bm ? bm.playerAvgOvr : 74;
 
     wrap.innerHTML = listToShow.map((pl, idx) => {
-      const s = pl.stats || {};
       const isStarter = idx < 5;
-      const roleTxt = pl.isUser
-        ? `${rotWin.label}·${pl.role === "STARTER" ? "先發" : "替補"}`
-        : (isStarter ? "先發主力" : "替補輪換");
+      const roleTxt = pl.isUser ? `${rotWin.label}` : (isStarter ? "先發" : "替補");
       const diff = (pl.ovr || 72) - avgOvr;
       const diffStr = diff > 0 ? `均+${diff}` : (diff < 0 ? `均${diff}` : "持平");
-      const skList = (pl.skills || []).map(id => renderSkillChip(id, "font-size:10.5px; padding:2px 6px;")).join("")
-        || `<span class="s-badge">基礎球風</span>`;
 
       return `
-        <article class="roster-player-card ${pl.isUser ? "is-user" : (!isStarter ? "is-bench" : "")}">
-          <div class="rpc-head">
-            <div style="min-width:0;">
-              <div class="rpc-name">#${pl.num} ${pl.name}${pl.isUser ? " ★" : ""}</div>
-              <div class="rpc-meta">
-                <span class="tag">${pl.pos}</span>
-                <span class="tag ${isStarter ? "gold" : ""}">${roleTxt}</span>
-                <span>${pl.heightCm || 185}cm</span>
-              </div>
+        <article class="roster-player-card ${pl.isUser ? "is-user" : (!isStarter ? "is-bench" : "")}" data-player-card-name="${escAttr(pl.name)}" data-player-card-team="${escAttr(teamName)}">
+          <div class="rpc-left">
+            <div class="rpc-name">${playerNameLinkHtml(pl.name, teamName, `#${pl.num} ${pl.name}${pl.isUser ? " ★" : ""}`)}</div>
+            <div class="rpc-meta">
+              <span class="tag">${pl.pos}</span>
+              <span class="tag ${isStarter ? "gold" : ""}">${roleTxt}</span>
+              <span>${pl.heightCm || 185}cm${pl.age ? ` · ${pl.age}歲` : ""}</span>
             </div>
+          </div>
+          <div class="rpc-right">
             <div class="rpc-ovr-box">
               <div class="rpc-ovr-num">${pl.ovr}</div>
-              <div class="rpc-ovr-cmp">OVR · ${diffStr}</div>
+              <div class="rpc-ovr-cmp">${diffStr}</div>
             </div>
+            <span class="rpc-chev">›</span>
           </div>
-          <div class="rpc-stats-row">
-            <div class="rpc-stat-pill">三分 <strong>${s.threePt || 70}</strong></div>
-            <div class="rpc-stat-pill">中投 <strong>${s.midRange || 70}</strong></div>
-            <div class="rpc-stat-pill">內線 <strong>${s.inside || 70}</strong></div>
-            <div class="rpc-stat-pill">外防 <strong>${s.perimDef || 70}</strong></div>
-            <div class="rpc-stat-pill">護框 <strong>${s.intDef || 70}</strong></div>
-            <div class="rpc-stat-pill">籃板 <strong>${s.rebound || 70}</strong></div>
-          </div>
-          <div class="rpc-skills">${skList}</div>
         </article>`;
     }).join("");
 
@@ -329,107 +647,193 @@ window.BTUI = (() => {
     }
   }
 
-  /* -------------------- 5. HUB BENCHMARK ENHANCEMENTS -------------------- */
+  /* -------------------- 5. ONE-PAGE HUB DISPLAYS & BENCHMARKS -------------------- */
   function enhanceHubDisplays() {
-    if (!window.Season || !Season.player) return;
+    const season = getSeason();
+    const db = getDB();
+    if (!season || !season.player || !db) return;
     const bm = computeLeagueBenchmarks();
     if (!bm) return;
-    const p = Season.player;
+    const p = season.player;
     const rotWin = getEffectiveRotationWindow();
-    const st = Season.seasonTotals || { gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, mvps: 0 };
+    const st = season.seasonTotals || { gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, mvps: 0 };
     const gp = Math.max(1, st.gp);
+    const ops = ensureTeamOps();
 
-    // Update Top Big CTA
     updateTopStickyCTA();
 
-    // Update OVR & League Comparison Hero Strip in 【我】Tab
+    // --- 【比賽】Tab: Scouting bar + 4-game mini schedule preview + button labels ---
+    const scoutBox = document.getElementById("nmScoutCompareBox");
+    if (scoutBox) {
+      const seasonDone = season.currentRoundIdx >= season.schedule.length;
+      if (!season.retired && !seasonDone) {
+        const nextG = season.schedule[season.currentRoundIdx];
+        const oppStanding = (season.standings || []).find(t => t.id === nextG.oppId);
+        const oppOvr = oppStanding ? (oppStanding.ovr || 78) : 78;
+        const pct = Math.max(25, Math.min(75, Math.round(50 + (bm.userTeamOvr - oppOvr) * 2.5)));
+        scoutBox.style.display = "block";
+        scoutBox.innerHTML = `
+          <div class="match-ovr-compare">
+            <span>我方 OVR ${bm.userTeamOvr}</span>
+            <div class="match-ovr-bar"><div class="match-ovr-fill-home" style="width:${pct}%;"></div></div>
+            <span>對手 OVR ${oppOvr}</span>
+          </div>
+          <div style="font-size:11.5px; color:#FDE68A; font-weight:800; margin-top:5px;">
+            對手王牌：${playerNameLinkHtml(nextG.oppAce, nextG.oppName)}（點名字看能力）
+          </div>`;
+      } else {
+        scoutBox.style.display = "none";
+      }
+    }
+
+    // Mini schedule preview (last 1 + current + next 2 = max 4 games)
+    const miniSched = document.getElementById("miniSchedulePreview");
+    if (miniSched && Array.isArray(season.schedule)) {
+      const startIdx = Math.max(0, season.currentRoundIdx - 1);
+      const slice = season.schedule.slice(startIdx, startIdx + 4);
+      miniSched.innerHTML = slice.map((g, offset) => {
+        const i = startIdx + offset;
+        const cls = g.played ? "done clickable-match" : (i === season.currentRoundIdx ? "current" : "");
+        const attr = g.played ? `data-past-match-idx="${i}"` : "";
+        const right = g.played
+          ? `<span style="display:inline-flex; align-items:center;"><span class="tag ${g.userScore > g.oppScore ? "win" : "loss"}">${g.userScore > g.oppScore ? "勝" : "負"} ${g.userScore}:${g.oppScore}</span><span class="sched-replay-pill">📊 數據</span></span>`
+          : (i === season.currentRoundIdx ? `<span class="tag gold">下一場</span>` : `<span class="tag">未賽</span>`);
+        return `<div class="sched-item ${cls}" ${attr}>
+          <span>${g.stage === 'PLAYOFF_FINALS' ? '🏆總決賽' : (g.stage === 'PLAYOFF_SF' ? '🔥準決賽' : 'R' + g.round)} · ${g.isHome ? "主" : "客"} vs ${g.oppName} (${playerNameLinkHtml(g.oppAce, g.oppName)})</span>
+          ${right}
+        </div>`;
+      }).join("");
+    }
+
+    // Full schedule & standings (inside drawer shelf) with clickable names
+    const schedEl = document.getElementById("scheduleListBox");
+    if (schedEl && Array.isArray(season.schedule)) {
+      schedEl.innerHTML = season.schedule.map((g, i) => {
+        const cls = g.played ? "done clickable-match" : (i === season.currentRoundIdx ? "current" : "");
+        const attr = g.played ? `data-past-match-idx="${i}"` : "";
+        const right = g.played
+          ? `<span style="display:inline-flex; align-items:center;"><span class="tag ${g.userScore > g.oppScore ? "win" : "loss"}">${g.userScore > g.oppScore ? "勝" : "負"} ${g.userScore}:${g.oppScore}</span><span class="sched-replay-pill">📊 看數據</span></span>`
+          : (i === season.currentRoundIdx ? `<span class="tag gold">下一場</span>` : `<span class="tag">未賽</span>`);
+        const mvpTag = g.played && g.mvp ? ` <span style="font-size:10.5px; color:#92400E; font-weight:800;">🏆MVP: ${playerNameLinkHtml(g.mvp.name, g.mvp.team)}</span>` : "";
+        return `<div class="sched-item ${cls}" ${attr}>
+          <span>${g.stage === 'PLAYOFF_FINALS' ? '🏆總決賽' : (g.stage === 'PLAYOFF_SF' ? '🔥準決賽' : 'R' + g.round)} · ${g.isHome ? "主場" : "客場"} vs ${g.oppName} (${playerNameLinkHtml(g.oppAce, g.oppName)})${mvpTag}</span>
+          ${right}
+        </div>`;
+      }).join("");
+    }
+
+    const stBody = document.getElementById("standingsBody");
+    if (stBody && Array.isArray(season.standings)) {
+      const sorted = [...season.standings].sort((a, b) => (b.w - a.w) || ((b.pf - b.pa) - (a.pf - a.pa)));
+      const leadW = sorted[0].w, leadL = sorted[0].l;
+      stBody.innerHTML = sorted.map((t, idx) => {
+        const gpT = t.w + t.l;
+        const pct = gpT ? (t.w / gpT).toFixed(3) : ".000";
+        const gb = ((leadW - t.w) + (t.l - leadL)) / 2;
+        const avg = gpT ? `${(t.pf / gpT).toFixed(1)} / ${(t.pa / gpT).toFixed(1)}` : "0 / 0";
+        return `<tr class="${t.isUserTeam ? "hl-row" : ""}">
+          <td>${idx + 1}</td><td class="left">${t.name}${t.isUserTeam ? " ★" : ""}</td>
+          <td>${t.w}</td><td>${t.l}</td><td>${pct}</td><td>${gb === 0 ? "—" : gb.toFixed(1)}</td>
+          <td>${avg}</td><td>${playerNameLinkHtml(t.ace, t.name)}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    const standBtnSub = document.getElementById("btnOpenStandingsSub");
+    if (standBtnSub) standBtnSub.textContent = `目前第 #${bm.standingRank} / ${bm.teamCount} 名`;
+
+    // --- 【我】Tab: One-Page KPI + Compact Avg + Train CTA Button + 3 Drawer Buttons ---
     const strip = document.getElementById("meOvrCompareStrip");
     if (strip) {
       const ovrDiffTxt = bm.playerOvrDiff >= 0 ? `+${bm.playerOvrDiff}` : `${bm.playerOvrDiff}`;
       const ovrColor = bm.playerOvrDiff >= 0 ? "var(--ok-green)" : "var(--crimson)";
-      const teamDiffTxt = bm.teamOvrDiff >= 0 ? `+${bm.teamOvrDiff}` : `${bm.teamOvrDiff}`;
-      const teamColor = bm.teamOvrDiff >= 0 ? "var(--ok-green)" : "var(--crimson)";
+      const trust = p.coachTrust || 35;
       strip.innerHTML = `
         <div class="ovr-kpi-card highlight">
-          <div class="ovr-kpi-lbl">個人總評 OVR</div>
+          <div class="ovr-kpi-lbl">個人 OVR</div>
           <div class="ovr-kpi-val">${bm.userOvr}</div>
-          <div class="ovr-kpi-cmp" style="color:${ovrColor};">均 ${bm.playerAvgOvr} (${ovrDiffTxt})</div>
+          <div class="ovr-kpi-cmp" style="color:${ovrColor};">均${bm.playerAvgOvr} (${ovrDiffTxt}) · #${bm.playerOvrRank}</div>
         </div>
         <div class="ovr-kpi-card">
-          <div class="ovr-kpi-lbl">聯盟球員排名</div>
-          <div class="ovr-kpi-val">#${bm.playerOvrRank}</div>
-          <div class="ovr-kpi-cmp">全聯盟 ${bm.totalPlayers} 人 · ${bm.userPos} #${bm.posRank}/${bm.posTotal}</div>
+          <div class="ovr-kpi-lbl">地位 / 教練信任</div>
+          <div class="ovr-kpi-val" style="font-size:15.5px;">${rotWin.label}</div>
+          <div class="ovr-kpi-cmp">信任 ${trust}/100 · ${bm.userPos} #${bm.posRank}</div>
         </div>
         <div class="ovr-kpi-card">
-          <div class="ovr-kpi-lbl">球隊戰力 OVR</div>
-          <div class="ovr-kpi-val">${bm.userTeamOvr}</div>
-          <div class="ovr-kpi-cmp" style="color:${teamColor};">均 ${bm.teamAvgOvr} (${teamDiffTxt}) · #${bm.teamOvrRank}/${bm.teamCount}</div>
+          <div class="ovr-kpi-lbl">賽季狀態</div>
+          <div class="ovr-kpi-val" style="color:${p.condition < 55 ? "var(--crimson)" : "var(--ok-green)"};">${p.condition}%</div>
+          <div class="ovr-kpi-cmp">${p.injured ? "🚑 輕微拉傷" : "均線 75%"}</div>
         </div>`;
     }
 
-    // Enhance Player Season Averages with league baseline comparisons
-    const summaryEl = document.getElementById("hubPlayerSummary");
-    if (summaryEl) {
+    const avgStrip = document.getElementById("meCompactAvgStrip");
+    if (avgStrip) {
       const ppg = st.gp ? Number((st.pts / gp).toFixed(1)) : 0;
       const rpg = st.gp ? Number((st.reb / gp).toFixed(1)) : 0;
       const apg = st.gp ? Number((st.ast / gp).toFixed(1)) : 0;
-      const spg = st.gp ? Number((st.stl / gp).toFixed(1)) : 0;
-      const bpg = st.gp ? Number((st.blk / gp).toFixed(1)) : 0;
-      const cmpMini = (val, base) => {
-        if (!st.gp) return `<span style="color:var(--ink-soft); font-size:10px;">(均${base})</span>`;
+      const fmtCmp = (val, base) => {
+        if (!st.gp) return `<span style="color:var(--ink-soft);">聯盟均 ${base}</span>`;
         const d = Number((val - base).toFixed(1));
-        const col = d >= 0 ? "#15803D" : "#C81E1E";
-        return `<span style="color:${col}; font-size:10px; font-weight:900;">(${d >= 0 ? "+" : ""}${d} vs 均${base})</span>`;
+        return `<span style="color:${d >= 0 ? "#15803D" : "#C81E1E"};">${d >= 0 ? "+" : ""}${d} vs 均${base}</span>`;
       };
-      const eqSet = new Set(Season.equippedTraits);
-      const noise = getJudgmentNoiseBand(Season.careerYear, eqSet, 100);
+      avgStrip.innerHTML = `
+        <div class="me-avg-cell"><div class="me-avg-lbl">場均得分 PPG</div><div class="me-avg-val">${ppg.toFixed(1)}</div><div class="me-avg-cmp">${fmtCmp(ppg, bm.avgBase.ppg)}</div></div>
+        <div class="me-avg-cell"><div class="me-avg-lbl">場均籃板 RPG</div><div class="me-avg-val">${rpg.toFixed(1)}</div><div class="me-avg-cmp">${fmtCmp(rpg, bm.avgBase.rpg)}</div></div>
+        <div class="me-avg-cell"><div class="me-avg-lbl">場均助攻 APG</div><div class="me-avg-val">${apg.toFixed(1)}</div><div class="me-avg-cmp">${fmtCmp(apg, bm.avgBase.apg)}</div></div>
+      `;
+    }
+
+    const trainBtnTitle = document.getElementById("btnOpenTrainTitle");
+    const trainBtnSub = document.getElementById("btnOpenTrainSub");
+    if (trainBtnTitle) trainBtnTitle.textContent = `🏋️ 場外養成（剩餘 ${p.ap} AP）`;
+    if (trainBtnSub) {
+      trainBtnSub.textContent = p.ap > 0
+        ? (p.injured ? "⚠️ 輕微拉傷中，點擊理療或特訓" : "點開選擇特訓、恢復與極限 QTE")
+        : "本週 AP 已用完，下場賽後補滿";
+    }
+
+    // Update detailed player summary inside drawer shelf too
+    const summaryEl = document.getElementById("hubPlayerSummary");
+    if (summaryEl) {
+      const eqSet = new Set(season.equippedTraits);
+      const noise = getJudgmentNoiseBand(season.careerYear, eqSet, 100);
       summaryEl.innerHTML = `
-        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px;">
-          <div class="stat-mini-box"><strong>場均得分 PPG</strong><span><strong>${ppg.toFixed(1)}</strong> ${cmpMini(ppg, bm.avgBase.ppg)}</span></div>
-          <div class="stat-mini-box"><strong>場均籃板 RPG</strong><span><strong>${rpg.toFixed(1)}</strong> ${cmpMini(rpg, bm.avgBase.rpg)}</span></div>
-          <div class="stat-mini-box"><strong>場均助攻 APG</strong><span><strong>${apg.toFixed(1)}</strong> ${cmpMini(apg, bm.avgBase.apg)}</span></div>
-          <div class="stat-mini-box"><strong>抄截 / 封阻</strong><span><strong>${spg.toFixed(1)} / ${bpg.toFixed(1)}</strong></span></div>
-        </div>
-        <div style="font-size:11.5px; color:var(--ink-soft); display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+        <div style="font-size:12px; display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
           <span class="cmp-badge">出賽 ${st.gp} 場</span>
           <span class="cmp-badge gold">單場 MVP ×${st.mvps || 0}</span>
           <span class="cmp-badge">判讀誤差 ±${noise}%</span>
+          <span class="cmp-badge">年齡 ${p.age} 歲 · 上限 ${p.cap}</span>
         </div>`;
     }
 
-    // Enhance Role & Coach Trust with threshold comparison
     const rtBox = document.getElementById("hubRoleTrustBox");
     if (rtBox) {
       const trust = p.coachTrust || 35;
       const nextGate = trust < 40 ? { lbl: "輪換門檻", v: 40 } : (trust < 60 ? { lbl: "先發門檻", v: 60 } : (trust < 80 ? { lbl: "王牌門檻", v: 80 } : { lbl: "絕對核心", v: 100 }));
       const gap = Math.max(0, nextGate.v - trust);
-      const trustNote = gap > 0 ? `距${nextGate.lbl}(${nextGate.v})差 ${gap}` : `已達${nextGate.lbl}！`;
       rtBox.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; font-weight:900;">
           <span>🏅 地位：<strong style="color:var(--crimson);">${rotWin.label}</strong></span>
-          <span>教練信任：<strong>${trust}/100</strong> <span class="cmp-badge ${gap === 0 ? "pos" : "gold"}">${trustNote}</span></span>
+          <span>教練信任：<strong>${trust}/100</strong> <span class="cmp-badge ${gap === 0 ? "pos" : "gold"}">${gap > 0 ? `距${nextGate.lbl}差 ${gap}` : `已達${nextGate.lbl}`}</span></span>
         </div>
-        <div style="margin-top:4px; color:var(--ink-soft);">預估上場：<strong>${Math.round(rotWin.minPct * 100)}%–${Math.round(rotWin.maxPct * 100)}%</strong> ｜ 狀態：<strong>${p.condition}%</strong>（均線 75%）</div>
+        <div style="margin-top:4px; color:var(--ink-soft);">預估上場：<strong>${Math.round(rotWin.minPct * 100)}%–${Math.round(rotWin.maxPct * 100)}%</strong></div>
       `;
     }
 
-    // Enhance Team Strength Tag with league average & rank
+    // --- 【球隊】Tab: 3-KPI + Tactics Drawer Button + Compact Starters 5 ---
     const rTag = document.getElementById("hubTeamStrengthTag");
     if (rTag) {
       const diffTxt = bm.teamOvrDiff >= 0 ? `+${bm.teamOvrDiff}` : `${bm.teamOvrDiff}`;
-      rTag.textContent = `戰力 OVR ${bm.userTeamOvr}（聯盟均 ${bm.teamAvgOvr} ${diffTxt} · 排名 #${bm.teamOvrRank}/${bm.teamCount}）`;
+      rTag.textContent = `戰力 OVR ${bm.userTeamOvr}（均 ${bm.teamAvgOvr} ${diffTxt} · #${bm.teamOvrRank}/${bm.teamCount}）`;
     }
-
-    // Enhance Team Ops Banner in 【球隊】
     const teamKpiStrip = document.getElementById("teamBenchmarkStrip");
     if (teamKpiStrip) {
-      const ops = ensureTeamOps();
       const chemDiff = (ops.chemistry || 65) - 65;
       teamKpiStrip.innerHTML = `
         <div class="ovr-kpi-card highlight">
           <div class="ovr-kpi-lbl">球隊戰力 OVR</div>
           <div class="ovr-kpi-val">${bm.userTeamOvr}</div>
-          <div class="ovr-kpi-cmp">聯盟均 ${bm.teamAvgOvr}（${bm.teamOvrDiff >= 0 ? "+" : ""}${bm.teamOvrDiff}）</div>
+          <div class="ovr-kpi-cmp">均 ${bm.teamAvgOvr}（${bm.teamOvrDiff >= 0 ? "+" : ""}${bm.teamOvrDiff}）</div>
         </div>
         <div class="ovr-kpi-card">
           <div class="ovr-kpi-lbl">戰力 / 積分排名</div>
@@ -437,18 +841,26 @@ window.BTUI = (() => {
           <div class="ovr-kpi-cmp">共 ${bm.teamCount} 支球隊</div>
         </div>
         <div class="ovr-kpi-card">
-          <div class="ovr-kpi-lbl">球隊化學反應</div>
+          <div class="ovr-kpi-lbl">球隊磨合度</div>
           <div class="ovr-kpi-val">${ops.chemistry}</div>
           <div class="ovr-kpi-cmp">均線 65（${chemDiff >= 0 ? "+" : ""}${chemDiff}）</div>
         </div>`;
     }
 
-    // Render 12-man roster cards (default 5 starters)
+    const teamOpsSub = document.getElementById("btnOpenTeamOpsSub");
+    if (teamOpsSub) {
+      const tac = getActiveTactic();
+      const logCount = (ops.offseasonLog && ops.offseasonLog.length) || 0;
+      teamOpsSub.textContent = `目前戰術：${tac.name}${logCount ? ` · 近期異動 ${logCount} 筆` : ""}`;
+    }
+
     renderRosterCards(bm);
   }
 
-  function render12StatGridWithCompare(st, lastDelta = null, heightCm = null) {
-    const bm = computeLeagueBenchmarks();
+  function render12StatGridWithCompare(st, lastDelta = null, heightCm = null, showCompare = true) {
+    const season = getSeason();
+    const db = getDB();
+    const bm = showCompare ? computeLeagueBenchmarks() : null;
     const fmtD = (k) => {
       if (!lastDelta || !lastDelta[k]) return "";
       const v = lastDelta[k];
@@ -456,69 +868,190 @@ window.BTUI = (() => {
         ? `<span style="color:#15803D; font-size:10px; margin-left:2px;">▲+${v}</span>`
         : `<span style="color:#C81E1E; font-size:10px; margin-left:2px;">▼${v}</span>`;
     };
-    const posBaseH = (window.POS_HEIGHT_BASE && Season && Season.player) ? (POS_HEIGHT_BASE[Season.player.pos] || 186) : 186;
+    const posHMap = getPosHeightBase();
+    const posBaseH = (season && season.player) ? (posHMap[season.player.pos] || 186) : 186;
     const hDiff = heightCm !== null ? heightCm - posBaseH : 0;
     const hCell = heightCm !== null
       ? `<div class="stat-mini-box" style="background:#FEFCE8; border-color:var(--ink);">
            <div class="stat-mini-top"><span>身高</span><span style="color:#1D4ED8; font-weight:900;">${heightCm}cm${fmtD("heightCm")}</span></div>
-           <div class="stat-mini-cmp ${hDiff >= 0 ? "up" : "down"}">同位均${posBaseH} (${hDiff >= 0 ? "+" : ""}${hDiff})</div>
+           ${showCompare ? `<div class="stat-mini-cmp ${hDiff >= 0 ? "up" : "down"}">同位均${posBaseH} (${hDiff >= 0 ? "+" : ""}${hDiff})</div>` : ""}
          </div>`
       : "";
 
+    const statDefs = (db && db.origins && db.origins.statDefs) ? db.origins.statDefs : [];
     return `<div class="stat-mini-grid" style="grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));">` +
       hCell +
-      DB.origins.statDefs.map(d => {
+      statDefs.map(d => {
         const val = st[d.k] || 60;
+        if (!showCompare) {
+          return `<div class="stat-mini-box"><div class="stat-mini-top"><span>${d.l}</span><span style="color:${val >= 80 ? "#C81E1E" : "#111"}; font-weight:900;">${val}${fmtD(d.k)}</span></div></div>`;
+        }
         const avg = (bm && bm.statAvgs && bm.statAvgs[d.k]) ? bm.statAvgs[d.k] : 70;
         const diff = val - avg;
         const cls = diff >= 2 ? "up" : (diff <= -2 ? "down" : "");
         return `<div class="stat-mini-box">
-          <div class="stat-mini-top">
-            <span>${d.l}</span>
-            <span style="color:${val >= 80 ? "#C81E1E" : "#111"}; font-weight:900;">${val}${fmtD(d.k)}</span>
-          </div>
+          <div class="stat-mini-top"><span>${d.l}</span><span style="color:${val >= 80 ? "#C81E1E" : "#111"}; font-weight:900;">${val}${fmtD(d.k)}</span></div>
           <div class="stat-mini-cmp ${cls}">均${avg} (${diff >= 0 ? "+" : ""}${diff})</div>
         </div>`;
       }).join("") +
       `</div>`;
   }
 
-  /* -------------------- 3. PRE-MATCH COACH DIRECTIVE 3-CHOICE -------------------- */
+  /* -------------------- 3. PRE-MATCH COACH DIRECTIVE + DEFIANCE PENALTY -------------------- */
+  let cachedDirectiveRoundKey = "";
+  let cachedDirectiveObj = null;
+
+  function chooseDynamicCoachDirective(season, nextG) {
+    const roundKey = `${season ? season.careerYear : 1}:${season ? season.currentRoundIdx : 0}`;
+    if (cachedDirectiveRoundKey === roundKey && cachedDirectiveObj) return cachedDirectiveObj;
+
+    const p = season && season.player;
+    const s = (p && p.stats) || {};
+    const rotKey = (season && season.rotationKey) || "ROOKIE";
+    const cond = (p && typeof p.condition === "number") ? p.condition : 100;
+    const ops = ensureTeamOps();
+    const chem = (ops && typeof ops.chemistry === "number") ? ops.chemistry : 65;
+    const bm = computeLeagueBenchmarks();
+    const oppStanding = nextG && season && (season.standings || []).find(t => t.id === nextG.oppId);
+    const oppOvr = oppStanding ? (oppStanding.ovr || 78) : 78;
+    const teamGap = (bm ? bm.userTeamOvr : 75) - oppOvr;
+
+    const scoreBase = ((s.threePt || 60) + (s.midRange || 60) + (s.inside || 60)) / 3;
+    const playBase = ((s.playmaking || 60) * 1.2 + (s.iq || 60) * 0.8) / 2;
+    const defBase = ((s.perimDef || 60) + (s.intDef || 60) + (s.rebound || 60)) / 3;
+
+    // Weight by Player Ability + Team Role + Opponent + Condition + Chemistry
+    let wScore = Math.max(10, scoreBase - 42);
+    let wPlay = Math.max(10, playBase - 42);
+    let wDef = Math.max(10, defBase - 42);
+    const reasons = [];
+
+    if (rotKey === "ROOKIE" || rotKey === "ROTATION") {
+      wDef += 24;
+      wPlay += 14;
+      wScore = Math.max(6, wScore - 16);
+      reasons.push("目前為新人／輪換定位，教練優先考驗防守態度與團隊配合");
+    } else if (rotKey === "ACE" || rotKey === "STAR") {
+      wScore += 22;
+      reasons.push("身為球隊核心主力，教練期望你主動接管比賽節奏");
+    } else {
+      wScore += 8; wPlay += 8; wDef += 8;
+    }
+
+    if (cond < 65) {
+      wPlay += 20;
+      wScore = Math.max(6, wScore - 12);
+      reasons.push(`體能偏低（${cond}%），教練建議多用傳導減輕消耗`);
+    }
+    if (chem < 58) {
+      wPlay += 18;
+      reasons.push(`球隊磨合度偏低（${chem}），急需串聯隊友找回化學反應`);
+    }
+    if (teamGap <= -2) {
+      wDef += 18;
+      reasons.push(`對手戰力佔優（OVR ${oppOvr}），教練強調先靠鐵血防守咬住比分`);
+    } else if (teamGap >= 3 && (rotKey === "STARTER" || rotKey === "STAR" || rotKey === "ACE")) {
+      wScore += 12;
+      reasons.push("我方戰力佔優，教練鼓勵強勢拉開比分");
+    }
+
+    // Deterministic per-round variation so directives genuinely rotate across games
+    const seedVal = ((season ? season.careerYear * 31 + season.currentRoundIdx * 17 : 7) + (oppOvr * 3)) % 100;
+    const total = wScore + wPlay + wDef;
+    const roll = (seedVal / 100) * total;
+    let id = "SCORE_ATTACK";
+    if (roll < wScore) id = "SCORE_ATTACK";
+    else if (roll < wScore + wPlay) id = "PLAYMAKE_LINK";
+    else id = "LOCKDOWN_DEF";
+
+    const idDesc = id === "SCORE_ATTACK" ? "強攻終結" : (id === "PLAYMAKE_LINK" ? "串聯組織" : "鐵血防守");
+    const reasonText = reasons.length
+      ? `📋 教練考量：${reasons[0]}，本場欽點【${idDesc}】。`
+      : `📋 教練考量：結合你的技術特點與對手陣容，本場欽點【${idDesc}】。`;
+
+    cachedDirectiveRoundKey = roundKey;
+    cachedDirectiveObj = { id, reasonText };
+    return cachedDirectiveObj;
+  }
+
+  function getCoachDirectiveId(p) {
+    const season = getSeason();
+    const nextG = season && season.schedule ? season.schedule[season.currentRoundIdx] : null;
+    return chooseDynamicCoachDirective(season, nextG).id;
+  }
+
+  function calcDefianceProfile(trust, chem) {
+    if (trust >= 75 && chem >= 75) {
+      return {
+        tier: "HIGH",
+        tipTrust: 0, tipChem: 0, failExtraTrust: -2, teamMakeDrag: 0,
+        warnText: `⚠️ 違背指示（信任 ${trust} / 磨合 ${chem}）：未達標額外 信任 -2`
+      };
+    }
+    if (trust < 45 || chem < 45) {
+      return {
+        tier: "LOW",
+        tipTrust: -4, tipChem: -3, failExtraTrust: -4, teamMakeDrag: -0.02,
+        warnText: `🚨 違背指示（信任 ${trust} / 磨合 ${chem} 偏低）：開賽 信任 -4、磨合 -3、隊友命中 -2%；未達標再扣 信任 -4`
+      };
+    }
+    return {
+      tier: "MID",
+      tipTrust: -2, tipChem: -2, failExtraTrust: -3, teamMakeDrag: 0,
+      warnText: `⚠️ 違背指示（信任 ${trust} / 磨合 ${chem}）：開賽 信任 -2、磨合 -2；未達標再扣 信任 -3`
+    };
+  }
+
   function openPreMatchFocus(actionType) {
+    const season = getSeason();
     pendingFocusAction = actionType;
     const modal = document.getElementById("preMatchFocusModal");
-    if (!modal || !window.Season) {
+    if (!modal || !season) {
       if (actionType === "SIM") simCurrentRoundQuick();
       else launchSeasonMatch();
       return;
     }
 
-    const g = Season.schedule[Season.currentRoundIdx];
-    const userTeam = Season.standings.find(t => t.isUserTeam) || { name: "我方" };
+    const g = season.schedule[season.currentRoundIdx];
+    const userTeam = season.standings.find(t => t.isUserTeam) || { name: "我方" };
     const bm = computeLeagueBenchmarks();
-    const rotKey = Season.rotationKey || "ROOKIE";
+    const rotKey = season.rotationKey || "ROOKIE";
+    const dirObj = chooseDynamicCoachDirective(season, g);
+    const directiveId = dirObj.id;
+    const uOvrNow = season.player ? calcOVR(season.player.stats, season.player.pos, season.equippedTraits) : 72;
+    const reasonEl = document.getElementById("pmFocusReason");
+    if (reasonEl) reasonEl.textContent = dirObj.reasonText;
+    const trust = (season.player && typeof season.player.coachTrust === "number") ? season.player.coachTrust : 35;
+    const ops = ensureTeamOps();
+    const chem = (ops && typeof ops.chemistry === "number") ? ops.chemistry : 65;
+    const defyProf = calcDefianceProfile(trust, chem);
 
-    const oppObj = Season.standings.find(t => t.id === (g && g.oppId));
+    const oppObj = season.standings.find(t => t.id === (g && g.oppId));
     const oppOvr = oppObj ? (oppObj.ovr || 78) : 78;
     const headerSub = document.getElementById("pmFocusMatchup");
     if (headerSub && g) {
-      headerSub.textContent = `${userTeam.name} (OVR ${bm ? bm.userTeamOvr : "--"}) VS ${g.oppName} (OVR ${oppOvr}) · 王牌 ${g.oppAce}`;
+      headerSub.innerHTML = `${userTeam.name} (OVR ${bm ? bm.userTeamOvr : "--"}) VS ${g.oppName} (OVR ${oppOvr}) · 王牌 ${playerNameLinkHtml(g.oppAce, g.oppName)}`;
     }
-
     const modeTag = document.getElementById("pmFocusModeTag");
     if (modeTag) modeTag.textContent = actionType === "SIM" ? "快速模擬模式" : "親自落場作戰";
 
     const grid = document.getElementById("pmFocusGrid");
+    grid.dataset.directiveId = directiveId;
     grid.innerHTML = COACH_FOCUS_OPTIONS.map(opt => {
-      const goal = opt.buildGoal(rotKey);
+      const goal = opt.buildGoal(rotKey, uOvrNow);
+      const isDirective = opt.id === directiveId;
       return `
-        <button type="button" class="focus-card" data-focus-id="${opt.id}">
+        <button type="button" class="focus-card ${isDirective ? "recommended" : ""}" data-focus-id="${opt.id}">
           <div class="focus-card-top">
             <span class="focus-card-title">${opt.icon} ${opt.title}</span>
-            <span class="focus-card-tag">${opt.tag}</span>
+            <span style="display:inline-flex; gap:4px; align-items:center;">
+              ${isDirective ? `<span class="focus-rec-badge">🎯 教練欽點指令</span>` : `<span class="tag loss">非指示方向</span>`}
+              <span class="focus-card-tag">${opt.tag}</span>
+            </span>
           </div>
           <div class="focus-card-quote">${opt.quote}</div>
           <div class="focus-card-fx">${opt.fx}</div>
+          ${!isDirective ? `<div class="focus-defy-warn">${defyProf.warnText}</div>` : ""}
           <div class="focus-card-reward">🎯 達標：${goal.label} ｜ ${goal.rewardText}</div>
         </button>`;
     }).join("");
@@ -527,22 +1060,43 @@ window.BTUI = (() => {
   }
 
   function selectCoachFocusAndStart(focusId) {
+    const season = getSeason();
+    const match = getMatch();
+    const grid = document.getElementById("pmFocusGrid");
+    const directiveId = (grid && grid.dataset.directiveId) || getCoachDirectiveId(season && season.player);
     const opt = COACH_FOCUS_OPTIONS.find(x => x.id === focusId) || COACH_FOCUS_OPTIONS[0];
-    const rotKey = (window.Season && Season.rotationKey) || "ROOKIE";
-    const goal = opt.buildGoal(rotKey);
-    activeCoachFocus = {
-      id: opt.id,
-      icon: opt.icon,
-      title: opt.title,
-      tag: opt.tag,
-      target: goal.target,
-      label: goal.label,
-      rewardText: goal.rewardText
-    };
-    if (window.Match) Match.coachFocus = { ...activeCoachFocus };
+    const rotKey = (season && season.rotationKey) || "ROOKIE";
+    const uOvrNow = (season && season.player) ? calcOVR(season.player.stats, season.player.pos, season.equippedTraits) : 72;
+    const goal = opt.buildGoal(rotKey, uOvrNow);
+    const defied = opt.id !== directiveId;
 
-    // Capture pre-match player snapshot for accurate post-match 3-progress diff
+    const trust = (season && season.player && typeof season.player.coachTrust === "number") ? season.player.coachTrust : 35;
+    const ops = ensureTeamOps();
+    const chem = (ops && typeof ops.chemistry === "number") ? ops.chemistry : 65;
+    const defyProf = calcDefianceProfile(trust, chem);
+
     capturePreMatchSnapshot();
+
+    // Apply immediate defiance penalty if player chose a non-directive focus
+    let tipPenaltyNote = "";
+    if (defied && season && season.player) {
+      if (defyProf.tipTrust !== 0) {
+        season.player.coachTrust = Math.max(5, (season.player.coachTrust || 35) + defyProf.tipTrust);
+      }
+      if (defyProf.tipChem !== 0 && typeof adjustTeamChemistry === "function") {
+        adjustTeamChemistry(defyProf.tipChem);
+      }
+      if (defyProf.tipTrust || defyProf.tipChem) {
+        tipPenaltyNote = `違背指示（信任 ${defyProf.tipTrust}、磨合 ${defyProf.tipChem}）`;
+      }
+    }
+
+    activeCoachFocus = {
+      id: opt.id, icon: opt.icon, title: opt.title, tag: opt.tag,
+      target: goal.target, label: goal.label, rewardText: goal.rewardText,
+      defied, defyProf, tipPenaltyNote
+    };
+    if (match) match.coachFocus = { ...activeCoachFocus };
 
     document.getElementById("preMatchFocusModal").classList.add("hidden");
     const act = pendingFocusAction;
@@ -552,41 +1106,55 @@ window.BTUI = (() => {
   }
 
   function getActiveCoachFocus() {
-    if (window.Match && Match.coachFocus) return Match.coachFocus;
+    const match = getMatch();
+    if (match && match.coachFocus) return match.coachFocus;
     return activeCoachFocus;
   }
 
   function evaluateCoachFocusPostMatch(userBox) {
+    const season = getSeason();
+    const match = getMatch();
     const f = getActiveCoachFocus();
-    if (!f || !Season || !Season.player) return null;
+    if (!f || !season || !season.player) return null;
     const opt = COACH_FOCUS_OPTIONS.find(x => x.id === f.id);
     if (!opt) return null;
-    const goal = opt.buildGoal(Season.rotationKey || "ROOKIE");
+    const uOvrNow = (season && season.player) ? calcOVR(season.player.stats, season.player.pos, season.equippedTraits) : 72;
+    const goal = opt.buildGoal(season.rotationKey || "ROOKIE", uOvrNow);
     const met = goal.check(userBox || {});
     let rewardApplied = "";
+    let penaltyApplied = f.tipPenaltyNote || "";
+
     if (met) {
-      rewardApplied = goal.applyReward(Season.player, Season);
+      rewardApplied = goal.applyReward(season.player, season);
+      if (f.defied && f.defyProf && f.defyProf.tier === "HIGH") {
+        season.player.coachTrust = Math.min(100, (season.player.coachTrust || 35) + 2);
+        rewardApplied += "、王牌正名信任 +2";
+      }
+    } else if (f.defied && f.defyProf && f.defyProf.failExtraTrust) {
+      season.player.coachTrust = Math.max(5, (season.player.coachTrust || 35) + f.defyProf.failExtraTrust);
+      penaltyApplied = penaltyApplied
+        ? `${penaltyApplied} ＋ 未達標追加信任 ${f.defyProf.failExtraTrust}`
+        : `違背指示且未達標：教練信任 ${f.defyProf.failExtraTrust}`;
     }
+
     const result = {
-      id: f.id,
-      icon: f.icon,
-      title: f.title,
-      label: goal.label,
-      met,
+      id: f.id, icon: f.icon, title: f.title, label: goal.label,
+      met, defied: Boolean(f.defied),
       progress: goal.progressText(userBox || {}),
-      rewardApplied
+      rewardApplied, penaltyApplied
     };
     activeCoachFocus = null;
-    if (window.Match) Match.coachFocus = null;
+    if (match) match.coachFocus = null;
     return result;
   }
 
   function capturePreMatchSnapshot() {
-    if (!window.Season || !Season.player) return;
-    const p = Season.player;
+    const season = getSeason();
+    if (!season || !season.player) return;
+    const p = season.player;
     const bm = computeLeagueBenchmarks();
     preMatchSnapshot = {
-      ovr: calcOVR(p.stats, p.pos, Season.equippedTraits),
+      ovr: calcOVR(p.stats, p.pos, season.equippedTraits),
       trust: p.coachTrust || 35,
       condition: p.condition || 100,
       reputation: p.reputation || 45,
@@ -597,10 +1165,11 @@ window.BTUI = (() => {
   }
 
   function takePlayerSnapshot() {
-    if (!window.Season || !Season.player) return null;
-    const p = Season.player;
+    const season = getSeason();
+    if (!season || !season.player) return null;
+    const p = season.player;
     return {
-      ovr: calcOVR(p.stats, p.pos, Season.equippedTraits),
+      ovr: calcOVR(p.stats, p.pos, season.equippedTraits),
       trust: p.coachTrust || 35,
       condition: p.condition || 100,
       reputation: p.reputation || 45,
@@ -608,23 +1177,24 @@ window.BTUI = (() => {
       heightCm: p.heightCm || 185,
       ap: p.ap || 0,
       stats: { ...(p.stats || {}) },
-      traitsCount: (Season.equippedTraits || []).length
+      traitsCount: (season.equippedTraits || []).length
     };
   }
 
   /* -------------------- 2. UNIFIED SETTLEMENT MODAL -------------------- */
   function buildNextMatchGoalText() {
-    if (!window.Season) return "繼續備戰下一場比賽！";
-    if (Season.retired) return "生涯已榮耀謝幕，隨時可點擊「新建生涯」開啟下一段籃球傳奇！";
-    if (Season.currentRoundIdx >= Season.schedule.length) {
+    const season = getSeason();
+    if (!season) return "繼續備戰下一場比賽！";
+    if (season.retired) return "生涯已榮耀謝幕，隨時可點擊「新建生涯」開啟下一段籃球傳奇！";
+    if (season.currentRoundIdx >= season.schedule.length) {
       return "本季賽程已全部結束！點擊頂部「🏆 壓縮賽季進入下一年」邁向新階段。";
     }
-    const g = Season.schedule[Season.currentRoundIdx];
-    const p = Season.player;
+    const g = season.schedule[season.currentRoundIdx];
+    const p = season.player;
     if (p && p.ap > 0) {
       return p.condition < 65
-        ? `下一戰對決 ${g.oppName}（王牌：${g.oppAce}）· 尚餘 ${p.ap} AP，建議先做「🧊 冰浴理療」恢復狀態再出賽。`
-        : `下一戰對決 ${g.oppName}（王牌：${g.oppAce}）· 尚餘 ${p.ap} AP，可先去【我】完成特訓提升屬性！`;
+        ? `下一戰對決 ${g.oppName}（王牌：${g.oppAce}）· 尚餘 ${p.ap} AP，建議先去【我】→ 場外養成做冰浴恢復。`
+        : `下一戰對決 ${g.oppName}（王牌：${g.oppAce}）· 尚餘 ${p.ap} AP，可先去【我】→ 場外養成提升能力！`;
     }
     const trust = (p && p.coachTrust) || 35;
     const trustGoal = trust < 60 ? "並衝刺教練信任至 60 搶佔先發" : "穩固主力地位衝擊季後賽";
@@ -632,8 +1202,12 @@ window.BTUI = (() => {
   }
 
   function showUnifiedSettlement(cfg) {
+    const season = getSeason();
     const modal = document.getElementById("unifiedSettlementModal");
     if (!modal) return;
+
+    // Close hub detail drawer if training was launched from it
+    closeSectionModal();
 
     document.getElementById("settleKindStamp").textContent = cfg.stamp || "結算報告";
     document.getElementById("settleSubTag").textContent = cfg.subTag || "";
@@ -647,18 +1221,24 @@ window.BTUI = (() => {
         const fr = cfg.focusResult;
         fvEl.style.display = "block";
         fvEl.className = `focus-verdict-pill ${fr.met ? "met" : "missed"}`;
-        fvEl.innerHTML = fr.met
-          ? `🎯 教練指令【${fr.title}】達成！（${fr.progress}）→ 額外獲得：<strong>${fr.rewardApplied}</strong>`
-          : `📋 教練指令【${fr.title}】未達標（${fr.progress} · 目標：${fr.label}）`;
+        if (fr.met) {
+          fvEl.innerHTML = `${fr.defied ? "⚡ 違背指示但用實力正名！" : "🎯 教練指令達成！"}【${fr.title}】（${fr.progress}）→ 獲得：<strong>${fr.rewardApplied}</strong>${fr.penaltyApplied ? `<br/>⚠️ 開賽磨合代價：${fr.penaltyApplied}` : ""}`;
+        } else {
+          fvEl.innerHTML = `${fr.defied ? "🚨 違背教練指示且未達標！" : "📋 教練指令未達標"}【${fr.title}】（${fr.progress} · 目標：${fr.label}）${fr.penaltyApplied ? `<br/>懲罰：<strong>${fr.penaltyApplied}</strong>` : ""}`;
+        }
       } else {
         fvEl.style.display = "none";
       }
     }
 
-    // Ensure exactly 3 progress cards
     const gains = (cfg.gains || []).slice(0, 3);
     while (gains.length < 3) {
-      gains.push({ label: "目前總評 OVR", value: `${Season && Season.player ? calcOVR(Season.player.stats, Season.player.pos, Season.equippedTraits) : "--"}`, dir: "flat", note: "穩步累積" });
+      gains.push({
+        label: "目前總評 OVR",
+        value: `${season && season.player ? calcOVR(season.player.stats, season.player.pos, season.equippedTraits) : "--"}`,
+        dir: "flat",
+        note: "穩步累積"
+      });
     }
     document.getElementById("settleGainsGrid").innerHTML = gains.map(g => `
       <div class="progress-item-card">
@@ -688,7 +1268,6 @@ window.BTUI = (() => {
     const bar = document.getElementById("settleUnlockBar");
     settlementOnContinue = cfg.onContinue || null;
 
-    // Anti-misclick 0.42s unlock bar
     if (settlementUnlockTimer) clearTimeout(settlementUnlockTimer);
     contBtn.disabled = true;
     contBtn.querySelector(".cont-txt").textContent = cfg.continueLabel || "繼續 ▶";
@@ -700,68 +1279,37 @@ window.BTUI = (() => {
         bar.style.width = "100%";
       });
     }
-    settlementUnlockTimer = setTimeout(() => {
-      contBtn.disabled = false;
-    }, 420);
+    settlementUnlockTimer = setTimeout(() => { contBtn.disabled = false; }, 420);
 
     modal.classList.remove("hidden");
   }
 
   function buildGainsFromSnapshots(before, after, extras = []) {
+    const db = getDB();
     const gains = [];
-    const statDefs = (DB.origins && DB.origins.statDefs) || [];
+    const statDefs = (db && db.origins && db.origins.statDefs) || [];
     if (before && after && before.stats && after.stats) {
       for (const d of statDefs) {
         const b = before.stats[d.k], a = after.stats[d.k];
         if (typeof b === "number" && typeof a === "number" && a !== b) {
-          gains.push({
-            label: d.l,
-            value: `${b}→${a}${a > b ? "↑" : "↓"}`,
-            dir: a > b ? "up" : "down",
-            note: a > b ? `+${a - b} 成長` : `${a - b} 變動`
-          });
+          gains.push({ label: d.l, value: `${b}→${a}${a > b ? "↑" : "↓"}`, dir: a > b ? "up" : "down", note: a > b ? `+${a - b} 成長` : `${a - b} 變動` });
         }
       }
     }
     if (before && after && after.heightCm !== before.heightCm) {
-      gains.push({
-        label: "身高發育",
-        value: `${before.heightCm}→${after.heightCm}cm↑`,
-        dir: "up",
-        note: `+${after.heightCm - before.heightCm}cm`
-      });
+      gains.push({ label: "身高發育", value: `${before.heightCm}→${after.heightCm}cm↑`, dir: "up", note: `+${after.heightCm - before.heightCm}cm` });
     }
     if (before && after && after.ovr !== before.ovr) {
-      gains.push({
-        label: "總評 OVR",
-        value: `${before.ovr}→${after.ovr}${after.ovr > before.ovr ? "↑" : "↓"}`,
-        dir: after.ovr > before.ovr ? "up" : "down",
-        note: "綜合戰力變化"
-      });
+      gains.push({ label: "總評 OVR", value: `${before.ovr}→${after.ovr}${after.ovr > before.ovr ? "↑" : "↓"}`, dir: after.ovr > before.ovr ? "up" : "down", note: "綜合戰力變化" });
     }
     if (before && after && after.trust !== before.trust) {
-      gains.push({
-        label: "教練信任",
-        value: `${before.trust}→${after.trust}${after.trust > before.trust ? "↑" : "↓"}`,
-        dir: after.trust > before.trust ? "up" : "down",
-        note: after.trust > before.trust ? "輪換更穩固" : "需用表現挽回"
-      });
+      gains.push({ label: "教練信任", value: `${before.trust}→${after.trust}${after.trust > before.trust ? "↑" : "↓"}`, dir: after.trust > before.trust ? "up" : "down", note: after.trust > before.trust ? "輪換更穩固" : "信任下滑" });
     }
     if (before && after && after.reputation !== before.reputation) {
-      gains.push({
-        label: "個人名氣",
-        value: `${before.reputation}→${after.reputation}${after.reputation > before.reputation ? "↑" : "↓"}`,
-        dir: after.reputation > before.reputation ? "up" : "down",
-        note: "球探關注度"
-      });
+      gains.push({ label: "個人名氣", value: `${before.reputation}→${after.reputation}${after.reputation > before.reputation ? "↑" : "↓"}`, dir: after.reputation > before.reputation ? "up" : "down", note: "球探關注度" });
     }
     if (before && after && after.condition !== before.condition) {
-      gains.push({
-        label: "賽季狀態",
-        value: `${before.condition}%→${after.condition}%${after.condition > before.condition ? "↑" : "↓"}`,
-        dir: after.condition > before.condition ? "up" : "down",
-        note: after.condition >= 80 ? "狀態火熱" : (after.condition < 55 ? "建議恢復" : "體能可控")
-      });
+      gains.push({ label: "賽季狀態", value: `${before.condition}%→${after.condition}%${after.condition > before.condition ? "↑" : "↓"}`, dir: after.condition > before.condition ? "up" : "down", note: after.condition >= 80 ? "狀態火熱" : (after.condition < 55 ? "建議恢復" : "體能可控") });
     }
     for (const ex of extras) {
       if (gains.length < 3) gains.push(ex);
@@ -770,27 +1318,12 @@ window.BTUI = (() => {
   }
 
   function showPostMatchSettlement(opts) {
-    const after = takePlayerSnapshot();
+    const after = takePlayerSnapshot() || { ovr: "--", trust: 35, condition: 100, reputation: 45 };
     const bm = computeLeagueBenchmarks();
     const extras = [
-      {
-        label: "本場個人表現",
-        value: `${opts.userPts}分 ${opts.userReb}板 ${opts.userAst}助`,
-        dir: opts.won ? "up" : "flat",
-        note: opts.won ? "率隊取勝" : "吸取經驗"
-      },
-      {
-        label: "總評 OVR 對比",
-        value: `${bm ? bm.userOvr : after.ovr}（均${bm ? bm.playerAvgOvr : "--"}）`,
-        dir: (bm && bm.playerOvrDiff >= 0) ? "up" : "flat",
-        note: bm ? `全聯盟 #${bm.playerOvrRank}/${bm.totalPlayers}` : ""
-      },
-      {
-        label: "本週行動點",
-        value: `已補滿 2 AP↑`,
-        dir: "up",
-        note: "可回【我】特訓"
-      }
+      { label: "本場個人表現", value: `${opts.userPts}分 ${opts.userReb}板 ${opts.userAst}助`, dir: opts.won ? "up" : "flat", note: opts.won ? "率隊取勝" : "吸取經驗" },
+      { label: "總評 OVR 對比", value: `${bm ? bm.userOvr : after.ovr}（均${bm ? bm.playerAvgOvr : "--"}）`, dir: (bm && bm.playerOvrDiff >= 0) ? "up" : "flat", note: bm ? `全聯盟 #${bm.playerOvrRank}/${bm.totalPlayers}` : "" },
+      { label: "本週行動點", value: `已補滿 2 AP↑`, dir: "up", note: "可回【我】養成" }
     ];
     const gains = buildGainsFromSnapshots(preMatchSnapshot, after, extras);
     preMatchSnapshot = null;
@@ -810,86 +1343,45 @@ window.BTUI = (() => {
     });
   }
 
-  function showTrainingSettlement(before, title, detail, tier) {
+  function showTrainingSettlement(before, title, detail, tier, onContinue = null) {
     const after = takePlayerSnapshot();
+    if (!before || !after) return;
     const bm = computeLeagueBenchmarks();
     const extras = [
-      {
-        label: "總評 OVR",
-        value: `${after.ovr}（均${bm ? bm.playerAvgOvr : "--"}）`,
-        dir: after.ovr > before.ovr ? "up" : "flat",
-        note: bm ? `聯盟 #${bm.playerOvrRank}` : ""
-      },
-      {
-        label: "剩餘行動點",
-        value: `${before.ap}→${after.ap} AP`,
-        dir: "flat",
-        note: after.ap > 0 ? "還可繼續安排" : "可開打下場比賽"
-      },
-      {
-        label: "賽季狀態",
-        value: `${after.condition}%`,
-        dir: after.condition >= 75 ? "up" : "down",
-        note: after.condition >= 75 ? "狀態良好" : "注意疲勞"
-      }
+      { label: "總評 OVR", value: `${after.ovr}（均${bm ? bm.playerAvgOvr : "--"}）`, dir: after.ovr > before.ovr ? "up" : "flat", note: bm ? `聯盟 #${bm.playerOvrRank}` : "" },
+      { label: "剩餘行動點", value: `${before.ap}→${after.ap} AP`, dir: "flat", note: after.ap > 0 ? "還可繼續安排" : "可開打下場比賽" },
+      { label: "賽季狀態", value: `${after.condition}%`, dir: after.condition >= 75 ? "up" : "down", note: after.condition >= 75 ? "狀態良好" : "注意疲勞" }
     ];
     const gains = buildGainsFromSnapshots(before, after, extras);
-    const badgeMap = {
-      GREAT: "✨ 特訓大成功時刻",
-      SUCCESS: "✅ 訓練達標時刻",
-      FAIL: "⚠️ 訓練波折時刻",
-      INJURY: "🚑 傷病警示時刻"
-    };
+    const badgeMap = { GREAT: "✨ 特訓大成功時刻", SUCCESS: "✅ 訓練達標時刻", FAIL: "⚠️ 訓練波折時刻", INJURY: "🚑 傷病警示時刻" };
     showUnifiedSettlement({
-      stamp: "🏋️ 場外訓練結算",
-      subTag: `尚餘 ${after.ap} AP`,
-      mvpBadge: badgeMap[tier] || "🏋️ 訓練時刻",
-      mvpTitle: title,
-      mvpSub: detail,
-      gains,
-      nextGoal: buildNextMatchGoalText(),
-      continueLabel: "繼續 ▶"
+      stamp: "🏋️ 場外訓練結算", subTag: `尚餘 ${after.ap} AP`,
+      mvpBadge: badgeMap[tier] || "🏋️ 訓練時刻", mvpTitle: title, mvpSub: detail,
+      gains, nextGoal: buildNextMatchGoalText(), continueLabel: "繼續 ▶", onContinue
     });
   }
 
   function showEventSettlement(before, evtTitle, ok, outText) {
     const after = takePlayerSnapshot();
+    if (!before || !after) return;
     const bm = computeLeagueBenchmarks();
     const extras = [
-      {
-        label: "總評 OVR",
-        value: `${after.ovr}（均${bm ? bm.playerAvgOvr : "--"}）`,
-        dir: after.ovr > before.ovr ? "up" : "flat",
-        note: bm ? `聯盟 #${bm.playerOvrRank}` : ""
-      },
-      {
-        label: "教練信任",
-        value: `${after.trust} / 100`,
-        dir: after.trust > before.trust ? "up" : "flat",
-        note: "隊內地位指標"
-      },
-      {
-        label: "個人名氣",
-        value: `${after.reputation} / 100`,
-        dir: after.reputation > before.reputation ? "up" : "flat",
-        note: "球探與媒體熱度"
-      }
+      { label: "總評 OVR", value: `${after.ovr}（均${bm ? bm.playerAvgOvr : "--"}）`, dir: after.ovr > before.ovr ? "up" : "flat", note: bm ? `聯盟 #${bm.playerOvrRank}` : "" },
+      { label: "教練信任", value: `${after.trust} / 100`, dir: after.trust > before.trust ? "up" : "flat", note: "隊內地位指標" },
+      { label: "個人名氣", value: `${after.reputation} / 100`, dir: after.reputation > before.reputation ? "up" : "flat", note: "球探與媒體熱度" }
     ];
     const gains = buildGainsFromSnapshots(before, after, extras);
     showUnifiedSettlement({
-      stamp: "📅 生涯事件結算",
-      subTag: ok ? "✅ 順利化解" : "⚠️ 歷練考驗",
-      mvpBadge: ok ? "🌟 關鍵人生時刻" : "⚡ 成長轉折時刻",
-      mvpTitle: evtTitle,
-      mvpSub: outText,
-      gains,
-      nextGoal: buildNextMatchGoalText(),
-      continueLabel: "繼續 ▶"
+      stamp: "📅 生涯事件結算", subTag: ok ? "✅ 順利化解" : "⚠️ 歷練考驗",
+      mvpBadge: ok ? "🌟 關鍵人生時刻" : "⚡ 成長轉折時刻", mvpTitle: evtTitle, mvpSub: outText,
+      gains, nextGoal: buildNextMatchGoalText(), continueLabel: "繼續 ▶"
     });
   }
 
   /* -------------------- 6. TITLE SCREEN & 3-STEP ONBOARDING + TUTORIAL MATCH -------------------- */
   function showTitleScreen(hasSave) {
+    const season = getSeason();
+    const db = getDB();
     ["viewHub", "viewMatch", "viewCreate"].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.remove("active");
@@ -902,28 +1394,16 @@ window.BTUI = (() => {
     const startBtn = document.getElementById("btnTitleStartNew");
     const saveInfo = document.getElementById("titleSaveInfo");
 
-    if (hasSave && window.Season && Season.player) {
-      const league = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
-      const ovr = calcOVR(Season.player.stats, Season.player.pos, Season.equippedTraits);
-      const ut = Season.standings.find(t => t.isUserTeam) || { name: "", w: 0, l: 0 };
-      if (contBtn) {
-        contBtn.style.display = "inline-flex";
-        contBtn.textContent = `🏀 繼續生涯（${Season.player.name} · OVR ${ovr}）`;
-      }
-      if (startBtn) {
-        startBtn.className = "manga-btn title-secondary-btn";
-        startBtn.textContent = "✨ 開始新遊戲（3 步新手引導）";
-      }
-      if (saveInfo) {
-        saveInfo.style.display = "block";
-        saveInfo.innerHTML = `💾 <strong>已讀取 IndexedDB 生涯存檔</strong>：第 ${Season.careerYear} 季 · ${league.name} · ${ut.name}（${ut.w}勝${ut.l}負）`;
-      }
+    if (hasSave && season && season.player && db) {
+      const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
+      const ovr = calcOVR(season.player.stats, season.player.pos, season.equippedTraits);
+      const ut = season.standings.find(t => t.isUserTeam) || { name: "", w: 0, l: 0 };
+      if (contBtn) { contBtn.style.display = "inline-flex"; contBtn.textContent = `🏀 繼續生涯（${season.player.name} · OVR ${ovr}）`; }
+      if (startBtn) { startBtn.className = "manga-btn title-secondary-btn"; startBtn.textContent = "✨ 開始新遊戲（3 步新手引導）"; }
+      if (saveInfo) { saveInfo.style.display = "block"; saveInfo.innerHTML = `💾 <strong>已讀取 IndexedDB 生涯存檔</strong>：第 ${season.careerYear} 季 · ${league.name} · ${ut.name}（${ut.w}勝${ut.l}負）`; }
     } else {
       if (contBtn) contBtn.style.display = "none";
-      if (startBtn) {
-        startBtn.className = "manga-btn primary title-primary-btn";
-        startBtn.textContent = "🏀 開始遊戲";
-      }
+      if (startBtn) { startBtn.className = "manga-btn primary title-primary-btn"; startBtn.textContent = "🏀 開始遊戲"; }
       if (saveInfo) saveInfo.style.display = "none";
     }
   }
@@ -942,6 +1422,7 @@ window.BTUI = (() => {
   }
 
   function setCreateStep(step) {
+    const season = getSeason();
     currentCreateStep = step;
     [1, 2, 3].forEach(n => {
       const pill = document.getElementById(`onboardStepPill${n}`);
@@ -957,9 +1438,9 @@ window.BTUI = (() => {
     if (step === 2 && typeof buildCreationDraft === "function") buildCreationDraft(false);
     if (step === 3) {
       const sum = document.getElementById("step3PlayerSummary");
-      if (sum && window.Season && Season.player) {
-        const p = Season.player;
-        const ovr = calcOVR(p.stats, p.pos, Season.equippedTraits);
+      if (sum && season && season.player) {
+        const p = season.player;
+        const ovr = calcOVR(p.stats, p.pos, season.equippedTraits);
         sum.innerHTML = `<strong>#${p.jerseyNum || 16} ${p.name}</strong>（${p.pos} · ${p.heightCm}cm）｜天賦：<strong>${p.rarityName}</strong>（上限 ${p.cap}）｜初始 OVR：<strong>${ovr}</strong>`;
       }
     }
@@ -967,59 +1448,44 @@ window.BTUI = (() => {
   }
 
   function launchTutorialMatch() {
-    if (!window.Season || !Season.player) return;
+    const season = getSeason();
+    const db = getDB();
+    const match = getMatch();
+    if (!season || !season.player || !db || !match) return;
     isTutorialMatch = true;
     clearPendingEventTimer();
     hideSkillPopover();
 
-    const league = DB.leagues.leagues.find(l => l.id === Season.leagueId) || DB.leagues.leagues[0];
+    const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
     const userTeamObj = league.teams.find(t => t.isUserTeam) || league.teams[0];
     const oppTeamObj = league.teams.find(t => !t.isUserTeam) || league.teams[1];
 
-    Match.league = { ...league, quarterMinutes: 2, otMinutes: 1 };
-    Match.homeName = `${userTeamObj.name} · 新秀隊`;
-    Match.awayName = `${oppTeamObj.name} · 試訓隊`;
+    match.league = { ...league, quarterMinutes: 2, otMinutes: 1 };
+    match.homeName = `${userTeamObj.name} · 新秀隊`;
+    match.awayName = `${oppTeamObj.name} · 試訓隊`;
     syncUserTeamRole(false);
-    Match.homeTeam = Season.userRoster.map(p => createPlayer(p, "HOME"));
-    Match.awayTeam = buildOpponentRoster(oppTeamObj).map(p => createPlayer(p, "AWAY"));
-    Match.userPlayer = Match.homeTeam.find(p => p.isUser) || Match.homeTeam[1];
-    Match.rivalPlayer = Match.awayTeam.find(p => p.isRival) || Match.awayTeam[2];
+    match.homeTeam = season.userRoster.map(p => createPlayer(p, "HOME"));
+    match.awayTeam = buildOpponentRoster(oppTeamObj).map(p => createPlayer(p, "AWAY"));
+    match.userPlayer = match.homeTeam.find(p => p.isUser) || match.homeTeam[1];
+    match.rivalPlayer = match.awayTeam.find(p => p.isRival) || match.awayTeam[2];
 
-    // Ensure user starts on floor during tutorial scrimmage
-    if (!Match.userPlayer.onFloor) {
-      const swapOut = Match.homeTeam.find(p => !p.isUser && p.onFloor);
+    if (!match.userPlayer.onFloor) {
+      const swapOut = match.homeTeam.find(p => !p.isUser && p.onFloor);
       if (swapOut) swapOut.onFloor = false;
-      Match.userPlayer.onFloor = true;
+      match.userPlayer.onFloor = true;
     }
-    Match.userPlayer.stamina = 100;
-    Match.userPlayer.maxStaminaCap = 100;
+    match.userPlayer.stamina = 100;
+    match.userPlayer.maxStaminaCap = 100;
 
-    // 1-quarter fast 2-minute scrimmage (start at Q4 so it finishes right after 1 quarter!)
-    Match.quarter = 4;
-    Match.timeLeftSec = 120;
-    Match.homeScore = 18;
-    Match.awayScore = 16;
-    Match.qScoresHome = [6, 6, 6, 0];
-    Match.qScoresAway = [6, 5, 5, 0];
-    Match.benchReason = "";
-    Match.totalGameSec = 0;
-    Match.tension = 78; // High tension so tutorial Bullet Time + QTE triggers right away!
-    Match.cooldownSec = 0;
-    Match.userSubCooldownSec = 999;
-    Match.rivalHardTriggersThisQ = 0;
-    Match.makeStreak = 0;
-    Match.missStreak = 0;
-    Match.perfectStreak = 0;
-    Match.perfectsTotal = 0;
-    Match.isZone = false;
-    Match.zonePossessionsLeft = 0;
-    Match.isGrit = false;
-    Match.recentActionIds = [];
-    Match.commHistory = [];
-    Match.shotAnim = null;
-    Match.activeScenario = null;
-    Match.pendingPostCutIn = null;
-    Match.coachFocus = null;
+    match.quarter = 4; match.timeLeftSec = 120;
+    match.homeScore = 18; match.awayScore = 16;
+    match.qScoresHome = [6, 6, 6, 0]; match.qScoresAway = [6, 5, 5, 0];
+    match.benchReason = ""; match.totalGameSec = 0; match.tension = 82;
+    match.cooldownSec = 0; match.userSubCooldownSec = 999; match.rivalHardTriggersThisQ = 0;
+    match.makeStreak = 0; match.missStreak = 0; match.perfectStreak = 0; match.perfectsTotal = 0;
+    match.isZone = false; match.zonePossessionsLeft = 0; match.isGrit = false;
+    match.recentActionIds = []; match.commHistory = []; match.shotAnim = null;
+    match.activeScenario = null; match.pendingPostCutIn = null; match.coachFocus = null;
 
     document.getElementById("pbpLog").innerHTML = "";
     document.getElementById("viewCreate").classList.remove("active");
@@ -1030,25 +1496,26 @@ window.BTUI = (() => {
     setDockMode("NONE");
     resizeCanvas();
 
-    Match.fastSimming = false;
+    match.fastSimming = false;
     const fbtn = document.getElementById("btnFastSimMatch");
     if (fbtn) fbtn.disabled = false;
-    Match.phase = "PLAYING";
-    Match.simAccumulator = 0;
+    match.phase = "PLAYING";
+    match.simAccumulator = 0;
     SoundFX.whistle();
     broadcast("🎓 【新手教學賽】最後 2 分鐘決勝試訓！留意「子彈時間」選卡與 QTE 黃金區間鎖定！", true);
     updateHUD();
   }
 
   function handleTutorialMatchEnd() {
+    const season = getSeason();
+    const match = getMatch();
     isTutorialMatch = false;
-    const u = Match.userPlayer || { pts: 0, oreb: 0, dreb: 0, ast: 0, stl: 0, blk: 0 };
-    const won = Match.homeScore >= Match.awayScore;
-    if (Season && Season.player) {
-      Season.player.tutorialDone = true;
-      SaveManager.save(Season);
+    const u = (match && match.userPlayer) || { pts: 0, oreb: 0, dreb: 0, ast: 0, stl: 0, blk: 0 };
+    if (season && season.player) {
+      season.player.tutorialDone = true;
+      SaveManager.save(season);
     }
-    Match.phase = "IDLE";
+    if (match) match.phase = "IDLE";
     document.getElementById("viewMatch").classList.remove("active");
     document.getElementById("viewHub").classList.add("active");
     switchHubTab("htab-match");
@@ -1056,43 +1523,247 @@ window.BTUI = (() => {
 
     showUnifiedSettlement({
       stamp: "🎓 教學賽完成！",
-      subTag: `試訓比分 ${Match.homeScore} : ${Match.awayScore}`,
+      subTag: `試訓比分 ${match ? match.homeScore : 0} : ${match ? match.awayScore : 0}`,
       mvpBadge: "⭐ 新手引導 3/3 達成",
-      mvpTitle: `${Season.player.name} 完成高一入隊試訓！`,
+      mvpTitle: `${season && season.player ? season.player.name : "新秀"} 完成高一入隊試訓！`,
       mvpSub: `教學賽拿下 ${u.pts} 分 ${(u.oreb || 0) + (u.dreb || 0)} 板 ${u.ast} 助（本場不計入正式戰績）。你已經掌握子彈時間與 QTE 節奏！`,
       gains: [
         { label: "教學賽得分", value: `${u.pts} 分`, dir: u.pts > 0 ? "up" : "flat", note: "試訓手感熱身" },
-        { label: "完美判定次數", value: `${Match.perfectsTotal || 0} 次`, dir: (Match.perfectsTotal || 0) > 0 ? "up" : "flat", note: "QTE 精準鎖定" },
+        { label: "完美判定次數", value: `${(match && match.perfectsTotal) || 0} 次`, dir: (match && match.perfectsTotal) > 0 ? "up" : "flat", note: "QTE 精準鎖定" },
         { label: "正式球季 AP", value: "2 / 2 AP↑", dir: "up", note: "已解鎖場外特訓" }
       ],
-      nextGoal: "正式踏入日本全國高校大賽！先點頂部「開始下一場比賽」或去【我】完成 2 AP 特訓。",
+      nextGoal: "正式踏入日本全國高校大賽！點頂部「開始下一場比賽」或去【我】→ 場外養成。",
       continueLabel: "🏀 進入球季大廳 ▶"
     });
   }
 
+  /* -------------------- LEAGUE STAT LEADERS & SEASON AWARDS CEREMONY -------------------- */
+  let activeLeaderCat = "ppg";
+  let awardsProceedCb = null;
+
+  function computeLeagueStatLeaders() {
+    const season = getSeason();
+    const db = getDB();
+    if (!season || !db || !db.leagues) return [];
+    const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
+    const qScale = (league.quarterMinutes || 8) / 8;
+    const userSt = season.seasonTotals || { gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0 };
+    const roundsDone = Math.max(1, season.currentRoundIdx || 0);
+    const uTeamStand = (season.standings || []).find(t => t.isUserTeam) || { name: "我方", w: 0, l: 0 };
+
+    const standingMap = Object.fromEntries((season.standings || []).map(t => [t.id, t]));
+    const rows = [];
+
+    const hashNoise = (str, salt) => {
+      let h = salt + (season.careerYear || 1) * 97;
+      for (let i = 0; i < str.length; i++) h = ((h * 31) + str.charCodeAt(i)) % 10000;
+      return ((h % 100) / 100) - 0.5; // -0.5 .. +0.49
+    };
+
+    const addNpcRow = (pl, teamName, teamId) => {
+      if (!pl || pl.isUser) return;
+      const prof = (pl.stats && pl.heightCm) ? pl : (typeof generateNpcProfile === "function" ? generateNpcProfile({ ...pl }) : pl);
+      const st = prof.stats || {};
+      const ovr = prof.ovr || 74;
+      const isSt = prof.role === "STARTER";
+      const minMul = isSt ? 1.0 : 0.48;
+      const tmSt = standingMap[teamId] || { w: 0, l: 0 };
+      const tmGp = Math.max(1, (tmSt.w || 0) + (tmSt.l || 0));
+      const winPct = tmGp ? (tmSt.w / tmGp) : 0.5;
+
+      const offIdx = ((st.threePt || ovr) + (st.midRange || ovr) + (st.inside || ovr)) / 3;
+      const ppg = Number(Math.max(2.0, ((offIdx - 48) * 0.54 + (prof.isRival ? 3.2 : 0) + hashNoise(prof.name, 11) * 3.0) * qScale * minMul).toFixed(1));
+      const rpg = Number(Math.max(0.8, (((st.rebound || ovr) - 46) * 0.22 + Math.max(0, ((prof.heightCm || 185) - 180) * 0.11) + hashNoise(prof.name, 23) * 1.4) * qScale * minMul).toFixed(1));
+      const apg = Number(Math.max(0.4, (((st.playmaking || ovr) * 0.65 + (st.iq || ovr) * 0.35 - 50) * 0.19 + (prof.pos === "PG" ? 1.4 : 0) + hashNoise(prof.name, 37) * 1.2) * qScale * minMul).toFixed(1));
+      const spg = Number(Math.max(0.1, (((st.perimDef || ovr) * 0.6 + (st.speed || ovr) * 0.4 - 52) * 0.055 + hashNoise(prof.name, 51) * 0.45) * qScale * minMul).toFixed(1));
+      const bpg = Number(Math.max(0.0, (((st.intDef || ovr) * 0.55 + (st.vertical || ovr) * 0.45 - 54) * 0.05 + Math.max(0, ((prof.heightCm || 185) - 190) * 0.04) + hashNoise(prof.name, 67) * 0.4) * qScale * minMul).toFixed(1));
+
+      const mvpScore = ppg * 1.15 + rpg * 0.95 + apg * 1.35 + spg * 2.2 + bpg * 2.0 + winPct * 12;
+      const dpoyScore = spg * 3.8 + bpg * 3.6 + rpg * 0.55 + ((st.perimDef || 70) + (st.intDef || 70)) * 0.08 + winPct * 4;
+      rows.push({
+        name: prof.name, teamName, pos: prof.pos || "SG", age: prof.age || 17, ovr, isUser: false,
+        ppg, rpg, apg, spg, bpg, mvpScore, dpoyScore, winPct
+      });
+    };
+
+    // Add user's teammates
+    for (const pl of (season.userRoster || [])) {
+      if (pl.isUser) continue;
+      if (pl.role === "STARTER" || (pl.ovr || 0) >= 66) addNpcRow(pl, uTeamStand.name, uTeamStand.id);
+    }
+
+    // Add all opponent teams' starters + top bench
+    for (const tm of (league.teams || [])) {
+      if (tm.id === uTeamStand.id) continue;
+      const r = (Array.isArray(tm.roster) && tm.roster.length) ? tm.roster : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
+      for (const pl of r) {
+        if (pl.role === "STARTER" || pl.isRival) addNpcRow(pl, tm.name, tm.id);
+      }
+    }
+
+    // Add User with TRUE seasonTotals
+    if (season.player) {
+      const p = season.player;
+      const uGp = Math.max(1, userSt.gp || 0);
+      const uPpg = userSt.gp ? Number((userSt.pts / uGp).toFixed(1)) : 0.0;
+      const uRpg = userSt.gp ? Number((userSt.reb / uGp).toFixed(1)) : 0.0;
+      const uApg = userSt.gp ? Number((userSt.ast / uGp).toFixed(1)) : 0.0;
+      const uSpg = userSt.gp ? Number((userSt.stl / uGp).toFixed(1)) : 0.0;
+      const uBpg = userSt.gp ? Number((userSt.blk / uGp).toFixed(1)) : 0.0;
+      const uTmGp = Math.max(1, (uTeamStand.w || 0) + (uTeamStand.l || 0));
+      const uWinPct = uTmGp ? (uTeamStand.w / uTmGp) : 0.5;
+      const uOvr = calcOVR(p.stats, p.pos, season.equippedTraits);
+      const mvpScore = uPpg * 1.15 + uRpg * 0.95 + uApg * 1.35 + uSpg * 2.2 + uBpg * 2.0 + uWinPct * 12;
+      const dpoyScore = uSpg * 3.8 + uBpg * 3.6 + uRpg * 0.55 + ((p.stats.perimDef || 70) + (p.stats.intDef || 70)) * 0.08 + uWinPct * 4;
+      rows.push({
+        name: p.name, teamName: uTeamStand.name, pos: p.pos || "SG", age: p.age || 15, ovr: uOvr, isUser: true,
+        ppg: uPpg, rpg: uRpg, apg: uApg, spg: uSpg, bpg: uBpg, mvpScore, dpoyScore, winPct: uWinPct
+      });
+    }
+    return rows;
+  }
+
+  function renderLeagueLeadersTab(cat = null) {
+    if (cat) activeLeaderCat = cat;
+    const box = document.getElementById("leagueLeadersList");
+    if (!box) return;
+    document.querySelectorAll("#leadersTabRow .leaders-tab-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.lcat === activeLeaderCat);
+    });
+    const rows = computeLeagueStatLeaders();
+    const sorted = [...rows].sort((a, b) => (b[activeLeaderCat] - a[activeLeaderCat]) || (b.ovr - a.ovr));
+    const unitMap = { ppg: "PPG", rpg: "RPG", apg: "APG", spg: "SPG", bpg: "BPG" };
+    const top10 = sorted.slice(0, 10);
+    const userIdx = sorted.findIndex(x => x.isUser);
+    const showList = [...top10];
+    if (userIdx >= 10) showList.push({ ...sorted[userIdx], _actualRank: userIdx + 1 });
+
+    box.innerHTML = showList.map((r, i) => {
+      const rank = r._actualRank || (i + 1);
+      return `
+        <div class="leader-row ${r.isUser ? "is-user" : ""}">
+          <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+            <span class="leader-rank">#${rank}</span>
+            <div style="min-width:0;">
+              <div>${playerNameLinkHtml(r.name, r.teamName)}${r.isUser ? " ★" : ""} <span class="tag">${r.pos}</span></div>
+              <div style="font-size:10.5px; color:var(--ink-soft);">${r.teamName} · OVR ${r.ovr}</div>
+            </div>
+          </div>
+          <div class="leader-val">${r[activeLeaderCat].toFixed(1)} <span style="font-size:10px; color:var(--ink-soft);">${unitMap[activeLeaderCat]}</span></div>
+        </div>`;
+    }).join("");
+  }
+
+  function openSeasonAwardsCeremony(onProceed) {
+    const season = getSeason();
+    const db = getDB();
+    const modal = document.getElementById("seasonAwardsModal");
+    if (!modal || !season || !db) {
+      if (typeof onProceed === "function") onProceed();
+      return;
+    }
+    awardsProceedCb = onProceed;
+    const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
+    const rows = computeLeagueStatLeaders();
+    if (!rows.length) {
+      if (typeof onProceed === "function") onProceed();
+      return;
+    }
+
+    const mvp = [...rows].sort((a, b) => b.mvpScore - a.mvpScore)[0];
+    const dpoy = [...rows].sort((a, b) => b.dpoyScore - a.dpoyScore)[0];
+    const maxRookieAge = season.leagueId === "hs_nationals" ? 15 : (season.leagueId === "ncaa_madness" ? 19 : 22);
+    const rookies = rows.filter(r => r.age <= maxRookieAge);
+    const roy = (rookies.length ? rookies : rows).sort((a, b) => b.mvpScore - a.mvpScore)[0];
+
+    const ppgKing = [...rows].sort((a, b) => b.ppg - a.ppg)[0];
+    const rpgKing = [...rows].sort((a, b) => b.rpg - a.rpg)[0];
+    const apgKing = [...rows].sort((a, b) => b.apg - a.apg)[0];
+    const spgKing = [...rows].sort((a, b) => b.spg - a.spg)[0];
+    const bpgKing = [...rows].sort((a, b) => b.bpg - a.bpg)[0];
+
+    const positions = ["PG", "SG", "SF", "PF", "C"];
+    const firstTeam = positions.map(pos => {
+      const pool = rows.filter(r => r.pos === pos);
+      const best = (pool.length ? pool : rows).sort((a, b) => b.mvpScore - a.mvpScore)[0];
+      return { pos, player: best };
+    });
+
+    const fmvpName = (season.playoffs && season.playoffs.finalsMvp && season.playoffs.finalsMvp.name) || null;
+    const fmvpIsUser = Boolean(season.playoffs && season.playoffs.finalsMvp && season.playoffs.finalsMvp.isUser);
+
+    // Record user's awards for hall of fame archive
+    const userHonors = [];
+    if (mvp && mvp.isUser) userHonors.push("👑 例行賽MVP");
+    if (dpoy && dpoy.isUser) userHonors.push("🛡️ 最佳防守球員");
+    if (roy && roy.isUser) userHonors.push("🌟 最佳新秀");
+    if (ppgKing && ppgKing.isUser) userHonors.push("🔥 得分王");
+    if (rpgKing && rpgKing.isUser) userHonors.push("🧲 籃板王");
+    if (apgKing && apgKing.isUser) userHonors.push("🎯 助攻王");
+    if (spgKing && spgKing.isUser) userHonors.push("⚡ 抄截王");
+    if (bpgKing && bpgKing.isUser) userHonors.push("🧱 封阻王");
+    if (firstTeam.some(x => x.player && x.player.isUser)) userHonors.push("🏅 最佳一陣");
+    season._seasonAwardsHonors = userHonors;
+
+    document.getElementById("awardsHeroSub").textContent = `第 ${season.careerYear} 季 · ${league.name} 年度頒獎典禮`;
+    document.getElementById("awardsHeroUserSummary").textContent = userHonors.length
+      ? `🎉 你本季斬獲榮譽：${userHonors.join(" · ")}`
+      : "本季所有個人獎項與最佳一陣正式揭曉！";
+
+    const majorCards = [
+      { lbl: "👑 例行賽 MVP", w: mvp, stat: `${mvp.ppg}分 ${mvp.rpg}板 ${mvp.apg}助` },
+      { lbl: "🛡️ 最佳防守 DPOY", w: dpoy, stat: `${dpoy.spg}抄 ${dpoy.bpg}帽 ${dpoy.rpg}板` },
+      { lbl: "🌟 最佳新秀 ROY", w: roy, stat: `${roy.age}歲 · ${roy.ppg}分 ${roy.apg}助` },
+      fmvpName
+        ? { lbl: "🏆 總決賽 FMVP", w: { name: fmvpName, teamName: season.playoffs.result === "CHAMPION" ? "總冠軍" : "決賽", isUser: fmvpIsUser }, stat: "季後賽最高榮耀" }
+        : { lbl: "🔥 聯賽得分王", w: ppgKing, stat: `場均 ${ppgKing.ppg} 分` }
+    ];
+    document.getElementById("awardsMajorGrid").innerHTML = majorCards.map(c => `
+      <div class="award-card ${c.w && c.w.isUser ? "user-won" : ""}">
+        <div class="award-lbl">${c.lbl}</div>
+        <div class="award-winner">${playerNameLinkHtml(c.w.name, c.w.teamName)}${c.w.isUser ? " ⭐" : ""}</div>
+        <div class="award-stat">${c.w.teamName} · ${c.stat}</div>
+      </div>`).join("");
+
+    const statKings = [
+      { lbl: "得分王", w: ppgKing, v: `${ppgKing.ppg} PPG` },
+      { lbl: "籃板王", w: rpgKing, v: `${rpgKing.rpg} RPG` },
+      { lbl: "助攻王", w: apgKing, v: `${apgKing.apg} APG` },
+      { lbl: "抄截王", w: spgKing, v: `${spgKing.spg} SPG` },
+      { lbl: "封阻王", w: bpgKing, v: `${bpgKing.bpg} BPG` }
+    ];
+    document.getElementById("awardsKingsList").innerHTML = statKings.map(k => `
+      <div class="leader-row ${k.w.isUser ? "is-user" : ""}" style="padding:5px 8px; font-size:11.5px;">
+        <span><strong>${k.lbl}</strong>：${playerNameLinkHtml(k.w.name, k.w.teamName)}${k.w.isUser ? " ⭐" : ""} <span style="color:var(--ink-soft);">(${k.w.teamName})</span></span>
+        <strong>${k.v}</strong>
+      </div>`).join("");
+
+    document.getElementById("awardsFirstTeamGrid").innerHTML = firstTeam.map(x => `
+      <div class="first-team-cell ${x.player && x.player.isUser ? "user-won" : ""}">
+        <div style="color:var(--crimson); font-size:10px;">${x.pos}</div>
+        <div style="margin-top:2px;">${playerNameLinkHtml(x.player.name, x.player.teamName)}</div>
+        <div style="font-size:9.5px; color:var(--ink-soft);">${x.player.ppg}分</div>
+      </div>`).join("");
+
+    modal.classList.remove("hidden");
+  }
+
   /* -------------------- BIND REFACTOR EVENTS -------------------- */
   function bindRefactorEvents() {
-    // Top Big CTA
     const bigCta = document.getElementById("btnTopBigCta");
     if (bigCta) {
       bigCta.addEventListener("click", () => {
         const mode = bigCta.dataset.ctaMode;
         if (mode === "NEW_CAREER") openCareerCreation();
-        else if (mode === "NEXT_SEASON") openSeasonEndCrossroads();
+        else if (mode === "NEXT_SEASON") openSeasonAwardsCeremony(() => openSeasonEndCrossroads());
         else requestStartMatchOrSim("PLAY");
       });
     }
 
-    // Utility drawer toggle in top bar
     const utilToggle = document.getElementById("btnToggleUtilDrawer");
     const utilDrawer = document.getElementById("topUtilDrawer");
-    if (utilToggle && utilDrawer) {
-      utilToggle.addEventListener("click", () => {
-        utilDrawer.classList.toggle("open");
-      });
-    }
+    if (utilToggle && utilDrawer) utilToggle.addEventListener("click", () => utilDrawer.classList.toggle("open"));
 
-    // Toggle bench roster
     const benchBtn = document.getElementById("btnToggleBenchRoster");
     if (benchBtn) {
       benchBtn.addEventListener("click", () => {
@@ -1101,7 +1772,117 @@ window.BTUI = (() => {
       });
     }
 
-    // Pre-match coach focus selection
+    // One-Page Hub Drill-Down Modal Launchers
+    const drawerBindings = [
+      ["btnOpenTrainModal", "🏋️ 本週場外養成", "每輪補滿 2 AP", "drawerSecTrain"],
+      ["btnOpenStatsModal", "📊 12 項能力與技能徽章", "附聯盟對比", "drawerSecStats"],
+      ["btnOpenRivalModal", "🔥 宿敵檔案與人生經歷", "自動時間軸", "drawerSecRival"],
+      ["btnOpenCareerModal", "🏛️ 生涯履歷與名人堂", "IndexedDB 存檔", "drawerSecCareer"],
+      ["btnOpenFullSched", "📅 本季完整賽程表", "LOD 0 逐場", "drawerSecSched"],
+      ["btnOpenStandings", "🏆 本聯賽積分榜", "即時排名", "drawerSecStandings"],
+      ["btnOpenLeaders", "📊 賽季各項數據榜", "五大數據領跑", "drawerSecLeaders"],
+      ["btnOpenWorldLod", "🌏 海外聯賽動態", "LOD 1 背景演算", "drawerSecWorld"],
+      ["btnOpenTeamOps", "🧠 教練戰術與陣容異動／補強", "化學反應與輪換", "drawerSecTeamOps"]
+    ];
+    for (const [btnId, title, badge, secId] of drawerBindings) {
+      const el = document.getElementById(btnId);
+      if (el) el.addEventListener("click", () => {
+        if (secId === "drawerSecLeaders") renderLeagueLeadersTab();
+        openSectionModal(title, badge, secId);
+      });
+    }
+    const lTabRow = document.getElementById("leadersTabRow");
+    if (lTabRow) {
+      lTabRow.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-lcat]");
+        if (b) renderLeagueLeadersTab(b.dataset.lcat);
+      });
+    }
+    const awardsNextBtn = document.getElementById("btnAwardsContinue");
+    if (awardsNextBtn) {
+      awardsNextBtn.addEventListener("click", () => {
+        document.getElementById("seasonAwardsModal").classList.add("hidden");
+        const cb = awardsProceedCb;
+        awardsProceedCb = null;
+        if (typeof cb === "function") cb();
+      });
+    }
+
+    const hdClose = document.getElementById("btnCloseHubDetailModal");
+    const hdModal = document.getElementById("hubDetailModal");
+    if (hdClose && hdModal) {
+      hdClose.addEventListener("click", closeSectionModal);
+      hdModal.addEventListener("click", (e) => { if (e.target.id === "hubDetailModal") closeSectionModal(); });
+    }
+
+    // Live Match Detailed Stats trigger
+    const ldsBtn = document.getElementById("btnLiveDetailStats");
+    const ldsClose = document.getElementById("btnCloseLiveDetailStats");
+    const ldsBoxBtn = document.getElementById("btnLiveOpenFullBox");
+    const ldsModal = document.getElementById("liveDetailStatsModal");
+    if (ldsBtn) ldsBtn.addEventListener("click", openLiveDetailStats);
+    if (ldsClose) ldsClose.addEventListener("click", closeLiveDetailStats);
+    if (ldsModal) ldsModal.addEventListener("click", (e) => { if (e.target.id === "liveDetailStatsModal") closeLiveDetailStats(); });
+    if (ldsBoxBtn) {
+      ldsBoxBtn.addEventListener("click", () => {
+        if (ldsModal) ldsModal.classList.add("hidden");
+        const match = getMatch();
+        if (match && phaseBeforeLiveDetail && match.phase === "PAUSED_MENU") {
+          match.phase = sanitizeResumePhase(phaseBeforeLiveDetail);
+        }
+        phaseBeforeLiveDetail = null;
+        openPauseCenter(false);
+      });
+    }
+
+    // Box Score Full 16-col toggle
+    const bsToggleBtn = document.getElementById("btnBsToggleFull");
+    if (bsToggleBtn) bsToggleBtn.addEventListener("click", () => toggleBoxScoreFullMode());
+
+    // Tap any stat row in Box Score (outside name link) -> pop out single-player detailed match stats!
+    const bsBody = document.getElementById("bsRosterBody");
+    if (bsBody) {
+      bsBody.addEventListener("click", (e) => {
+        if (e.target.closest("[data-player-name]")) return;
+        const tr = e.target.closest("tr[data-bs-row-idx]");
+        if (!tr) return;
+        const match = getMatch();
+        const src = (match && match._historyView) ? match._historyView : match;
+        if (!src) return;
+        const tab = (typeof activePauseTab !== "undefined") ? activePauseTab : "HOME";
+        const list = tab === "HOME" ? (src.homeTeam || []) : (src.awayTeam || []);
+        const pl = list[Number(tr.dataset.bsRowIdx)];
+        if (!pl) return;
+        const tName = tab === "HOME" ? src.homeName : src.awayName;
+        openPlayerMatchStatsPopup(pl, tName, `${src.homeName} ${src.homeScore} - ${src.awayScore} ${src.awayName}`);
+      });
+    }
+
+    // Global delegated click for Player Name Link, Roster Card, or Played Schedule Item
+    document.addEventListener("click", (e) => {
+      if (e.target.closest("[data-skill-id]")) return;
+      const nameLink = e.target.closest("[data-player-name]");
+      if (nameLink) {
+        e.stopPropagation();
+        openPlayerCardByName(nameLink.dataset.playerName, nameLink.dataset.playerTeam || "");
+        return;
+      }
+      const pastRow = e.target.closest("[data-past-match-idx]");
+      if (pastRow) {
+        openPastMatchBoxScore(Number(pastRow.dataset.pastMatchIdx));
+        return;
+      }
+      const card = e.target.closest("[data-player-card-name]");
+      if (card) openPlayerCardByName(card.dataset.playerCardName, card.dataset.playerCardTeam || "");
+    });
+
+    const pdClose = document.getElementById("btnClosePlayerDetail");
+    const pdModal = document.getElementById("playerDetailModal");
+    if (pdClose && pdModal) {
+      pdClose.addEventListener("click", () => pdModal.classList.add("hidden"));
+      pdModal.addEventListener("click", (e) => { if (e.target.id === "playerDetailModal") pdModal.classList.add("hidden"); });
+    }
+
     const pmGrid = document.getElementById("pmFocusGrid");
     if (pmGrid) {
       pmGrid.addEventListener("click", (e) => {
@@ -1112,14 +1893,8 @@ window.BTUI = (() => {
       });
     }
     const pmCancel = document.getElementById("btnPmFocusCancel");
-    if (pmCancel) {
-      pmCancel.addEventListener("click", () => {
-        pendingFocusAction = null;
-        document.getElementById("preMatchFocusModal").classList.add("hidden");
-      });
-    }
+    if (pmCancel) pmCancel.addEventListener("click", () => { pendingFocusAction = null; document.getElementById("preMatchFocusModal").classList.add("hidden"); });
 
-    // Unified settlement continue
     const contBtn = document.getElementById("btnSettleContinue");
     if (contBtn) {
       contBtn.addEventListener("click", () => {
@@ -1131,7 +1906,6 @@ window.BTUI = (() => {
       });
     }
 
-    // Title screen buttons
     const titleCont = document.getElementById("btnTitleContinue");
     if (titleCont) {
       titleCont.addEventListener("click", () => {
@@ -1144,14 +1918,8 @@ window.BTUI = (() => {
       });
     }
     const titleNew = document.getElementById("btnTitleStartNew");
-    if (titleNew) {
-      titleNew.addEventListener("click", () => {
-        document.getElementById("viewTitle").classList.remove("active");
-        openCareerCreation();
-      });
-    }
+    if (titleNew) titleNew.addEventListener("click", () => { document.getElementById("viewTitle").classList.remove("active"); openCareerCreation(); });
 
-    // Onboarding Step 1: position cards + next
     const posGrid = document.getElementById("posPickGrid");
     if (posGrid) {
       posGrid.addEventListener("click", (e) => {
@@ -1166,20 +1934,15 @@ window.BTUI = (() => {
     }
     const toStep2 = document.getElementById("btnStep1Next");
     if (toStep2) toStep2.addEventListener("click", () => { SoundFX.tap(); setCreateStep(2); });
-
     const backStep1 = document.getElementById("btnStep2Back");
     if (backStep1) backStep1.addEventListener("click", () => { SoundFX.tap(); setCreateStep(1); });
-
     const startTutBtn = document.getElementById("btnStartTutorialMatch");
     if (startTutBtn) startTutBtn.addEventListener("click", () => { SoundFX.tap(); launchTutorialMatch(); });
-
     const skipTutBtn = document.getElementById("btnSkipTutorialMatch");
     if (skipTutBtn) {
       skipTutBtn.addEventListener("click", () => {
-        if (Season && Season.player) {
-          Season.player.tutorialDone = true;
-          SaveManager.save(Season);
-        }
+        const season = getSeason();
+        if (season && season.player) { season.player.tutorialDone = true; SaveManager.save(season); }
         document.getElementById("viewCreate").classList.remove("active");
         document.getElementById("viewHub").classList.add("active");
         switchHubTab("htab-match");
@@ -1190,6 +1953,19 @@ window.BTUI = (() => {
 
   return {
     computeLeagueBenchmarks,
+    playerNameLinkHtml,
+    openPlayerCard,
+    openPlayerCardByName,
+    openSectionModal,
+    closeSectionModal,
+    openLiveDetailStats,
+    closeLiveDetailStats,
+    toggleBoxScoreFullMode,
+    openPlayerMatchStatsPopup,
+    openPastMatchBoxScore,
+    sanitizeResumePhase,
+    renderLeagueLeadersTab,
+    openSeasonAwardsCeremony,
     switchHubTab,
     updateTopStickyCTA,
     enhanceHubDisplays,

@@ -639,7 +639,7 @@
           <div class="tutorial-tip-item">3️⃣ <strong>QTE 精準鎖定</strong>：喺黃金區間按螢幕或空白鍵鎖定，連續完美可覺醒【🔥 ZONE 領域】！</div>
         </div>
         <div style="display:flex; flex-direction:column; gap:8px;">
-          <button type="button" class="manga-btn primary" id="btnStartTutorialMatch" style="width:100%; min-height:52px; font-size:15.5px;">🔥 立即開打教學賽（不計入正式戰績）</button>
+          <button type="button" class="manga-btn primary" id="btnStartTutorialMatch" style="width:100%; min-height:52px; font-size:15.5px;">🔥 開始 2 分鐘教學賽</button>
           <button type="button" class="manga-btn" id="btnSkipTutorialMatch" style="width:100%; min-height:44px;">略過教學賽，直接進入球季大廳</button>
         </div>
       </div>
@@ -687,181 +687,233 @@
     </nav>
 
     <main class="hub-wrap">
-      <!-- TAB 1: 【比賽】 -->
+      <!-- TAB 1: 【比賽】一頁精簡主頁 -->
       <section id="htab-match" class="hub-panel">
         <div class="next-match-hero">
           <img src="./assets/images/default.webp" loading="eager" decoding="async" alt="賽季主視覺" />
           <div class="next-match-inner">
-            <div>
+            <div style="width:100%;">
               <div style="font-size:11px; font-weight:900; color:#FACC15;" id="nmStageTag">例行賽 第 1 輪</div>
               <div class="vs-line" id="nmMatchupText">湘北高校 VS 陵南高校</div>
-              <div style="font-size:12px; color:#E5DEC9;" id="nmMetaText">球齡：第 1 年（臨場判斷誤差 ±12%）｜ 定位：球隊王牌</div>
+              <div style="font-size:12px; color:#E5DEC9;" id="nmMetaText">球齡：第 1 年 ｜ 定位：球隊王牌</div>
+              <div id="nmScoutCompareBox" style="margin-top:4px;"></div>
             </div>
             <div class="btn-row" style="width:100%;">
-              <button class="manga-btn primary" id="btnPlayNextMatch" type="button" style="flex:1; font-size:14px;">🏀 親自落場打今場</button>
+              <button class="manga-btn primary" id="btnPlayNextMatch" type="button" style="display:none !important;">🏀 親自落場打今場</button>
               <button class="manga-btn gold" id="btnSimRound" type="button" style="flex:1;">⏩ 快速模擬本輪</button>
               <button class="manga-btn gold" id="btnNextSeason" type="button" style="display:none; width:100%;">🏆 壓縮賽季進入下一年</button>
             </div>
           </div>
         </div>
 
-        <div class="grid-12">
-          <div class="comic-card c-6">
-            <div class="card-head">
-              <div class="card-title">📅 本季賽程表</div>
-              <span class="tag gold" id="hubLeagueBadge" title="須透過 18 歲畢業選秀或休賽季／季中轉會晉級與更換聯賽">日本全國高校大賽 (8分/7場)</span>
-            </div>
-            <div id="playoffBracketBox" class="playoff-banner" style="display:none;"></div>
-            <div class="schedule-list" id="scheduleListBox"></div>
-          </div>
+        <div id="playoffBracketBox" class="playoff-banner" style="display:none;"></div>
 
-          <div class="comic-card c-6">
-            <div class="card-head">
-              <div class="card-title" id="standingsTitle">🏆 本聯賽積分榜</div>
-              <span class="tag">LOD 0 精細結算</span>
-            </div>
-            <div class="table-scroll">
-              <table class="data-table">
-                <thead><tr><th>排名</th><th>球隊</th><th>勝</th><th>負</th><th>勝率</th><th>勝差</th><th>得/失</th><th>王牌</th></tr></thead>
-                <tbody id="standingsBody"></tbody>
-              </table>
-            </div>
+        <div class="comic-card">
+          <div class="card-head" style="margin-bottom:8px; padding-bottom:6px;">
+            <div class="card-title">📅 近期賽程</div>
+            <span class="tag gold" id="hubLeagueBadge">日本全國高校大賽</span>
           </div>
-
-          <div class="comic-card c-12">
-            <div class="card-head">
-              <div class="card-title">🌏 海外聯賽動態 (LOD 1 宏觀結算)</div>
-              <span class="tag gold">每輪自動背景演算</span>
+          <div id="miniSchedulePreview" style="display:flex; flex-direction:column; gap:6px;"></div>
+          <div class="hub-action-stack">
+            <button type="button" class="hub-drawer-btn" id="btnOpenFullSched">
+              <span>📅 查看完整本季賽程表<span class="hub-drawer-btn-sub">各場比分與單場 MVP</span></span>
+              <span class="hub-drawer-arrow">›</span>
+            </button>
+            <div class="hub-action-grid-3" style="margin-top:0;">
+              <button type="button" class="hub-drawer-btn" id="btnOpenStandings">
+                <span>🏆 積分榜</span>
+                <span class="hub-drawer-btn-sub" id="btnOpenStandingsSub">即時排名</span>
+              </button>
+              <button type="button" class="hub-drawer-btn" id="btnOpenLeaders">
+                <span>📊 數據榜</span>
+                <span class="hub-drawer-btn-sub">得分/板/助王</span>
+              </button>
+              <button type="button" class="hub-drawer-btn" id="btnOpenWorldLod">
+                <span>🌏 海外聯賽</span>
+                <span class="hub-drawer-btn-sub">五大戰況</span>
+              </button>
             </div>
-            <div id="worldLodBox"></div>
           </div>
         </div>
       </section>
 
-      <!-- TAB 2: 【我】 -->
+      <!-- TAB 2: 【我】一頁精簡主頁（養成改按鈕點開） -->
       <section id="htab-me" class="hub-panel" style="display:none;">
         <div id="meOvrCompareStrip" class="ovr-hero-strip"></div>
+        <div id="meCompactAvgStrip" class="me-avg-strip"></div>
 
-        <div class="grid-12">
-          <div class="comic-card c-7">
-            <div class="card-head">
-              <div class="card-title">🏋️ 本週場外養成（每打完 1 輪補滿 2 AP）</div>
-              <div style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:900;">
-                剩餘 AP：<span id="apPipsBox" style="display:inline-flex; gap:4px;"></span>
-              </div>
-            </div>
-            <div id="trainOutcomeBanner" style="display:none; margin-bottom:10px; padding:10px 12px; border:2.5px solid var(--ink); background:#FFF; box-shadow:var(--shadow-sm); font-size:12.5px; font-weight:800;"></div>
-            <div style="margin-bottom:8px; font-size:12px; font-weight:900;" id="trainRiskBanner">狀態極佳 (100%)：訓練高機率【✨ 大成功】，幾乎零受傷風險</div>
-            <div class="ap-grid" id="apActionsGrid">
-              <button type="button" class="ap-card" data-ap-act="train_shoot">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--crimson);"><span>投射特訓</span><span>1 AP</span></div>
-                <div style="font-size:13.5px; font-weight:900;">🎯 三分與中投精準度</div>
-                <div style="font-size:11px; color:var(--ink-soft);">主升：三分 / 中投 ｜ 消耗狀態</div>
-              </button>
-              <button type="button" class="ap-card" data-ap-act="train_finish">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--crimson);"><span>終結爆發</span><span>1 AP</span></div>
-                <div style="font-size:13.5px; font-weight:900;">💥 內線終結、彈跳與速度</div>
-                <div style="font-size:11px; color:var(--ink-soft);">主升：內線 / 彈跳 / 速度</div>
-              </button>
-              <button type="button" class="ap-card" data-ap-act="train_def">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--crimson);"><span>防守肉搏</span><span>1 AP</span></div>
-                <div style="font-size:13.5px; font-weight:900;">🛡️ 外防、護框、籃板與力量</div>
-                <div style="font-size:11px; color:var(--ink-soft);">主升：外防 / 護框 / 籃板 / 力量</div>
-              </button>
-              <button type="button" class="ap-card" data-ap-act="train_iq">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:#1D4ED8;"><span>戰術組織</span><span>1 AP</span></div>
-                <div style="font-size:13.5px; font-weight:900;">🧠 控球組織與球商覆盤</div>
-                <div style="font-size:11px; color:var(--ink-soft);">主升：組織 / 球商 / 意志（低疲勞）</div>
-              </button>
-              <button type="button" class="ap-card" data-ap-act="recover">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--ok-green);"><span>醫療恢復</span><span>1 AP</span></div>
-                <div style="font-size:13.5px; font-weight:900;">🧊 冰浴理療與傷病康復</div>
-                <div style="font-size:11px; color:var(--ink-soft);">狀態回復 +28%（傷癒康復 +18% 並解除拉傷）</div>
-              </button>
-              <button type="button" class="ap-card" data-ap-act="social">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:#1D4ED8;"><span>商業社交</span><span>1 AP</span></div>
-                <div style="font-size:13.5px; font-weight:900;">🤝 球探交流與媒體曝光</div>
-                <div style="font-size:11px; color:var(--ink-soft);">提升名氣、球探星級與轉會熱度</div>
-              </button>
-              <button type="button" class="ap-card" data-ap-act="extreme_qte" style="border-color:var(--crimson); background:#FFF5F5;">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--crimson);"><span>🔥 極限特訓 QTE</span><span>2 AP</span></div>
-                <div style="font-size:13.5px; font-weight:900;">⚡ 魔鬼特訓：高難縮圈・極低機率覺醒</div>
-                <div style="font-size:11px; color:var(--ink-soft);">高速窄環 QTE：成功加屬性，超低機率(11%)覺醒新技／洗紅特</div>
-              </button>
-            </div>
-          </div>
+        <div class="hub-action-stack" style="margin-top:0;">
+          <button type="button" class="hub-drawer-btn accent-gold" id="btnOpenTrainModal">
+            <span>
+              <span id="btnOpenTrainTitle">🏋️ 場外養成（剩餘 2 AP）</span>
+              <span class="hub-drawer-btn-sub" id="btnOpenTrainSub">點擊展開特訓、冰浴恢復與 2 AP 極限特訓 QTE</span>
+            </span>
+            <span class="hub-drawer-arrow">▶</span>
+          </button>
 
-          <div class="comic-card c-5">
-            <div class="card-head">
-              <div class="card-title">👤 本季場均 &amp; 能力對比</div>
-              <span class="tag gold" id="hubExpTag">球齡 1 年</span>
-            </div>
-            <div id="hubPlayerSummary" style="font-size:12.5px; display:flex; flex-direction:column; gap:8px;"></div>
-            <div id="hubRoleTrustBox" style="margin-top:8px; padding:8px 10px; border:2px solid var(--ink); background:#FFFDF7; font-size:11.5px;"></div>
-            <div style="margin-top:8px; padding-top:8px; border-top:1.5px solid var(--ink);">
-              <div style="font-size:11.5px; font-weight:900; margin-bottom:5px;">身高天賦、已持有特質與徽章（點擊查看說明）</div>
-              <div id="hubTraitToggles" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
-            </div>
-            <div style="margin-top:8px; padding-top:8px; border-top:1.5px solid var(--ink);">
-              <div style="font-size:11.5px; font-weight:900; margin-bottom:4px;">12 項個人能力（附聯盟同位置平均對比）</div>
-              <div id="hubPlayerStatsGrid"></div>
-            </div>
-          </div>
+          <button type="button" class="hub-drawer-btn" id="btnOpenStatsModal">
+            <span>📊 12 項能力與技能徽章<span class="hub-drawer-btn-sub">12 項能力對比與徽章說明</span></span>
+            <span class="hub-drawer-arrow">›</span>
+          </button>
 
-          <div class="comic-card c-12">
-            <div class="card-head"><div class="card-title">📋 宿敵檔案與人生經歷</div><span class="star-bar" id="trainStarsTag">★★★☆☆</span></div>
-            <div id="trainProfileBox" style="font-size:12px; display:none;"></div>
-            <div class="rival-box" id="trainRivalBox" style="margin-top:0;"></div>
-            <div id="trainEventFeed" style="margin-top:8px; padding:8px 10px; border:2px dashed var(--ink); background:#FFFDF7; font-size:11.5px; line-height:1.5;">
-              <div style="font-weight:900; color:var(--ink);">📅 自動人生經歷時間軸</div>
-              <div style="color:var(--ink-soft);">場外事件會隨每週訓練完結與比賽推進自動觸發。</div>
-            </div>
-          </div>
+          <button type="button" class="hub-drawer-btn" id="btnOpenRivalModal">
+            <span>🔥 宿敵檔案與近期人生經歷<span class="hub-drawer-btn-sub">宿敵熱度、稱號與事件紀錄</span></span>
+            <span class="hub-drawer-arrow">›</span>
+          </button>
 
-          <div class="comic-card c-12">
-            <div class="card-head">
-              <div class="card-title">📈 跨季壓縮生涯履歷與名人堂</div>
-              <div class="btn-row">
-                <span class="tag" id="idbStatusTag">IndexedDB 就緒</span>
-                <button class="manga-btn primary" id="btnResetCareer" type="button">🗑 重置存檔</button>
-              </div>
-            </div>
-            <div id="careerTrophyCase"></div>
-            <div id="careerGrowthStoryBox" style="margin-bottom:12px;"></div>
-            <div id="careerRivalryHistoryBox" style="margin-bottom:12px;"></div>
-            <div class="table-scroll">
-              <table class="data-table">
-                <thead><tr><th>球季</th><th>聯賽</th><th>球隊</th><th>戰績</th><th>出賽</th><th>PPG</th><th>RPG</th><th>APG</th><th>SPG</th><th>BPG</th><th>單場MVP</th><th>榮譽</th></tr></thead>
-                <tbody id="careerArchiveBody"></tbody>
-              </table>
-            </div>
-          </div>
+          <button type="button" class="hub-drawer-btn" id="btnOpenCareerModal">
+            <span>🏛️ 生涯履歷與名人堂殿堂<span class="hub-drawer-btn-sub">獎盃櫃、成長曲線與存檔</span></span>
+            <span class="hub-drawer-arrow">›</span>
+          </button>
         </div>
       </section>
 
-      <!-- TAB 3: 【球隊】 -->
+      <!-- TAB 3: 【球隊】一頁精簡主頁（先發 5 人精簡卡＋戰術補強彈窗） -->
       <section id="htab-team" class="hub-panel" style="display:none;">
         <div id="teamBenchmarkStrip" class="ovr-hero-strip"></div>
 
-        <div class="grid-12">
-          <div class="comic-card c-12" id="hubTeamOpsCard">
-            <div class="card-head">
-              <div class="card-title">🧠 球隊化學反應・教練戰術與補強動態</div>
-              <span class="tag gold" id="hubTacticTag">戰術：團隊傳導</span>
-            </div>
-            <div id="hubTeamOpsBody" style="font-size:12px;"></div>
-          </div>
+        <button type="button" class="hub-drawer-btn" id="btnOpenTeamOps" style="margin-bottom:10px;">
+          <span>🧠 教練戰術、陣容異動與補強<span class="hub-drawer-btn-sub" id="btnOpenTeamOpsSub">目前戰術：團隊傳導</span></span>
+          <span class="hub-drawer-arrow">›</span>
+        </button>
 
-          <div class="comic-card c-12">
-            <div class="card-head">
-              <div class="card-title" id="hubRosterTitle">👥 本隊 12 人名單（預設顯示先發 5 人）</div>
-              <span class="tag gold" id="hubTeamStrengthTag">球隊綜合戰力 OVR 82</span>
-            </div>
-            <div id="hubTeamRosterCards" class="roster-card-grid"></div>
-            <button type="button" class="manga-btn gold roster-toggle-btn" id="btnToggleBenchRoster">👥 展開替補陣容（+7 人）▼</button>
+        <div class="comic-card">
+          <div class="card-head" style="margin-bottom:8px; padding-bottom:6px;">
+            <div class="card-title" id="hubRosterTitle">👥 先發 5 人（點卡看能力）</div>
+            <span class="tag gold" id="hubTeamStrengthTag">戰力 OVR 82</span>
           </div>
+          <div id="hubTeamRosterCards" class="roster-card-grid"></div>
+          <button type="button" class="manga-btn gold roster-toggle-btn" id="btnToggleBenchRoster">👥 展開替補陣容（+7 人）▼</button>
         </div>
       </section>
+
+      <!-- HIDDEN DRAWER SHELF (Real DOM nodes mounted cleanly into #hubDetailModal on demand) -->
+      <div id="hubDrawerShelf" class="hub-drawer-shelf">
+        <div id="drawerSecTrain">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; font-size:12px; font-weight:900; margin-bottom:8px;">
+            <span>每打完 1 輪比賽補滿 2 AP</span>
+            <span>剩餘 AP：<span id="apPipsBox" style="display:inline-flex; gap:4px;"></span></span>
+          </div>
+          <div id="trainOutcomeBanner" style="display:none; margin-bottom:10px; padding:10px 12px; border:2.5px solid var(--ink); background:#FFF; box-shadow:var(--shadow-sm); font-size:12.5px; font-weight:800;"></div>
+          <div style="margin-bottom:8px; font-size:12px; font-weight:900;" id="trainRiskBanner">狀態極佳 (100%)</div>
+          <div class="ap-grid" id="apActionsGrid">
+            <button type="button" class="ap-card" data-ap-act="train_shoot">
+              <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--crimson);"><span>投射特訓</span><span>1 AP</span></div>
+              <div style="font-size:13.5px; font-weight:900;">🎯 三分與中投精準度</div>
+              <div style="font-size:11px; color:var(--ink-soft);">主升：三分 / 中投 ｜ 消耗狀態</div>
+            </button>
+            <button type="button" class="ap-card" data-ap-act="train_finish">
+              <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--crimson);"><span>終結爆發</span><span>1 AP</span></div>
+              <div style="font-size:13.5px; font-weight:900;">💥 內線終結、彈跳與速度</div>
+              <div style="font-size:11px; color:var(--ink-soft);">主升：內線 / 彈跳 / 速度</div>
+            </button>
+            <button type="button" class="ap-card" data-ap-act="train_def">
+              <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--crimson);"><span>防守肉搏</span><span>1 AP</span></div>
+              <div style="font-size:13.5px; font-weight:900;">🛡️ 外防、護框、籃板與力量</div>
+              <div style="font-size:11px; color:var(--ink-soft);">主升：外防 / 護框 / 籃板 / 力量</div>
+            </button>
+            <button type="button" class="ap-card" data-ap-act="train_iq">
+              <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:#1D4ED8;"><span>戰術組織</span><span>1 AP</span></div>
+              <div style="font-size:13.5px; font-weight:900;">🧠 控球組織與球商覆盤</div>
+              <div style="font-size:11px; color:var(--ink-soft);">主升：組織 / 球商 / 意志（低疲勞）</div>
+            </button>
+            <button type="button" class="ap-card" data-ap-act="recover">
+              <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--ok-green);"><span>醫療恢復</span><span>1 AP</span></div>
+              <div style="font-size:13.5px; font-weight:900;">🧊 冰浴理療與傷病康復</div>
+              <div style="font-size:11px; color:var(--ink-soft);">狀態回復 +28%（傷癒康復 +18% 並解除拉傷）</div>
+            </button>
+            <button type="button" class="ap-card" data-ap-act="social">
+              <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:#1D4ED8;"><span>商業社交</span><span>1 AP</span></div>
+              <div style="font-size:13.5px; font-weight:900;">🤝 球探交流與媒體曝光</div>
+              <div style="font-size:11px; color:var(--ink-soft);">提升名氣、球探星級與轉會熱度</div>
+            </button>
+            <button type="button" class="ap-card" data-ap-act="extreme_qte" style="border-color:var(--crimson); background:#FFF5F5;">
+              <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; color:var(--crimson);"><span>🔥 極限特訓 QTE</span><span>2 AP</span></div>
+              <div style="font-size:13.5px; font-weight:900;">⚡ 魔鬼特訓：高難縮圈・極低機率覺醒</div>
+              <div style="font-size:11px; color:var(--ink-soft);">高速窄環 QTE：成功加屬性，超低機率(11%)覺醒新技／洗紅特</div>
+            </button>
+          </div>
+        </div>
+
+        <div id="drawerSecStats">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="tag gold" id="hubExpTag">球齡 1 年</span>
+          </div>
+          <div id="hubPlayerSummary" style="margin-bottom:8px;"></div>
+          <div id="hubRoleTrustBox" style="margin-bottom:10px; padding:8px 10px; border:2px solid var(--ink); background:#FFFDF7; font-size:11.5px;"></div>
+          <div style="margin-bottom:10px; padding-top:8px; border-top:1.5px solid var(--ink);">
+            <div style="font-size:11.5px; font-weight:900; margin-bottom:5px;">身高天賦、已持有特質與徽章（點擊查看說明）</div>
+            <div id="hubTraitToggles" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+          </div>
+          <div style="padding-top:8px; border-top:1.5px solid var(--ink);">
+            <div style="font-size:11.5px; font-weight:900; margin-bottom:5px;">12 項個人能力（附聯盟同位置平均對比）</div>
+            <div id="hubPlayerStatsGrid"></div>
+          </div>
+        </div>
+
+        <div id="drawerSecRival">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:900;">球探星級評價</span>
+            <span class="star-bar" id="trainStarsTag">★★★☆☆</span>
+          </div>
+          <div id="trainProfileBox" style="display:none;"></div>
+          <div class="rival-box" id="trainRivalBox" style="margin-top:0;"></div>
+          <div id="trainEventFeed" style="margin-top:10px; padding:8px 10px; border:2px dashed var(--ink); background:#FFFDF7; font-size:11.5px; line-height:1.5;">
+            <div style="font-weight:900; color:var(--ink);">📅 自動人生經歷時間軸</div>
+            <div style="color:var(--ink-soft);">場外事件會隨每週訓練完結與比賽推進自動觸發。</div>
+          </div>
+        </div>
+
+        <div id="drawerSecCareer">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+            <span class="tag" id="idbStatusTag">IndexedDB 就緒</span>
+            <button class="manga-btn primary" id="btnResetCareer" type="button">🗑 重置存檔</button>
+          </div>
+          <div id="careerTrophyCase"></div>
+          <div id="careerGrowthStoryBox" style="margin-bottom:12px;"></div>
+          <div id="careerRivalryHistoryBox" style="margin-bottom:12px;"></div>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead><tr><th>球季</th><th>聯賽</th><th>球隊</th><th>戰績</th><th>出賽</th><th>PPG</th><th>RPG</th><th>APG</th><th>SPG</th><th>BPG</th><th>單場MVP</th><th>榮譽</th></tr></thead>
+              <tbody id="careerArchiveBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="drawerSecSched">
+          <div class="schedule-list" id="scheduleListBox" style="max-height:60vh;"></div>
+        </div>
+
+        <div id="drawerSecStandings">
+          <div style="font-size:13px; font-weight:900; margin-bottom:8px;" id="standingsTitle">🏆 本聯賽積分榜</div>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead><tr><th>排名</th><th>球隊</th><th>勝</th><th>負</th><th>勝率</th><th>勝差</th><th>得/失</th><th>王牌</th></tr></thead>
+              <tbody id="standingsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="drawerSecLeaders">
+          <div class="leaders-tab-row" id="leadersTabRow">
+            <button type="button" class="leaders-tab-btn active" data-lcat="ppg">得分</button>
+            <button type="button" class="leaders-tab-btn" data-lcat="rpg">籃板</button>
+            <button type="button" class="leaders-tab-btn" data-lcat="apg">助攻</button>
+            <button type="button" class="leaders-tab-btn" data-lcat="spg">抄截</button>
+            <button type="button" class="leaders-tab-btn" data-lcat="bpg">封阻</button>
+          </div>
+          <div id="leagueLeadersList" class="leader-list"></div>
+        </div>
+
+        <div id="drawerSecWorld">
+          <div id="worldLodBox"></div>
+        </div>
+
+        <div id="drawerSecTeamOps">
+          <div style="margin-bottom:8px;"><span class="tag gold" id="hubTacticTag">戰術：團隊傳導</span></div>
+          <div id="hubTeamOpsBody" style="font-size:12px;"></div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -906,14 +958,13 @@
     </header>
 
     <div class="micro-ribbon">
-      <div class="ribbon-inner">
-        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <span class="mini-meter">⚡體力 <span class="mini-track"><span class="mini-fill" id="hudStaminaBar" style="width:100%;"></span></span> <span id="hudStaminaTxt">100%</span></span>
-          <span id="hudStateBadges" style="display:inline-flex; gap:4px; align-items:center; flex-wrap:wrap;"><span class="s-badge">常態作戰</span></span>
+      <div class="live-micro-compact">
+        <div class="live-core-stats">
+          <span class="mini-meter">⚡<span class="mini-track"><span class="mini-fill" id="hudStaminaBar" style="width:100%;"></span></span> <span id="hudStaminaTxt">100%</span></span>
+          <span id="hudBoxLine" style="display:inline-flex; gap:6px; align-items:center;"><span>PTS 0</span><span>REB 0</span><span>AST 0</span></span>
+          <span id="hudStateBadges" style="display:inline-flex; gap:4px; align-items:center; flex-wrap:wrap;"></span>
         </div>
-        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;" id="hudBoxLine">
-          <span>#10</span><span>PTS 0</span><span>REB 0</span><span>AST 0</span><span>STL 0</span><span>BLK 0</span><span>PF 0</span>
-        </div>
+        <button type="button" class="live-detail-trigger" id="btnLiveDetailStats">📊 詳細</button>
       </div>
     </div>
 
@@ -967,17 +1018,19 @@
 
       <div id="bsMvpBanner" class="mvp-banner" style="display:none;"></div>
       <div class="table-scroll">
-        <table class="data-table" style="min-width:360px;">
+        <table class="data-table bs-quarter-table">
           <thead><tr id="bsQuarterHead"></tr></thead>
           <tbody id="bsQuarterBody"></tbody>
         </table>
       </div>
 
-      <div style="display:flex; gap:6px; margin:8px 0; flex-wrap:wrap;">
+      <div class="bs-toolbar-grid">
         <button type="button" class="manga-btn primary" id="btnBsHomeTab">我方 (12人)</button>
         <button type="button" class="manga-btn" id="btnBsAwayTab">對手 (12人)</button>
         <button type="button" class="manga-btn" id="btnBsLogTab">🎙️ 賽事旁述記錄</button>
+        <button type="button" class="manga-btn" id="btnBsToggleFull">📊 展開詳盡 16 欄</button>
       </div>
+      <div style="font-size:11px; color:var(--ink-soft); font-weight:800; margin-bottom:5px;">💡 點名字看能力 · 點數字看單場詳情</div>
 
       <div id="bsRosterWrap" class="table-scroll">
         <table class="data-table">
@@ -1036,6 +1089,59 @@
     </div>
   </div>
 
+  <!-- ===== ONE-PAGE HUB DRILL-DOWN MODAL ===== -->
+  <div class="modal-backdrop hidden" id="hubDetailModal" style="z-index:92;">
+    <div class="modal-sheet" style="max-width:680px;">
+      <div class="card-head">
+        <div class="card-title" id="hubDetailModalTitle">詳細資訊</div>
+        <span class="tag gold" id="hubDetailModalBadge">詳細</span>
+      </div>
+      <div id="hubDetailModalBody"></div>
+      <div style="margin-top:12px;">
+        <button type="button" class="manga-btn primary" id="btnCloseHubDetailModal" style="width:100%; min-height:46px;">返回主頁</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FLOATING LIVE MATCH DETAILED STATS MODAL ===== -->
+  <div class="modal-backdrop hidden" id="liveDetailStatsModal" style="z-index:96;">
+    <div class="modal-sheet" style="max-width:500px;">
+      <div class="card-head">
+        <div class="card-title">📊 本場即時詳細數據</div>
+        <span class="tag gold" id="ldsSub">Q1 · 0 - 0</span>
+      </div>
+      <div id="ldsPlayerName" style="font-size:15px; font-weight:900; margin-bottom:6px;"></div>
+      <div id="ldsFocusBox" style="display:none; padding:8px 10px; border:2px solid var(--ink); background:#FEFCE8; margin-bottom:8px;"></div>
+      <div id="ldsStatGrid" class="live-stat-grid"></div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+        <button type="button" class="manga-btn gold" id="btnLiveOpenFullBox" style="width:100%; min-height:46px;">📋 查看雙方 12 人完整 Box Score</button>
+        <button type="button" class="manga-btn primary" id="btnCloseLiveDetailStats" style="width:100%; min-height:46px;">▶ 繼續比賽</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CLICKABLE PLAYER DETAIL CARD MODAL ===== -->
+  <div class="modal-backdrop hidden" id="playerDetailModal" style="z-index:105;">
+    <div class="modal-sheet pdetail-sheet">
+      <div class="pdetail-hero">
+        <div style="min-width:0;">
+          <div class="pdetail-name" id="pdHeroName">#10 球員</div>
+          <div class="pdetail-sub" id="pdHeroSub">球隊 · SG · 先發主力</div>
+        </div>
+        <div class="pdetail-ovr-pill">
+          <div style="font-size:10px; font-weight:900;">OVR</div>
+          <div style="font-size:22px; font-weight:900; line-height:1;" id="pdOvrVal">80</div>
+          <div style="font-size:9.5px; font-weight:900; margin-top:2px;" id="pdOvrCmp">均75 (+5)</div>
+        </div>
+      </div>
+      <div style="font-size:11.5px; font-weight:900;">📊 12 項技術與身體能力</div>
+      <div id="pdStatsGrid" class="pdetail-stat-grid"></div>
+      <div style="font-size:11.5px; font-weight:900; margin-bottom:5px;">⚡ 持有技能與特質（點擊查看效果）</div>
+      <div id="pdSkillsBox" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px;"></div>
+      <button type="button" class="manga-btn primary" id="btnClosePlayerDetail" style="width:100%; min-height:46px;">關閉球員檔案</button>
+    </div>
+  </div>
+
   <!-- ===== PRE-MATCH COACH DIRECTIVE & FOCUS (3-CHOICE) MODAL ===== -->
   <div class="modal-backdrop hidden" id="preMatchFocusModal">
     <div class="modal-sheet" style="max-width:540px;">
@@ -1045,10 +1151,28 @@
       </div>
       <div style="font-size:17px; font-weight:900; margin-bottom:3px;">教練指令及本場專注（三選一）</div>
       <div id="pmFocusMatchup" style="font-size:12px; font-weight:800; color:var(--ink-soft);"></div>
+      <div id="pmFocusReason" class="focus-reason-box"></div>
       <div id="pmFocusGrid" class="focus-grid"></div>
       <div style="display:flex; justify-content:flex-end;">
         <button type="button" class="manga-btn" id="btnPmFocusCancel" style="width:100%;">返回主頁</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== END-OF-SEASON AWARDS CEREMONY MODAL ===== -->
+  <div class="modal-backdrop hidden" id="seasonAwardsModal">
+    <div class="modal-sheet" style="max-width:560px;">
+      <div class="awards-hero">
+        <span class="stamp" style="background:var(--gold-bright); color:var(--ink);">🏆 SEASON AWARDS</span>
+        <div style="font-size:19px; font-weight:900; margin-top:6px;" id="awardsHeroSub">年度頒獎典禮</div>
+        <div style="font-size:12px; color:#FDE68A; font-weight:800; margin-top:4px;" id="awardsHeroUserSummary"></div>
+      </div>
+      <div id="awardsMajorGrid" class="awards-grid"></div>
+      <div style="font-size:12px; font-weight:900; margin-bottom:5px;">📊 本季五大數據王</div>
+      <div id="awardsKingsList" class="leader-list" style="margin-bottom:10px;"></div>
+      <div style="font-size:12px; font-weight:900; margin-bottom:4px;">🏅 年度最佳一陣 (All-League 1st Team)</div>
+      <div id="awardsFirstTeamGrid" class="first-team-grid" style="margin-bottom:12px;"></div>
+      <button type="button" class="manga-btn primary" id="btnAwardsContinue" style="width:100%; min-height:50px; font-size:15px;">領取榮譽，進入休賽季抉擇 ▶</button>
     </div>
   </div>
 
@@ -1694,9 +1818,27 @@
       if (!Array.isArray(roster)) return [];
       const logs = [];
       const isHs = leagueId === "hs_nationals";
+      const isNcaa = leagueId === "ncaa_madness";
+      const rookieNamePools = {
+        hs_nationals: ["佐佐木 健", "高橋 翔太", "小林 翼", "渡邊 陸", "中村 陽斗", "伊藤 隼人", "加藤 悠馬", "山本 大輝", "森田 颯", "井上 蓮"],
+        ncaa_madness: ["J. Carter", "M. Brooks", "T. Harper", "D. Coleman", "K. Foster", "R. Jenkins", "A. Morales", "C. Bennett"],
+        asia_pro: ["陳 柏宇", "林 冠廷", "張 哲維", "王 俊凱", "李 浩然", "劉 承翰", "佐藤 拓海", "金 泰宇"],
+        euro_elite: ["L. Novak", "M. Petrovic", "A. Kovacs", "D. Rossi", "F. Navarro", "N. Popovic", "E. Lindqvist"],
+        nba_prime: ["Z. Holloway", "C. Vance", "J. Mercer", "K. Sterling", "D. Thornton", "T. Langford", "B. Caldwell"],
+        fiba_world: ["M. Silva", "R. Fernandez", "A. Diallo", "L. Bogic", "K. Sato", "T. Martin"]
+      };
+      const existingNames = new Set(roster.map(p => p && p.name));
+      const pickFreshName = () => {
+        const pool = rookieNamePools[leagueId] || rookieNamePools.nba_prime;
+        const avail = pool.filter(n => !existingNames.has(n));
+        const chosen = avail.length ? avail[Math.floor(Math.random() * avail.length)] : `${pool[0]} Jr.`;
+        existingNames.add(chosen);
+        return chosen;
+      };
+
       for (const pl of roster) {
         if (!pl || pl.isUser) continue;
-        pl.age = (typeof pl.age === "number" ? pl.age : (isHs ? 16 : 24)) + 1;
+        pl.age = (typeof pl.age === "number" ? pl.age : (isHs ? 16 : (isNcaa ? 20 : 25))) + 1;
         let delta = 0;
         if (pl.age <= 23) delta = Math.random() < 0.72 ? (Math.random() < 0.35 ? 2 : 1) : 0;
         else if (pl.age <= 29) delta = Math.random() < 0.28 ? 1 : (Math.random() < 0.15 ? -1 : 0);
@@ -1714,7 +1856,52 @@
           }
         }
       }
-      return logs.slice(0, 4);
+
+      const nonUsers = roster.filter(p => p && !p.isUser);
+      let departing = [];
+      if (isHs) {
+        // 嚴格只讓剛打完高三（升至 18 歲）的學長畢業離隊，絕不誤送高一／高二球員
+        departing = nonUsers.filter(p => p.age >= 18).sort((a, b) => b.age - a.age || b.ovr - a.ovr).slice(0, 4);
+      } else if (isNcaa) {
+        // 大四生（升至 22 歲以上）畢業投入選秀
+        departing = nonUsers.filter(p => p.age >= 22).sort((a, b) => b.age - a.age || b.ovr - a.ovr).slice(0, 4);
+      } else {
+        const retirees = nonUsers.filter(p => p.age >= 35).slice(0, 2);
+        const transfers = nonUsers.filter(p => !retirees.includes(p)).sort((a, b) => a.ovr - b.ovr).slice(0, Math.max(1, 2 - retirees.length));
+        departing = [...retirees, ...transfers].slice(0, 3);
+      }
+
+      const lgObj = DB.leagues.leagues.find(l => l.id === leagueId) || DB.leagues.leagues[0];
+      const lgAvgOvr = Math.round(lgObj.teams.reduce((s, t) => s + (t.ovr || 75), 0) / Math.max(1, lgObj.teams.length));
+
+      for (const oldPl of departing) {
+        const idx = roster.indexOf(oldPl);
+        if (idx < 0) continue;
+        const reason = isHs ? "🎓畢業離隊" : (isNcaa ? "🎓畢業投身選秀" : (oldPl.age >= 35 ? "🏛️光榮退役" : "✈️約滿轉會離隊"));
+        const newAge = isHs ? 15 : (isNcaa ? 18 : (19 + Math.floor(Math.random() * 4)));
+        const newOvr = isHs
+          ? Math.max(60, Math.min(75, lgAvgOvr - 6 + Math.floor(Math.random() * 9)))
+          : Math.max(66, Math.min(86, lgAvgOvr - 4 + Math.floor(Math.random() * 9)));
+        const newName = pickFreshName();
+        const newNum = pickUnusedJerseyNumber(roster, null);
+        const newLabel = isHs ? "🌱新高一生" : (isNcaa ? "🌱大一新秀" : (newAge <= 20 ? "🌟選秀新秀" : "🤝自由新援"));
+
+        const incoming = generateNpcProfile({
+          num: newNum, name: newName, pos: oldPl.pos || "SG", age: newAge,
+          role: "BENCH", ovr: newOvr, skills: []
+        });
+        incoming.age = newAge;
+        roster[idx] = incoming;
+
+        if (oldPl.role === "STARTER") {
+          const cand = roster.filter(p => p && !p.isUser && p.role !== "STARTER" && p.pos === oldPl.pos).sort((a, b) => b.ovr - a.ovr)[0]
+            || roster.filter(p => p && !p.isUser && p.role !== "STARTER").sort((a, b) => b.ovr - a.ovr)[0];
+          if (cand) cand.role = "STARTER";
+        }
+        logs.unshift(`${reason}：${oldPl.name}(${oldPl.pos}) → ${newLabel} #${newNum} ${newName}(${incoming.pos} · OVR ${incoming.ovr}) 加盟`);
+      }
+
+      return logs.slice(0, 6);
     }
 
     function getActiveTactic() {
@@ -2549,6 +2736,65 @@
         mvpLine = `${acePts}分 ${aceReb}板 ${aceAst}助`;
       }
       g.mvp = { name: mvpName, team: mvpTeam, line: mvpLine, isUser: userIsMvp };
+      const buildQuickBox = (rosterList, teamPts, oppPts, isHomeSide) => {
+        const qSec = (league.quarterMinutes || 8) * 60 * 4;
+        const rows = rosterList.map(pl => {
+          const isSt = pl.role === "STARTER";
+          const sec = pl.isUser ? Math.round(qSec * rotWin.targetPct) : Math.round(qSec * (isSt ? 0.68 : 0.22));
+          if (pl.isUser && isHomeSide) {
+            const fga = Math.max(pts ? Math.ceil(pts / 1.5) : 1, Math.round(pts * 0.88));
+            const fgm = Math.min(fga, Math.max(0, Math.round(pts * 0.42)));
+            const tpm = Math.min(fgm, Math.floor(pts / 9));
+            const tpa = Math.max(tpm, tpm + Math.floor(Math.random() * 3));
+            const ftm = Math.max(0, pts - fgm * 2 - tpm);
+            const fta = ftm + (ftm > 0 ? Math.floor(Math.random() * 2) : 0);
+            return {
+              num: pl.num, name: pl.name, pos: pl.pos, role: pl.role, isUser: true, isRival: false,
+              secPlayed: sec, pts, oreb: Math.floor(reb * 0.3), dreb: Math.ceil(reb * 0.7), ast, stl, blk,
+              tov: Math.floor(Math.random() * 3), fgm, fga, tpm, tpa, ftm, fta, pf: Math.floor(Math.random() * 4),
+              plusMinus: teamPts - oppPts
+            };
+          }
+          const w = (isSt ? 1.5 : 0.55) * ((pl.ovr || 74) / 76);
+          return { _w: w, num: pl.num, name: pl.name, pos: pl.pos, role: pl.role, isUser: false, isRival: Boolean(pl.isRival), secPlayed: sec, pts: 0, oreb: 0, dreb: 0, ast: 0, stl: 0, blk: 0, tov: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0, pf: Math.floor(Math.random() * 4), plusMinus: Math.round((teamPts - oppPts) * (isSt ? 0.85 : 0.3)) };
+        });
+        const others = rows.filter(r => !r.isUser);
+        let remPts = Math.max(0, teamPts - (isHomeSide ? pts : 0));
+        const wSum = others.reduce((s, r) => s + r._w, 0) || 1;
+        others.forEach((r, idx) => {
+          const share = idx === others.length - 1 ? remPts : Math.min(remPts, Math.max(0, Math.round((teamPts - (isHomeSide ? pts : 0)) * (r._w / wSum))));
+          remPts -= share;
+          r.pts = share;
+          r.fgm = Math.round(share * 0.42);
+          r.fga = Math.max(r.fgm, Math.round(r.fgm * 2.05));
+          r.tpm = Math.min(r.fgm, Math.floor(share / 10));
+          r.tpa = Math.max(r.tpm, r.tpm + (r.tpm ? 2 : 1));
+          r.ftm = Math.max(0, share - r.fgm * 2 - r.tpm);
+          r.fta = r.ftm + (r.ftm ? 1 : 0);
+          r.oreb = Math.floor(Math.random() * (r.role === "STARTER" ? 3 : 2));
+          r.dreb = Math.floor(Math.random() * (r.role === "STARTER" ? 6 : 3)) + (r.role === "STARTER" ? 1 : 0);
+          r.ast = Math.floor(Math.random() * (r.role === "STARTER" ? 5 : 2));
+          r.stl = Math.floor(Math.random() * 2);
+          r.blk = Math.floor(Math.random() * 2);
+          r.tov = Math.floor(Math.random() * 3);
+          delete r._w;
+        });
+        return rows;
+      };
+      const splitQ = (tot) => {
+        const q1 = Math.round(tot * 0.24), q2 = Math.round(tot * 0.25), q3 = Math.round(tot * 0.25);
+        return [q1, q2, q3, Math.max(0, tot - q1 - q2 - q3)];
+      };
+      const oppRosterFull = buildOpponentRoster(league.teams.find(t => t.id === g.oppId) || oppTeam);
+      g.boxScore = {
+        homeName: userTeam.name, awayName: g.oppName,
+        homeScore: us, awayScore: os,
+        qScoresHome: splitQ(us), qScoresAway: splitQ(os),
+        mvp: g.mvp,
+        homeTeam: buildQuickBox(Season.userRoster, us, os, true),
+        awayTeam: buildQuickBox(oppRosterFull, os, us, false),
+        commHistory: [{ ts: "FINAL", hl: true, msg: `快速模擬完場：${userTeam.name} ${us} - ${os} ${g.oppName}｜🏆MVP：${mvpName}（${mvpLine}）` }]
+      };
 
       Season.seasonTotals.gp += 1;
       Season.seasonTotals.pts += pts; Season.seasonTotals.reb += reb;
@@ -3123,6 +3369,7 @@
     }
 
     function saveMatchCheckpoint(force = false) {
+      if (window.BTUI && BTUI.isTutorialActive()) return;
       const now = Date.now();
       if (!force && now - _lastCpSaveMs < 1500) return;
       const snap = buildMatchSnapshot();
@@ -3649,9 +3896,10 @@
         const defMod = ModifierResolver.resolve({ defenseRating: 0 }, dfSkills, { ...baseCtx, shotZone: "DEFENSE", possession: "DEFENSE", staminaPct: Math.round(defender.stamina || 80), fouls: defender.pf || 0 }).finalStats.defenseRating;
         const skillEdge = (offMod - defMod * 0.8) * 0.0055 + (hasSk(shooter, "streaky_shooter") ? (Math.random() < 0.5 ? 0.04 : -0.05) : 0);
         const staminaPenalty = shooter.stamina < 30 ? -0.08 : (shooter.stamina < 50 ? -0.03 : 0);
-        const focusMakeMod = (shooter.isUser && Match.coachFocus && Match.coachFocus.id === "SCORE_ATTACK") ? 0.035
+        const defyDrag = (!shooter.isUser && right && Match.coachFocus && Match.coachFocus.defied && Match.coachFocus.defyProf && Match.coachFocus.defyProf.teamMakeDrag) ? Match.coachFocus.defyProf.teamMakeDrag : 0;
+        const focusMakeMod = ((shooter.isUser && Match.coachFocus && Match.coachFocus.id === "SCORE_ATTACK") ? 0.035
           : ((!shooter.isUser && right && Match.coachFocus && Match.coachFocus.id === "PLAYMAKE_LINK") ? 0.03
-          : ((defender.isUser && Match.coachFocus && Match.coachFocus.id === "LOCKDOWN_DEF") ? -0.035 : 0));
+          : ((defender.isUser && Match.coachFocus && Match.coachFocus.id === "LOCKDOWN_DEF") ? -0.035 : 0))) + defyDrag;
         const makeProb = Math.max(0.12, Math.min(0.72, (is3 ? 0.34 : 0.47) + (offRating - defRating) * 0.0072 + heightEdge + skillEdge + staminaPenalty + focusMakeMod));
 
         if (Math.random() < blkProb) {
@@ -3709,6 +3957,13 @@
     function handleQuarterEnd() {
       if (!Match.fastSimming) SoundFX.buzzer();
       Match.rivalHardTriggersThisQ = 0;
+      if (window.BTUI && BTUI.isTutorialActive()) {
+        Match.fastSimming = false;
+        Match.phase = "ENDED";
+        setDockMode("NONE");
+        BTUI.handleTutorialMatchEnd();
+        return;
+      }
       if (Match.quarter < 4) {
         broadcast(`第 ${Match.quarter} 節結束，比分 ${Match.homeScore} : ${Match.awayScore}！`, true);
         Match.quarter += 1; Match.timeLeftSec = Match.league.quarterMinutes * 60; Match.cooldownSec = 0;
@@ -3722,11 +3977,6 @@
         [...Match.homeTeam, ...Match.awayTeam].forEach(p => p.stamina = Math.min(p.maxStaminaCap, p.stamina + 8));
         broadcast(`平手進入加時賽 OT${Match.quarter - 4}！`, true);
         triggerPopup("OVERTIME!", "#EF4444"); updateHUD();
-      } else if (window.BTUI && BTUI.isTutorialActive()) {
-        Match.fastSimming = false;
-        Match.phase = "ENDED";
-        setDockMode("NONE");
-        BTUI.handleTutorialMatchEnd();
       } else {
         const homeWon = Match.homeScore > Match.awayScore;
         const all16 = [...Match.homeTeam, ...Match.awayTeam];
@@ -3752,6 +4002,21 @@
         if (g && !g.played) {
           g.played = true; g.userScore = Match.homeScore; g.oppScore = Match.awayScore;
           g.mvp = { name: bestP.name, team: mvpTeamName, line: mvpLine, isUser: Boolean(bestP.isUser) };
+          const packPl = (pl) => ({
+            num: pl.num, name: pl.name, pos: pl.pos, role: pl.role, isUser: Boolean(pl.isUser), isRival: Boolean(pl.isRival),
+            secPlayed: pl.secPlayed || 0, pts: pl.pts || 0, oreb: pl.oreb || 0, dreb: pl.dreb || 0, ast: pl.ast || 0,
+            stl: pl.stl || 0, blk: pl.blk || 0, tov: pl.tov || 0, fgm: pl.fgm || 0, fga: pl.fga || 0,
+            tpm: pl.tpm || 0, tpa: pl.tpa || 0, ftm: pl.ftm || 0, fta: pl.fta || 0, pf: pl.pf || 0, plusMinus: pl.plusMinus || 0
+          });
+          g.boxScore = {
+            homeName: Match.homeName, awayName: Match.awayName,
+            homeScore: Match.homeScore, awayScore: Match.awayScore,
+            qScoresHome: [...Match.qScoresHome], qScoresAway: [...Match.qScoresAway],
+            mvp: g.mvp,
+            homeTeam: Match.homeTeam.map(packPl),
+            awayTeam: Match.awayTeam.map(packPl),
+            commHistory: Match.commHistory.slice(0, 40)
+          };
           const u = Match.userPlayer;
           Season.seasonTotals.gp += 1;
           Season.seasonTotals.pts += u.pts; Season.seasonTotals.reb += (u.oreb + u.dreb);
@@ -4434,7 +4699,7 @@
         const st = Math.round(u.stamina);
         document.getElementById("hudStaminaTxt").textContent = `${st}%`;
         const sb = document.getElementById("hudStaminaBar"); sb.style.width = `${st}%`; sb.classList.toggle("low", st < 25);
-        document.getElementById("hudBoxLine").innerHTML = `<span>#${u.num}(${u.pos})</span><span>PTS ${u.pts}</span><span>REB ${u.oreb + u.dreb}</span><span>AST ${u.ast}</span><span>STL ${u.stl}</span><span>BLK ${u.blk}</span><span>PF ${u.pf}</span>`;
+        document.getElementById("hudBoxLine").innerHTML = `<span><strong>PTS ${u.pts}</strong></span><span>REB ${u.oreb + u.dreb}</span><span>AST ${u.ast}</span>`;
       }
       const badges = [];
       if (Match.isZone) badges.push(`<span class="s-badge zone">🔥 ZONE 覺醒</span>`);
@@ -4454,6 +4719,8 @@
 
     // ---------- PAUSE & FINAL CENTER ----------
     function openPauseCenter(isFinal = false) {
+      Match._historyView = null;
+      if (window.BTUI && typeof BTUI.toggleBoxScoreFullMode === "function") BTUI.toggleBoxScoreFullMode(false);
       if (!isFinal && Match.phase !== "PAUSED_MENU" && Match.phase !== "ENDED") {
         phaseBeforePause = Match.phase;
         Match.phase = "PAUSED_MENU";
@@ -4522,11 +4789,11 @@
       Match.phase = "PLAYING";
       broadcast("⏩ 啟動快速模擬，高速演算剩餘賽事至完場……", true);
       let guard = 0;
-      while (Match.phase !== "ENDED" && guard < 800) {
+      while (Match.phase !== "ENDED" && Match.phase !== "IDLE" && guard < 800) {
         simulateNormalPossession(true);
         guard++;
       }
-      if (Match.phase !== "ENDED") {
+      if (Match.phase !== "ENDED" && Match.phase !== "IDLE") {
         Match.timeLeftSec = 0;
         if (Match.quarter < 4) Match.quarter = 4;
         if (Match.homeScore === Match.awayScore) addScore("HOME", 2);
@@ -4535,7 +4802,13 @@
       Match.fastSimming = false;
     }
 
-    function closePauseCenter() { document.getElementById("boxScoreModal").classList.add("hidden"); if (Match.phase === "PAUSED_MENU") Match.phase = phaseBeforePause; }
+    function closePauseCenter() {
+      document.getElementById("boxScoreModal").classList.add("hidden");
+      if (Match.phase === "PAUSED_MENU") {
+        Match.phase = window.BTUI ? BTUI.sanitizeResumePhase(phaseBeforePause) : (phaseBeforePause === "PAUSED_MENU" ? "PLAYING" : phaseBeforePause);
+        lastMs = performance.now();
+      }
+    }
     function returnToHub() {
       const wasCompleted = Match.phase === "ENDED";
       Match.phase = "IDLE";
@@ -4551,23 +4824,28 @@
     }
 
     function renderPauseTab() {
+      const src = Match._historyView || Match;
+      const isHist = Boolean(Match._historyView);
       document.getElementById("btnBsHomeTab").className = `manga-btn ${activePauseTab === "HOME" ? "primary" : ""}`;
       document.getElementById("btnBsAwayTab").className = `manga-btn ${activePauseTab === "AWAY" ? "primary" : ""}`;
       document.getElementById("btnBsLogTab").className = `manga-btn ${activePauseTab === "LOG" ? "primary" : ""}`;
       const rw = document.getElementById("bsRosterWrap"), lw = document.getElementById("bsCommLogWrap");
       if (activePauseTab === "LOG") {
         rw.style.display = "none"; lw.style.display = "flex";
-        lw.innerHTML = Match.commHistory.map(e => `<div class="pbp-row"><span class="pbp-time">[${e.ts}]</span><span style="${e.hl ? "font-weight:900; color:#FACC15;" : ""}">${e.msg}</span></div>`).join("") || "暫無旁述";
+        lw.innerHTML = (src.commHistory || []).map(e => `<div class="pbp-row"><span class="pbp-time">[${e.ts}]</span><span style="${e.hl ? "font-weight:900; color:#FACC15;" : ""}">${e.msg}</span></div>`).join("") || "暫無旁述";
         return;
       }
       rw.style.display = "block"; lw.style.display = "none";
-      const list = activePauseTab === "HOME" ? Match.homeTeam : Match.awayTeam;
+      const list = activePauseTab === "HOME" ? (src.homeTeam || []) : (src.awayTeam || []);
       const tot = { pts:0, oreb:0, dreb:0, ast:0, stl:0, blk:0, tov:0, fgm:0, fga:0, tpm:0, tpa:0, ftm:0, fta:0, pf:0 };
-      const rows = list.map(p => {
-        for (const k of Object.keys(tot)) tot[k] += p[k];
+      const rows = list.map((p, rowIdx) => {
+        for (const k of Object.keys(tot)) tot[k] += (p[k] || 0);
         const cls = p.isUser ? "hl-row" : (p.isRival ? "rival-row" : (p.role === "BENCH" ? "bench-row" : ""));
-        const mvpMark = (Match.phase === "ENDED" && Match.mvpPlayer === p) ? `<span class="mvp-pill">🏆 MVP</span>` : "";
-        return `<tr class="${cls}"><td class="left">#${p.num} ${p.name} (${p.pos})${mvpMark}</td><td>${p.role === "STARTER" ? "先發" : "後備"}${p.onFloor ? "●" : ""}</td><td>${formatClock(p.secPlayed)}</td><td><strong>${p.pts}</strong></td><td>${p.oreb}</td><td>${p.dreb}</td><td><strong>${p.oreb+p.dreb}</strong></td><td>${p.ast}</td><td>${p.stl}</td><td>${p.blk}</td><td>${p.tov}</td><td>${p.fgm}/${p.fga}</td><td>${p.tpm}/${p.tpa}</td><td>${p.ftm}/${p.fta}</td><td>${p.pf}</td><td>${p.plusMinus > 0 ? "+"+p.plusMinus : p.plusMinus}</td></tr>`;
+        const isMvp = isHist ? (src.mvp && src.mvp.name === p.name) : (Match.phase === "ENDED" && Match.mvpPlayer === p);
+        const mvpMark = isMvp ? `<span class="mvp-pill">🏆 MVP</span>` : "";
+        const pTeamName = activePauseTab === "HOME" ? src.homeName : src.awayName;
+        const pLink = window.BTUI ? BTUI.playerNameLinkHtml(p.name, pTeamName, `#${p.num} ${p.name} (${p.pos})`) : `#${p.num} ${p.name} (${p.pos})`;
+        return `<tr class="${cls}" data-bs-row-idx="${rowIdx}"><td class="left">${pLink}${mvpMark}</td><td>${p.role === "STARTER" ? "先發" : "後備"}${p.onFloor ? "●" : ""}</td><td>${formatClock(p.secPlayed || 0)}</td><td><strong>${p.pts || 0}</strong></td><td>${p.oreb || 0}</td><td>${p.dreb || 0}</td><td><strong>${(p.oreb || 0) + (p.dreb || 0)}</strong></td><td>${p.ast || 0}</td><td>${p.stl || 0}</td><td>${p.blk || 0}</td><td>${p.tov || 0}</td><td>${p.fgm || 0}/${p.fga || 0}</td><td>${p.tpm || 0}/${p.tpa || 0}</td><td>${p.ftm || 0}/${p.fta || 0}</td><td>${p.pf || 0}</td><td>${(p.plusMinus || 0) > 0 ? "+" + p.plusMinus : (p.plusMinus || 0)}</td></tr>`;
       }).join("");
       document.getElementById("bsRosterBody").innerHTML = rows + `<tr class="total-row"><td class="left">全隊總計</td><td>—</td><td>—</td><td>${tot.pts}</td><td>${tot.oreb}</td><td>${tot.dreb}</td><td>${tot.oreb+tot.dreb}</td><td>${tot.ast}</td><td>${tot.stl}</td><td>${tot.blk}</td><td>${tot.tov}</td><td>${tot.fgm}/${tot.fga}</td><td>${tot.tpm}/${tot.tpa}</td><td>${tot.ftm}/${tot.fta}</td><td>${tot.pf}</td><td>—</td></tr>`;
     }
@@ -5052,8 +5330,8 @@
       return calcOVR(st, pos, skillIds);
     }
 
-    function render12StatGrid(st, lastDelta = null, heightCm = null) {
-      if (window.BTUI && Season && Season.player) return BTUI.render12StatGridWithCompare(st, lastDelta, heightCm);
+    function render12StatGrid(st, lastDelta = null, heightCm = null, showCompare = true) {
+      if (window.BTUI && Season && Season.player) return BTUI.render12StatGridWithCompare(st, lastDelta, heightCm, showCompare);
       const fmtD = (k) => {
         if (!lastDelta || !lastDelta[k]) return "";
         const v = lastDelta[k];
@@ -5144,7 +5422,7 @@
           ${skills.map(id => renderSkillChip(id)).join("")}
           ${rarity.cutin ? `<span class="tag gold">⚡ 高一自帶大招：${ciMap[rarity.cutin] || rarity.cutin}</span>` : ""}
         </div>
-        ${render12StatGrid(stats)}
+        ${render12StatGrid(stats, null, null, false)}
       `;
     }
 
@@ -5484,16 +5762,8 @@
       const lastDetail = (tbEl && tbEl.querySelector("div:last-child")) ? tbEl.querySelector("div:last-child").textContent : "";
       const shouldEvt = (p.ap === 0 && !p.eventTriggeredThisRound && Season.currentRoundIdx < Season.schedule.length && Math.random() < 0.68);
       if (window.BTUI && _trainBeforeSnap) {
-        BTUI.showTrainingSettlement(_trainBeforeSnap, lastTitle, lastDetail, lastTitle.includes("大成功") ? "GREAT" : (lastTitle.includes("拉傷") ? "INJURY" : (lastTitle.includes("失敗") ? "FAIL" : "SUCCESS")));
-        if (shouldEvt) {
-          const prevCont = document.getElementById("btnSettleContinue");
-          // Chain event smoothly after closing settlement
-          const origOnce = () => {
-            if (prevCont) prevCont.removeEventListener("click", origOnce);
-            scheduleCareerEvent("📅 週中訓練插曲", 220);
-          };
-          if (prevCont) prevCont.addEventListener("click", origOnce);
-        }
+        const tier = lastTitle.includes("大成功") ? "GREAT" : (lastTitle.includes("拉傷") ? "INJURY" : (lastTitle.includes("失敗") ? "FAIL" : "SUCCESS"));
+        BTUI.showTrainingSettlement(_trainBeforeSnap, lastTitle, lastDetail, tier, shouldEvt ? () => scheduleCareerEvent("📅 週中訓練插曲", 220) : null);
       } else if (shouldEvt) {
         scheduleCareerEvent("📅 週中訓練插曲", 450);
       }
@@ -5502,21 +5772,28 @@
     // Extreme Training Mini QTE
     let tqState = null;
     function startExtremeTrainQTE() {
+      if (window.BTUI && typeof BTUI.closeSectionModal === "function") BTUI.closeSectionModal();
       document.getElementById("trainQteModal").classList.remove("hidden");
       const cv = document.getElementById("tqCanvas"), r = cv.getBoundingClientRect();
       cv.width = Math.max(300, Math.floor((r.width || 400) * 2));
       cv.height = Math.max(120, Math.floor((r.height || 140) * 2));
       const rndTarget = 0.24 + Math.random() * 0.22;
-      tqState = { ringR: 1.0, targetR: rndTarget, tol: 0.052, raf: null, active: true, readyAt: performance.now() + 180 };
-      let prev = performance.now();
+      const t0 = performance.now();
+      tqState = { ringR: 1.0, targetR: rndTarget, tol: 0.052, raf: null, active: true, prepUntil: t0 + 350, readyAt: t0 + 380 };
+      let prev = t0;
       const loop = (now) => {
         if (!tqState || !tqState.active) return;
         const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
-        tqState.ringR -= 1.18 * dt;
+        const inPrep = now < tqState.prepUntil;
+        if (!inPrep) tqState.ringR -= 1.18 * dt;
         const c = cv.getContext("2d"), w = cv.width, h = cv.height, cx = w/2, cy = h/2, mr = Math.min(w, h)*0.44;
         c.fillStyle = "#181614"; c.fillRect(0, 0, w, h);
         c.strokeStyle = "#FACC15"; c.lineWidth = 10; c.beginPath(); c.arc(cx, cy, mr * tqState.targetR, 0, Math.PI*2); c.stroke();
-        c.strokeStyle = "#FFF"; c.lineWidth = 5; c.beginPath(); c.arc(cx, cy, Math.max(4, mr * tqState.ringR), 0, Math.PI*2); c.stroke();
+        c.strokeStyle = inPrep ? "#FDE68A" : "#FFF"; c.lineWidth = 5; c.beginPath(); c.arc(cx, cy, Math.max(4, mr * tqState.ringR), 0, Math.PI*2); c.stroke();
+        if (inPrep) {
+          c.fillStyle = "#FACC15"; c.font = "900 24px sans-serif"; c.textAlign = "center"; c.textBaseline = "middle";
+          c.fillText("準備鎖定！", cx, cy);
+        }
         if (tqState.ringR <= 0.08) { resolveExtremeTrainQTE(false); return; }
         tqState.raf = requestAnimationFrame(loop);
       };
@@ -5563,8 +5840,11 @@
       const tbEl = document.getElementById("trainOutcomeBanner");
       const lastTitle = (tbEl && tbEl.querySelector("div:first-child")) ? tbEl.querySelector("div:first-child").textContent : "極限特訓完成";
       const lastDetail = (tbEl && tbEl.querySelector("div:last-child")) ? tbEl.querySelector("div:last-child").textContent : "";
+      const shouldQteEvt = (p.ap === 0 && !p.eventTriggeredThisRound && Season.currentRoundIdx < Season.schedule.length && Math.random() < 0.68);
       if (window.BTUI && _qteBeforeSnap) {
-        BTUI.showTrainingSettlement(_qteBeforeSnap, lastTitle, lastDetail, ok ? "GREAT" : "FAIL");
+        BTUI.showTrainingSettlement(_qteBeforeSnap, lastTitle, lastDetail, ok ? "GREAT" : "FAIL", shouldQteEvt ? () => scheduleCareerEvent("📅 週中極限特訓插曲", 220) : null);
+      } else if (shouldQteEvt) {
+        scheduleCareerEvent("📅 週中極限特訓插曲", 450);
       }
     }
 
@@ -5588,8 +5868,14 @@
         rivalTeam: rivalTeamData.name || "勁敵球隊",
         teammateName: (topMate && topMate.name) || uTeamData.ace || "主力隊友",
         vetName: (vetMate && vetMate.name) || (topMate && topMate.name) || "資深隊友",
+        vetRoleLabel: Season.leagueId === "hs_nationals" ? "資深學長" : "隊內老將",
         pgMentorName: (pgMate && pgMate.name) || uTeamData.ace || "先發控衛",
-        legendName: league.legendName || "籃球傳奇",
+        legendName: (() => {
+          const cand = league.legendName || "籃球傳奇名宿";
+          const activeSet = new Set();
+          (league.teams || []).forEach(t => { if (t.ace) activeSet.add(t.ace); (t.roster || []).forEach(pl => activeSet.add(pl.name)); });
+          return activeSet.has(cand) ? "籃球傳奇名宿" : cand;
+        })(),
         leagueName: league.name
       };
     }
@@ -5670,10 +5956,12 @@
           else if (e.stage === stage) w *= 1.8;     // 其次呈現當前階段專屬事件
           // 依球員與球隊處境動態調整正負面事件權重（避免雪上加霜或脫離現實）
           if (e.tone === "NEGATIVE") {
-            if (p.injured || p.condition < 45) w *= 0.45; // 已經受傷／低體力時降低惡性負面事件機率
-            else if (winPct < 45 || (p.coachTrust || 35) < 40) w *= 1.35; // 戰績低迷時合理反映更衣室與輿論壓力
+            w *= 1.25; // 提升逆境與負面事件出現率，避免整季一帆風順
+            if (p.injured || p.condition < 40) w *= 0.55;
+            else if (winPct < 45 || (p.coachTrust || 35) < 45) w *= 1.35;
           } else if (e.tone === "POSITIVE") {
-            if (winPct >= 60 || p.reputation >= 65) w *= 1.30; // 高勝率／高名氣更容易吸引合約、代言與徵召
+            if (curOvr >= 78) w *= 0.78; // 高能力值後收斂正面成長事件出率
+            if (winPct >= 65 || p.reputation >= 70) w *= 1.15;
             if (p.injured && e.id.includes("rehab")) w *= 2.4;
           }
           if (p.recentEventIds.includes(e.id)) w *= 0.12; // 近期觸發過大幅降權避免重複
@@ -6011,7 +6299,10 @@
         if (chip) { e.stopPropagation(); showSkillPopover(chip.dataset.skillId, chip); return; }
         if (!e.target.closest("#skillTipPopover")) hideSkillPopover();
       });
-      document.getElementById("btnNextSeason").addEventListener("click", openSeasonEndCrossroads);
+      document.getElementById("btnNextSeason").addEventListener("click", () => {
+        if (window.BTUI) BTUI.openSeasonAwardsCeremony(() => openSeasonEndCrossroads());
+        else openSeasonEndCrossroads();
+      });
 
       document.getElementById("btnSaveDB").addEventListener("click", async () => {
         const ok = await SaveManager.save(Season);
