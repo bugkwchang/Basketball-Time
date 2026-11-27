@@ -377,10 +377,15 @@ window.BTUI = (() => {
 
     const allPlayers = [];
     for (const pl of (season.userRoster || [])) {
+      const prof = (!pl.isUser && (!pl.stats || !pl.heightCm) && typeof generateNpcProfile === "function")
+        ? generateNpcProfile({ ...pl }) : pl;
       allPlayers.push({
-        name: pl.name, ovr: pl.isUser ? userOvr : (pl.ovr || 72),
-        pos: pl.pos || "SG", isUser: Boolean(pl.isUser),
-        stats: pl.isUser && pObj ? pObj.stats : pl.stats
+        name: prof.name,
+        ovr: pl.isUser ? userOvr : (prof.ovr || 72),
+        pos: prof.pos || "SG",
+        heightCm: pl.isUser && pObj ? (pObj.heightCm || 185) : (prof.heightCm || 185),
+        isUser: Boolean(pl.isUser),
+        stats: pl.isUser && pObj ? pObj.stats : (prof.stats || null)
       });
     }
     for (const tm of (league.teams || [])) {
@@ -390,7 +395,16 @@ window.BTUI = (() => {
         ? tm.roster
         : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
       for (const pl of r) {
-        allPlayers.push({ name: pl.name, ovr: pl.ovr || tm.ovr || 74, pos: pl.pos || "SG", isUser: false, stats: pl.stats || null });
+        const prof = (!pl.stats || !pl.heightCm) && typeof generateNpcProfile === "function"
+          ? generateNpcProfile({ ...pl }) : pl;
+        allPlayers.push({
+          name: prof.name,
+          ovr: prof.ovr || tm.ovr || 74,
+          pos: prof.pos || "SG",
+          heightCm: prof.heightCm || 185,
+          isUser: false,
+          stats: prof.stats || null
+        });
       }
     }
 
@@ -409,6 +423,10 @@ window.BTUI = (() => {
     const userPosRankObj = getPosRank(userOvr, userPos);
     const posRank = userPosRankObj.rank;
     const posTotal = userPosRankObj.total;
+    const posHeights = samePos.map(x => x.heightCm).filter(h => typeof h === "number" && h > 140);
+    const posAvgHeight = posHeights.length
+      ? Math.round(posHeights.reduce((a, b) => a + b, 0) / posHeights.length)
+      : (getPosHeightBase()[userPos] || 186);
 
     const statAvgs = {};
     const posTpl = (db.origins && db.origins.posTemplates && db.origins.posTemplates[userPos]) || {};
@@ -433,7 +451,7 @@ window.BTUI = (() => {
     return {
       leagueName: league.name,
       userOvr, playerAvgOvr, playerOvrDiff: userOvr - playerAvgOvr, playerOvrRank, totalPlayers,
-      allPlayersSorted: sortedAll, getOverallRank, getPosRank, userPos, posRank, posTotal,
+      allPlayersSorted: sortedAll, getOverallRank, getPosRank, userPos, posRank, posTotal, posAvgHeight,
       userTeamOvr, teamAvgOvr, teamOvrDiff: userTeamOvr - teamAvgOvr, teamOvrRank, teamCount, standingRank,
       statAvgs, avgBase
     };
@@ -869,7 +887,9 @@ window.BTUI = (() => {
         : `<span style="color:#C81E1E; font-size:10px; margin-left:2px;">▼${v}</span>`;
     };
     const posHMap = getPosHeightBase();
-    const posBaseH = (season && season.player) ? (posHMap[season.player.pos] || 186) : 186;
+    const posBaseH = (bm && typeof bm.posAvgHeight === "number")
+      ? bm.posAvgHeight
+      : ((season && season.player) ? (posHMap[season.player.pos] || 186) : 186);
     const hDiff = heightCm !== null ? heightCm - posBaseH : 0;
     const hCell = heightCm !== null
       ? `<div class="stat-mini-box" style="background:#FEFCE8; border-color:var(--ink);">
@@ -1630,6 +1650,11 @@ window.BTUI = (() => {
     document.querySelectorAll("#leadersTabRow .leaders-tab-btn").forEach(b => {
       b.classList.toggle("active", b.dataset.lcat === activeLeaderCat);
     });
+    const season = getSeason();
+    if (!season || (season.currentRoundIdx || 0) === 0) {
+      box.innerHTML = `<div style="padding:18px 12px; text-align:center; border:2px dashed var(--ink); background:#FFFDF7; font-size:12.5px; font-weight:800; color:var(--ink-soft); line-height:1.6;">📅 新賽季尚未開打！<br/>完成第 1 輪比賽後，系統將即時統計全聯盟五大數據排行榜。</div>`;
+      return;
+    }
     const rows = computeLeagueStatLeaders();
     const sorted = [...rows].sort((a, b) => (b[activeLeaderCat] - a[activeLeaderCat]) || (b.ovr - a.ovr));
     const unitMap = { ppg: "PPG", rpg: "RPG", apg: "APG", spg: "SPG", bpg: "BPG" };
