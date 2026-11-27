@@ -547,12 +547,17 @@
       <div class="title-body">
         <div class="title-features">
           <div class="title-feat-pill">⚡ 子彈時間<br/>關鍵三選一</div>
-          <div class="title-feat-pill">🎯 教練指令<br/>戰術影響結算</div>
+          <div class="title-feat-pill">🌍 活體聯賽<br/>跨季換血演進</div>
           <div class="title-feat-pill">🏛️ 6 大聯賽<br/>衝擊名人堂</div>
         </div>
         <div id="titleSaveInfo" class="title-save-pill" style="display:none;"></div>
+        <div class="save-slots-wrap" id="titleSaveSlots"></div>
+        <div class="save-backup-bar">
+          <button type="button" class="manga-btn" id="btnTitleImportSave" style="font-size:12px; padding:7px 12px; width:100%;">📥 匯入存檔備份 (.json)</button>
+          <input type="file" id="saveImportFileInput" accept=".json,application/json" style="display:none;" />
+        </div>
         <button type="button" class="manga-btn primary title-primary-btn" id="btnTitleContinue" style="display:none;">🏀 繼續生涯</button>
-        <button type="button" class="manga-btn primary title-primary-btn" id="btnTitleStartNew">🏀 開始遊戲</button>
+        <button type="button" class="manga-btn primary title-primary-btn" id="btnTitleStartNew" style="display:none;">🏀 開始遊戲</button>
       </div>
     </div>
   </div>
@@ -671,7 +676,8 @@
         </button>
       </div>
       <div class="util-drawer" id="topUtilDrawer">
-        <button class="manga-btn primary" id="btnNewCareerFlow" type="button">✨ 新建生涯</button>
+        <button class="manga-btn" id="btnSwitchSaveSlot" type="button" title="切換 3 槽位存檔或備份">💾 存檔</button>
+          <button class="manga-btn primary" id="btnNewCareerFlow" type="button">✨ 新建生涯</button>
         <button class="manga-btn dark" id="btnExportRoster" type="button">⬇ 匯出名單 JSON</button>
         <button class="manga-btn gold" id="btnImportRoster" type="button">⬆ 匯入 Roster</button>
         <input class="hidden-file" id="rosterFileInput" type="file" accept=".json,application/json" />
@@ -772,6 +778,13 @@
       <section id="htab-team" class="hub-panel" style="display:none;">
         <div id="teamBenchmarkStrip" class="ovr-hero-strip"></div>
 
+          <button type="button" class="hub-drawer-btn" id="btnOpenOffseasonReport" style="margin-bottom:8px; display:none;">
+            <span class="hub-drawer-btn-left">
+              <strong>📰 休賽季聯盟異動快報</strong>
+              <span id="btnOpenOffseasonSub">查看全聯賽離隊、焦點新人與新季王牌榜</span>
+            </span>
+            <span class="hub-drawer-chev">›</span>
+          </button>
         <button type="button" class="hub-drawer-btn" id="btnOpenTeamOps" style="margin-bottom:10px;">
           <span>🧠 教練戰術、陣容異動與補強<span class="hub-drawer-btn-sub" id="btnOpenTeamOpsSub">目前戰術：團隊傳導</span></span>
           <span class="hub-drawer-arrow">›</span>
@@ -1121,6 +1134,29 @@
   </div>
 
   <!-- ===== CLICKABLE PLAYER DETAIL CARD MODAL ===== -->
+  <!-- ==================== OFFSEASON LEAGUE REPORT MODAL ==================== -->
+  <div class="modal-backdrop hidden" id="offseasonReportModal" style="z-index:98;">
+    <div class="modal-card" style="max-width:560px; padding:14px;">
+      <div class="panel-head" style="margin-bottom:8px;">
+        <div>
+          <span class="stamp" id="osrSeasonStamp" style="background:var(--gold-bright); color:var(--ink);">新球季快報</span>
+          <span style="font-size:16px; font-weight:900; margin-left:6px;" id="osrTitle">休賽季聯盟異動總結</span>
+        </div>
+        <button type="button" class="manga-btn" id="btnCloseOffseasonReport" style="padding:5px 10px; font-size:12px;">✕ 關閉</button>
+      </div>
+      <div class="osr-tabs" id="osrTabBar">
+        <button type="button" class="osr-tab active" data-osr-tab="myteam">本隊異動</button>
+        <button type="button" class="osr-tab" data-osr-tab="league">各隊補強</button>
+        <button type="button" class="osr-tab" data-osr-tab="rookies">焦點新人</button>
+        <button type="button" class="osr-tab" data-osr-tab="aces">新季王牌榜</button>
+      </div>
+      <div id="osrBody" class="osr-body"></div>
+      <div style="margin-top:10px; text-align:right;">
+        <button type="button" class="manga-btn primary" id="btnConfirmOffseasonReport" style="width:100%;">🏀 進入新球季備戰</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop hidden" id="playerDetailModal" style="z-index:105;">
     <div class="modal-sheet pdetail-sheet">
       <div class="pdetail-hero">
@@ -1300,7 +1336,16 @@
     const SaveManager = (() => {
       const DB_NAME = "BasketballTimeDB";
       const STORE = "saves";
+      const SLOT_PREF_KEY = "bt_active_slot_v1";
+      const SLOT_COUNT = 3;
       let dbPromise = null;
+      let activeSlot = 1;
+      try {
+        const stored = Number(localStorage.getItem(SLOT_PREF_KEY));
+        if (stored >= 1 && stored <= SLOT_COUNT) activeSlot = stored;
+      } catch (_) {}
+
+      const slotKey = (slot) => `career_slot_${Math.max(1, Math.min(SLOT_COUNT, Number(slot) || activeSlot))}`;
 
       function openDB() {
         if (dbPromise) return dbPromise;
@@ -1319,38 +1364,102 @@
         return dbPromise;
       }
 
+      function buildMeta(stateObj, slot) {
+        if (!stateObj || !stateObj.player || !stateObj.standings) return null;
+        const p = stateObj.player;
+        const ut = (stateObj.standings || []).find(t => t.isUserTeam) || { name: "未知球隊", w: 0, l: 0 };
+        const lg = (DB && DB.leagues && DB.leagues.leagues)
+          ? (DB.leagues.leagues.find(l => l.id === stateObj.leagueId) || { name: stateObj.leagueId || "聯賽" })
+          : { name: stateObj.leagueId || "聯賽" };
+        const ovr = typeof calcOVR === "function" ? calcOVR(p.stats, p.pos, stateObj.equippedTraits) : 72;
+        return {
+          slot,
+          name: p.name || "主角",
+          pos: p.pos || "SG",
+          age: p.age || 15,
+          ovr,
+          careerYear: stateObj.careerYear || 1,
+          leagueName: lg.name,
+          teamName: ut.name,
+          wl: `${ut.w}勝${ut.l}負`,
+          retired: Boolean(stateObj.retired),
+          updatedAt: stateObj._savedAt || Date.now()
+        };
+      }
+
       return {
-        async save(stateObj) {
+        SLOT_COUNT,
+        getActiveSlot() { return activeSlot; },
+        setActiveSlot(slot) {
+          const s = Math.max(1, Math.min(SLOT_COUNT, Number(slot) || 1));
+          activeSlot = s;
+          try { localStorage.setItem(SLOT_PREF_KEY, String(s)); } catch (_) {}
+          return activeSlot;
+        },
+        async save(stateObj, slot = null) {
+          const targetSlot = slot ? Math.max(1, Math.min(SLOT_COUNT, Number(slot))) : activeSlot;
+          if (stateObj && typeof stateObj === "object") stateObj._savedAt = Date.now();
           const db = await openDB();
           if (!db) return false;
           return new Promise((resolve) => {
             try {
               const tx = db.transaction(STORE, "readwrite");
-              tx.objectStore(STORE).put(stateObj, "career_slot_1");
+              tx.objectStore(STORE).put(stateObj, slotKey(targetSlot));
               tx.oncomplete = () => resolve(true);
               tx.onerror = () => resolve(false);
             } catch (_) { resolve(false); }
           });
         },
-        async load() {
+        async load(slot = null) {
+          const targetSlot = slot ? Math.max(1, Math.min(SLOT_COUNT, Number(slot))) : activeSlot;
           const db = await openDB();
           if (!db) return null;
           return new Promise((resolve) => {
             try {
               const tx = db.transaction(STORE, "readonly");
-              const req = tx.objectStore(STORE).get("career_slot_1");
+              const req = tx.objectStore(STORE).get(slotKey(targetSlot));
               req.onsuccess = () => resolve(req.result || null);
               req.onerror = () => resolve(null);
             } catch (_) { resolve(null); }
           });
         },
-        async clear() {
+        async listSlots() {
+          const out = [];
+          for (let s = 1; s <= SLOT_COUNT; s++) {
+            const data = await this.load(s);
+            out.push({ slot: s, empty: !Boolean(data && data.player && data.standings), meta: buildMeta(data, s) });
+          }
+          return out;
+        },
+        async clear(slot = null) {
+          const targetSlot = slot ? Math.max(1, Math.min(SLOT_COUNT, Number(slot))) : activeSlot;
           const db = await openDB();
           if (!db) return;
-          try {
-            const tx = db.transaction(STORE, "readwrite");
-            tx.objectStore(STORE).delete("career_slot_1");
-          } catch (_) {}
+          return new Promise((resolve) => {
+            try {
+              const tx = db.transaction(STORE, "readwrite");
+              tx.objectStore(STORE).delete(slotKey(targetSlot));
+              tx.oncomplete = () => {
+                try { localStorage.removeItem(`bt_match_checkpoint_slot_${targetSlot}`); } catch (_) {}
+                resolve(true);
+              };
+              tx.onerror = () => resolve(false);
+            } catch (_) { resolve(false); }
+          });
+        },
+        async exportSlotJson(slot = null) {
+          const data = await this.load(slot);
+          if (!data) return null;
+          return JSON.stringify({ format: "BasketballTimeSave", version: 2, exportedAt: new Date().toISOString(), season: data }, null, 2);
+        },
+        async importSlotJson(slot, jsonText) {
+          const parsed = JSON.parse(jsonText);
+          const candidate = parsed && parsed.season ? parsed.season : parsed;
+          if (!candidate || !candidate.player || !Array.isArray(candidate.standings) || !Array.isArray(candidate.schedule)) {
+            throw new Error("檔案格式不符，請確認為《Basketball Time》匯出的存檔備份");
+          }
+          await this.save(candidate, slot);
+          return candidate;
         }
       };
     })();
@@ -1865,43 +1974,107 @@
       C:  ["paint_beast_t3", "rim_eraser_t4", "glass_cleaner_t3", "posterizer_t3"]
     };
 
-    function getConditionProfile(condition = 80, injured = false) {
+    function getInjuryLevel(p) {
+      if (!p) return 0;
+      if (typeof p.injuryLevel === "number") return Math.max(0, Math.min(3, p.injuryLevel));
+      return p.injured ? 1 : 0;
+    }
+
+    function getConditionProfile(condition = 80, injuredOrLevel = false) {
       const c = Math.max(0, Math.min(100, Number(condition) || 0));
-      if (injured) {
+      const injLv = typeof injuredOrLevel === "number"
+        ? Math.max(0, Math.min(3, injuredOrLevel))
+        : (injuredOrLevel ? 1 : 0);
+
+      if (injLv >= 3) {
         return {
-          tier: "INJURED", label: "輕微拉傷", shortEffect: "命中-12% · 體力耗+38%",
-          color: "#C81E1E", shotRateAdj: -12, staminaDrainMul: 1.38, qteScaleAdj: 0.82,
-          trainGreatBonus: -0.12, trainFailBonus: 0.28, matchInjuryChance: 0.14
+          tier: "INJURED_3", injLv: 3, label: "嚴重拉傷・強制休戰", shortEffect: "隊醫禁賽 · 須理療復健",
+          color: "#7F1D1D", shotRateAdj: -30, staminaDrainMul: 1.80, qteScaleAdj: 0.65,
+          simPerfMul: 0.0, simFgPenalty: 0.16, simTovAdd: 3,
+          trainGreatBonus: -0.20, trainFailBonus: 0.50, matchInjuryChance: 0
+        };
+      }
+      if (injLv === 2) {
+        return {
+          tier: "INJURED_2", injLv: 2, label: "中度扭傷", shortEffect: "命中-22% · 體力耗+60%",
+          color: "#991B1B", shotRateAdj: -22, staminaDrainMul: 1.60, qteScaleAdj: 0.74,
+          simPerfMul: Math.max(0.24, 0.30 + (c / 100) * 0.14), simFgPenalty: 0.12, simTovAdd: 3,
+          trainGreatBonus: -0.16, trainFailBonus: 0.42, matchInjuryChance: 0.36
+        };
+      }
+      if (injLv === 1) {
+        return {
+          tier: "INJURED_1", injLv: 1, label: "輕微拉傷", shortEffect: "命中-13% · 體力耗+38%",
+          color: "#C81E1E", shotRateAdj: -13, staminaDrainMul: 1.38, qteScaleAdj: 0.82,
+          simPerfMul: Math.max(0.38, 0.46 + (c / 100) * 0.18), simFgPenalty: 0.08, simTovAdd: 2,
+          trainGreatBonus: -0.12, trainFailBonus: 0.28, matchInjuryChance: 0.24
         };
       }
       if (c >= 85) {
         return {
-          tier: "PEAK", label: "狀態巔峰", shortEffect: "命中+3% · 體力耗-10%",
+          tier: "PEAK", injLv: 0, label: "狀態巔峰", shortEffect: "命中+3% · 體力耗-10%",
           color: "#15803D", shotRateAdj: 3, staminaDrainMul: 0.90, qteScaleAdj: 1.04,
+          simPerfMul: 1.06, simFgPenalty: -0.02, simTovAdd: 0,
           trainGreatBonus: 0.08, trainFailBonus: 0, matchInjuryChance: 0
         };
       }
       if (c >= 60) {
         return {
-          tier: "GOOD", label: "狀態良好", shortEffect: "正常發揮 · 零過勞風險",
+          tier: "GOOD", injLv: 0, label: "狀態良好", shortEffect: "正常發揮 · 零過勞風險",
           color: "#15803D", shotRateAdj: 0, staminaDrainMul: 1.00, qteScaleAdj: 1.00,
+          simPerfMul: 0.94 + ((c - 60) / 25) * 0.08, simFgPenalty: 0, simTovAdd: 0,
           trainGreatBonus: 0, trainFailBonus: 0, matchInjuryChance: 0
         };
       }
       if (c >= 40) {
         return {
-          tier: "TIRED", label: "疲勞累積", shortEffect: "命中-5% · 體力耗+18%",
-          color: "#B45309", shotRateAdj: -5, staminaDrainMul: 1.18, qteScaleAdj: 0.92,
-          trainGreatBonus: -0.06, trainFailBonus: 0.14, matchInjuryChance: 0.04
+          tier: "TIRED", injLv: 0, label: "疲勞累積", shortEffect: "命中-6% · 體力耗+20%",
+          color: "#B45309", shotRateAdj: -6, staminaDrainMul: 1.20, qteScaleAdj: 0.91,
+          simPerfMul: 0.68 + ((c - 40) / 20) * 0.14, simFgPenalty: 0.05, simTovAdd: 1,
+          trainGreatBonus: -0.06, trainFailBonus: 0.16, matchInjuryChance: 0.06
+        };
+      }
+      if (c >= 20) {
+        return {
+          tier: "EXHAUSTED", injLv: 0, label: "過勞警戒", shortEffect: "命中-13% · 高拉傷風險",
+          color: "#C81E1E", shotRateAdj: -13, staminaDrainMul: 1.38, qteScaleAdj: 0.84,
+          simPerfMul: 0.45 + ((c - 20) / 20) * 0.15, simFgPenalty: 0.09, simTovAdd: 2,
+          trainGreatBonus: -0.10, trainFailBonus: 0.30, matchInjuryChance: 0.18
         };
       }
       return {
-        tier: "EXHAUSTED", label: "過勞警戒", shortEffect: "命中-10% · 易拉傷",
-        color: "#C81E1E", shotRateAdj: -10, staminaDrainMul: 1.30, qteScaleAdj: 0.86,
-        trainGreatBonus: -0.10, trainFailBonus: 0.26, matchInjuryChance: 0.10
+        tier: "DEPLETED", injLv: 0, label: "體能透支", shortEffect: "命中-20% · 極易重傷",
+        color: "#7F1D1D", shotRateAdj: -20, staminaDrainMul: 1.55, qteScaleAdj: 0.76,
+        simPerfMul: Math.max(0.25, 0.26 + (c / 20) * 0.14), simFgPenalty: 0.14, simTovAdd: 3,
+        trainGreatBonus: -0.14, trainFailBonus: 0.44, matchInjuryChance: 0.38
       };
     }
     window.getConditionProfile = getConditionProfile;
+    window.getInjuryLevel = getInjuryLevel;
+
+    function applyPostMatchFatigueAndInjury(p, minRatio, isHighIntensity = false) {
+      if (!p) return null;
+      const curInj = getInjuryLevel(p);
+      const preProf = getConditionProfile(p.condition, curInj);
+      // 扣除賽季狀態，允許一路降至 0%（絕不因打完比賽反彈回血）
+      const condLoss = Math.max(4, Math.round(8 + minRatio * 13 + (isHighIntensity ? 4 : 0) + (curInj > 0 ? 4 : 0)));
+      p.condition = Math.max(0, Math.min(100, (p.condition || 0) - condLoss));
+
+      // 過勞或帶傷硬撐：真實檢定傷病新增或惡化（0 → 1 輕微拉傷 → 2 中度扭傷 → 3 嚴重拉傷強制休戰）
+      let escalateChance = preProf.matchInjuryChance;
+      if (p.condition <= 10) escalateChance = Math.max(escalateChance, 0.45);
+      else if (p.condition <= 25) escalateChance = Math.max(escalateChance, 0.25);
+      if (curInj > 0) escalateChance = Math.min(0.75, escalateChance + 0.15);
+
+      if (curInj < 3 && minRatio >= 0.22 && escalateChance > 0 && Math.random() < escalateChance) {
+        const nextLv = Math.min(3, curInj + 1);
+        p.injuryLevel = nextLv;
+        p.injured = true;
+        const injNames = { 1: "輕微拉傷", 2: "中度扭傷", 3: "嚴重拉傷（隊醫強制休戰）" };
+        return { escalated: true, level: nextLv, label: injNames[nextLv], condLoss };
+      }
+      return { escalated: false, level: curInj, label: "", condLoss };
+    }
 
     function getSeasonGrowthBudget(age = 16, leagueId = "hs_nationals") {
       const a = Number(age) || 16;
@@ -2161,38 +2334,19 @@
         const idx = roster.indexOf(oldPl);
         if (idx < 0) continue;
         const reason = isHs ? "🎓畢業離隊" : (isNcaa ? "🎓畢業投身選秀" : (oldPl.age >= 35 ? "🏛️光榮退役" : "✈️約滿轉會離隊"));
-        const newAge = isHs ? 15 : (isNcaa ? 18 : (19 + Math.floor(Math.random() * 4)));
-        const isSuperRookie = Math.random() < 0.14;
-        const newOvr = isHs
-          ? Math.max(60, Math.min(79, lgAvgOvr - 6 + Math.floor(Math.random() * 9) + (isSuperRookie ? 5 : 0)))
-          : Math.max(66, Math.min(88, lgAvgOvr - 4 + Math.floor(Math.random() * 9) + (isSuperRookie ? 5 : 0)));
-        const newName = pickFreshName();
-        const newNum = pickUnusedJerseyNumber(roster, null);
         const newPos = oldPl.pos || "SG";
-        const newLabel = isSuperRookie ? "🌟天選超級新人" : (isHs ? "🌱新高一生" : (isNcaa ? "🌱大一新秀" : (newAge <= 20 ? "🌟選秀新秀" : "🤝自由新援")));
-        const skPool = POS_SKILL_POOL[newPos] || POS_SKILL_POOL.SG;
-        const randSkills = [];
-        if (isSuperRookie) {
-          randSkills.push(skPool[0], skPool[1 + Math.floor(Math.random() * Math.max(1, skPool.length - 1))]);
-        } else if (Math.random() < 0.82) {
-          randSkills.push(skPool[Math.floor(Math.random() * skPool.length)]);
-        }
-
-        const incoming = generateNpcProfile({
-          num: newNum, name: newName, pos: newPos, age: newAge,
-          role: "BENCH", ovr: newOvr, skills: Array.from(new Set(randSkills)),
-          potential: isSuperRookie ? 5 : (2 + Math.floor(Math.random() * 3))
-        });
-        incoming.age = newAge;
-        incoming.seasonOvrStart = incoming.ovr;
+        const incoming = generateProceduralRookie(newPos, leagueId, lgAvgOvr, roster, existingNames);
+        if (!incoming.isSuperRookie) incoming.role = "BENCH";
+        const newLabel = incoming.isSuperRookie ? "🌟天選超級新人" : (isHs ? "🌱新高一生" : (isNcaa ? "🌱大一新秀" : (incoming.age <= 20 ? "🌟選秀新秀" : "🤝自由新援")));
         roster[idx] = incoming;
 
-        if (oldPl.role === "STARTER") {
+        if (oldPl.role === "STARTER" && incoming.role !== "STARTER") {
           const cand = roster.filter(p => p && !p.isUser && p.role !== "STARTER" && p.pos === oldPl.pos).sort((a, b) => b.ovr - a.ovr)[0]
             || roster.filter(p => p && !p.isUser && p.role !== "STARTER").sort((a, b) => b.ovr - a.ovr)[0];
           if (cand) cand.role = "STARTER";
         }
-        logs.unshift(`${reason}：${oldPl.name}(${oldPl.pos}) → ${newLabel} #${newNum} ${newName}(${incoming.pos} · 評級 ${incoming.ovr}) 加盟`);
+        const skCount = (incoming.skills || []).length;
+        logs.unshift(`${reason}：${oldPl.name}(${oldPl.pos}) → ${newLabel} #${incoming.num} ${incoming.name}(${incoming.pos} · 評級 ${incoming.ovr}${incoming.archetypeTag ? ` · ${incoming.archetypeTag}` : ""}${skCount ? ` · ${skCount}技` : ""}) 加盟`);
       }
 
       return logs.slice(0, 8);
@@ -2401,7 +2555,11 @@
       const p = Season.player || { condition: 100, injured: false, coachTrust: 35 };
       const tp = getCoachTrustProfile(p.coachTrust);
       let condAdj = 0, condNote = "";
-      if (p.injured) { condAdj = -0.22; condNote = "🚑 傷病限時 (-22%)"; }
+      const _injLv = getInjuryLevel(p);
+      if (_injLv >= 3) { condAdj = -1.0; condNote = "🏥 嚴重拉傷・強制休戰"; }
+      else if (_injLv === 2) { condAdj = -0.40; condNote = "🚑 中度扭傷保護 (-40%)"; }
+      else if (_injLv === 1) { condAdj = -0.24; condNote = "🚑 輕微拉傷保護 (-24%)"; }
+      else if (p.condition < 25) { condAdj = -0.32; condNote = "🚨 體能透支限時 (-32%)"; }
       else if (p.condition < 50) { condAdj = -0.18; condNote = "🚨 過勞減時 (-18%)"; }
       else if (p.condition < 70) { condAdj = -0.10; condNote = "⚠️ 狀態偏低 (-10%)"; }
       else if (p.condition >= 90) { condAdj = 0.05; condNote = "✨ 狀態火熱 (+5%)"; }
@@ -2579,7 +2737,367 @@
     // ---------- 3. SEASON & LOD SIMULATION ENGINE ----------
     let Season = null;
 
-    function buildOpponentRoster(teamObj) {
+    // ---------- Phase 2 核心引擎：活體聯賽持久化名單、全聯賽換血與動態王牌 ----------
+    const PROCEDURAL_NAME_PARTS = {
+      hs_nationals: {
+        surnames: ["佐佐木", "高橋", "小林", "渡邊", "中村", "伊藤", "加藤", "山本", "森田", "井上", "木村", "清水", "林", "齊藤", "吉田", "山田", "松本", "阿部", "橋本", "石川", "前田", "藤田", "岡田", "長谷川"],
+        givens: ["健", "翔太", "翼", "陸", "陽斗", "隼人", "悠馬", "大輝", "颯", "蓮", "海斗", "拓海", "蒼太", "悠真", "奏汰", "樹", "律", "朝陽", "大和", "湊"]
+      },
+      ncaa_madness: {
+        surnames: ["Carter", "Brooks", "Harper", "Coleman", "Foster", "Jenkins", "Morales", "Bennett", "Hayes", "Sanders", "Price", "Bryant", "Griffin", "Diaz", "Russell", "Simmons", "Wallace", "Woods", "Cole", "West"],
+        givens: ["J.", "M.", "T.", "D.", "K.", "R.", "A.", "C.", "B.", "E.", "L.", "N.", "S.", "Z."]
+      },
+      asia_pro: {
+        surnames: ["陳", "林", "張", "王", "李", "劉", "黃", "吳", "周", "徐", "高", "郭", "何", "鄭", "佐藤", "田中", "金", "朴"],
+        givens: ["柏宇", "冠廷", "哲維", "俊凱", "浩然", "承翰", "家豪", "宇軒", "彥廷", "子豪", "拓海", "健太", "泰宇", "敏俊", "智훈", "信宏"]
+      },
+      euro_elite: {
+        surnames: ["Novak", "Petrovic", "Kovacs", "Rossi", "Navarro", "Popovic", "Lindqvist", "Babic", "Vukovic", "Moretti", "Silva", "Keller", "Jankovic", "Molina", "Bauer", "Savic"],
+        givens: ["L.", "M.", "A.", "D.", "F.", "N.", "E.", "S.", "I.", "V.", "K.", "T."]
+      },
+      nba_prime: {
+        surnames: ["Holloway", "Vance", "Mercer", "Sterling", "Thornton", "Langford", "Caldwell", "Braxton", "Kensington", "Malone", "Rivers", "Harden", "Tatum", "Booker", "Edwards", "Bridges", "Porter", "Green", "Barnes", "Grant"],
+        givens: ["Z.", "C.", "J.", "K.", "D.", "T.", "B.", "A.", "M.", "R.", "S.", "L.", "Q.", "V."]
+      },
+      fiba_world: {
+        surnames: ["Silva", "Fernandez", "Diallo", "Bogic", "Sato", "Martin", "Gomez", "Kone", "Ivanov", "Mendes", "Costa", "Ndiaye", "Alvarez", "Bianchi"],
+        givens: ["M.", "R.", "A.", "L.", "K.", "T.", "D.", "P.", "J.", "E."]
+      }
+    };
+
+    const ROOKIE_ARCHETYPES = {
+      PG: [
+        { tag: "控場指揮官", bias: { playmaking: 8, iq: 7, threePt: 3 }, skills: ["dimer_general_t3", "floor_iq"] },
+        { tag: "閃電雙能衛", bias: { speed: 8, threePt: 6, inside: 4 }, skills: ["fastbreak_king", "deadeye_three_t4"] },
+        { tag: "外線鎖防鬼才", bias: { perimDef: 8, speed: 6, iq: 4 }, skills: ["clutch_stealer", "perimeter_lockdown_t3"] }
+      ],
+      SG: [
+        { tag: "冷血三分狙擊手", bias: { threePt: 9, midRange: 5, grit: 4 }, skills: ["deadeye_three_t4", "microwave"] },
+        { tag: "中距離殺手", bias: { midRange: 9, inside: 5, grit: 5 }, skills: ["midrange_maestro_t3", "big_heart"] },
+        { tag: "飛天暴扣側翼", bias: { vertical: 8, inside: 7, speed: 6 }, skills: ["posterizer_t3", "fastbreak_king"] }
+      ],
+      SF: [
+        { tag: "全能攻防鋒線", bias: { inside: 6, midRange: 6, perimDef: 6 }, skills: ["perimeter_lockdown_t3", "big_heart"] },
+        { tag: "快攻反擊箭頭", bias: { speed: 7, vertical: 7, inside: 6 }, skills: ["fastbreak_king", "posterizer_t3"] },
+        { tag: "3D 外線大鎖", bias: { threePt: 7, perimDef: 8, strength: 4 }, skills: ["deadeye_three_t4", "perimeter_lockdown_t3"] }
+      ],
+      PF: [
+        { tag: "暴力禁區野獸", bias: { inside: 8, strength: 8, vertical: 6 }, skills: ["posterizer_t3", "paint_beast_t3"] },
+        { tag: "籃板護框藍領", bias: { rebound: 9, intDef: 7, strength: 6 }, skills: ["glass_cleaner_t3", "rim_eraser_t4"] },
+        { tag: "現代空間四號", bias: { threePt: 7, midRange: 6, rebound: 5 }, skills: ["deadeye_three_t4", "glass_cleaner_t3"] }
+      ],
+      C: [
+        { tag: "禁區禁飛巨塔", bias: { intDef: 9, rebound: 8, strength: 7 }, skills: ["rim_eraser_t4", "paint_beast_t3"] },
+        { tag: "籃板統治者", bias: { rebound: 9, strength: 8, inside: 6 }, skills: ["glass_cleaner_t3", "paint_beast_t3"] },
+        { tag: "機動吃餅中鋒", bias: { vertical: 8, inside: 8, speed: 5 }, skills: ["posterizer_t3", "rim_eraser_t4"] }
+      ]
+    };
+
+    function pickProceduralRookieName(leagueId, usedNamesSet) {
+      const pool = PROCEDURAL_NAME_PARTS[leagueId] || PROCEDURAL_NAME_PARTS.nba_prime;
+      const isAsianOrder = (leagueId === "hs_nationals" || leagueId === "asia_pro");
+      for (let attempt = 0; attempt < 40; attempt++) {
+        const sn = pool.surnames[Math.floor(Math.random() * pool.surnames.length)];
+        const gn = pool.givens[Math.floor(Math.random() * pool.givens.length)];
+        const full = isAsianOrder ? `${sn} ${gn}` : `${gn} ${sn}`;
+        if (!usedNamesSet.has(full)) {
+          usedNamesSet.add(full);
+          return full;
+        }
+      }
+      const fallback = `${pool.surnames[0]} ${pool.givens[0]} II`;
+      usedNamesSet.add(fallback);
+      return fallback;
+    }
+
+    function generateProceduralRookie(pos, leagueId, lgAvgOvr, roster, usedNamesSet) {
+      const isHs = leagueId === "hs_nationals";
+      const isNcaa = leagueId === "ncaa_madness";
+      const roll = Math.random();
+      const isSuperRookie = roll < 0.13;
+      const isStarterUpside = !isSuperRookie && roll < 0.42;
+
+      const newAge = isHs ? 15 : (isNcaa ? 18 : (19 + Math.floor(Math.random() * 4)));
+      let newOvr;
+      if (isHs) {
+        newOvr = isSuperRookie
+          ? Math.min(82, lgAvgOvr + 3 + Math.floor(Math.random() * 5))
+          : (isStarterUpside ? Math.max(66, lgAvgOvr - 2 + Math.floor(Math.random() * 6)) : Math.max(60, lgAvgOvr - 7 + Math.floor(Math.random() * 6)));
+      } else {
+        newOvr = isSuperRookie
+          ? Math.min(89, lgAvgOvr + 4 + Math.floor(Math.random() * 5))
+          : (isStarterUpside ? Math.max(70, lgAvgOvr - 2 + Math.floor(Math.random() * 6)) : Math.max(65, lgAvgOvr - 6 + Math.floor(Math.random() * 6)));
+      }
+
+      const archList = ROOKIE_ARCHETYPES[pos] || ROOKIE_ARCHETYPES.SG;
+      const arch = archList[Math.floor(Math.random() * archList.length)];
+      const posPool = POS_SKILL_POOL[pos] || POS_SKILL_POOL.SG;
+      const skSet = new Set();
+      if (isSuperRookie) {
+        arch.skills.forEach(s => skSet.add(s));
+        if (Math.random() < 0.65) skSet.add(Math.random() < 0.5 ? "big_heart" : "alpha_dog");
+      } else if (isStarterUpside) {
+        skSet.add(arch.skills[Math.floor(Math.random() * arch.skills.length)]);
+        if (Math.random() < 0.45) skSet.add(posPool[Math.floor(Math.random() * posPool.length)]);
+      } else if (Math.random() < 0.72) {
+        skSet.add(posPool[Math.floor(Math.random() * posPool.length)]);
+      }
+
+      const newName = pickProceduralRookieName(leagueId, usedNamesSet);
+      const newNum = pickUnusedJerseyNumber(roster, null);
+      const pot = isSuperRookie ? 5 : (isStarterUpside ? (Math.random() < 0.5 ? 4 : 3) : (2 + Math.floor(Math.random() * 2)));
+      const incoming = generateNpcProfile({
+        num: newNum, name: newName, pos, age: newAge,
+        role: isSuperRookie ? "STARTER" : "BENCH",
+        ovr: newOvr,
+        statBias: arch.bias,
+        skills: Array.from(skSet),
+        potential: pot,
+        archetypeTag: arch.tag,
+        isSuperRookie
+      });
+      incoming.age = newAge;
+      incoming.seasonOvrStart = incoming.ovr;
+      incoming.isSuperRookie = isSuperRookie;
+      incoming.archetypeTag = arch.tag;
+      return incoming;
+    }
+
+    function ensureLeagueRosters(targetSeason = Season, targetLeagueId = null) {
+      if (!targetSeason || !DB || !DB.leagues) return {};
+      if (!targetSeason.leagueRosters || typeof targetSeason.leagueRosters !== "object") {
+        targetSeason.leagueRosters = {};
+      }
+      const lid = targetLeagueId || targetSeason.leagueId || "hs_nationals";
+      const lg = DB.leagues.leagues.find(l => l.id === lid);
+      if (!lg) return {};
+      if (!targetSeason.leagueRosters[lid]) {
+        targetSeason.leagueRosters[lid] = {};
+      }
+      const map = targetSeason.leagueRosters[lid];
+      for (const tm of (lg.teams || [])) {
+        if (!Array.isArray(map[tm.id]) || map[tm.id].length < 5) {
+          const baseRoster = (Array.isArray(tm.roster) && tm.roster.length >= 5)
+            ? JSON.parse(JSON.stringify(tm.roster)).map(p => generateNpcProfile(p))
+            : buildFallbackTeamRoster(tm);
+          map[tm.id] = baseRoster;
+        } else {
+          map[tm.id] = map[tm.id].map(p => ensureNpcGrowthDNA(p));
+        }
+      }
+      return map;
+    }
+
+    function getLiveTeamRoster(teamId, leagueId = null) {
+      const lid = leagueId || (Season && Season.leagueId) || "hs_nationals";
+      if (Season && Season.standings) {
+        const ut = Season.standings.find(t => t.isUserTeam);
+        if (ut && ut.id === teamId && Array.isArray(Season.userRoster) && Season.userRoster.length) {
+          return Season.userRoster;
+        }
+      }
+      const map = ensureLeagueRosters(Season, lid);
+      if (map && Array.isArray(map[teamId]) && map[teamId].length) return map[teamId];
+      const lg = DB.leagues && DB.leagues.leagues.find(l => l.id === lid);
+      const tm = lg && lg.teams.find(t => t.id === teamId);
+      return tm ? buildFallbackTeamRoster(tm) : [];
+    }
+    window.getLiveTeamRoster = getLiveTeamRoster;
+
+    function resolveTeamAce(roster) {
+      const valid = (roster || []).filter(p => p && !p.isUser);
+      if (!valid.length) return { name: "球隊王牌", ovr: 75, player: null };
+      const sorted = [...valid].sort((a, b) => (b.ovr || 70) - (a.ovr || 70));
+      const ace = sorted[0];
+      valid.forEach(p => { p.isRival = (p === ace); });
+      return { name: ace.name, ovr: ace.ovr || 75, player: ace };
+    }
+
+    function evolveAllLeagueTeams(targetSeason, leagueId, userTeamId, userTeamLogs = []) {
+      const lg = DB.leagues.leagues.find(l => l.id === leagueId) || DB.leagues.leagues[0];
+      const map = ensureLeagueRosters(targetSeason, leagueId);
+      const lgAvgOvr = Math.round(lg.teams.reduce((s, t) => s + (t.ovr || 75), 0) / Math.max(1, lg.teams.length));
+      const isHs = leagueId === "hs_nationals";
+      const isNcaa = leagueId === "ncaa_madness";
+
+      // 建立全聯賽已使用姓名表，確保所有球隊新人絕不撞名
+      const globalUsedNames = new Set();
+      Object.values(map).forEach(r => (r || []).forEach(p => { if (p && p.name) globalUsedNames.add(p.name); }));
+      if (Array.isArray(targetSeason.userRoster)) {
+        targetSeason.userRoster.forEach(p => { if (p && p.name) globalUsedNames.add(p.name); });
+      }
+
+      const leagueMoves = [];
+      const allRookies = [];
+      const aceBoard = [];
+
+      // 先處理玩家自己球隊的摘要
+      const uTmObj = lg.teams.find(t => t.id === userTeamId) || lg.teams[0];
+      const uTeamOvr = calcTeamStrength(targetSeason.userRoster || []);
+      const uBestAll = [...(targetSeason.userRoster || [])].sort((a, b) => (b.ovr || 70) - (a.ovr || 70))[0];
+      aceBoard.push({
+        teamId: uTmObj.id, teamName: uTmObj.name, isUserTeam: true,
+        teamOvr: uTeamOvr, aceName: uBestAll ? uBestAll.name : uTmObj.ace,
+        aceOvr: uBestAll ? uBestAll.ovr : uTeamOvr, acePos: uBestAll ? uBestAll.pos : "SG",
+        aceChanged: false, oldAce: uTmObj.ace
+      });
+
+      // 遍歷聯賽內其餘每一支球隊，真實演進、離隊、補進隨機新人、重算王牌！
+      for (const tm of (lg.teams || [])) {
+        if (tm.id === userTeamId) continue;
+        const roster = map[tm.id] || buildFallbackTeamRoster(tm);
+        const prevAceObj = roster.find(p => p && p.isRival) || [...roster].sort((a, b) => (b.ovr || 70) - (a.ovr || 70))[0];
+        const oldAceName = prevAceObj ? prevAceObj.name : tm.ace;
+
+        // 1) 年齡 +1 與差異化成長／老化
+        for (const pl of roster) {
+          if (!pl) continue;
+          ensureNpcGrowthDNA(pl);
+          pl.age = (typeof pl.age === "number" ? pl.age : (isHs ? 16 : (isNcaa ? 20 : 25))) + 1;
+          const pot = pl.potential || 3;
+          const gt = pl.growthType || "NORMAL";
+          const cap = Math.min(97, 74 + pot * 4 + (pl.isRival ? 3 : 0));
+          const focus = POS_GROWTH_FOCUS[pl.pos] || POS_GROWTH_FOCUS.SG;
+          if (pl.stats) {
+            if (pl.age <= 22) {
+              const isBreakout = pot >= 4 && Math.random() < (gt === "EARLY" ? 0.42 : 0.28);
+              focus.slice(0, 3).forEach((k, idx) => {
+                const g = idx === 0 ? (isBreakout ? 3 : (pot >= 4 ? 2 : 1)) : (Math.random() < 0.70 ? (isBreakout ? 2 : 1) : 0);
+                if (g > 0 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + g);
+              });
+              if (isBreakout && Array.isArray(pl.skills) && pl.skills.length < 3 && Math.random() < 0.35) {
+                const sp = (POS_SKILL_POOL[pl.pos] || POS_SKILL_POOL.SG).filter(id => !pl.skills.includes(id));
+                if (sp.length) pl.skills.push(sp[Math.floor(Math.random() * sp.length)]);
+              }
+            } else if (pl.age <= 29) {
+              const gBase = (gt === "LATE" && pl.age <= 27 && pot >= 3) ? 2 : (Math.random() < 0.50 ? 1 : 0);
+              focus.filter(k => !PHYSICAL_STAT_KEYS.has(k)).slice(0, 2).forEach(k => {
+                if (gBase > 0 && pl.stats[k] !== undefined) pl.stats[k] = Math.min(cap, pl.stats[k] + gBase);
+              });
+            } else {
+              const drop = pl.age >= 34 ? 2 : 1;
+              ["speed", "vertical"].forEach(k => { if (pl.stats[k] !== undefined) pl.stats[k] = Math.max(42, pl.stats[k] - drop); });
+              if (Math.random() < 0.45 && pl.stats.iq !== undefined) pl.stats.iq = Math.min(98, pl.stats.iq + 1);
+            }
+            pl.ovr = calcOVR(pl.stats, pl.pos, pl.skills);
+            pl.seasonOvrStart = pl.ovr;
+          }
+        }
+
+        // 2) 離隊名單（高中高三畢業 / 大學大四選秀 / 職業退役＋轉會流動）
+        let departing = [];
+        if (isHs) {
+          departing = roster.filter(p => p.age >= 18).sort((a, b) => b.age - a.age || b.ovr - a.ovr).slice(0, 4);
+        } else if (isNcaa) {
+          departing = roster.filter(p => p.age >= 22).sort((a, b) => b.age - a.age || b.ovr - a.ovr).slice(0, 4);
+        } else {
+          const retirees = roster.filter(p => p.age >= 35).slice(0, 2);
+          // 職業聯賽除底層輪換外，也有 25% 機率出現主力球星自由轉會離隊，製造聯盟洗牌
+          const pool = roster.filter(p => !retirees.includes(p));
+          const starLeft = Math.random() < 0.25
+            ? [pool.sort((a, b) => b.ovr - a.ovr)[0]].filter(Boolean)
+            : [];
+          const lowLeft = pool.filter(p => !starLeft.includes(p)).sort((a, b) => a.ovr - b.ovr).slice(0, Math.max(1, 2 - retirees.length));
+          departing = [...retirees, ...starLeft, ...lowLeft].slice(0, 3);
+        }
+
+        const depLogs = [];
+        const arrLogs = [];
+        for (const oldPl of departing) {
+          const idx = roster.indexOf(oldPl);
+          if (idx < 0) continue;
+          const reason = isHs ? "畢業" : (isNcaa ? "參選" : (oldPl.age >= 35 ? "退役" : "轉會離隊"));
+          const incoming = generateProceduralRookie(oldPl.pos || "SG", leagueId, lgAvgOvr, roster, globalUsedNames);
+          roster[idx] = incoming;
+          depLogs.push({ name: oldPl.name, pos: oldPl.pos, ovr: oldPl.ovr, reason, wasAce: oldPl.name === oldAceName });
+          arrLogs.push({
+            name: incoming.name, pos: incoming.pos, ovr: incoming.ovr, age: incoming.age,
+            potential: incoming.potential, skills: incoming.skills || [],
+            archetypeTag: incoming.archetypeTag || "", isSuperRookie: Boolean(incoming.isSuperRookie)
+          });
+          allRookies.push({
+            teamId: tm.id, teamName: tm.name, ...arrLogs[arrLogs.length - 1]
+          });
+        }
+
+        // 3) 確保 5 位最強／各位置先發，並重算球隊戰力與新任王牌！
+        const startersNow = roster.filter(p => p.role === "STARTER");
+        if (startersNow.length > 5) {
+          startersNow.sort((a, b) => b.ovr - a.ovr).slice(5).forEach(p => { p.role = "BENCH"; });
+        } else if (startersNow.length < 5) {
+          roster.filter(p => p.role !== "STARTER").sort((a, b) => b.ovr - a.ovr).slice(0, 5 - startersNow.length).forEach(p => { p.role = "STARTER"; });
+        }
+        const newAce = resolveTeamAce(roster);
+        const newTeamOvr = calcTeamStrength(roster);
+        const aceChanged = newAce.name !== oldAceName;
+
+        map[tm.id] = roster;
+        leagueMoves.push({
+          teamId: tm.id, teamName: tm.name, teamOvr: newTeamOvr,
+          oldAce: oldAceName, newAce: newAce.name, newAceOvr: newAce.ovr, newAcePos: newAce.player ? newAce.player.pos : "SF",
+          aceChanged, departures: depLogs, arrivals: arrLogs
+        });
+        aceBoard.push({
+          teamId: tm.id, teamName: tm.name, isUserTeam: false,
+          teamOvr: newTeamOvr, aceName: newAce.name, aceOvr: newAce.ovr,
+          acePos: newAce.player ? newAce.player.pos : "SF",
+          aceChanged, oldAce: oldAceName
+        });
+      }
+
+      // 同時把本隊焦點新人也納入全聯賽焦點新人榜
+      (targetSeason.userRoster || []).forEach(pl => {
+        if (pl && !pl.isUser && pl.isSuperRookie) {
+          allRookies.push({
+            teamId: uTmObj.id, teamName: uTmObj.name,
+            name: pl.name, pos: pl.pos, ovr: pl.ovr, age: pl.age,
+            potential: pl.potential || 4, skills: pl.skills || [],
+            archetypeTag: pl.archetypeTag || "潛力新星", isSuperRookie: true
+          });
+        }
+      });
+
+      allRookies.sort((a, b) => (b.isSuperRookie ? 1 : 0) - (a.isSuperRookie ? 1 : 0) || (b.ovr - a.ovr) || (b.potential - a.potential));
+      aceBoard.sort((a, b) => b.aceOvr - a.aceOvr || b.teamOvr - a.teamOvr);
+
+      return {
+        year: targetSeason.careerYear,
+        leagueId,
+        leagueName: lg.name,
+        myTeamName: uTmObj.name,
+        myTeamLogs: userTeamLogs,
+        leagueMoves,
+        topRookies: allRookies.slice(0, 6),
+        aceBoard
+      };
+    }
+
+    function buildFallbackTeamRoster(teamObj) {
+      const base = teamObj.ovr || 84;
+      return [
+        { num: 8, name: `${teamObj.name.slice(0,2)}控衛`, pos: "PG", role: "STARTER", ovr: base - 2, rebW: 0.13, astW: 0.36, stlW: 0.26, blkW: 0.05 },
+        { num: 5, name: `${teamObj.name.slice(0,2)}射手`, pos: "SG", role: "STARTER", ovr: base - 1, rebW: 0.15, astW: 0.18, stlW: 0.24, blkW: 0.10 },
+        { num: 4, name: `${teamObj.ace}`, pos: "SF", role: "STARTER", ovr: Math.min(96, base + 4), isRival: true, rebW: 0.22, astW: 0.26, stlW: 0.24, blkW: 0.22 },
+        { num: 13, name: `${teamObj.name.slice(0,2)}大前`, pos: "PF", role: "STARTER", ovr: base - 1, rebW: 0.24, astW: 0.10, stlW: 0.14, blkW: 0.22 },
+        { num: 15, name: `${teamObj.name.slice(0,2)}中鋒`, pos: "C", role: "STARTER", ovr: base, rebW: 0.26, astW: 0.10, stlW: 0.12, blkW: 0.41 },
+        { num: 6, name: `${teamObj.name.slice(0,2)}第六人`, pos: "SG", role: "BENCH", ovr: base - 5, rebW: 0.14, astW: 0.22, stlW: 0.20, blkW: 0.06 },
+        { num: 10, name: `${teamObj.name.slice(0,2)}鋒衛替補`, pos: "SF", role: "BENCH", ovr: base - 6, rebW: 0.18, astW: 0.16, stlW: 0.18, blkW: 0.14 },
+        { num: 11, name: `${teamObj.name.slice(0,2)}內線替補`, pos: "C", role: "BENCH", ovr: base - 6, rebW: 0.26, astW: 0.08, stlW: 0.10, blkW: 0.30 },
+        { num: 12, name: `${teamObj.name.slice(0,2)}控衛替補`, pos: "PG", role: "BENCH", ovr: base - 7, rebW: 0.12, astW: 0.34, stlW: 0.24, blkW: 0.05 },
+        { num: 14, name: `${teamObj.name.slice(0,2)}射手替補`, pos: "SG", role: "BENCH", ovr: base - 8, rebW: 0.13, astW: 0.18, stlW: 0.18, blkW: 0.06 },
+        { num: 16, name: `${teamObj.name.slice(0,2)}大前替補`, pos: "PF", role: "BENCH", ovr: base - 8, rebW: 0.24, astW: 0.10, stlW: 0.12, blkW: 0.22 },
+        { num: 18, name: `${teamObj.name.slice(0,2)}高塔替補`, pos: "C", role: "BENCH", ovr: base - 9, rebW: 0.28, astW: 0.06, stlW: 0.08, blkW: 0.34 }
+      ].map(p => generateNpcProfile(p));
+    }
+
+    function buildOpponentRoster(teamObj, leagueId = null) {
+      if (teamObj && teamObj.id && Season && Season.leagueRosters) {
+        const lid = leagueId || Season.leagueId || "hs_nationals";
+        const map = Season.leagueRosters[lid];
+        if (map && Array.isArray(map[teamObj.id]) && map[teamObj.id].length >= 5) {
+          return JSON.parse(JSON.stringify(map[teamObj.id])).map(p => ensureNpcGrowthDNA(p));
+        }
+      }
       if (teamObj && Array.isArray(teamObj.roster) && teamObj.roster.length >= 5) {
         return JSON.parse(JSON.stringify(teamObj.roster)).map(p => generateNpcProfile(p));
       }
@@ -2786,12 +3304,20 @@
       return roster;
     }
 
-    function createNewCareer(leagueId = "hs_nationals", keepArchive = [], yearNum = 1, customRoster = null, preservedPlayer = null, preservedTraits = null, keepHistory = null, keepTeamOps = null) {
+    function createNewCareer(leagueId = "hs_nationals", keepArchive = [], yearNum = 1, customRoster = null, preservedPlayer = null, preservedTraits = null, keepHistory = null, keepTeamOps = null, keepLeagueRosters = null, keepOffseasonReport = null) {
       const league = DB.leagues.leagues.find(l => l.id === leagueId) || DB.leagues.leagues[0];
-      const standings = league.teams.map(t => ({
-        id: t.id, name: t.name, ovr: t.ovr, ace: t.ace, coach: t.coach || "總教練", isUserTeam: Boolean(t.isUserTeam),
-        w: 0, l: 0, pf: 0, pa: 0
-      }));
+      const persistedRosters = keepLeagueRosters ? JSON.parse(JSON.stringify(keepLeagueRosters)) : {};
+      const liveMap = persistedRosters[league.id] || null;
+      const standings = league.teams.map(t => {
+        const liveR = liveMap && Array.isArray(liveMap[t.id]) && liveMap[t.id].length >= 5 ? liveMap[t.id] : null;
+        const liveAce = liveR ? resolveTeamAce(liveR) : null;
+        const liveOvr = liveR ? calcTeamStrength(liveR) : t.ovr;
+        return {
+          id: t.id, name: t.name, ovr: liveOvr, ace: liveAce ? liveAce.name : t.ace,
+          coach: t.coach || "總教練", isUserTeam: Boolean(t.isUserTeam),
+          w: 0, l: 0, pf: 0, pa: 0
+        };
+      });
       const worldLod = DB.leagues.leagues.filter(l => l.id !== league.id).map(l => {
         const sortedInit = [...l.teams].sort((a, b) => (b.ovr || 80) - (a.ovr || 80));
         return {
@@ -2810,12 +3336,14 @@
         player: preservedPlayer || null,
         equippedTraits: Array.isArray(preservedTraits) ? [...preservedTraits] : ["big_heart", "microwave", "floor_iq", "deadeye_three_t4", "paint_beast_t3", "perimeter_lockdown_t3"],
         userRoster: [],
-        schedule: generateSchedule(league),
+        schedule: generateSchedule({ ...league, teams: standings }),
         currentRoundIdx: 0,
         regularGames: league.seasonGames || 7,
         playoffs: null,
         standings,
         worldLod,
+        leagueRosters: persistedRosters,
+        offseasonReport: keepOffseasonReport || null,
         seasonTotals: { gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, mvps: 0 },
         leaguePlayerTotals: {},
         archive: keepArchive,
@@ -2823,6 +3351,7 @@
         teamOps: keepTeamOps ? JSON.parse(JSON.stringify(keepTeamOps)) : null
       };
       Season.userRoster = ensureRosterProfiles(customRoster || JSON.parse(JSON.stringify(DB.leagues.defaultUserRoster)));
+      ensureLeagueRosters(Season, league.id);
       ensureCareerHistory(Season);
       ensureTeamOps(Season);
       if (Season.player) syncUserTeamRole(false);
@@ -3001,20 +3530,32 @@
       if (us === os) us += 1;
       g.played = true; g.userScore = us; g.oppScore = os;
       const rotWin = getEffectiveRotationWindow();
-      const minScale = rotWin.targetPct / 0.80;
-      const uOvr = Season.player ? calcOVR(Season.player.stats, Season.player.pos, Season.equippedTraits) : 72;
+      const pSim = Season.player;
+      const injLvSim = getInjuryLevel(pSim);
+      const simCondProf = pSim ? getConditionProfile(pSim.condition, injLvSim) : { simPerfMul: 1, simFgPenalty: 0, simTovAdd: 0 };
+      const isForcedDnp = injLvSim >= 3;
+      const minScale = isForcedDnp ? 0 : Math.max(0.15, rotWin.targetPct / 0.80);
+      const uOvr = pSim ? calcOVR(pSim.stats, pSim.pos, Season.equippedTraits) : 72;
       const leagueAvgOvr = league.teams.reduce((s, t) => s + (t.ovr || 85), 0) / Math.max(1, league.teams.length);
       const ovrGap = uOvr - leagueAvgOvr;
       const ovrMul = Math.max(0.28, Math.min(1.45, Math.pow(Math.max(0.45, uOvr / leagueAvgOvr), 2.3)));
-      const condMul = Season.player ? (Season.player.injured ? 0.65 : Math.max(0.65, Season.player.condition / 100)) : 1;
+      const condMul = isForcedDnp ? 0 : simCondProf.simPerfMul;
+      // 疲勞或帶傷導致主角低迷時，全隊得分也合理受拖累
+      if (pSim && (isForcedDnp || condMul < 0.75) && rotWin.targetPct >= 0.45) {
+        const drag = isForcedDnp ? 0.93 : (0.94 + condMul * 0.06);
+        us = Math.max(40, Math.round(us * drag));
+        if (us === os) os += 1;
+        g.userScore = us; g.oppScore = os;
+      }
       const ptsMul = (simFocus && simFocus.id === "SCORE_ATTACK") ? 1.16 : 1;
       const astMul = (simFocus && simFocus.id === "PLAYMAKE_LINK") ? 1.28 : 1;
       const defMul = (simFocus && simFocus.id === "LOCKDOWN_DEF") ? 1.24 : 1;
-      const pts = Math.max(0, Math.round((8 + Math.random() * 13 + Math.max(-5, ovrGap * 0.45)) * minScale * ovrMul * condMul * ptsMul));
-      const reb = Math.max(0, Math.round((2 + Math.random() * 5.5) * minScale * Math.max(0.45, ovrMul) * defMul));
-      const ast = Math.max(0, Math.round((1.2 + Math.random() * 5) * minScale * Math.max(0.45, ovrMul) * astMul));
-      const stl = Math.round(Math.random() * 2.0 * minScale * Math.max(0.4, ovrMul) * defMul);
-      const blk = Math.round(Math.random() * 1.5 * minScale * Math.max(0.4, ovrMul) * defMul);
+      const pts = isForcedDnp ? 0 : Math.max(0, Math.round((8 + Math.random() * 12 + Math.max(-5, ovrGap * 0.45)) * minScale * ovrMul * condMul * ptsMul));
+      const reb = isForcedDnp ? 0 : Math.max(0, Math.round((2 + Math.random() * 5.0) * minScale * Math.max(0.42, ovrMul) * Math.max(0.35, condMul) * defMul));
+      const ast = isForcedDnp ? 0 : Math.max(0, Math.round((1.2 + Math.random() * 4.8) * minScale * Math.max(0.42, ovrMul) * Math.max(0.35, condMul) * astMul));
+      const stl = isForcedDnp ? 0 : Math.round(Math.random() * 1.9 * minScale * Math.max(0.38, ovrMul) * Math.max(0.30, condMul) * defMul);
+      const blk = isForcedDnp ? 0 : Math.round(Math.random() * 1.4 * minScale * Math.max(0.38, ovrMul) * Math.max(0.30, condMul) * defMul);
+      const simTov = isForcedDnp ? 0 : Math.min(8, Math.floor(Math.random() * 2.5) + (simCondProf.simTovAdd || 0));
 
       const userWon = us > os;
       const userGs = pts * 1.0 + reb * 1.0 + ast * 1.3 + stl * 2.0 + blk * 2.0 + (userWon ? 5 : 0);
@@ -3045,16 +3586,24 @@
           const isSt = pl.role === "STARTER";
           const sec = pl.isUser ? Math.round(qSec * rotWin.targetPct) : Math.round(qSec * (isSt ? 0.68 : 0.22));
           if (pl.isUser && isHomeSide) {
-            const fga = Math.max(pts ? Math.ceil(pts / 1.5) : 1, Math.round(pts * 0.88));
-            const fgm = Math.min(fga, Math.max(0, Math.round(pts * 0.42)));
+            if (isForcedDnp) {
+              return {
+                num: pl.num, name: pl.name, pos: pl.pos, role: pl.role, isUser: true, isRival: false,
+                secPlayed: 0, pts: 0, oreb: 0, dreb: 0, ast: 0, stl: 0, blk: 0,
+                tov: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0, pf: 0, plusMinus: 0
+              };
+            }
+            const effFg = Math.max(0.22, Math.min(0.56, 0.45 - (simCondProf.simFgPenalty || 0)));
+            const fgm = Math.max(0, Math.round(pts * 0.41));
+            const fga = Math.max(fgm, pts > 0 ? Math.round(fgm / effFg) : Math.max(2, Math.round(4 * minScale)));
             const tpm = Math.min(fgm, Math.floor(pts / 9));
-            const tpa = Math.max(tpm, tpm + Math.floor(Math.random() * 3));
+            const tpa = Math.max(tpm, tpm + Math.floor(Math.random() * 3) + ((simCondProf.simFgPenalty || 0) > 0.06 ? 1 : 0));
             const ftm = Math.max(0, pts - fgm * 2 - tpm);
             const fta = ftm + (ftm > 0 ? Math.floor(Math.random() * 2) : 0);
             return {
               num: pl.num, name: pl.name, pos: pl.pos, role: pl.role, isUser: true, isRival: false,
               secPlayed: sec, pts, oreb: Math.floor(reb * 0.3), dreb: Math.ceil(reb * 0.7), ast, stl, blk,
-              tov: Math.floor(Math.random() * 3), fgm, fga, tpm, tpa, ftm, fta, pf: Math.floor(Math.random() * 4),
+              tov: simTov, fgm, fga, tpm, tpa, ftm, fta, pf: Math.floor(Math.random() * 4),
               plusMinus: teamPts - oppPts
             };
           }
@@ -3110,10 +3659,22 @@
       advancePlayoffBracketIfNeeded(g);
       if (Season.player) {
         Season.player.ap = 2;
-        Season.player.condition = Math.max(35, Season.player.condition - Math.round(6 + minScale * 6));
         Season.player.eventTriggeredThisRound = false;
-        checkPeriodicHeightGrowth();
-        evaluatePostMatchTrust(pts * 1.2 + reb * 1.2 + ast * 1.4 + stl * 2 + blk * 2, userWon);
+        if (isForcedDnp) {
+          // 強制休戰一輪：傷勢自然緩解一級並微幅恢復體能
+          Season.player.injuryLevel = Math.max(0, getInjuryLevel(Season.player) - 1);
+          Season.player.injured = Season.player.injuryLevel > 0;
+          Season.player.condition = Math.min(100, (Season.player.condition || 0) + 14);
+          showToast("🏥 你本輪因嚴重拉傷強制休戰，傷勢已緩解一級，狀態微幅回復 +14%。");
+        } else {
+          const fatRes = applyPostMatchFatigueAndInjury(Season.player, minScale * 0.8, Boolean(g.stage));
+          if (fatRes && fatRes.escalated) {
+            showToast(`🚑 過勞出賽導致傷勢惡化為【${fatRes.label}】！請立即安排理療休養。`);
+          }
+          evaluatePostMatchTrust(pts * 1.2 + reb * 1.2 + ast * 1.4 + stl * 2 + blk * 2 - simTov * 1.5, userWon);
+        }
+        const tmNotes = stepMidSeasonTeammateGrowth();
+        if (tmNotes.length) showToast(`🌱 隊友實戰成長：${tmNotes[0]}`);
       }
       const focusResult = window.BTUI ? BTUI.evaluateCoachFocusPostMatch({ pts, oreb: Math.floor(reb * 0.3), dreb: Math.ceil(reb * 0.7), ast, stl, blk, tov: Math.floor(Math.random() * 3) }) : null;
       SaveManager.save(Season);
@@ -3630,7 +4191,7 @@
     }
 
     // ---------- MID-MATCH AUTO-CHECKPOINT (防重整重開比賽) ----------
-    const MATCH_CP_LS_KEY = "BasketballTime_ActiveMatch_v1";
+    const getMatchCheckpointKey = () => `bt_match_checkpoint_slot_${SaveManager.getActiveSlot()}`;
     let _lastCpSaveMs = 0;
 
     function buildMatchSnapshot() {
@@ -3680,21 +4241,21 @@
       _lastCpSaveMs = now;
       Season.activeMatch = snap;
       // 1) 同步寫入 localStorage（確保手機/瀏覽器瞬間重整或關閉分頁前一定落盤）
-      try { localStorage.setItem(MATCH_CP_LS_KEY, JSON.stringify(snap)); } catch (_) {}
+      try { localStorage.setItem(getMatchCheckpointKey(), JSON.stringify(snap)); } catch (_) {}
       // 2) 非同步同步寫入 IndexedDB 生涯存檔
       SaveManager.save(Season);
     }
 
     function clearMatchCheckpoint() {
       if (Season && Season.activeMatch) delete Season.activeMatch;
-      try { localStorage.removeItem(MATCH_CP_LS_KEY); } catch (_) {}
+      try { localStorage.removeItem(getMatchCheckpointKey()); } catch (_) {}
     }
 
     function getValidMatchCheckpoint() {
       if (!Season || !Array.isArray(Season.schedule)) return null;
       let lsSnap = null;
       try {
-        const raw = localStorage.getItem(MATCH_CP_LS_KEY);
+        const raw = localStorage.getItem(getMatchCheckpointKey());
         if (raw) lsSnap = JSON.parse(raw);
       } catch (_) {}
       const idbSnap = Season.activeMatch || null;
@@ -3783,6 +4344,10 @@
 
     function launchSeasonMatch() {
       if (Season.currentRoundIdx >= Season.schedule.length || Season.retired) return;
+      if (Season.player && getInjuryLevel(Season.player) >= 3) {
+        showToast("🏥 隊醫強制休戰中！請先至場外養成進行理療降級，或使用「快速模擬本輪」由隊友代打。");
+        return;
+      }
       clearPendingEventTimer();
       hideSkillPopover();
       document.getElementById("eventModal").classList.add("hidden");
@@ -3804,7 +4369,7 @@
       Match.rivalPlayer = Match.awayTeam.find(p => p.isRival) || Match.awayTeam[2];
       const rotWin = getEffectiveRotationWindow();
       if (Season.player) {
-        const startSt = Math.max(40, Math.min(100, Season.player.condition || 100));
+        const startSt = Math.max(18, Math.min(100, Season.player.condition || 0));
         Match.userPlayer.stamina = startSt;
         Match.userPlayer.maxStaminaCap = startSt;
         // If injured/exhausted forced bench start even as starter, swap cleanly with top bench player
@@ -4123,7 +4688,7 @@
           p.secPlayed += actual;
           p.maxStaminaCap = Math.max(34, p.maxStaminaCap - capDecayPerPos);
           const focusDrain = (p.isUser && Match.coachFocus && Match.coachFocus.id === "SCORE_ATTACK") ? 1.06 : 1;
-          const _condDrainMul = (p.isUser && Season && Season.player) ? getConditionProfile(Season.player.condition, Season.player.injured).staminaDrainMul : 1.0;
+          const _condDrainMul = (p.isUser && Season && Season.player) ? getConditionProfile(Season.player.condition, getInjuryLevel(Season.player)).staminaDrainMul : 1.0;
             p.stamina = Math.max(6, p.stamina - (p.isUser ? drainMod * focusDrain * _condDrainMul : 1.55));
         } else {
           p.stamina = Math.min(p.maxStaminaCap, p.stamina + 5.2);
@@ -4204,7 +4769,8 @@
         const focusMakeMod = ((shooter.isUser && Match.coachFocus && Match.coachFocus.id === "SCORE_ATTACK") ? 0.035
           : ((!shooter.isUser && right && Match.coachFocus && Match.coachFocus.id === "PLAYMAKE_LINK") ? 0.03
           : ((defender.isUser && Match.coachFocus && Match.coachFocus.id === "LOCKDOWN_DEF") ? -0.035 : 0))) + defyDrag;
-        const makeProb = Math.max(0.12, Math.min(0.72, (is3 ? 0.34 : 0.47) + (offRating - defRating) * 0.0072 + heightEdge + skillEdge + staminaPenalty + focusMakeMod));
+        const userCondShotMod = (shooter.isUser && Season && Season.player) ? (getConditionProfile(Season.player.condition, getInjuryLevel(Season.player)).shotRateAdj / 100) : 0;
+        const makeProb = Math.max(0.08, Math.min(0.72, (is3 ? 0.34 : 0.47) + (offRating - defRating) * 0.0072 + heightEdge + skillEdge + staminaPenalty + focusMakeMod + userCondShotMod));
 
         if (Math.random() < blkProb) {
           rimProtector.blk += 1;
@@ -4338,17 +4904,12 @@
           if (Season.player) {
             Season.player.ap = 2;
             const minRatio = u.secPlayed / Math.max(1, Match.totalGameSec);
-            const preCondProf = getConditionProfile(Season.player.condition, Season.player.injured);
             const isHighIntensity = Boolean(g.stage) || Math.abs(Match.homeScore - Match.awayScore) <= 6;
-            const condLoss = Math.round(9 + minRatio * 12 + (isHighIntensity ? 4 : 0)); // 依上場時間與強度扣除 9% ~ 25%
-            Season.player.condition = Math.max(20, Season.player.condition - condLoss);
-            // 疲勞出賽實質受傷風險檢定
-            if (!Season.player.injured && preCondProf.matchInjuryChance > 0 && minRatio >= 0.45 && Math.random() < preCondProf.matchInjuryChance) {
-              Season.player.injured = true;
-              showToast("🚑 過勞出賽導致賽後小腿輕微拉傷！建議立即安排冰浴理療。");
+            const fatRes = applyPostMatchFatigueAndInjury(Season.player, minRatio, isHighIntensity);
+            if (fatRes && fatRes.escalated) {
+              showToast(`🚑 過勞出賽導致傷勢惡化為【${fatRes.label}】！請立即安排理療休養。`);
             }
             Season.player.eventTriggeredThisRound = false;
-            checkPeriodicHeightGrowth();
             const perf = u.pts * 1.2 + (u.oreb + u.dreb) * 1.2 + u.ast * 1.4 + u.stl * 2 + u.blk * 2 - u.tov * 1.5;
             evaluatePostMatchTrust(perf, Match.homeScore > Match.awayScore, u);
             const tmGrowthNotes = stepMidSeasonTeammateGrowth();
@@ -4494,7 +5055,7 @@
         const oH = (oppDef && oppDef.heightCm) || 188;
         const heightAdj = (a.zone === "PAINT" || a.statType === "BLOCK" || a.statType === "BOXOUT_DREB" || a.statType === "OREB_PUTBACK") ? Math.round((uH - oH) * 0.42) : Math.round((uH - oH) * 0.14);
         const leagueDiffPenalty = ((Match.league && Match.league.difficultyTier) || 1) * 5;
-        const condProf = getConditionProfile(p.condition, p.injured);
+        const condProf = getConditionProfile(p.condition, getInjuryLevel(p));
         const staminaPen = stamina < 30 ? -14 : (stamina < 55 ? -6 : 0);
         const statAdj = Math.round((relStat - oppVal) * 0.92) + heightAdj - leagueDiffPenalty + staminaPen + condProf.shotRateAdj;
         const baseSkillRate = (side === "DEFENSE" ? res.finalStats.defenseRating : res.finalStats.shootPct) - 8;
@@ -5926,7 +6487,7 @@
       document.getElementById("apPipsBox").innerHTML = [0, 1].map(i => `<span class="ap-pip ${i >= p.ap ? "used" : ""}"></span>`).join("");
 
       const riskBanner = document.getElementById("trainRiskBanner");
-      const _cProf = getConditionProfile(p.condition, p.injured);
+      const _cProf = getConditionProfile(p.condition, getInjuryLevel(p));
       const _sBudget = getSeasonGrowthBudget(p.age, Season.leagueId);
       const _sGain = p.seasonStatGain || 0;
       const _paceTxt = _sGain >= _sBudget ? "｜本季已達高負荷成長瓶頸（建議側重恢復與實戰）" : `｜本季成長進度 ${_sGain}/${_sBudget}`;
@@ -5943,9 +6504,12 @@
         riskBanner.textContent = `🚨 【${_cProf.label}】${p.condition}%（比賽${_cProf.shortEffect}）：強行訓練或出賽極易拉傷，請立即安排理療！`;
       }
 
+      const _injNow = getInjuryLevel(p);
       document.querySelectorAll("#apActionsGrid .ap-card").forEach(btn => {
-        const need = btn.dataset.apAct === "extreme_qte" ? 2 : 1;
-        btn.disabled = p.ap < need;
+        const act = btn.dataset.apAct;
+        const need = act === "extreme_qte" ? 2 : 1;
+        const blockedBySevereInj = _injNow >= 3 && act !== "recover" && act !== "social" && act !== "train_iq";
+        btn.disabled = p.ap < need || blockedBySevereInj;
       });
 
       const ovr = calcOVR(p.stats, p.pos, Season.equippedTraits);
@@ -6011,17 +6575,22 @@
       };
 
       if (act === "recover") {
-        const hadInj = p.injured;
-        const healAmt = hadInj ? 18 : 28; // 不再一鍵滿血：傷癒回復 +18%，一般理療回復 +28%
-        p.condition = Math.min(100, (p.condition || 50) + healAmt);
-        p.injured = false;
+        const prevInjLv = getInjuryLevel(p);
+        const nextInjLv = Math.max(0, prevInjLv - 1);
+        p.injuryLevel = nextInjLv;
+        p.injured = nextInjLv > 0;
+        const healAmt = prevInjLv >= 2 ? 16 : (prevInjLv === 1 ? 20 : 28);
+        p.condition = Math.min(100, (p.condition || 0) + healAmt);
         SoundFX.swish();
+        const injStatusTxt = prevInjLv === 0
+          ? `深層拉伸舒緩疲勞，賽季狀態回復 +${healAmt}%（現 ${p.condition}%）。`
+          : (nextInjLv === 0
+            ? `拉傷已妥善處理並解除傷病保護，賽季狀態回復 +${healAmt}%（現 ${p.condition}%）。`
+            : `完成本階段復健，傷勢降為【${getConditionProfile(p.condition, nextInjLv).label}】，賽季狀態回復 +${healAmt}%（現 ${p.condition}%，仍需繼續理療）。`);
         showTrainBanner(
           "SUCCESS",
-          hadInj ? "🩺 隊醫理療康復完成！" : "🧊 冰浴與肌肉放鬆完成！",
-          hadInj
-            ? `拉傷已妥善處理並解除傷病保護，賽季狀態回復 +${healAmt}%（現 ${p.condition}%）。`
-            : `深層拉伸舒緩疲勞，賽季狀態回復 +${healAmt}%（現 ${p.condition}%）。`
+          prevInjLv > 0 ? (nextInjLv === 0 ? "🩺 隊醫理療康復完成！" : "🩺 復健療程順利推進！") : "🧊 冰浴與肌肉放鬆完成！",
+          injStatusTxt
         );
       } else if (act === "social") {
         const res = evalTrainingOutcome(p.condition, p.stats.grit, true);
@@ -6034,19 +6603,23 @@
         }
       } else {
         const isLowRisk = (act === "train_iq");
-        const effCond = p.injured ? Math.max(20, p.condition - 30) : p.condition;
+        const curInjLv = getInjuryLevel(p);
+        const effCond = Math.max(0, (p.condition || 0) - curInjLv * 25);
         const res = evalTrainingOutcome(effCond, p.stats.grit, isLowRisk);
 
         if (res === "INJURY") {
-          p.injured = true; p.condition = Math.max(20, p.condition - 18); addSt("speed", -1);
+          const nextLv = Math.min(3, curInjLv + 1);
+          p.injuryLevel = nextLv; p.injured = true;
+          p.condition = Math.max(0, (p.condition || 0) - 18); addSt("speed", -1);
           SoundFX.clank();
-          showTrainBanner("INJURY", "🚑 過勞訓練拉傷！", "雙腿發軟起跳失衡拉傷小腿！陷入【輕微拉傷】狀態（狀態 -18、速度 -1），請盡快以 1 AP 理療康復！");
+          const injLbl = getConditionProfile(p.condition, nextLv).label;
+          showTrainBanner("INJURY", `🚑 過勞訓練導致【${injLbl}】！`, `身體負荷超標導致動作失衡！陷入【${injLbl}】（狀態 -18、速度 -1），請立即安排理療復健！`);
         } else if (res === "FAIL") {
-          p.condition = Math.max(20, p.condition - 13);
+          p.condition = Math.max(0, (p.condition || 0) - 13);
           SoundFX.clank();
-          showTrainBanner("FAIL", "⚠️ 訓練失敗！手感全無……", "身體過於疲憊導致動作走樣，今節特訓毫無進帳，賽季狀態 -13。");
+          showTrainBanner("FAIL", "⚠️ 訓練失敗！手感全無……", "身體過於疲憊導致動作走樣，本節特訓毫無進帳，賽季狀態 -13。");
         } else if (act === "train_shoot") {
-          p.condition = Math.max(20, p.condition - 11);
+          p.condition = Math.max(0, (p.condition || 0) - 11);
           if (res === "GREAT") {
             addScaled("threePt", 2, true); addScaled("midRange", 1, true); SoundFX.swish();
             showTrainBanner("GREAT", "✨ 大成功！連續 30 球空心刷網！", `出手肌肉記憶進一步鎖定！實際成長：${fmtBatch()}。`);
@@ -6055,7 +6628,7 @@
             showTrainBanner("SUCCESS", "✅ 投射特訓達標", `穩定完成定點與急停投籃課表。實際成長：${fmtBatch()}。`);
           }
         } else if (act === "train_finish") {
-          p.condition = Math.max(20, p.condition - 13);
+          p.condition = Math.max(0, (p.condition || 0) - 13);
           if (res === "GREAT") {
             addScaled("inside", 2, true); addScaled("vertical", 1, true); addScaled("speed", 1, true); SoundFX.swish();
             showTrainBanner("GREAT", "✨ 大成功！摸高再破個人紀錄！", `爆發力與終結手腕更銳利！實際成長：${fmtBatch()}。`);
@@ -6064,7 +6637,7 @@
             showTrainBanner("SUCCESS", "✅ 終結與爆發訓練完成", `上籃腳步與起跳節奏更紮實。實際成長：${fmtBatch()}。`);
           }
         } else if (act === "train_def") {
-          p.condition = Math.max(20, p.condition - 13);
+          p.condition = Math.max(0, (p.condition || 0) - 13);
           if (res === "GREAT") {
             addScaled("perimDef", 2, true); addScaled("intDef", 1, true); addScaled("rebound", 1, true); addScaled("strength", 1, true); SoundFX.swish();
             showTrainBanner("GREAT", "✨ 大成功！防守大閘覺醒！", `隊內對抗賽連續零封對手！實際成長：${fmtBatch()}。`);
@@ -6073,7 +6646,7 @@
             showTrainBanner("SUCCESS", "✅ 防守與籃板卡位完成", `滑步橫移與卡位意識進步。實際成長：${fmtBatch()}。`);
           }
         } else if (act === "train_iq") {
-          p.condition = Math.max(20, p.condition - 5);
+          p.condition = Math.max(0, (p.condition || 0) - 5);
           if (res === "GREAT") {
             addScaled("playmaking", 2, true); addScaled("iq", 2, true); addScaled("grit", 1, true); SoundFX.swish();
             showTrainBanner("GREAT", "✨ 大成功！徹底看穿對手戰術板！", `精準預判擋拆變化！實際成長：${fmtBatch()}。`);
@@ -6140,7 +6713,7 @@
       const _qteBeforeSnap = window.BTUI ? BTUI.takePlayerSnapshot() : null;
       if (ok) {
         SoundFX.swish();
-        p.condition = Math.max(25, p.condition - 12);
+        p.condition = Math.max(0, (p.condition || 0) - 12);
         const redTrait = Season.equippedTraits.find(id => { const sk = DB.skills.skills.find(s => s.id === id); return sk && sk.category === "RED_TRAIT"; });
         if (redTrait && Math.random() < 0.22) {
           Season.equippedTraits = Season.equippedTraits.filter(x => x !== redTrait);
@@ -6171,7 +6744,7 @@
           }
         }
       } else {
-        SoundFX.clank(); applyPlayerDelta({ grit: 1 }); p.condition = Math.max(20, p.condition - 16);
+        SoundFX.clank(); applyPlayerDelta({ grit: 1 }); p.condition = Math.max(0, (p.condition || 0) - 16);
         showTrainBanner("FAIL", "⚠️ 極限特訓失敗！節奏完全跟唔上……", "高難度縮圈失手！僅獲意志 +1，疲勞加劇（狀態 -16）。");
       }
       syncUserTeamRole(false);
@@ -6366,12 +6939,12 @@
             if (p.stats[k] !== prev) evtDeltas[k] = p.stats[k] - prev;
           }
         }
-        else if (k === "condition") p.condition = Math.min(100, Math.max(20, p.condition + v));
+        else if (k === "condition") p.condition = Math.min(100, Math.max(0, (p.condition || 0) + v));
         else if (k === "reputation") p.reputation = Math.min(100, Math.max(0, p.reputation + v));
         else if (k === "rivalHeat") p.rivalHeat = Math.min(100, Math.max(0, p.rivalHeat + v));
         else if (k === "coachTrust") p.coachTrust = Math.min(100, Math.max(5, (p.coachTrust || 35) + v));
-        else if (k === "setInjury") p.injured = true;
-        else if (k === "clearInjury") p.injured = false;
+        else if (k === "setInjury") { p.injuryLevel = Math.min(3, getInjuryLevel(p) + 1); p.injured = true; }
+        else if (k === "clearInjury") { p.injuryLevel = 0; p.injured = false; }
         else if (k === "midTransfer") {
           // Mid-season transfer to top contending team in current league!
           const prevTeam = Season.standings.find(t => t.isUserTeam);
@@ -6609,7 +7182,7 @@
           return;
         }
         const savedP = {
-          ...Season.player, ap: 2, condition: 100, injured: false, eventTriggeredThisRound: false,
+          ...Season.player, ap: 2, condition: 100, injured: false, injuryLevel: 0, eventTriggeredThisRound: false,
           seasonStatGain: 0,
           rivalHeat: Math.max(15, Math.round((Season.player.rivalHeat || 30) * 0.80))
         };
@@ -6628,8 +7201,17 @@
           freeAgents: target === "hs_nationals" ? [] : generateProFreeAgents(target, lgAvg),
           offseasonLog: growthLogs
         };
-        createNewCareer(target, nextArc, Season.careerYear + 1, nextRoster, savedP, savedTraits, prevHist, nextOps);
-        showToast(`🏀 展開第 ${Season.careerYear} 季征途！${growthLogs[0] ? " " + growthLogs[0] : ""}`);
+        // 全聯賽持久化陣容跨季演進（各隊舊人離隊、新人加入、動態重算每隊王牌）
+        const carryRosters = Season.leagueRosters ? JSON.parse(JSON.stringify(Season.leagueRosters)) : {};
+        const uStandNow = (Season.standings || []).find(t => t.isUserTeam);
+        const targetUserTeam = sameLeague && uStandNow ? uStandNow.id : ((tLeague.teams.find(t => t.isUserTeam) || tLeague.teams[0]).id);
+        const tempSeasonCtx = { careerYear: Season.careerYear + 1, leagueId: target, leagueRosters: carryRosters, userRoster: nextRoster };
+        const osReport = evolveAllLeagueTeams(tempSeasonCtx, target, targetUserTeam, growthLogs);
+        createNewCareer(target, nextArc, Season.careerYear + 1, nextRoster, savedP, savedTraits, prevHist, nextOps, tempSeasonCtx.leagueRosters, osReport);
+        showToast(`🏀 邁入第 ${Season.careerYear} 季！全聯賽完成休賽季換血與王牌更新！`);
+        if (window.BTUI && typeof BTUI.openOffseasonReport === "function") {
+          setTimeout(() => BTUI.openOffseasonReport("myteam"), 160);
+        }
       });
 
       // Team Ops Interactive Controls (Tactics / Pro FA Sign & Trade)
@@ -6828,17 +7410,26 @@
       preloadCutinImages();
 
       buildWoodTexture();
-      const saved = await SaveManager.load();
+      const allSlots = await SaveManager.listSlots();
+      let saved = await SaveManager.load(SaveManager.getActiveSlot());
+      if (!(saved && saved.schedule && saved.standings && saved.player)) {
+        const firstFilled = allSlots.find(s => !s.empty);
+        if (firstFilled) {
+          SaveManager.setActiveSlot(firstFilled.slot);
+          saved = await SaveManager.load(firstFilled.slot);
+        }
+      }
       const hasSavedCareer = Boolean(saved && saved.schedule && saved.standings && saved.player);
       if (hasSavedCareer) {
         Season = saved;
-        document.getElementById("idbStatusTag").textContent = "IndexedDB 已載入生涯存檔";
+        ensureLeagueRosters(Season, Season.leagueId);
+        document.getElementById("idbStatusTag").textContent = `存檔槽 ${SaveManager.getActiveSlot()} 已載入`;
         renderHub();
       } else {
         createNewCareer("hs_nationals");
       }
       if (window.BTUI) {
-        BTUI.showTitleScreen(hasSavedCareer);
+        await BTUI.showTitleScreen(hasSavedCareer);
       } else if (!hasSavedCareer) {
         openCareerCreation();
       }
@@ -6847,6 +7438,19 @@
       overlay.classList.add("hidden");
       requestAnimationFrame(gameLoop);
     }
+
+    async function loadCareerFromSlot(slotNum) {
+      SaveManager.setActiveSlot(slotNum);
+      const data = await SaveManager.load(slotNum);
+      if (!data || !data.player || !data.standings) return false;
+      Season = data;
+      ensureLeagueRosters(Season, Season.leagueId);
+      const tag = document.getElementById("idbStatusTag");
+      if (tag) tag.textContent = `存檔槽 ${slotNum} 已載入`;
+      renderHub();
+      return true;
+    }
+    window.loadCareerFromSlot = loadCareerFromSlot;
 
     window.addEventListener("load", () => {
       document.getElementById("btnBootRetry").addEventListener("click", bootGame);

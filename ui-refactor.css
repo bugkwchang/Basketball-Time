@@ -773,3 +773,161 @@ html, body {
   margin-top: 6px;
   line-height: 1.4;
 }
+
+
+/* ==================== PHASE 2: 3-SLOT SAVE & OFFSEASON REPORT ==================== */
+.save-slots-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.save-slot-card {
+  border: 2.5px solid var(--ink);
+  background: #FFFDF7;
+  padding: 10px 11px;
+  box-shadow: 3px 3px 0 var(--ink);
+  text-align: left;
+}
+.save-slot-card.active-slot {
+  background: #FEFCE8;
+  border-color: var(--crimson);
+}
+.save-slot-card.empty {
+  background: #F7F4EC;
+  border-style: dashed;
+  box-shadow: none;
+}
+.save-slot-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.save-slot-badge {
+  font-size: 10.5px;
+  font-weight: 900;
+  padding: 2px 7px;
+  background: var(--ink);
+  color: #FFF;
+}
+.save-slot-badge.gold {
+  background: var(--crimson);
+  color: #FFF;
+}
+.save-slot-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.save-backup-bar {
+  margin-top: 8px;
+}
+
+.osr-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.osr-tab {
+  border: 2px solid var(--ink);
+  background: #F7F4EC;
+  font-size: 11.5px;
+  font-weight: 900;
+  padding: 7px 4px;
+  cursor: pointer;
+  min-height: 38px;
+}
+.osr-tab.active {
+  background: var(--ink);
+  color: var(--gold-bright);
+}
+.osr-body {
+  max-height: 54vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 2px;
+}
+.osr-section-head {
+  font-size: 12.5px;
+  font-weight: 900;
+  color: var(--crimson);
+  border-left: 4px solid var(--crimson);
+  padding-left: 7px;
+  margin-bottom: 2px;
+}
+.osr-log-row {
+  background: #FFFDF7;
+  border: 1.5px solid var(--ink);
+  padding: 7px 9px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+.osr-team-card, .osr-rookie-card {
+  background: #FFFDF7;
+  border: 2px solid var(--ink);
+  padding: 8px 10px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.osr-rookie-card.super {
+  background: #FEFCE8;
+  border-color: var(--crimson);
+}
+.osr-team-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.osr-move-line {
+  font-size: 11.5px;
+  line-height: 1.5;
+  margin-top: 3px;
+}
+.osr-lbl {
+  font-weight: 900;
+  color: var(--ink-soft);
+}
+.osr-ace-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 10px;
+  border: 2px solid var(--ink);
+  background: #FFFDF7;
+}
+.osr-ace-row.is-user {
+  background: #FEF9C3;
+  border-color: var(--crimson);
+}
+.osr-ace-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.osr-rank {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--crimson);
+  min-width: 24px;
+}
+.osr-ace-ovr {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--ink);
+  border-left: 2px solid var(--ink);
+  padding-left: 10px;
+}
+.osr-empty {
+  text-align: center;
+  padding: 18px;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  font-weight: 800;
+}

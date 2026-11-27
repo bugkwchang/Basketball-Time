@@ -391,9 +391,9 @@ window.BTUI = (() => {
     for (const tm of (league.teams || [])) {
       const isUT = season.standings && season.standings.some(s => s.isUserTeam && s.id === tm.id);
       if (isUT) continue;
-      const r = Array.isArray(tm.roster) && tm.roster.length
-        ? tm.roster
-        : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
+      const r = (typeof window.getLiveTeamRoster === "function")
+        ? window.getLiveTeamRoster(tm.id, season.leagueId)
+        : (Array.isArray(tm.roster) && tm.roster.length ? tm.roster : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []));
       for (const pl of r) {
         const prof = (!pl.stats || !pl.heightCm) && typeof generateNpcProfile === "function"
           ? generateNpcProfile({ ...pl }) : pl;
@@ -485,9 +485,9 @@ window.BTUI = (() => {
       const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
       const orderedTeams = [...(league.teams || [])].sort((a, b) => (a.name === teamHint ? -1 : (b.name === teamHint ? 1 : 0)));
       for (const tm of orderedTeams) {
-        const list = (Array.isArray(tm.roster) && tm.roster.length)
-          ? tm.roster
-          : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
+        const list = (typeof window.getLiveTeamRoster === "function")
+          ? window.getLiveTeamRoster(tm.id, season.leagueId)
+          : ((Array.isArray(tm.roster) && tm.roster.length) ? tm.roster : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []));
         const found = list.find(pl => pl && pl.name === target);
         if (found) {
           const profiled = (found.stats && found.heightCm) ? found : (typeof generateNpcProfile === "function" ? generateNpcProfile({ ...found }) : found);
@@ -792,7 +792,7 @@ window.BTUI = (() => {
           <div class="ovr-kpi-lbl">賽季狀態</div>
           ${(() => {
             const cp = typeof window.getConditionProfile === "function"
-              ? window.getConditionProfile(p.condition, p.injured)
+              ? window.getConditionProfile(p.condition, typeof window.getInjuryLevel === "function" ? window.getInjuryLevel(p) : p.injured)
               : { label: p.injured ? "輕微拉傷" : "狀態良好", color: p.condition < 55 ? "var(--crimson)" : "var(--ok-green)", shortEffect: "" };
             return `<div class="ovr-kpi-val" style="color:${cp.color};">${p.condition}%</div>
           <div class="ovr-kpi-cmp" style="color:${cp.color};">${cp.label}</div>`;
@@ -884,7 +884,18 @@ window.BTUI = (() => {
     const teamOpsSub = document.getElementById("btnOpenTeamOpsSub");
     if (teamOpsSub) {
       const tac = getActiveTactic();
-      const logCount = (ops.offseasonLog && ops.offseasonLog.length) || 0;
+      const osrBtn = document.getElementById("btnOpenOffseasonReport");
+    const osrSub = document.getElementById("btnOpenOffseasonSub");
+    if (osrBtn) {
+      if (season.offseasonReport) {
+        osrBtn.style.display = "flex";
+        const aceChgCnt = (season.offseasonReport.aceBoard || []).filter(x => x.aceChanged).length;
+        if (osrSub) osrSub.textContent = `第 ${season.offseasonReport.year} 季休賽季異動 · ${aceChgCnt} 隊王牌易主 · 點擊詳閱`;
+      } else {
+        osrBtn.style.display = "none";
+      }
+    }
+    const logCount = (ops.offseasonLog && ops.offseasonLog.length) || 0;
       teamOpsSub.textContent = `目前戰術：${tac.name}${logCount ? ` · 近期異動 ${logCount} 筆` : ""}`;
     }
 
@@ -1415,9 +1426,144 @@ window.BTUI = (() => {
   }
 
   /* -------------------- 6. TITLE SCREEN & 3-STEP ONBOARDING + TUTORIAL MATCH -------------------- */
-  function showTitleScreen(hasSave) {
+  let activeOsrTab = "myteam";
+
+  function openOffseasonReport(tab = "myteam") {
     const season = getSeason();
-    const db = getDB();
+    const modal = document.getElementById("offseasonReportModal");
+    if (!modal || !season || !season.offseasonReport) return;
+    activeOsrTab = tab || "myteam";
+    const rep = season.offseasonReport;
+    const stamp = document.getElementById("osrSeasonStamp");
+    const title = document.getElementById("osrTitle");
+    if (stamp) stamp.textContent = `第 ${rep.year} 季開季前`;
+    if (title) title.textContent = `${rep.leagueName}・休賽季異動快報`;
+    renderOffseasonReportTab(activeOsrTab);
+    modal.classList.remove("hidden");
+  }
+
+  function renderOffseasonReportTab(tab) {
+    const season = getSeason();
+    const body = document.getElementById("osrBody");
+    if (!body || !season || !season.offseasonReport) return;
+    const rep = season.offseasonReport;
+    activeOsrTab = tab;
+
+    document.querySelectorAll("#osrTabBar .osr-tab").forEach(b => {
+      b.classList.toggle("active", b.dataset.osrTab === tab);
+    });
+
+    if (tab === "myteam") {
+      const logs = rep.myTeamLogs || [];
+      body.innerHTML = `
+        <div class="osr-section-head">🏠 ${rep.myTeamName} 本季陣容異動</div>
+        ${logs.length
+          ? logs.map(line => `<div class="osr-log-row">${line}</div>`).join("")
+          : `<div class="osr-empty">本隊維持既有班底，默契持續升溫！</div>`}`;
+    } else if (tab === "league") {
+      const moves = rep.leagueMoves || [];
+      body.innerHTML = moves.map(m => {
+        const depHtml = (m.departures || []).length
+          ? m.departures.map(d => `<span class="tag loss" style="margin:2px 3px 2px 0;">${d.reason} ${d.name}(${d.pos}·${d.ovr})${d.wasAce ? "👑" : ""}</span>`).join("")
+          : `<span style="font-size:11px; color:var(--ink-soft);">無主力離隊</span>`;
+        const arrHtml = (m.arrivals || []).length
+          ? m.arrivals.map(a => `<span class="tag ${a.isSuperRookie ? "gold" : "win"}" style="margin:2px 3px 2px 0;">${a.isSuperRookie ? "🌟" : "+"}${playerNameLinkHtml(a.name, m.teamName, `${a.name}(${a.pos}·${a.ovr})`)}</span>`).join("")
+          : `<span style="font-size:11px; color:var(--ink-soft);">無新援加盟</span>`;
+        const aceBadge = m.aceChanged ? `<span class="tag gold">🔥 新王牌：${playerNameLinkHtml(m.newAce, m.teamName)}</span>` : `<span style="font-size:11px; color:var(--ink-soft);">王牌：${playerNameLinkHtml(m.newAce, m.teamName)}</span>`;
+        return `
+          <div class="osr-team-card">
+            <div class="osr-team-top">
+              <strong>${m.teamName}（戰力 ${m.teamOvr}）</strong>
+              ${aceBadge}
+            </div>
+            <div class="osr-move-line"><span class="osr-lbl">離隊：</span>${depHtml}</div>
+            <div class="osr-move-line"><span class="osr-lbl">加盟：</span>${arrHtml}</div>
+          </div>`;
+      }).join("") || `<div class="osr-empty">本季無聯賽異動紀錄。</div>`;
+    } else if (tab === "rookies") {
+      const rookies = rep.topRookies || [];
+      body.innerHTML = `
+        <div class="osr-section-head">🌟 本季全聯賽焦點新人（點擊姓名查看詳細球探卡）</div>
+        ${rookies.map(r => {
+          const skChips = (r.skills || []).slice(0, 3).map(id => renderSkillChip(id, "font-size:10px; padding:2px 5px;")).join("");
+          return `
+            <div class="osr-rookie-card ${r.isSuperRookie ? "super" : ""}">
+              <div class="osr-team-top">
+                <div>
+                  ${r.isSuperRookie ? '<span class="tag gold">🌟 天選超級新人</span> ' : '<span class="tag">新秀</span> '}
+                  <strong>${playerNameLinkHtml(r.name, r.teamName)}</strong>
+                  <span style="font-size:11px; color:var(--ink-soft);">(${r.pos} · ${r.age}歲 · ${r.teamName})</span>
+                </div>
+                <strong style="font-size:15px; color:var(--crimson);">評級 ${r.ovr}</strong>
+              </div>
+              <div style="font-size:11px; color:#92400E; font-weight:800; margin:3px 0;">潛力 ${"★".repeat(r.potential || 3)} ${r.archetypeTag ? `· 球風【${r.archetypeTag}】` : ""}</div>
+              <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">${skChips || '<span style="font-size:11px; color:var(--ink-soft);">基礎潛力新秀</span>'}</div>
+            </div>`;
+        }).join("") || `<div class="osr-empty">本季無焦點新人資料。</div>`}`;
+    } else if (tab === "aces") {
+      const board = rep.aceBoard || [];
+      body.innerHTML = `
+        <div class="osr-section-head">👑 新球季各隊頭號王牌與球隊戰力</div>
+        ${board.map((row, idx) => `
+          <div class="osr-ace-row ${row.isUserTeam ? "is-user" : ""}">
+            <div class="osr-ace-left">
+              <span class="osr-rank">#${idx + 1}</span>
+              <div>
+                <div style="font-weight:900; font-size:13px;">${playerNameLinkHtml(row.aceName, row.teamName)} <span class="tag">${row.acePos}</span> ${row.aceChanged ? '<span class="tag gold">🔥 新王牌</span>' : ''}</div>
+                <div style="font-size:11px; color:var(--ink-soft);">${row.teamName}（球隊戰力 ${row.teamOvr}）${row.aceChanged ? ` · 接替 ${row.oldAce}` : ""}</div>
+              </div>
+            </div>
+            <div class="osr-ace-ovr">${row.aceOvr}</div>
+          </div>`).join("")}`;
+    }
+  }
+
+  async function renderTitleSaveSlots() {
+    const wrap = document.getElementById("titleSaveSlots");
+    if (!wrap || typeof SaveManager === "undefined" || !SaveManager.listSlots) return;
+    const slots = await SaveManager.listSlots();
+    const active = SaveManager.getActiveSlot();
+    const fmtDate = (ts) => {
+      try {
+        const d = new Date(ts);
+        return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+      } catch (_) { return ""; }
+    };
+    wrap.innerHTML = slots.map(s => {
+      const isAct = s.slot === active;
+      if (s.empty || !s.meta) {
+        return `
+          <div class="save-slot-card empty ${isAct ? "active-slot" : ""}">
+            <div class="save-slot-head">
+              <span class="save-slot-badge">存檔槽 ${s.slot}</span>
+              <span style="font-size:11px; color:var(--ink-soft);">空白存檔位</span>
+            </div>
+            <button type="button" class="manga-btn primary" data-slot-new="${s.slot}" style="width:100%; margin-top:6px; padding:8px 10px; font-size:13px;">🏀 在槽位 ${s.slot} 開啟新旅程</button>
+          </div>`;
+      }
+      const m = s.meta;
+      return `
+        <div class="save-slot-card ${isAct ? "active-slot" : ""}">
+          <div class="save-slot-head">
+            <span class="save-slot-badge ${isAct ? "gold" : ""}">存檔槽 ${s.slot}${isAct ? " · 上次遊玩" : ""}</span>
+            <span style="font-size:10.5px; color:var(--ink-soft);">${fmtDate(m.updatedAt)}</span>
+          </div>
+          <div class="save-slot-main">
+            <div>
+              <div style="font-size:14.5px; font-weight:900;">${m.name} <span class="tag">${m.pos}</span> <span style="color:var(--crimson);">評級 ${m.ovr}</span></div>
+              <div style="font-size:11.5px; color:var(--ink-soft); margin-top:2px;">第 ${m.careerYear} 季 · ${m.leagueName} · ${m.teamName}（${m.wl}）${m.retired ? " · 🏛️已退役" : ""}</div>
+            </div>
+          </div>
+          <div class="save-slot-actions">
+            <button type="button" class="manga-btn primary" data-slot-load="${s.slot}" style="flex:1; padding:7px 10px; font-size:12.5px;">🏀 繼續生涯</button>
+            <button type="button" class="manga-btn" data-slot-export="${s.slot}" style="padding:7px 9px; font-size:11.5px;" title="匯出 JSON 備份">📤 備份</button>
+            <button type="button" class="manga-btn" data-slot-delete="${s.slot}" style="padding:7px 9px; font-size:11.5px; color:#B91C1C;" title="清空此存檔槽">🗑️</button>
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  async function showTitleScreen(hasSave) {
     ["viewHub", "viewMatch", "viewCreate"].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.remove("active");
@@ -1425,23 +1571,7 @@ window.BTUI = (() => {
     const titleView = document.getElementById("viewTitle");
     if (!titleView) return;
     titleView.classList.add("active");
-
-    const contBtn = document.getElementById("btnTitleContinue");
-    const startBtn = document.getElementById("btnTitleStartNew");
-    const saveInfo = document.getElementById("titleSaveInfo");
-
-    if (hasSave && season && season.player && db) {
-      const league = db.leagues.leagues.find(l => l.id === season.leagueId) || db.leagues.leagues[0];
-      const ovr = calcOVR(season.player.stats, season.player.pos, season.equippedTraits);
-      const ut = season.standings.find(t => t.isUserTeam) || { name: "", w: 0, l: 0 };
-      if (contBtn) { contBtn.style.display = "inline-flex"; contBtn.textContent = `🏀 繼續生涯（${season.player.name} · OVR ${ovr}）`; }
-      if (startBtn) { startBtn.className = "manga-btn title-secondary-btn"; startBtn.textContent = "✨ 開始新遊戲（3 步新手引導）"; }
-      if (saveInfo) { saveInfo.style.display = "block"; saveInfo.innerHTML = `💾 <strong>已讀取 IndexedDB 生涯存檔</strong>：第 ${season.careerYear} 季 · ${league.name} · ${ut.name}（${ut.w}勝${ut.l}負）`; }
-    } else {
-      if (contBtn) contBtn.style.display = "none";
-      if (startBtn) { startBtn.className = "manga-btn primary title-primary-btn"; startBtn.textContent = "🏀 開始遊戲"; }
-      if (saveInfo) saveInfo.style.display = "none";
-    }
+    await renderTitleSaveSlots();
   }
 
   function renderPosPickCards() {
@@ -1619,9 +1749,9 @@ window.BTUI = (() => {
     if (!lg) return;
     const tm = (lg.teams || []).find(t => t.id === teamId);
     if (!tm) return;
-    const rawRoster = (Array.isArray(tm.roster) && tm.roster.length)
-      ? tm.roster
-      : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []);
+    const rawRoster = (typeof window.getLiveTeamRoster === "function")
+      ? window.getLiveTeamRoster(tm.id, lg.id)
+      : ((Array.isArray(tm.roster) && tm.roster.length) ? tm.roster : (typeof buildOpponentRoster === "function" ? buildOpponentRoster(tm) : []));
     const profiled = rawRoster.map(pl =>
       (!pl.stats || !pl.heightCm) && typeof generateNpcProfile === "function" ? generateNpcProfile({ ...pl }) : pl
     );
@@ -2052,19 +2182,107 @@ window.BTUI = (() => {
       });
     }
 
-    const titleCont = document.getElementById("btnTitleContinue");
-    if (titleCont) {
-      titleCont.addEventListener("click", () => {
-        document.getElementById("viewTitle").classList.remove("active");
-        document.getElementById("viewHub").classList.add("active");
-        switchHubTab("htab-match");
-        renderHub();
-        const cp = getValidMatchCheckpoint();
-        if (cp) restoreMatchFromCheckpoint(cp);
+    const slotWrap = document.getElementById("titleSaveSlots");
+    if (slotWrap) {
+      slotWrap.addEventListener("click", async (e) => {
+        const loadBtn = e.target.closest("[data-slot-load]");
+        if (loadBtn) {
+          const slotNum = Number(loadBtn.dataset.slotLoad);
+          if (typeof window.loadCareerFromSlot === "function") {
+            const ok = await window.loadCareerFromSlot(slotNum);
+            if (ok) {
+              document.getElementById("viewTitle").classList.remove("active");
+              document.getElementById("viewHub").classList.add("active");
+              switchHubTab("htab-match");
+              renderHub();
+              const cp = getValidMatchCheckpoint();
+              if (cp) restoreMatchFromCheckpoint(cp);
+            }
+          }
+          return;
+        }
+        const newBtn = e.target.closest("[data-slot-new]");
+        if (newBtn) {
+          const slotNum = Number(newBtn.dataset.slotNew);
+          SaveManager.setActiveSlot(slotNum);
+          document.getElementById("viewTitle").classList.remove("active");
+          openCareerCreation();
+          return;
+        }
+        const expBtn = e.target.closest("[data-slot-export]");
+        if (expBtn) {
+          const slotNum = Number(expBtn.dataset.slotExport);
+          const jsonStr = await SaveManager.exportSlotJson(slotNum);
+          if (!jsonStr) { showToast("此槽位無可匯出的存檔"); return; }
+          const blob = new Blob([jsonStr], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url; a.download = `basketball-time-slot${slotNum}.json`;
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          showToast(`📤 已匯出存檔槽 ${slotNum} 備份檔案！`);
+          return;
+        }
+        const delBtn = e.target.closest("[data-slot-delete]");
+        if (delBtn) {
+          const slotNum = Number(delBtn.dataset.slotDelete);
+          if (window.confirm(`確定要清空【存檔槽 ${slotNum}】嗎？此操作無法復原（建議先點擊備份）。`)) {
+            await SaveManager.clear(slotNum);
+            await renderTitleSaveSlots();
+            showToast(`🗑️ 已清空存檔槽 ${slotNum}`);
+          }
+        }
       });
     }
-    const titleNew = document.getElementById("btnTitleStartNew");
-    if (titleNew) titleNew.addEventListener("click", () => { document.getElementById("viewTitle").classList.remove("active"); openCareerCreation(); });
+
+    const impBtn = document.getElementById("btnTitleImportSave");
+    const impInput = document.getElementById("saveImportFileInput");
+    if (impBtn && impInput) {
+      impBtn.addEventListener("click", () => impInput.click());
+      impInput.addEventListener("change", (e) => {
+        const f = e.target.files[0]; if (!f) return;
+        const rd = new FileReader();
+        rd.onload = async () => {
+          try {
+            const slots = await SaveManager.listSlots();
+            const emptySlot = slots.find(s => s.empty);
+            const targetSlot = emptySlot ? emptySlot.slot : SaveManager.getActiveSlot();
+            if (!emptySlot && !window.confirm(`三個存檔槽皆已使用，將覆寫【存檔槽 ${targetSlot}】，是否繼續？`)) return;
+            await SaveManager.importSlotJson(targetSlot, rd.result);
+            SaveManager.setActiveSlot(targetSlot);
+            await renderTitleSaveSlots();
+            showToast(`📥 已成功還原存檔至【存檔槽 ${targetSlot}】！`);
+          } catch (err) {
+            showToast(`存檔匯入失敗：${err.message}`);
+          }
+        };
+        rd.readAsText(f); e.target.value = "";
+      });
+    }
+
+    const switchSlotBtn = document.getElementById("btnSwitchSaveSlot");
+    if (switchSlotBtn) {
+      switchSlotBtn.addEventListener("click", async () => {
+        const season = getSeason();
+        if (season && season.player) await SaveManager.save(season);
+        await showTitleScreen(true);
+      });
+    }
+
+    const osrOpenBtn = document.getElementById("btnOpenOffseasonReport");
+    if (osrOpenBtn) osrOpenBtn.addEventListener("click", () => openOffseasonReport("myteam"));
+    const osrCloseBtn = document.getElementById("btnCloseOffseasonReport");
+    const osrConfBtn = document.getElementById("btnConfirmOffseasonReport");
+    const closeOsr = () => { const m = document.getElementById("offseasonReportModal"); if (m) m.classList.add("hidden"); };
+    if (osrCloseBtn) osrCloseBtn.addEventListener("click", closeOsr);
+    if (osrConfBtn) osrConfBtn.addEventListener("click", closeOsr);
+    const osrTabBar = document.getElementById("osrTabBar");
+    if (osrTabBar) {
+      osrTabBar.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-osr-tab]");
+        if (b) renderOffseasonReportTab(b.dataset.osrTab);
+      });
+    }
 
     const posGrid = document.getElementById("posPickGrid");
     if (posGrid) {
@@ -2127,6 +2345,7 @@ window.BTUI = (() => {
     showTrainingSettlement,
     showEventSettlement,
     showTitleScreen,
+    openOffseasonReport,
     setCreateStep,
     launchTutorialMatch,
     handleTutorialMatchEnd,
