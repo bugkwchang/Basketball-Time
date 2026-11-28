@@ -36,9 +36,9 @@
   "leagues": [
     {
       "id": "hs_nationals",
-      "name": "日本全國高校大賽 (Winter Cup)",
+      "name": "全國高校熱血大賽（冬季決戰）",
       "difficultyTier": 1,
-      "legendName": "安西 光義",
+      "legendName": "安原 宗義",
       "quarterMinutes": 8,
       "otMinutes": 4,
       "foulOutLimit": 5,
@@ -46,15 +46,15 @@
       "teams": [
         {
           "id": "shohoku",
-          "name": "湘北高校",
+          "name": "赤潮高校",
           "ovr": 71,
-          "ace": "流川 楓",
-          "coach": "安西 光義",
+          "ace": "霧島 蒼楓",
+          "coach": "安原 宗義",
           "isUserTeam": true,
           "roster": [
             {
               "num": 7,
-              "name": "宮城 良田",
+              "name": "白河 電光",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 71,
@@ -94,7 +94,7 @@
             },
             {
               "num": 11,
-              "name": "流川 楓",
+              "name": "霧島 蒼楓",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 74,
@@ -120,7 +120,7 @@
             },
             {
               "num": 10,
-              "name": "櫻木 花道",
+              "name": "紅林 烈火",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 70,
@@ -147,7 +147,7 @@
             },
             {
               "num": 4,
-              "name": "赤木 剛憲",
+              "name": "黑木 鐵憲",
               "pos": "C",
               "role": "STARTER",
               "ovr": 72,
@@ -172,7 +172,7 @@
             },
             {
               "num": 14,
-              "name": "三井 壽",
+              "name": "南條 炎壽",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 71,
@@ -197,7 +197,7 @@
             },
             {
               "num": 5,
-              "name": "木暮 公延",
+              "name": "青木 延平",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 63,
@@ -219,7 +219,7 @@
             },
             {
               "num": 8,
-              "name": "安田 靖春",
+              "name": "安藤 晴也",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 60,
@@ -240,7 +240,7 @@
             },
             {
               "num": 6,
-              "name": "潮崎 哲士",
+              "name": "汐見 哲也",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 59,
@@ -259,7 +259,7 @@
             },
             {
               "num": 9,
-              "name": "角田 悟",
+              "name": "角谷 聰志",
               "pos": "C",
               "role": "BENCH",
               "ovr": 59,
@@ -279,7 +279,7 @@
             },
             {
               "num": 12,
-              "name": "石井 健太郎",
+              "name": "石橋 健一",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 58,
@@ -298,7 +298,7 @@
             },
             {
               "num": 13,
-              "name": "佐佐岡 智",
+              "name": "佐倉 智樹",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 58,
@@ -319,14 +319,14 @@
         },
         {
           "id": "sannoh",
-          "name": "山王工業高校",
+          "name": "皇嶽工業高校",
           "ovr": 75,
-          "ace": "澤北 榮治",
-          "coach": "堂本 五郎",
+          "ace": "澤城 榮司",
+          "coach": "堂島 嚴五",
           "roster": [
             {
               "num": 4,
-              "name": "深津 一成",
+              "name": "深谷 一誠",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 73,
@@ -350,7 +350,7 @@
             },
             {
               "num": 6,
-              "name": "松本 稔",
+              "name": "松原 稔司",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 71,
@@ -373,7 +373,7 @@
             },
             {
               "num": 9,
-              "name": "澤北 榮治",
+              "name": "澤城 榮司",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 76,
@@ -400,7 +400,7 @@
             },
             {
               "num": 5,
-              "name": "野邊 將廣",
+              "name": "野口 將大",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 70,
@@ -423,7 +423,7 @@
             },
             {
               "num": 7,
-              "name": "河田 雅史",
+              "name": "河原 雅人",
               "pos": "C",
               "role": "STARTER",
               "ovr": 75,
@@ -449,7 +449,7 @@
             },
             {
               "num": 8,
-              "name": "一之倉 聰",
+              "name": "一宮 聰太",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 64,
@@ -471,7 +471,7 @@
             },
             {
               "num": 15,
-              "name": "河田 美紀男",
+              "name": "河原 巨力",
               "pos": "C",
               "role": "BENCH",
               "ovr": 63,
@@ -494,7 +494,7 @@
             },
             {
               "num": 10,
-              "name": "堂本 健太",
+              "name": "堂島 健太",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 61,
@@ -514,7 +514,7 @@
             },
             {
               "num": 11,
-              "name": "佐佐木 翔",
+              "name": "佐竹 翔馬",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 61,
@@ -534,7 +534,7 @@
             },
             {
               "num": 12,
-              "name": "高橋 雄大",
+              "name": "高瀨 雄介",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 60,
@@ -554,7 +554,7 @@
             },
             {
               "num": 13,
-              "name": "中村 陸",
+              "name": "中島 陸斗",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 60,
@@ -573,7 +573,7 @@
             },
             {
               "num": 14,
-              "name": "小林 誠",
+              "name": "小川 誠一",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 60,
@@ -594,14 +594,14 @@
         },
         {
           "id": "kainan",
-          "name": "海南大附屬高校",
+          "name": "蒼海附屬高校",
           "ovr": 74,
-          "ace": "牧 紳一",
-          "coach": "高頭 力",
+          "ace": "牧野 帝一",
+          "coach": "高城 鐵力",
           "roster": [
             {
               "num": 4,
-              "name": "牧 紳一",
+              "name": "牧野 帝一",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 75,
@@ -628,7 +628,7 @@
             },
             {
               "num": 6,
-              "name": "神 宗一郎",
+              "name": "神谷 宗司",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 72,
@@ -651,7 +651,7 @@
             },
             {
               "num": 10,
-              "name": "清田 信長",
+              "name": "清原 信彥",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 70,
@@ -674,7 +674,7 @@
             },
             {
               "num": 9,
-              "name": "武藤 正",
+              "name": "武田 正樹",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 67,
@@ -696,7 +696,7 @@
             },
             {
               "num": 5,
-              "name": "高砂 一馬",
+              "name": "高松 一馬",
               "pos": "C",
               "role": "STARTER",
               "ovr": 70,
@@ -720,7 +720,7 @@
             },
             {
               "num": 15,
-              "name": "宮益 義範",
+              "name": "宮本 義明",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 63,
@@ -742,7 +742,7 @@
             },
             {
               "num": 7,
-              "name": "小菅 健",
+              "name": "小笠原 健",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 61,
@@ -762,7 +762,7 @@
             },
             {
               "num": 8,
-              "name": "鈴木 大輔",
+              "name": "鈴村 大輔",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 61,
@@ -782,7 +782,7 @@
             },
             {
               "num": 11,
-              "name": "伊藤 拓海",
+              "name": "伊東 拓真",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 60,
@@ -802,7 +802,7 @@
             },
             {
               "num": 12,
-              "name": "渡邊 駿",
+              "name": "渡部 駿介",
               "pos": "C",
               "role": "BENCH",
               "ovr": 60,
@@ -822,7 +822,7 @@
             },
             {
               "num": 13,
-              "name": "加藤 蓮",
+              "name": "加賀 蓮司",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 59,
@@ -841,7 +841,7 @@
             },
             {
               "num": 14,
-              "name": "山本 翼",
+              "name": "山崎 翼斗",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 59,
@@ -862,14 +862,14 @@
         },
         {
           "id": "ryonan",
-          "name": "陵南高校",
+          "name": "嵐南高校",
           "ovr": 72,
-          "ace": "仙道 彰",
-          "coach": "田岡 茂一",
+          "ace": "仙石 彰人",
+          "coach": "田村 茂造",
           "roster": [
             {
               "num": 5,
-              "name": "植草 智之",
+              "name": "植木 智也",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 66,
@@ -890,7 +890,7 @@
             },
             {
               "num": 6,
-              "name": "越野 宏明",
+              "name": "越智 宏樹",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 66,
@@ -911,7 +911,7 @@
             },
             {
               "num": 7,
-              "name": "仙道 彰",
+              "name": "仙石 彰人",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 75,
@@ -938,7 +938,7 @@
             },
             {
               "num": 13,
-              "name": "福田 吉兆",
+              "name": "福山 吉星",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 71,
@@ -964,7 +964,7 @@
             },
             {
               "num": 4,
-              "name": "魚住 純",
+              "name": "海原 純一",
               "pos": "C",
               "role": "STARTER",
               "ovr": 71,
@@ -989,7 +989,7 @@
             },
             {
               "num": 8,
-              "name": "池上 亮二",
+              "name": "池谷 亮介",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 64,
@@ -1011,7 +1011,7 @@
             },
             {
               "num": 15,
-              "name": "相田 彥一",
+              "name": "相澤 彥太",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 59,
@@ -1032,7 +1032,7 @@
             },
             {
               "num": 9,
-              "name": "菅平 健",
+              "name": "菅原 健司",
               "pos": "C",
               "role": "BENCH",
               "ovr": 61,
@@ -1052,7 +1052,7 @@
             },
             {
               "num": 10,
-              "name": "岡田 翼",
+              "name": "岡崎 翼人",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 60,
@@ -1071,7 +1071,7 @@
             },
             {
               "num": 11,
-              "name": "吉田 颯",
+              "name": "吉川 颯太",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 60,
@@ -1091,7 +1091,7 @@
             },
             {
               "num": 12,
-              "name": "森田 健",
+              "name": "森本 健吾",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 59,
@@ -1110,7 +1110,7 @@
             },
             {
               "num": 14,
-              "name": "井上 誠",
+              "name": "井口 誠也",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 59,
@@ -1131,14 +1131,14 @@
         },
         {
           "id": "shoyo",
-          "name": "翔陽高校",
+          "name": "飛陽學園高校",
           "ovr": 71,
-          "ace": "藤真 健司",
-          "coach": "藤真 健司",
+          "ace": "藤原 健太",
+          "coach": "藤原 健太",
           "roster": [
             {
               "num": 4,
-              "name": "藤真 健司",
+              "name": "藤原 健太",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 73,
@@ -1164,7 +1164,7 @@
             },
             {
               "num": 6,
-              "name": "長谷川 一志",
+              "name": "長岡 一志",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 69,
@@ -1187,7 +1187,7 @@
             },
             {
               "num": 8,
-              "name": "永野 滿",
+              "name": "永田 滿男",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 67,
@@ -1209,7 +1209,7 @@
             },
             {
               "num": 7,
-              "name": "高野 昭一",
+              "name": "高木 昭人",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 67,
@@ -1231,7 +1231,7 @@
             },
             {
               "num": 5,
-              "name": "花形 透",
+              "name": "花城 透司",
               "pos": "C",
               "role": "STARTER",
               "ovr": 71,
@@ -1255,7 +1255,7 @@
             },
             {
               "num": 9,
-              "name": "伊藤 卓",
+              "name": "伊澤 卓也",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 63,
@@ -1276,7 +1276,7 @@
             },
             {
               "num": 10,
-              "name": "渡邊 翔",
+              "name": "渡海 翔平",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 61,
@@ -1295,7 +1295,7 @@
             },
             {
               "num": 11,
-              "name": "齋藤 亮",
+              "name": "齋木 亮太",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 60,
@@ -1314,7 +1314,7 @@
             },
             {
               "num": 12,
-              "name": "木村 樹",
+              "name": "木下 樹生",
               "pos": "C",
               "role": "BENCH",
               "ovr": 60,
@@ -1333,7 +1333,7 @@
             },
             {
               "num": 13,
-              "name": "清水 悠",
+              "name": "清川 悠斗",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 60,
@@ -1352,7 +1352,7 @@
             },
             {
               "num": 14,
-              "name": "松本 健",
+              "name": "松尾 健治",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 59,
@@ -1371,7 +1371,7 @@
             },
             {
               "num": 15,
-              "name": "石川 翼",
+              "name": "石田 翼生",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 59,
@@ -1392,14 +1392,14 @@
         },
         {
           "id": "aiwa",
-          "name": "愛和學院高校",
+          "name": "星和學院高校",
           "ovr": 72,
-          "ace": "諸星 大",
-          "coach": "愛和總教練",
+          "ace": "星野 大河",
+          "coach": "星和監督・大森 誠",
           "roster": [
             {
               "num": 5,
-              "name": "井手 拓也",
+              "name": "井原 拓也",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 67,
@@ -1420,7 +1420,7 @@
             },
             {
               "num": 4,
-              "name": "諸星 大",
+              "name": "星野 大河",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 74,
@@ -1447,7 +1447,7 @@
             },
             {
               "num": 7,
-              "name": "杉山 翔",
+              "name": "杉浦 翔太",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 68,
@@ -1468,7 +1468,7 @@
             },
             {
               "num": 8,
-              "name": "橫山 陸",
+              "name": "橫田 陸生",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 68,
@@ -1489,7 +1489,7 @@
             },
             {
               "num": 6,
-              "name": "大塚 剛",
+              "name": "大森 剛志",
               "pos": "C",
               "role": "STARTER",
               "ovr": 69,
@@ -1511,7 +1511,7 @@
             },
             {
               "num": 9,
-              "name": "藤井 健",
+              "name": "藤田 健人",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 61,
@@ -1531,7 +1531,7 @@
             },
             {
               "num": 10,
-              "name": "橋本 蓮",
+              "name": "橋口 蓮也",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 61,
@@ -1550,7 +1550,7 @@
             },
             {
               "num": 11,
-              "name": "小川 誠",
+              "name": "小澤 誠司",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 60,
@@ -1569,7 +1569,7 @@
             },
             {
               "num": 12,
-              "name": "岡本 樹",
+              "name": "岡村 樹人",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 60,
@@ -1588,7 +1588,7 @@
             },
             {
               "num": 13,
-              "name": "前田 剛",
+              "name": "前川 剛史",
               "pos": "C",
               "role": "BENCH",
               "ovr": 60,
@@ -1607,7 +1607,7 @@
             },
             {
               "num": 14,
-              "name": "村上 翼",
+              "name": "村田 翼也",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 59,
@@ -1626,7 +1626,7 @@
             },
             {
               "num": 15,
-              "name": "近藤 駿",
+              "name": "近江 駿太",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 59,
@@ -1647,14 +1647,14 @@
         },
         {
           "id": "toyotama",
-          "name": "豐玉高校",
+          "name": "烈玉商業高校",
           "ovr": 70,
-          "ace": "南 烈",
-          "coach": "金平 教練",
+          "ace": "南雲 烈火",
+          "coach": "金森 健作",
           "roster": [
             {
               "num": 6,
-              "name": "板倉 大二朗",
+              "name": "板橋 大朗",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 68,
@@ -1677,7 +1677,7 @@
             },
             {
               "num": 7,
-              "name": "矢嶋 京平",
+              "name": "矢吹 京介",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 67,
@@ -1698,7 +1698,7 @@
             },
             {
               "num": 4,
-              "name": "南 烈",
+              "name": "南雲 烈火",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 73,
@@ -1724,7 +1724,7 @@
             },
             {
               "num": 5,
-              "name": "岸本 實理",
+              "name": "岸田 實哉",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 70,
@@ -1748,7 +1748,7 @@
             },
             {
               "num": 8,
-              "name": "岩田 三秋",
+              "name": "岩崎 三郎",
               "pos": "C",
               "role": "STARTER",
               "ovr": 66,
@@ -1769,7 +1769,7 @@
             },
             {
               "num": 9,
-              "name": "大川 輝男",
+              "name": "大河 輝司",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 62,
@@ -1790,7 +1790,7 @@
             },
             {
               "num": 10,
-              "name": "奧野 健",
+              "name": "奧村 健太",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 61,
@@ -1809,7 +1809,7 @@
             },
             {
               "num": 11,
-              "name": "西村 亮",
+              "name": "西岡 亮平",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 60,
@@ -1828,7 +1828,7 @@
             },
             {
               "num": 12,
-              "name": "谷口 翔",
+              "name": "谷本 翔吾",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 60,
@@ -1847,7 +1847,7 @@
             },
             {
               "num": 13,
-              "name": "森 剛",
+              "name": "森山 剛太",
               "pos": "C",
               "role": "BENCH",
               "ovr": 59,
@@ -1866,7 +1866,7 @@
             },
             {
               "num": 14,
-              "name": "池田 翼",
+              "name": "池本 翼司",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 59,
@@ -1885,7 +1885,7 @@
             },
             {
               "num": 15,
-              "name": "濱田 誠",
+              "name": "濱口 誠人",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 59,
@@ -1906,14 +1906,14 @@
         },
         {
           "id": "meihou",
-          "name": "名朋工業高校",
+          "name": "魁朋工業高校",
           "ovr": 71,
-          "ace": "森重 寬",
-          "coach": "名朋總教練",
+          "ace": "森岡 鐵雄",
+          "coach": "魁朋監督・黑田 徹",
           "roster": [
             {
               "num": 5,
-              "name": "佐伯 健",
+              "name": "佐久間 健",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 66,
@@ -1934,7 +1934,7 @@
             },
             {
               "num": 6,
-              "name": "三浦 翔",
+              "name": "三宅 翔平",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 66,
@@ -1954,7 +1954,7 @@
             },
             {
               "num": 7,
-              "name": "遠藤 陸",
+              "name": "遠山 陸斗",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 67,
@@ -1975,7 +1975,7 @@
             },
             {
               "num": 8,
-              "name": "柴田 剛",
+              "name": "柴崎 剛志",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 67,
@@ -1996,7 +1996,7 @@
             },
             {
               "num": 15,
-              "name": "森重 寬",
+              "name": "森岡 鐵雄",
               "pos": "C",
               "role": "STARTER",
               "ovr": 75,
@@ -2025,7 +2025,7 @@
             },
             {
               "num": 9,
-              "name": "淺野 蓮",
+              "name": "淺井 蓮太",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 60,
@@ -2044,7 +2044,7 @@
             },
             {
               "num": 10,
-              "name": "坂本 翼",
+              "name": "坂口 翼人",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 60,
@@ -2063,7 +2063,7 @@
             },
             {
               "num": 11,
-              "name": "上田 誠",
+              "name": "上野 誠司",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 60,
@@ -2082,7 +2082,7 @@
             },
             {
               "num": 12,
-              "name": "原田 樹",
+              "name": "原口 樹也",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 60,
@@ -2101,7 +2101,7 @@
             },
             {
               "num": 13,
-              "name": "宮崎 剛",
+              "name": "宮澤 剛一",
               "pos": "C",
               "role": "BENCH",
               "ovr": 61,
@@ -2121,7 +2121,7 @@
             },
             {
               "num": 14,
-              "name": "中田 健",
+              "name": "中西 健太",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 59,
@@ -2140,7 +2140,7 @@
             },
             {
               "num": 16,
-              "name": "河合 駿",
+              "name": "河村 駿介",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 59,
@@ -2163,9 +2163,9 @@
     },
     {
       "id": "ncaa_madness",
-      "name": "美國大學聯賽 NCAA",
+      "name": "全美大學三月狂熱聯賽（UCAA）",
       "difficultyTier": 2,
-      "legendName": "格蘭特・希爾",
+      "legendName": "喬納森・席爾瓦",
       "quarterMinutes": 10,
       "otMinutes": 5,
       "foulOutLimit": 5,
@@ -2173,15 +2173,15 @@
       "teams": [
         {
           "id": "ncaa_duke",
-          "name": "杜克大學藍魔",
+          "name": "藍焰大學魔狼",
           "ovr": 79,
-          "ace": "庫珀・弗拉格",
-          "coach": "喬恩・謝爾",
+          "ace": "庫爾・佛斯特",
+          "coach": "喬納森・席爾瓦",
           "isUserTeam": true,
           "roster": [
             {
               "num": 5,
-              "name": "泰瑞斯・普羅克特",
+              "name": "傑登・卡特",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 74,
@@ -2217,7 +2217,7 @@
             },
             {
               "num": 2,
-              "name": "庫珀・弗拉格",
+              "name": "庫爾・佛斯特",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 82,
@@ -2243,7 +2243,7 @@
             },
             {
               "num": 7,
-              "name": "康・克努佩爾",
+              "name": "傑登・霍金斯",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 75,
@@ -2264,7 +2264,7 @@
             },
             {
               "num": 9,
-              "name": "卡曼・馬盧阿奇",
+              "name": "傑登・班克斯",
               "pos": "C",
               "role": "STARTER",
               "ovr": 76,
@@ -2288,7 +2288,7 @@
             },
             {
               "num": 1,
-              "name": "凱萊布・福斯特",
+              "name": "傑登・特納",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 69,
@@ -2308,7 +2308,7 @@
             },
             {
               "num": 14,
-              "name": "錫安・詹姆斯",
+              "name": "傑登・麥克雷",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 70,
@@ -2329,7 +2329,7 @@
             },
             {
               "num": 18,
-              "name": "梅森・吉利斯",
+              "name": "傑登・弗萊明",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 68,
@@ -2349,7 +2349,7 @@
             },
             {
               "num": 3,
-              "name": "以賽亞・埃文斯",
+              "name": "傑登・布萊德利",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 69,
@@ -2369,7 +2369,7 @@
             },
             {
               "num": 6,
-              "name": "馬利・布朗",
+              "name": "傑登・皮爾斯",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 69,
@@ -2390,7 +2390,7 @@
             },
             {
               "num": 21,
-              "name": "帕特里克・恩貢巴",
+              "name": "傑登・道森",
               "pos": "C",
               "role": "BENCH",
               "ovr": 67,
@@ -2410,7 +2410,7 @@
             },
             {
               "num": 8,
-              "name": "達倫・哈里斯",
+              "name": "傑登・錢德勒",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 66,
@@ -2431,14 +2431,14 @@
         },
         {
           "id": "ncaa_unc",
-          "name": "北卡焦油踵",
+          "name": "卡羅萊納天藍鷹",
           "ovr": 77,
-          "ace": "RJ・戴維斯",
-          "coach": "休伯特・戴維斯",
+          "ace": "RJ・達文特",
+          "coach": "休斯・達文波特",
           "roster": [
             {
               "num": 3,
-              "name": "艾略特・卡多",
+              "name": "傑登・羅傑斯",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 73,
@@ -2459,7 +2459,7 @@
             },
             {
               "num": 4,
-              "name": "RJ・戴維斯",
+              "name": "RJ・達文特",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 79,
@@ -2484,7 +2484,7 @@
             },
             {
               "num": 9,
-              "name": "伊恩・傑克森",
+              "name": "傑登・巴恩斯",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 74,
@@ -2504,7 +2504,7 @@
             },
             {
               "num": 24,
-              "name": "傑倫・威瑟斯",
+              "name": "傑登・沃森",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 71,
@@ -2524,7 +2524,7 @@
             },
             {
               "num": 13,
-              "name": "賈倫・華盛頓",
+              "name": "傑登・克勞福德",
               "pos": "C",
               "role": "STARTER",
               "ovr": 72,
@@ -2544,7 +2544,7 @@
             },
             {
               "num": 7,
-              "name": "塞斯・特林布爾",
+              "name": "傑登・格雷森",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 70,
@@ -2564,7 +2564,7 @@
             },
             {
               "num": 11,
-              "name": "德雷克・鮑威爾",
+              "name": "傑登・霍爾特",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 69,
@@ -2584,7 +2584,7 @@
             },
             {
               "num": 22,
-              "name": "文・阿倫・盧賓",
+              "name": "傑登・曼寧",
               "pos": "C",
               "role": "BENCH",
               "ovr": 68,
@@ -2604,7 +2604,7 @@
             },
             {
               "num": 0,
-              "name": "泰森・凱德",
+              "name": "傑登・雷諾茲",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 67,
@@ -2623,7 +2623,7 @@
             },
             {
               "num": 5,
-              "name": "詹姆斯・布朗",
+              "name": "馬庫斯・卡特",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 66,
@@ -2642,7 +2642,7 @@
             },
             {
               "num": 2,
-              "name": "埃利奧特・托馬斯",
+              "name": "馬庫斯・霍金斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 66,
@@ -2661,7 +2661,7 @@
             },
             {
               "num": 15,
-              "name": "賈倫・克勞德",
+              "name": "馬庫斯・班克斯",
               "pos": "C",
               "role": "BENCH",
               "ovr": 65,
@@ -2682,14 +2682,14 @@
         },
         {
           "id": "ncaa_ku",
-          "name": "堪薩斯松鴉鷹",
+          "name": "中西部金鷹學院",
           "ovr": 78,
-          "ace": "亨特・狄金森",
-          "coach": "比爾・塞爾夫",
+          "ace": "漢特・迪克森",
+          "coach": "威廉・索爾斯",
           "roster": [
             {
               "num": 3,
-              "name": "達胡安・哈里斯",
+              "name": "馬庫斯・特納",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 73,
@@ -2712,7 +2712,7 @@
             },
             {
               "num": 5,
-              "name": "澤克・梅奧",
+              "name": "馬庫斯・麥克雷",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 75,
@@ -2733,7 +2733,7 @@
             },
             {
               "num": 2,
-              "name": "AJ・斯托爾",
+              "name": "馬庫斯・弗萊明",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 74,
@@ -2753,7 +2753,7 @@
             },
             {
               "num": 24,
-              "name": "KJ・亞當斯",
+              "name": "馬庫斯・布萊德利",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 73,
@@ -2775,7 +2775,7 @@
             },
             {
               "num": 1,
-              "name": "亨特・狄金森",
+              "name": "漢特・迪克森",
               "pos": "C",
               "role": "STARTER",
               "ovr": 80,
@@ -2801,7 +2801,7 @@
             },
             {
               "num": 0,
-              "name": "謝克・摩爾",
+              "name": "馬庫斯・皮爾斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 68,
@@ -2821,7 +2821,7 @@
             },
             {
               "num": 6,
-              "name": "萊倫・格里芬",
+              "name": "馬庫斯・道森",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 69,
@@ -2840,7 +2840,7 @@
             },
             {
               "num": 40,
-              "name": "弗洛里・比敦加",
+              "name": "馬庫斯・錢德勒",
               "pos": "C",
               "role": "BENCH",
               "ovr": 70,
@@ -2860,7 +2860,7 @@
             },
             {
               "num": 8,
-              "name": "大衛・科伊特",
+              "name": "馬庫斯・羅傑斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 68,
@@ -2880,7 +2880,7 @@
             },
             {
               "num": 14,
-              "name": "拉基姆・帕斯莫爾",
+              "name": "馬庫斯・巴恩斯",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 67,
@@ -2899,7 +2899,7 @@
             },
             {
               "num": 22,
-              "name": "札克・克萊門斯",
+              "name": "馬庫斯・沃森",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 66,
@@ -2918,7 +2918,7 @@
             },
             {
               "num": 25,
-              "name": "威爾・西奧博爾德",
+              "name": "馬庫斯・克勞福德",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 65,
@@ -2939,14 +2939,14 @@
         },
         {
           "id": "ncaa_uk",
-          "name": "肯塔基野貓",
+          "name": "藍草大學狂獅",
           "ovr": 77,
-          "ace": "奧特加・奧韋",
-          "coach": "馬克・波普",
+          "ace": "奧斯丁・歐文斯",
+          "coach": "馬丁・帕克",
           "roster": [
             {
               "num": 1,
-              "name": "拉蒙特・巴特勒",
+              "name": "馬庫斯・格雷森",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 74,
@@ -2968,7 +2968,7 @@
             },
             {
               "num": 2,
-              "name": "賈克森・羅賓遜",
+              "name": "馬庫斯・霍爾特",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 75,
@@ -2989,7 +2989,7 @@
             },
             {
               "num": 0,
-              "name": "奧特加・奧韋",
+              "name": "奧斯丁・歐文斯",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 78,
@@ -3014,7 +3014,7 @@
             },
             {
               "num": 7,
-              "name": "安德魯・卡爾",
+              "name": "馬庫斯・曼寧",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 73,
@@ -3036,7 +3036,7 @@
             },
             {
               "num": 22,
-              "name": "阿馬里・威廉斯",
+              "name": "馬庫斯・雷諾茲",
               "pos": "C",
               "role": "STARTER",
               "ovr": 74,
@@ -3058,7 +3058,7 @@
             },
             {
               "num": 4,
-              "name": "科比・布雷亞",
+              "name": "布萊斯・卡特",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 71,
@@ -3078,7 +3078,7 @@
             },
             {
               "num": 15,
-              "name": "安斯利・阿爾莫諾",
+              "name": "布萊斯・霍金斯",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 67,
@@ -3098,7 +3098,7 @@
             },
             {
               "num": 10,
-              "name": "布蘭登・加里森",
+              "name": "布萊斯・班克斯",
               "pos": "C",
               "role": "BENCH",
               "ovr": 68,
@@ -3118,7 +3118,7 @@
             },
             {
               "num": 11,
-              "name": "特拉維斯・佩里",
+              "name": "布萊斯・特納",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 67,
@@ -3137,7 +3137,7 @@
             },
             {
               "num": 12,
-              "name": "科林・錢德勒",
+              "name": "布萊斯・麥克雷",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 67,
@@ -3157,7 +3157,7 @@
             },
             {
               "num": 5,
-              "name": "克里・克里薩",
+              "name": "布萊斯・弗萊明",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 69,
@@ -3178,7 +3178,7 @@
             },
             {
               "num": 9,
-              "name": "特倫特・諾亞",
+              "name": "布萊斯・布萊德利",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 66,
@@ -3199,14 +3199,14 @@
         },
         {
           "id": "ncaa_uconn",
-          "name": "康乃狄克哈士奇",
+          "name": "新英格蘭雪狼",
           "ovr": 78,
-          "ace": "亞歷克斯・卡拉班",
-          "coach": "丹・赫爾利",
+          "ace": "亞歷克斯・卡蘭",
+          "coach": "丹尼爾・哈里斯",
           "roster": [
             {
               "num": 10,
-              "name": "哈桑・迪亞拉",
+              "name": "布萊斯・皮爾斯",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 72,
@@ -3227,7 +3227,7 @@
             },
             {
               "num": 1,
-              "name": "索羅・鮑爾",
+              "name": "布萊斯・道森",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 74,
@@ -3248,7 +3248,7 @@
             },
             {
               "num": 30,
-              "name": "利亞姆・麥克尼利",
+              "name": "布萊斯・錢德勒",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 75,
@@ -3269,7 +3269,7 @@
             },
             {
               "num": 11,
-              "name": "亞歷克斯・卡拉班",
+              "name": "亞歷克斯・卡蘭",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 79,
@@ -3295,7 +3295,7 @@
             },
             {
               "num": 35,
-              "name": "薩姆森・強森",
+              "name": "布萊斯・羅傑斯",
               "pos": "C",
               "role": "STARTER",
               "ovr": 73,
@@ -3316,7 +3316,7 @@
             },
             {
               "num": 20,
-              "name": "艾丹・馬哈尼",
+              "name": "布萊斯・巴恩斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 69,
@@ -3336,7 +3336,7 @@
             },
             {
               "num": 23,
-              "name": "傑林・斯圖爾特",
+              "name": "布萊斯・沃森",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 69,
@@ -3356,7 +3356,7 @@
             },
             {
               "num": 5,
-              "name": "塔里斯・里德",
+              "name": "布萊斯・克勞福德",
               "pos": "C",
               "role": "BENCH",
               "ovr": 71,
@@ -3377,7 +3377,7 @@
             },
             {
               "num": 3,
-              "name": "傑登・羅斯",
+              "name": "布萊斯・格雷森",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 68,
@@ -3397,7 +3397,7 @@
             },
             {
               "num": 2,
-              "name": "艾哈邁德・諾威爾",
+              "name": "布萊斯・霍爾特",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 67,
@@ -3417,7 +3417,7 @@
             },
             {
               "num": 12,
-              "name": "以賽亞・亞伯拉罕",
+              "name": "布萊斯・曼寧",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 66,
@@ -3437,7 +3437,7 @@
             },
             {
               "num": 24,
-              "name": "優素福・辛格雷",
+              "name": "布萊斯・雷諾茲",
               "pos": "C",
               "role": "BENCH",
               "ovr": 65,
@@ -3458,14 +3458,14 @@
         },
         {
           "id": "ncaa_auburn",
-          "name": "奧本大學老虎",
+          "name": "南方烈虎大學",
           "ovr": 79,
-          "ace": "約翰尼・布魯姆",
-          "coach": "布魯斯・珀爾",
+          "ace": "強尼・布魯克",
+          "coach": "布魯諾・佩爾頓",
           "roster": [
             {
               "num": 13,
-              "name": "丹佛・瓊斯",
+              "name": "德文・卡特",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 73,
@@ -3486,7 +3486,7 @@
             },
             {
               "num": 2,
-              "name": "邁爾斯・凱利",
+              "name": "德文・霍金斯",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 74,
@@ -3506,7 +3506,7 @@
             },
             {
               "num": 10,
-              "name": "查德・貝克-馬扎拉",
+              "name": "德文・班克斯",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 75,
@@ -3528,7 +3528,7 @@
             },
             {
               "num": 4,
-              "name": "約翰尼・布魯姆",
+              "name": "強尼・布魯克",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 81,
@@ -3554,7 +3554,7 @@
             },
             {
               "num": 44,
-              "name": "迪倫・卡德威爾",
+              "name": "德文・特納",
               "pos": "C",
               "role": "STARTER",
               "ovr": 73,
@@ -3576,7 +3576,7 @@
             },
             {
               "num": 0,
-              "name": "塔哈德・佩蒂福德",
+              "name": "德文・麥克雷",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 72,
@@ -3597,7 +3597,7 @@
             },
             {
               "num": 5,
-              "name": "克里斯・摩爾",
+              "name": "德文・弗萊明",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 67,
@@ -3617,7 +3617,7 @@
             },
             {
               "num": 31,
-              "name": "錢尼・強森",
+              "name": "德文・布萊德利",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 70,
@@ -3637,7 +3637,7 @@
             },
             {
               "num": 3,
-              "name": "賈海姆・哈德森",
+              "name": "德文・皮爾斯",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 67,
@@ -3656,7 +3656,7 @@
             },
             {
               "num": 8,
-              "name": "圖爾特・霍華德",
+              "name": "德文・道森",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 66,
@@ -3675,7 +3675,7 @@
             },
             {
               "num": 12,
-              "name": "JP・佩格斯",
+              "name": "德文・錢德勒",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 68,
@@ -3696,7 +3696,7 @@
             },
             {
               "num": 21,
-              "name": "布雷克・馬斯格羅夫",
+              "name": "德文・羅傑斯",
               "pos": "C",
               "role": "BENCH",
               "ovr": 65,
@@ -3719,9 +3719,9 @@
     },
     {
       "id": "asia_pro",
-      "name": "亞洲職業聯賽 (B.League / CBA / NBL)",
+      "name": "泛亞職業籃球超級聯賽（APBL）",
       "difficultyTier": 2,
-      "legendName": "姚 明",
+      "legendName": "特雷・格蘭傑",
       "quarterMinutes": 10,
       "otMinutes": 5,
       "foulOutLimit": 5,
@@ -3729,15 +3729,15 @@
       "teams": [
         {
           "id": "chiba_jets",
-          "name": "千葉噴射機",
+          "name": "東京灣噴射翼",
           "ovr": 82,
-          "ace": "渡邊 雄太",
-          "coach": "特雷弗・格里森",
+          "ace": "渡部 雄飛",
+          "coach": "特雷・格蘭傑",
           "isUserTeam": true,
           "roster": [
             {
               "num": 2,
-              "name": "富樫 勇樹",
+              "name": "富永 勇人",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 81,
@@ -3776,7 +3776,7 @@
             },
             {
               "num": 12,
-              "name": "渡邊 雄太",
+              "name": "渡部 雄飛",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 84,
@@ -3801,7 +3801,7 @@
             },
             {
               "num": 33,
-              "name": "約翰・穆尼",
+              "name": "陳 宇軒",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 80,
@@ -3823,7 +3823,7 @@
             },
             {
               "num": 4,
-              "name": "DJ・霍格",
+              "name": "林 宇軒",
               "pos": "C",
               "role": "STARTER",
               "ovr": 79,
@@ -3845,7 +3845,7 @@
             },
             {
               "num": 31,
-              "name": "原 修太",
+              "name": "張 宇軒",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 75,
@@ -3866,7 +3866,7 @@
             },
             {
               "num": 11,
-              "name": "西村 文男",
+              "name": "王 宇軒",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 72,
@@ -3886,7 +3886,7 @@
             },
             {
               "num": 25,
-              "name": "荒尾 岳",
+              "name": "李 宇軒",
               "pos": "C",
               "role": "BENCH",
               "ovr": 71,
@@ -3906,7 +3906,7 @@
             },
             {
               "num": 0,
-              "name": "田代 直希",
+              "name": "劉 宇軒",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 72,
@@ -3927,7 +3927,7 @@
             },
             {
               "num": 9,
-              "name": "二上 耀",
+              "name": "黃 宇軒",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 71,
@@ -3947,7 +3947,7 @@
             },
             {
               "num": 14,
-              "name": "佐藤 卓磨",
+              "name": "周 宇軒",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 73,
@@ -3967,7 +3967,7 @@
             },
             {
               "num": 34,
-              "name": "克里斯托弗・史密斯",
+              "name": "吳 宇軒",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 77,
@@ -3990,14 +3990,14 @@
         },
         {
           "id": "yokohama_bc",
-          "name": "橫濱海盜",
+          "name": "橫濱港黑帆",
           "ovr": 80,
-          "ace": "河村 勇輝",
-          "coach": "拉西・托維",
+          "ace": "川村 閃光",
+          "coach": "拉爾斯・托爾森",
           "roster": [
             {
               "num": 5,
-              "name": "河村 勇輝",
+              "name": "川村 閃光",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 84,
@@ -4025,7 +4025,7 @@
             },
             {
               "num": 18,
-              "name": "森井 健太",
+              "name": "許 宇軒",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 74,
@@ -4046,7 +4046,7 @@
             },
             {
               "num": 14,
-              "name": "大庭 岳輝",
+              "name": "高 宇軒",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 74,
@@ -4065,7 +4065,7 @@
             },
             {
               "num": 40,
-              "name": "喬許・斯科特",
+              "name": "鄭 宇軒",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 79,
@@ -4086,7 +4086,7 @@
             },
             {
               "num": 15,
-              "name": "德文・奧利弗",
+              "name": "郭 宇軒",
               "pos": "C",
               "role": "STARTER",
               "ovr": 79,
@@ -4108,7 +4108,7 @@
             },
             {
               "num": 30,
-              "name": "須藤 昂矢",
+              "name": "曾 宇軒",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 72,
@@ -4128,7 +4128,7 @@
             },
             {
               "num": 23,
-              "name": "金・開",
+              "name": "佐藤 宇軒",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 72,
@@ -4147,7 +4147,7 @@
             },
             {
               "num": 9,
-              "name": "杉浦 佑成",
+              "name": "高橋 宇軒",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 71,
@@ -4166,7 +4166,7 @@
             },
             {
               "num": 1,
-              "name": "達米恩・英格利斯",
+              "name": "金 宇軒",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 77,
@@ -4188,7 +4188,7 @@
             },
             {
               "num": 11,
-              "name": "凱・索托",
+              "name": "朴 宇軒",
               "pos": "C",
               "role": "BENCH",
               "ovr": 76,
@@ -4209,7 +4209,7 @@
             },
             {
               "num": 4,
-              "name": "松崎 裕樹",
+              "name": "崔 宇軒",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 71,
@@ -4228,7 +4228,7 @@
             },
             {
               "num": 7,
-              "name": "西野 曜",
+              "name": "陳 承翰",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 70,
@@ -4249,14 +4249,14 @@
         },
         {
           "id": "seoul_knights",
-          "name": "首爾 SK 騎士",
+          "name": "漢江赤焰騎士",
           "ovr": 80,
-          "ace": "賈米爾・沃尼",
-          "coach": "全熙哲",
+          "ace": "賈馬爾・華倫",
+          "coach": "全 宰勳",
           "roster": [
             {
               "num": 5,
-              "name": "金 善亨",
+              "name": "林 承翰",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 79,
@@ -4278,7 +4278,7 @@
             },
             {
               "num": 13,
-              "name": "吳 在賢",
+              "name": "張 承翰",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 75,
@@ -4299,7 +4299,7 @@
             },
             {
               "num": 8,
-              "name": "安 永俊",
+              "name": "王 承翰",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 78,
@@ -4321,7 +4321,7 @@
             },
             {
               "num": 20,
-              "name": "吳 世根",
+              "name": "李 承翰",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 77,
@@ -4343,7 +4343,7 @@
             },
             {
               "num": 34,
-              "name": "賈米爾・沃尼",
+              "name": "賈馬爾・華倫",
               "pos": "C",
               "role": "STARTER",
               "ovr": 83,
@@ -4369,7 +4369,7 @@
             },
             {
               "num": 11,
-              "name": "崔 元赫",
+              "name": "劉 承翰",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 71,
@@ -4388,7 +4388,7 @@
             },
             {
               "num": 15,
-              "name": "許 日寧",
+              "name": "黃 承翰",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 72,
@@ -4407,7 +4407,7 @@
             },
             {
               "num": 41,
-              "name": "金 亨彬",
+              "name": "周 承翰",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 70,
@@ -4426,7 +4426,7 @@
             },
             {
               "num": 1,
-              "name": "以賽亞・希克斯",
+              "name": "吳 承翰",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 76,
@@ -4447,7 +4447,7 @@
             },
             {
               "num": 7,
-              "name": "高 尚賢",
+              "name": "許 承翰",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 71,
@@ -4466,7 +4466,7 @@
             },
             {
               "num": 21,
-              "name": "崔 部慶",
+              "name": "高 承翰",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 72,
@@ -4486,7 +4486,7 @@
             },
             {
               "num": 3,
-              "name": "金 泰勳",
+              "name": "鄭 承翰",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 70,
@@ -4507,14 +4507,14 @@
         },
         {
           "id": "guangdong",
-          "name": "廣東宏遠華南虎",
+          "name": "嶺南烈焰猛虎",
           "ovr": 81,
-          "ace": "胡 明軒",
-          "coach": "杜鋒",
+          "ace": "胡 明陽",
+          "coach": "杜 鎮海",
           "roster": [
             {
               "num": 2,
-              "name": "徐 傑",
+              "name": "徐 飛揚",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 78,
@@ -4537,7 +4537,7 @@
             },
             {
               "num": 3,
-              "name": "胡 明軒",
+              "name": "胡 明陽",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 81,
@@ -4563,7 +4563,7 @@
             },
             {
               "num": 11,
-              "name": "杜 潤旺",
+              "name": "郭 承翰",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 76,
@@ -4584,7 +4584,7 @@
             },
             {
               "num": 20,
-              "name": "任 駿飛",
+              "name": "曾 承翰",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 76,
@@ -4605,7 +4605,7 @@
             },
             {
               "num": 25,
-              "name": "艾瑞克・莫蘭德",
+              "name": "佐藤 承翰",
               "pos": "C",
               "role": "STARTER",
               "ovr": 80,
@@ -4627,7 +4627,7 @@
             },
             {
               "num": 1,
-              "name": "張 文逸",
+              "name": "高橋 承翰",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 71,
@@ -4646,7 +4646,7 @@
             },
             {
               "num": 18,
-              "name": "黃 明依",
+              "name": "金 承翰",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 72,
@@ -4666,7 +4666,7 @@
             },
             {
               "num": 51,
-              "name": "徐 昕",
+              "name": "朴 承翰",
               "pos": "C",
               "role": "BENCH",
               "ovr": 73,
@@ -4688,7 +4688,7 @@
             },
             {
               "num": 10,
-              "name": "特洛伊・吉倫沃特",
+              "name": "崔 承翰",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 79,
@@ -4710,7 +4710,7 @@
             },
             {
               "num": 7,
-              "name": "張 皓嘉",
+              "name": "陳 冠宇",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 72,
@@ -4731,7 +4731,7 @@
             },
             {
               "num": 28,
-              "name": "王 少傑",
+              "name": "林 冠宇",
               "pos": "C",
               "role": "BENCH",
               "ovr": 74,
@@ -4752,7 +4752,7 @@
             },
             {
               "num": 9,
-              "name": "張 明池",
+              "name": "張 冠宇",
               "pos": "C",
               "role": "BENCH",
               "ovr": 70,
@@ -4774,14 +4774,14 @@
         },
         {
           "id": "liaoning",
-          "name": "遼寧本鋼飛豹",
+          "name": "北境鋼鐵飛豹",
           "ovr": 82,
-          "ace": "趙 繼偉",
-          "coach": "楊鳴",
+          "ace": "趙 繼風",
+          "coach": "楊 振鋒",
           "roster": [
             {
               "num": 3,
-              "name": "趙 繼偉",
+              "name": "趙 繼風",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 82,
@@ -4807,7 +4807,7 @@
             },
             {
               "num": 4,
-              "name": "凱爾・弗格",
+              "name": "王 冠宇",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 82,
@@ -4830,7 +4830,7 @@
             },
             {
               "num": 77,
-              "name": "張 鎮麟",
+              "name": "張 鎮宇",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 81,
@@ -4853,7 +4853,7 @@
             },
             {
               "num": 22,
-              "name": "李 曉旭",
+              "name": "李 冠宇",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 76,
@@ -4874,7 +4874,7 @@
             },
             {
               "num": 55,
-              "name": "韓 德君",
+              "name": "韓 德泰",
               "pos": "C",
               "role": "STARTER",
               "ovr": 78,
@@ -4897,7 +4897,7 @@
             },
             {
               "num": 36,
-              "name": "鄢 手騏",
+              "name": "劉 冠宇",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 71,
@@ -4916,7 +4916,7 @@
             },
             {
               "num": 1,
-              "name": "付 豪",
+              "name": "黃 冠宇",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 76,
@@ -4937,7 +4937,7 @@
             },
             {
               "num": 12,
-              "name": "劉 雁宇",
+              "name": "周 冠宇",
               "pos": "C",
               "role": "BENCH",
               "ovr": 71,
@@ -4957,7 +4957,7 @@
             },
             {
               "num": 25,
-              "name": "德茲・威爾斯",
+              "name": "吳 冠宇",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 78,
@@ -4978,7 +4978,7 @@
             },
             {
               "num": 10,
-              "name": "叢 明晨",
+              "name": "許 冠宇",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 72,
@@ -4997,7 +4997,7 @@
             },
             {
               "num": 8,
-              "name": "王 嵐嶔",
+              "name": "高 冠宇",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 75,
@@ -5018,7 +5018,7 @@
             },
             {
               "num": 17,
-              "name": "俞 澤辰",
+              "name": "鄭 冠宇",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 71,
@@ -5039,14 +5039,14 @@
         },
         {
           "id": "taipei_braves",
-          "name": "臺北富邦勇士",
+          "name": "寶島天藍戰士",
           "ovr": 78,
-          "ace": "林 志傑",
-          "coach": "許晉哲",
+          "ace": "林 志豪",
+          "coach": "許 振華",
           "roster": [
             {
               "num": 0,
-              "name": "賴 廷恩",
+              "name": "郭 冠宇",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 74,
@@ -5067,7 +5067,7 @@
             },
             {
               "num": 12,
-              "name": "林 志傑",
+              "name": "林 志豪",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 81,
@@ -5093,7 +5093,7 @@
             },
             {
               "num": 8,
-              "name": "周 桂羽",
+              "name": "曾 冠宇",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 76,
@@ -5114,7 +5114,7 @@
             },
             {
               "num": 21,
-              "name": "曾 祥鈞",
+              "name": "佐藤 冠宇",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 77,
@@ -5135,7 +5135,7 @@
             },
             {
               "num": 32,
-              "name": "布蘭登・金恩",
+              "name": "高橋 冠宇",
               "pos": "C",
               "role": "STARTER",
               "ovr": 79,
@@ -5156,7 +5156,7 @@
             },
             {
               "num": 6,
-              "name": "吳 永盛",
+              "name": "金 冠宇",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 71,
@@ -5175,7 +5175,7 @@
             },
             {
               "num": 14,
-              "name": "蔡 文誠",
+              "name": "朴 冠宇",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 73,
@@ -5196,7 +5196,7 @@
             },
             {
               "num": 23,
-              "name": "石 博恩",
+              "name": "崔 冠宇",
               "pos": "C",
               "role": "BENCH",
               "ovr": 71,
@@ -5215,7 +5215,7 @@
             },
             {
               "num": 7,
-              "name": "洪 楷傑",
+              "name": "陳 柏翰",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 72,
@@ -5234,7 +5234,7 @@
             },
             {
               "num": 11,
-              "name": "簡 廷兆",
+              "name": "林 柏翰",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 71,
@@ -5254,7 +5254,7 @@
             },
             {
               "num": 24,
-              "name": "張 宗憲",
+              "name": "張 柏翰",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 74,
@@ -5275,7 +5275,7 @@
             },
             {
               "num": 33,
-              "name": "林 孟學",
+              "name": "王 柏翰",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 70,
@@ -5297,14 +5297,14 @@
         },
         {
           "id": "sydney_kings",
-          "name": "雪梨國王 (NBL)",
+          "name": "雪梨港皇冠隊",
           "ovr": 82,
-          "ace": "澤維爾・庫克斯",
-          "coach": "布萊恩・古爾吉安",
+          "ace": "澤維爾・庫柏",
+          "coach": "布萊恩・古德溫",
           "roster": [
             {
               "num": 1,
-              "name": "傑倫・亞當斯",
+              "name": "李 柏翰",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 81,
@@ -5326,7 +5326,7 @@
             },
             {
               "num": 5,
-              "name": "肖恩・布魯斯",
+              "name": "劉 柏翰",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 75,
@@ -5347,7 +5347,7 @@
             },
             {
               "num": 10,
-              "name": "澤維爾・庫克斯",
+              "name": "澤維爾・庫柏",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 83,
@@ -5373,7 +5373,7 @@
             },
             {
               "num": 13,
-              "name": "卡姆・奧利弗",
+              "name": "黃 柏翰",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 80,
@@ -5395,7 +5395,7 @@
             },
             {
               "num": 7,
-              "name": "亞歷克斯・圖希",
+              "name": "周 柏翰",
               "pos": "C",
               "role": "STARTER",
               "ovr": 77,
@@ -5416,7 +5416,7 @@
             },
             {
               "num": 3,
-              "name": "庫阿特・諾伊",
+              "name": "吳 柏翰",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 76,
@@ -5437,7 +5437,7 @@
             },
             {
               "num": 8,
-              "name": "伊齊・勒阿法",
+              "name": "許 柏翰",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 73,
@@ -5456,7 +5456,7 @@
             },
             {
               "num": 22,
-              "name": "馬特・哈里斯",
+              "name": "高 柏翰",
               "pos": "C",
               "role": "BENCH",
               "ovr": 72,
@@ -5475,7 +5475,7 @@
             },
             {
               "num": 2,
-              "name": "卡姆・麥克雷",
+              "name": "鄭 柏翰",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 73,
@@ -5494,7 +5494,7 @@
             },
             {
               "num": 11,
-              "name": "肖恩・麥克唐納",
+              "name": "郭 柏翰",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 72,
@@ -5513,7 +5513,7 @@
             },
             {
               "num": 14,
-              "name": "安格斯・格洛弗",
+              "name": "曾 柏翰",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 74,
@@ -5534,7 +5534,7 @@
             },
             {
               "num": 25,
-              "name": "喬丹・亨特",
+              "name": "佐藤 柏翰",
               "pos": "C",
               "role": "BENCH",
               "ovr": 74,
@@ -5557,14 +5557,14 @@
         },
         {
           "id": "melbourne_utd",
-          "name": "墨爾本聯 (NBL)",
+          "name": "墨爾本聯軍",
           "ovr": 81,
-          "ace": "克里斯・古爾丁",
-          "coach": "迪恩・維克曼",
+          "ace": "克里斯・戈登",
+          "coach": "迪倫・維克托",
           "roster": [
             {
               "num": 8,
-              "name": "馬修・德拉維多瓦",
+              "name": "高橋 柏翰",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 79,
@@ -5588,7 +5588,7 @@
             },
             {
               "num": 43,
-              "name": "克里斯・古爾丁",
+              "name": "克里斯・戈登",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 82,
@@ -5613,7 +5613,7 @@
             },
             {
               "num": 7,
-              "name": "謝伊・伊利",
+              "name": "金 柏翰",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 78,
@@ -5634,7 +5634,7 @@
             },
             {
               "num": 20,
-              "name": "傑克・懷特",
+              "name": "朴 柏翰",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 79,
@@ -5656,7 +5656,7 @@
             },
             {
               "num": 15,
-              "name": "馬庫斯・李",
+              "name": "崔 柏翰",
               "pos": "C",
               "role": "STARTER",
               "ovr": 78,
@@ -5678,7 +5678,7 @@
             },
             {
               "num": 11,
-              "name": "伊恩・克拉克",
+              "name": "陳 哲維",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 76,
@@ -5699,7 +5699,7 @@
             },
             {
               "num": 25,
-              "name": "羅伯・洛",
+              "name": "林 哲維",
               "pos": "C",
               "role": "BENCH",
               "ovr": 73,
@@ -5719,7 +5719,7 @@
             },
             {
               "num": 4,
-              "name": "弗林・卡梅倫",
+              "name": "張 哲維",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 72,
@@ -5738,7 +5738,7 @@
             },
             {
               "num": 3,
-              "name": "坦納・克雷布斯",
+              "name": "王 哲維",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 73,
@@ -5759,7 +5759,7 @@
             },
             {
               "num": 10,
-              "name": "凱爾・鮑文",
+              "name": "李 哲維",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 74,
@@ -5780,7 +5780,7 @@
             },
             {
               "num": 14,
-              "name": "阿里爾・胡克波蒂",
+              "name": "劉 哲維",
               "pos": "C",
               "role": "BENCH",
               "ovr": 75,
@@ -5801,7 +5801,7 @@
             },
             {
               "num": 2,
-              "name": "坎貝爾・布洛格",
+              "name": "黃 哲維",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 70,
@@ -5824,9 +5824,9 @@
     },
     {
       "id": "euro_elite",
-      "name": "歐洲頂級聯賽 EuroLeague",
+      "name": "歐洲王者俱樂部聯賽（EBL）",
       "difficultyTier": 3,
-      "legendName": "瓦西里斯・斯潘諾利斯",
+      "legendName": "卡洛斯・馬丁內斯",
       "quarterMinutes": 10,
       "otMinutes": 5,
       "foulOutLimit": 5,
@@ -5834,15 +5834,15 @@
       "teams": [
         {
           "id": "eu_mad",
-          "name": "皇家馬德里",
+          "name": "馬德里白翼俱樂部",
           "ovr": 87,
-          "ace": "法昆多・坎帕佐",
-          "coach": "丘斯・馬特奧",
+          "ace": "法昆多・卡斯楚",
+          "coach": "卡洛斯・馬丁內斯",
           "isUserTeam": true,
           "roster": [
             {
               "num": 7,
-              "name": "法昆多・坎帕佐",
+              "name": "法昆多・卡斯楚",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 88,
@@ -5883,7 +5883,7 @@
             },
             {
               "num": 11,
-              "name": "馬里奧・赫佐尼亞",
+              "name": "盧卡・諾瓦克",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 85,
@@ -5905,7 +5905,7 @@
             },
             {
               "num": 14,
-              "name": "加布里埃爾・戴克",
+              "name": "盧卡・科瓦奇",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 83,
@@ -5929,7 +5929,7 @@
             },
             {
               "num": 22,
-              "name": "艾迪・塔瓦雷斯",
+              "name": "艾迪・托雷斯",
               "pos": "C",
               "role": "STARTER",
               "ovr": 87,
@@ -5953,7 +5953,7 @@
             },
             {
               "num": 23,
-              "name": "塞爾吉奧・魯爾",
+              "name": "盧卡・波波夫",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 80,
@@ -5975,7 +5975,7 @@
             },
             {
               "num": 13,
-              "name": "札南・穆薩",
+              "name": "盧卡・米勒",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 83,
@@ -5996,7 +5996,7 @@
             },
             {
               "num": 18,
-              "name": "賽爾吉・伊巴卡",
+              "name": "盧卡・加西亞",
               "pos": "C",
               "role": "BENCH",
               "ovr": 80,
@@ -6017,7 +6017,7 @@
             },
             {
               "num": 6,
-              "name": "阿爾貝托・阿巴爾德",
+              "name": "盧卡・羅西",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 79,
@@ -6038,7 +6038,7 @@
             },
             {
               "num": 8,
-              "name": "安德烈斯・費利斯",
+              "name": "盧卡・莫雷蒂",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 79,
@@ -6059,7 +6059,7 @@
             },
             {
               "num": 16,
-              "name": "烏斯曼・加魯巴",
+              "name": "盧卡・席爾瓦",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 80,
@@ -6080,7 +6080,7 @@
             },
             {
               "num": 30,
-              "name": "伊萊・恩迪亞耶",
+              "name": "盧卡・納瓦羅",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 77,
@@ -6103,14 +6103,14 @@
         },
         {
           "id": "eu_ath",
-          "name": "帕納辛奈科斯",
+          "name": "雅典翡翠衛士",
           "ovr": 87,
-          "ace": "肯德里克・納恩",
-          "coach": "埃爾金・阿塔曼",
+          "ace": "肯德里克・諾蘭",
+          "coach": "埃爾坎・阿塔爾",
           "roster": [
             {
               "num": 10,
-              "name": "科斯塔斯・斯盧卡斯",
+              "name": "盧卡・揚科夫",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 85,
@@ -6133,7 +6133,7 @@
             },
             {
               "num": 25,
-              "name": "肯德里克・納恩",
+              "name": "肯德里克・諾蘭",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 88,
@@ -6159,7 +6159,7 @@
             },
             {
               "num": 16,
-              "name": "切迪・奧斯曼",
+              "name": "盧卡・薩維奇",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 82,
@@ -6181,7 +6181,7 @@
             },
             {
               "num": 41,
-              "name": "胡安喬・埃爾南戈麥斯",
+              "name": "盧卡・馬林",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 82,
@@ -6203,7 +6203,7 @@
             },
             {
               "num": 26,
-              "name": "馬蒂亞斯・萊索爾",
+              "name": "盧卡・費雷拉",
               "pos": "C",
               "role": "STARTER",
               "ovr": 86,
@@ -6227,7 +6227,7 @@
             },
             {
               "num": 22,
-              "name": "傑里安・格蘭特",
+              "name": "盧卡・施密特",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 81,
@@ -6248,7 +6248,7 @@
             },
             {
               "num": 2,
-              "name": "洛倫佐・布朗",
+              "name": "盧卡・瓦格納",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 81,
@@ -6268,7 +6268,7 @@
             },
             {
               "num": 44,
-              "name": "迪諾斯・米托格盧",
+              "name": "盧卡・林德",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 80,
@@ -6288,7 +6288,7 @@
             },
             {
               "num": 0,
-              "name": "帕納約蒂斯・卡萊察基斯",
+              "name": "盧卡・博格",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 77,
@@ -6309,7 +6309,7 @@
             },
             {
               "num": 40,
-              "name": "馬里烏斯・格里戈尼斯",
+              "name": "盧卡・科斯塔",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 80,
@@ -6329,7 +6329,7 @@
             },
             {
               "num": 77,
-              "name": "奧梅爾・尤爾特塞文",
+              "name": "馬爾科・諾瓦克",
               "pos": "C",
               "role": "BENCH",
               "ovr": 80,
@@ -6350,7 +6350,7 @@
             },
             {
               "num": 6,
-              "name": "迪米特里斯・莫萊蒂斯",
+              "name": "馬爾科・科瓦奇",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 75,
@@ -6371,14 +6371,14 @@
         },
         {
           "id": "eu_oly",
-          "name": "奧林匹亞科斯",
+          "name": "比雷埃夫斯赤紅軍",
           "ovr": 87,
-          "ace": "薩沙・韋津科夫",
-          "coach": "喬治斯・巴佐卡斯",
+          "ace": "薩沙・維克多夫",
+          "coach": "喬治・巴爾卡斯",
           "roster": [
             {
               "num": 0,
-              "name": "托馬斯・沃爾卡普",
+              "name": "馬爾科・波波夫",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 82,
@@ -6401,7 +6401,7 @@
             },
             {
               "num": 94,
-              "name": "埃文・富尼耶",
+              "name": "馬爾科・米勒",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 85,
@@ -6423,7 +6423,7 @@
             },
             {
               "num": 16,
-              "name": "科斯塔斯・帕帕尼古拉烏",
+              "name": "馬爾科・加西亞",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 81,
@@ -6445,7 +6445,7 @@
             },
             {
               "num": 14,
-              "name": "薩沙・韋津科夫",
+              "name": "薩沙・維克多夫",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 89,
@@ -6471,7 +6471,7 @@
             },
             {
               "num": 33,
-              "name": "尼古拉・米盧蒂諾夫",
+              "name": "馬爾科・羅西",
               "pos": "C",
               "role": "STARTER",
               "ovr": 84,
@@ -6493,7 +6493,7 @@
             },
             {
               "num": 1,
-              "name": "奈傑爾・威廉斯-戈斯",
+              "name": "馬爾科・莫雷蒂",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 80,
@@ -6513,7 +6513,7 @@
             },
             {
               "num": 22,
-              "name": "泰勒・多西",
+              "name": "馬爾科・席爾瓦",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 80,
@@ -6533,7 +6533,7 @@
             },
             {
               "num": 10,
-              "name": "穆斯塔法・法爾",
+              "name": "馬爾科・納瓦羅",
               "pos": "C",
               "role": "BENCH",
               "ovr": 82,
@@ -6555,7 +6555,7 @@
             },
             {
               "num": 3,
-              "name": "納茲・米特魯-朗",
+              "name": "馬爾科・揚科夫",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 78,
@@ -6576,7 +6576,7 @@
             },
             {
               "num": 5,
-              "name": "揚努利斯・拉倫察基斯",
+              "name": "馬爾科・薩維奇",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 77,
@@ -6597,7 +6597,7 @@
             },
             {
               "num": 25,
-              "name": "阿萊克・彼得斯",
+              "name": "馬爾科・馬林",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 82,
@@ -6618,7 +6618,7 @@
             },
             {
               "num": 30,
-              "name": "摩西・萊特",
+              "name": "馬爾科・費雷拉",
               "pos": "C",
               "role": "BENCH",
               "ovr": 80,
@@ -6641,14 +6641,14 @@
         },
         {
           "id": "eu_bar",
-          "name": "巴塞隆拿",
+          "name": "加泰隆尼亞藍紅軍",
           "ovr": 85,
-          "ace": "凱文・潘特",
-          "coach": "喬安・佩納羅亞",
+          "ace": "凱文・帕爾默",
+          "coach": "胡安・佩雷拉",
           "roster": [
             {
               "num": 13,
-              "name": "托馬斯・薩托蘭斯基",
+              "name": "馬爾科・施密特",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 81,
@@ -6671,7 +6671,7 @@
             },
             {
               "num": 0,
-              "name": "凱文・潘特",
+              "name": "凱文・帕爾默",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 86,
@@ -6696,7 +6696,7 @@
             },
             {
               "num": 21,
-              "name": "亞歷克斯・阿布里內斯",
+              "name": "馬爾科・瓦格納",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 79,
@@ -6716,7 +6716,7 @@
             },
             {
               "num": 22,
-              "name": "賈巴里・帕克",
+              "name": "馬爾科・林德",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 84,
@@ -6738,7 +6738,7 @@
             },
             {
               "num": 6,
-              "name": "揚・韋塞利",
+              "name": "馬爾科・博格",
               "pos": "C",
               "role": "STARTER",
               "ovr": 83,
@@ -6760,7 +6760,7 @@
             },
             {
               "num": 20,
-              "name": "尼古拉斯・拉普羅維托拉",
+              "name": "馬爾科・科斯塔",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 81,
@@ -6781,7 +6781,7 @@
             },
             {
               "num": 1,
-              "name": "賈斯汀・安德森",
+              "name": "斯特凡・諾瓦克",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 78,
@@ -6801,7 +6801,7 @@
             },
             {
               "num": 14,
-              "name": "威利・埃爾南戈麥斯",
+              "name": "斯特凡・科瓦奇",
               "pos": "C",
               "role": "BENCH",
               "ovr": 81,
@@ -6822,7 +6822,7 @@
             },
             {
               "num": 8,
-              "name": "達里奧・布里蘇埃拉",
+              "name": "斯特凡・波波夫",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 79,
@@ -6843,7 +6843,7 @@
             },
             {
               "num": 10,
-              "name": "奇梅齊耶・梅圖",
+              "name": "斯特凡・米勒",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 81,
@@ -6865,7 +6865,7 @@
             },
             {
               "num": 17,
-              "name": "胡安・努涅斯",
+              "name": "斯特凡・加西亞",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 78,
@@ -6886,7 +6886,7 @@
             },
             {
               "num": 19,
-              "name": "優素法・法爾",
+              "name": "斯特凡・羅西",
               "pos": "C",
               "role": "BENCH",
               "ovr": 78,
@@ -6910,14 +6910,14 @@
         },
         {
           "id": "eu_fen",
-          "name": "費內巴切",
+          "name": "博斯普魯斯金鷹",
           "ovr": 86,
-          "ace": "奈傑爾・海耶斯-戴維斯",
-          "coach": "薩魯納斯・雅西克維丘斯",
+          "ace": "奈傑爾・海登",
+          "coach": "薩魯納斯・亞當斯",
           "roster": [
             {
               "num": 2,
-              "name": "韋德・鮑德溫",
+              "name": "斯特凡・莫雷蒂",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 85,
@@ -6939,7 +6939,7 @@
             },
             {
               "num": 23,
-              "name": "馬爾科・古杜里奇",
+              "name": "斯特凡・席爾瓦",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 83,
@@ -6962,7 +6962,7 @@
             },
             {
               "num": 11,
-              "name": "奈傑爾・海耶斯-戴維斯",
+              "name": "奈傑爾・海登",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 88,
@@ -6988,7 +6988,7 @@
             },
             {
               "num": 50,
-              "name": "邦齊・科爾森",
+              "name": "斯特凡・納瓦羅",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 82,
@@ -7010,7 +7010,7 @@
             },
             {
               "num": 92,
-              "name": "肯・伯奇",
+              "name": "斯特凡・揚科夫",
               "pos": "C",
               "role": "STARTER",
               "ovr": 80,
@@ -7031,7 +7031,7 @@
             },
             {
               "num": 20,
-              "name": "德文・霍爾",
+              "name": "斯特凡・薩維奇",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 79,
@@ -7051,7 +7051,7 @@
             },
             {
               "num": 3,
-              "name": "斯科蒂・威爾貝金",
+              "name": "斯特凡・馬林",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 81,
@@ -7071,7 +7071,7 @@
             },
             {
               "num": 5,
-              "name": "塞爾塔奇・桑利",
+              "name": "斯特凡・費雷拉",
               "pos": "C",
               "role": "BENCH",
               "ovr": 78,
@@ -7091,7 +7091,7 @@
             },
             {
               "num": 10,
-              "name": "梅利赫・馬赫穆托格盧",
+              "name": "斯特凡・施密特",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 76,
@@ -7110,7 +7110,7 @@
             },
             {
               "num": 13,
-              "name": "塔里克・比貝羅維奇",
+              "name": "斯特凡・瓦格納",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 80,
@@ -7130,7 +7130,7 @@
             },
             {
               "num": 4,
-              "name": "尼科洛・梅利",
+              "name": "斯特凡・林德",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 80,
@@ -7152,7 +7152,7 @@
             },
             {
               "num": 21,
-              "name": "戴肖恩・皮埃爾",
+              "name": "斯特凡・博格",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 79,
@@ -7175,14 +7175,14 @@
         },
         {
           "id": "eu_mon",
-          "name": "AS 摩納哥",
+          "name": "地中海紅星俱樂部",
           "ovr": 85,
-          "ace": "邁克・詹姆斯",
-          "coach": "瓦西里斯・斯潘諾利斯",
+          "ace": "麥可・傑森",
+          "coach": "瓦西里・斯帕諾斯",
           "roster": [
             {
               "num": 55,
-              "name": "邁克・詹姆斯",
+              "name": "麥可・傑森",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 88,
@@ -7208,7 +7208,7 @@
             },
             {
               "num": 0,
-              "name": "艾利・奧科博",
+              "name": "斯特凡・科斯塔",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 83,
@@ -7230,7 +7230,7 @@
             },
             {
               "num": 11,
-              "name": "阿爾法・迪亞洛",
+              "name": "尼古拉・諾瓦克",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 83,
@@ -7252,7 +7252,7 @@
             },
             {
               "num": 4,
-              "name": "約翰・布朗三世",
+              "name": "尼古拉・科瓦奇",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 81,
@@ -7274,7 +7274,7 @@
             },
             {
               "num": 20,
-              "name": "唐納塔斯・莫泰尤納斯",
+              "name": "尼古拉・波波夫",
               "pos": "C",
               "role": "STARTER",
               "ovr": 81,
@@ -7296,7 +7296,7 @@
             },
             {
               "num": 32,
-              "name": "馬修・斯特拉澤爾",
+              "name": "尼古拉・米勒",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 79,
@@ -7317,7 +7317,7 @@
             },
             {
               "num": 22,
-              "name": "喬丹・勞埃德",
+              "name": "尼古拉・加西亞",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 82,
@@ -7338,7 +7338,7 @@
             },
             {
               "num": 9,
-              "name": "喬治斯・帕帕揚尼斯",
+              "name": "尼古拉・羅西",
               "pos": "C",
               "role": "BENCH",
               "ovr": 81,
@@ -7359,7 +7359,7 @@
             },
             {
               "num": 6,
-              "name": "維托・布朗",
+              "name": "尼古拉・莫雷蒂",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 78,
@@ -7379,7 +7379,7 @@
             },
             {
               "num": 14,
-              "name": "馬姆・傑泰",
+              "name": "尼古拉・席爾瓦",
               "pos": "C",
               "role": "BENCH",
               "ovr": 79,
@@ -7400,7 +7400,7 @@
             },
             {
               "num": 30,
-              "name": "富爾坎・科爾克馬茲",
+              "name": "尼古拉・納瓦羅",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 78,
@@ -7419,7 +7419,7 @@
             },
             {
               "num": 33,
-              "name": "尼克・卡拉希斯",
+              "name": "尼古拉・揚科夫",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 81,
@@ -7445,14 +7445,14 @@
         },
         {
           "id": "eu_efe",
-          "name": "安納托利亞艾菲斯",
+          "name": "伊斯坦堡星藍軍",
           "ovr": 85,
-          "ace": "肖恩・拉金",
-          "coach": "盧卡・班奇",
+          "ace": "尚恩・蘭登",
+          "coach": "盧卡・巴爾迪",
           "roster": [
             {
               "num": 0,
-              "name": "肖恩・拉金",
+              "name": "尚恩・蘭登",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 87,
@@ -7478,7 +7478,7 @@
             },
             {
               "num": 1,
-              "name": "羅德里格・博布瓦",
+              "name": "尼古拉・薩維奇",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 82,
@@ -7500,7 +7500,7 @@
             },
             {
               "num": 6,
-              "name": "伊萊賈・布萊恩特",
+              "name": "尼古拉・馬林",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 83,
@@ -7522,7 +7522,7 @@
             },
             {
               "num": 14,
-              "name": "羅蘭茲・史密茨",
+              "name": "尼古拉・費雷拉",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 81,
@@ -7543,7 +7543,7 @@
             },
             {
               "num": 17,
-              "name": "文森・波里耶",
+              "name": "尼古拉・施密特",
               "pos": "C",
               "role": "STARTER",
               "ovr": 84,
@@ -7566,7 +7566,7 @@
             },
             {
               "num": 13,
-              "name": "達里烏斯・湯普森",
+              "name": "尼古拉・瓦格納",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 81,
@@ -7588,7 +7588,7 @@
             },
             {
               "num": 3,
-              "name": "喬丹・諾瓦拉",
+              "name": "尼古拉・林德",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 80,
@@ -7608,7 +7608,7 @@
             },
             {
               "num": 25,
-              "name": "丹尼爾・奧圖魯",
+              "name": "尼古拉・博格",
               "pos": "C",
               "role": "BENCH",
               "ovr": 81,
@@ -7630,7 +7630,7 @@
             },
             {
               "num": 24,
-              "name": "埃爾坎・奧斯馬尼",
+              "name": "尼古拉・科斯塔",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 78,
@@ -7648,7 +7648,7 @@
             },
             {
               "num": 18,
-              "name": "多烏什・奧茲德米羅格魯",
+              "name": "達里奧・諾瓦克",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 77,
@@ -7668,7 +7668,7 @@
             },
             {
               "num": 35,
-              "name": "德里克・威利斯",
+              "name": "達里奧・科瓦奇",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 78,
@@ -7686,7 +7686,7 @@
             },
             {
               "num": 23,
-              "name": "里德萬・翁切爾",
+              "name": "達里奧・波波夫",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 76,
@@ -7706,14 +7706,14 @@
         },
         {
           "id": "eu_mil",
-          "name": "米蘭奧林匹亞",
+          "name": "米蘭赤紅公爵",
           "ovr": 85,
-          "ace": "尼古拉・米羅蒂奇",
-          "coach": "埃托雷・梅西納",
+          "ace": "尼古拉・米蘭諾夫",
+          "coach": "埃托雷・馬爾科尼",
           "roster": [
             {
               "num": 1,
-              "name": "內納德・迪米特里耶維奇",
+              "name": "達里奧・米勒",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 82,
@@ -7735,7 +7735,7 @@
             },
             {
               "num": 31,
-              "name": "沙馮・希爾茲",
+              "name": "達里奧・加西亞",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 85,
@@ -7759,7 +7759,7 @@
             },
             {
               "num": 10,
-              "name": "萊安德羅・博爾馬羅",
+              "name": "達里奧・羅西",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 81,
@@ -7781,7 +7781,7 @@
             },
             {
               "num": 33,
-              "name": "尼古拉・米羅蒂奇",
+              "name": "尼古拉・米蘭諾夫",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 87,
@@ -7807,7 +7807,7 @@
             },
             {
               "num": 16,
-              "name": "扎克・勒代",
+              "name": "達里奧・莫雷蒂",
               "pos": "C",
               "role": "STARTER",
               "ovr": 84,
@@ -7830,7 +7830,7 @@
             },
             {
               "num": 2,
-              "name": "尼科・曼尼恩",
+              "name": "達里奧・席爾瓦",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 80,
@@ -7852,7 +7852,7 @@
             },
             {
               "num": 12,
-              "name": "阿爾莫尼・布魯克斯",
+              "name": "達里奧・納瓦羅",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 79,
@@ -7872,7 +7872,7 @@
             },
             {
               "num": 7,
-              "name": "斯特凡諾・托努特",
+              "name": "達里奧・揚科夫",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 79,
@@ -7892,7 +7892,7 @@
             },
             {
               "num": 32,
-              "name": "喬什・尼博",
+              "name": "達里奧・薩維奇",
               "pos": "C",
               "role": "BENCH",
               "ovr": 82,
@@ -7914,7 +7914,7 @@
             },
             {
               "num": 17,
-              "name": "吉安保羅・里奇",
+              "name": "達里奧・馬林",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 78,
@@ -7933,7 +7933,7 @@
             },
             {
               "num": 21,
-              "name": "迭戈・弗拉卡多里",
+              "name": "達里奧・費雷拉",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 77,
@@ -7951,7 +7951,7 @@
             },
             {
               "num": 25,
-              "name": "奧斯曼・迪奧普",
+              "name": "達里奧・施密特",
               "pos": "C",
               "role": "BENCH",
               "ovr": 77,
@@ -7973,9 +7973,9 @@
     },
     {
       "id": "nba_prime",
-      "name": "北美頂級聯賽 NBA",
+      "name": "北美職業籃球巔峰聯盟（PBA）",
       "difficultyTier": 4,
-      "legendName": "德維恩・韋德",
+      "legendName": "傑森・雷德蒙",
       "quarterMinutes": 12,
       "otMinutes": 5,
       "foulOutLimit": 6,
@@ -7983,15 +7983,15 @@
       "teams": [
         {
           "id": "lal",
-          "name": "洛杉磯湖人",
+          "name": "洛杉磯紫金皇朝",
           "ovr": 91,
-          "ace": "勒布朗・詹姆斯",
-          "coach": "JJ・雷迪克",
+          "ace": "雷歐・詹森",
+          "coach": "傑森・雷德蒙",
           "isUserTeam": true,
           "roster": [
             {
               "num": 77,
-              "name": "盧卡・東契奇",
+              "name": "盧卡・唐尼奇",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 96,
@@ -8033,7 +8033,7 @@
             },
             {
               "num": 23,
-              "name": "勒布朗・詹姆斯",
+              "name": "雷歐・詹森",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 94,
@@ -8060,7 +8060,7 @@
             },
             {
               "num": 28,
-              "name": "八村 壘",
+              "name": "八神 雷司",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 83,
@@ -8082,7 +8082,7 @@
             },
             {
               "num": 11,
-              "name": "賈克森・海耶斯",
+              "name": "札克・史特林",
               "pos": "C",
               "role": "STARTER",
               "ovr": 81,
@@ -8104,7 +8104,7 @@
             },
             {
               "num": 15,
-              "name": "奧斯汀・里夫斯",
+              "name": "札克・霍洛威",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 86,
@@ -8127,7 +8127,7 @@
             },
             {
               "num": 17,
-              "name": "多里安・芬尼-史密斯",
+              "name": "札克・范斯",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 81,
@@ -8148,7 +8148,7 @@
             },
             {
               "num": 2,
-              "name": "賈里德・范德比爾特",
+              "name": "札克・考德威爾",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 80,
@@ -8170,7 +8170,7 @@
             },
             {
               "num": 7,
-              "name": "蓋布・文森特",
+              "name": "札克・桑頓",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 79,
@@ -8191,7 +8191,7 @@
             },
             {
               "num": 4,
-              "name": "道爾頓・克內克特",
+              "name": "札克・蘭福德",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 81,
@@ -8212,7 +8212,7 @@
             },
             {
               "num": 20,
-              "name": "謝克・米爾頓",
+              "name": "札克・蒙羅",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 77,
@@ -8232,7 +8232,7 @@
             },
             {
               "num": 27,
-              "name": "亞歷克斯・萊恩",
+              "name": "札克・麥克斯韋",
               "pos": "C",
               "role": "BENCH",
               "ovr": 77,
@@ -8256,14 +8256,14 @@
         },
         {
           "id": "bos",
-          "name": "波士頓塞爾提克",
+          "name": "波士頓翡翠軍團",
           "ovr": 94,
-          "ace": "傑森・塔圖姆",
-          "coach": "喬・馬祖拉",
+          "ace": "傑森・泰勒姆",
+          "coach": "喬瑟夫・馬佐拉",
           "roster": [
             {
               "num": 4,
-              "name": "朱・霍勒迪",
+              "name": "札克・哈里斯",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 88,
@@ -8286,7 +8286,7 @@
             },
             {
               "num": 9,
-              "name": "德里克・懷特",
+              "name": "札克・沃克",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 88,
@@ -8310,7 +8310,7 @@
             },
             {
               "num": 7,
-              "name": "傑倫・布朗",
+              "name": "傑倫・布萊克",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 92,
@@ -8334,7 +8334,7 @@
             },
             {
               "num": 0,
-              "name": "傑森・塔圖姆",
+              "name": "傑森・泰勒姆",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 95,
@@ -8361,7 +8361,7 @@
             },
             {
               "num": 8,
-              "name": "克里斯塔普斯・波爾津吉斯",
+              "name": "札克・格里芬",
               "pos": "C",
               "role": "STARTER",
               "ovr": 89,
@@ -8384,7 +8384,7 @@
             },
             {
               "num": 11,
-              "name": "佩頓・普里查德",
+              "name": "札克・羅素",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 83,
@@ -8405,7 +8405,7 @@
             },
             {
               "num": 30,
-              "name": "薩姆・豪瑟",
+              "name": "札克・華盛頓",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 80,
@@ -8424,7 +8424,7 @@
             },
             {
               "num": 42,
-              "name": "艾爾・霍福德",
+              "name": "札克・布里奇斯",
               "pos": "C",
               "role": "BENCH",
               "ovr": 82,
@@ -8446,7 +8446,7 @@
             },
             {
               "num": 40,
-              "name": "盧克・科內特",
+              "name": "札克・波特",
               "pos": "C",
               "role": "BENCH",
               "ovr": 80,
@@ -8467,7 +8467,7 @@
             },
             {
               "num": 88,
-              "name": "內米亞斯・奎塔",
+              "name": "札克・西蒙斯",
               "pos": "C",
               "role": "BENCH",
               "ovr": 78,
@@ -8488,7 +8488,7 @@
             },
             {
               "num": 26,
-              "name": "澤維爾・蒂爾曼",
+              "name": "札克・克萊頓",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 78,
@@ -8509,7 +8509,7 @@
             },
             {
               "num": 27,
-              "name": "喬丹・沃爾什",
+              "name": "札克・本森",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 76,
@@ -8531,14 +8531,14 @@
         },
         {
           "id": "den",
-          "name": "丹佛金塊",
+          "name": "丹佛高原金礦",
           "ovr": 92,
-          "ace": "尼古拉・約基奇",
-          "coach": "大衛・阿德爾曼",
+          "ace": "尼古拉・約萬諾夫",
+          "coach": "大衛・阿德勒",
           "roster": [
             {
               "num": 27,
-              "name": "賈馬爾・莫瑞",
+              "name": "賈馬爾・摩根",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 89,
@@ -8562,7 +8562,7 @@
             },
             {
               "num": 0,
-              "name": "克里斯蒂安・布勞恩",
+              "name": "凱文・史特林",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 83,
@@ -8584,7 +8584,7 @@
             },
             {
               "num": 1,
-              "name": "麥可・波特",
+              "name": "凱文・霍洛威",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 86,
@@ -8605,7 +8605,7 @@
             },
             {
               "num": 32,
-              "name": "亞倫・戈登",
+              "name": "凱文・范斯",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 87,
@@ -8629,7 +8629,7 @@
             },
             {
               "num": 15,
-              "name": "尼古拉・約基奇",
+              "name": "尼古拉・約萬諾夫",
               "pos": "C",
               "role": "STARTER",
               "ovr": 97,
@@ -8658,7 +8658,7 @@
             },
             {
               "num": 4,
-              "name": "羅素・衛斯特布魯克",
+              "name": "凱文・考德威爾",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 82,
@@ -8681,7 +8681,7 @@
             },
             {
               "num": 8,
-              "name": "佩頓・華森",
+              "name": "凱文・桑頓",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 80,
@@ -8702,7 +8702,7 @@
             },
             {
               "num": 6,
-              "name": "德安德烈・喬丹",
+              "name": "凱文・蘭福德",
               "pos": "C",
               "role": "BENCH",
               "ovr": 78,
@@ -8722,7 +8722,7 @@
             },
             {
               "num": 3,
-              "name": "朱利安・斯特勞瑟",
+              "name": "凱文・蒙羅",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 80,
@@ -8743,7 +8743,7 @@
             },
             {
               "num": 22,
-              "name": "齊克・納吉",
+              "name": "凱文・麥克斯韋",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 77,
@@ -8763,7 +8763,7 @@
             },
             {
               "num": 9,
-              "name": "達里奧・沙里奇",
+              "name": "凱文・哈里斯",
               "pos": "C",
               "role": "BENCH",
               "ovr": 78,
@@ -8784,7 +8784,7 @@
             },
             {
               "num": 24,
-              "name": "傑倫・皮克特",
+              "name": "凱文・沃克",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 76,
@@ -8806,14 +8806,14 @@
         },
         {
           "id": "okc",
-          "name": "奧克拉荷馬雷霆",
+          "name": "俄城雷霆風暴",
           "ovr": 94,
-          "ace": "謝伊・吉爾傑斯-亞歷山大",
-          "coach": "馬克・戴格諾特",
+          "ace": "謝伊・亞歷克斯",
+          "coach": "馬克・戴格勒",
           "roster": [
             {
               "num": 2,
-              "name": "謝伊・吉爾傑斯-亞歷山大",
+              "name": "謝伊・亞歷克斯",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 97,
@@ -8841,7 +8841,7 @@
             },
             {
               "num": 5,
-              "name": "呂根茨・多爾特",
+              "name": "凱文・格里芬",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 84,
@@ -8863,7 +8863,7 @@
             },
             {
               "num": 8,
-              "name": "傑倫・威廉斯",
+              "name": "凱文・羅素",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 90,
@@ -8887,7 +8887,7 @@
             },
             {
               "num": 7,
-              "name": "切特・霍姆格倫",
+              "name": "切特・霍爾曼",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 90,
@@ -8910,7 +8910,7 @@
             },
             {
               "num": 55,
-              "name": "以賽亞・哈爾滕施泰因",
+              "name": "凱文・華盛頓",
               "pos": "C",
               "role": "STARTER",
               "ovr": 85,
@@ -8933,7 +8933,7 @@
             },
             {
               "num": 9,
-              "name": "亞歷克斯・卡魯索",
+              "name": "凱文・布里奇斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 84,
@@ -8955,7 +8955,7 @@
             },
             {
               "num": 22,
-              "name": "卡森・華萊士",
+              "name": "凱文・西蒙斯",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 82,
@@ -8976,7 +8976,7 @@
             },
             {
               "num": 21,
-              "name": "阿隆・威金斯",
+              "name": "凱文・克萊頓",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 81,
@@ -8997,7 +8997,7 @@
             },
             {
               "num": 11,
-              "name": "以賽亞・喬",
+              "name": "凱文・本森",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 82,
@@ -9017,7 +9017,7 @@
             },
             {
               "num": 34,
-              "name": "肯里奇・威廉斯",
+              "name": "賈馬爾・史特林",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 80,
@@ -9038,7 +9038,7 @@
             },
             {
               "num": 6,
-              "name": "傑林・威廉斯",
+              "name": "賈馬爾・霍洛威",
               "pos": "C",
               "role": "BENCH",
               "ovr": 79,
@@ -9060,7 +9060,7 @@
             },
             {
               "num": 25,
-              "name": "阿傑・米切爾",
+              "name": "賈馬爾・范斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 78,
@@ -9082,14 +9082,14 @@
         },
         {
           "id": "gsw",
-          "name": "金州勇士",
+          "name": "金灣浪花騎士",
           "ovr": 90,
-          "ace": "史蒂芬・柯瑞",
-          "coach": "史蒂夫・科爾",
+          "ace": "史凱・柯林斯",
+          "coach": "史蒂文・柯爾森",
           "roster": [
             {
               "num": 30,
-              "name": "史蒂芬・柯瑞",
+              "name": "史凱・柯林斯",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 95,
@@ -9117,7 +9117,7 @@
             },
             {
               "num": 2,
-              "name": "布蘭丁・波傑姆斯基",
+              "name": "賈馬爾・考德威爾",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 82,
@@ -9139,7 +9139,7 @@
             },
             {
               "num": 10,
-              "name": "吉米・巴特勒",
+              "name": "吉米・巴頓",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 90,
@@ -9164,7 +9164,7 @@
             },
             {
               "num": 23,
-              "name": "德雷蒙德・格林",
+              "name": "德雷・格蘭特",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 85,
@@ -9189,7 +9189,7 @@
             },
             {
               "num": 21,
-              "name": "昆汀・波斯特",
+              "name": "賈馬爾・桑頓",
               "pos": "C",
               "role": "STARTER",
               "ovr": 80,
@@ -9209,7 +9209,7 @@
             },
             {
               "num": 7,
-              "name": "巴迪・希爾德",
+              "name": "賈馬爾・蘭福德",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 82,
@@ -9229,7 +9229,7 @@
             },
             {
               "num": 0,
-              "name": "喬納森・庫明加",
+              "name": "賈馬爾・蒙羅",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 84,
@@ -9251,7 +9251,7 @@
             },
             {
               "num": 5,
-              "name": "凱文・盧尼",
+              "name": "賈馬爾・麥克斯韋",
               "pos": "C",
               "role": "BENCH",
               "ovr": 79,
@@ -9272,7 +9272,7 @@
             },
             {
               "num": 4,
-              "name": "摩西・穆迪",
+              "name": "賈馬爾・哈里斯",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 81,
@@ -9293,7 +9293,7 @@
             },
             {
               "num": 1,
-              "name": "小蓋瑞・裴頓",
+              "name": "賈馬爾・沃克",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 81,
@@ -9315,7 +9315,7 @@
             },
             {
               "num": 32,
-              "name": "特雷斯・傑克森-戴維斯",
+              "name": "賈馬爾・格里芬",
               "pos": "C",
               "role": "BENCH",
               "ovr": 81,
@@ -9337,7 +9337,7 @@
             },
             {
               "num": 15,
-              "name": "吉・桑托斯",
+              "name": "賈馬爾・羅素",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 77,
@@ -9360,14 +9360,14 @@
         },
         {
           "id": "sas",
-          "name": "聖安東尼奧馬刺",
+          "name": "聖城銀黑鐵騎",
           "ovr": 89,
-          "ace": "維克托・文班亞馬",
-          "coach": "米奇・強森",
+          "ace": "維克・文森特",
+          "coach": "米奇・約翰森",
           "roster": [
             {
               "num": 4,
-              "name": "德亞倫・福克斯",
+              "name": "達倫・福斯特",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 90,
@@ -9391,7 +9391,7 @@
             },
             {
               "num": 5,
-              "name": "斯蒂芬・卡斯爾",
+              "name": "賈馬爾・華盛頓",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 83,
@@ -9413,7 +9413,7 @@
             },
             {
               "num": 24,
-              "name": "德文・瓦塞爾",
+              "name": "賈馬爾・布里奇斯",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 84,
@@ -9434,7 +9434,7 @@
             },
             {
               "num": 10,
-              "name": "傑里米・索漢",
+              "name": "賈馬爾・波特",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 82,
@@ -9456,7 +9456,7 @@
             },
             {
               "num": 1,
-              "name": "維克托・文班亞馬",
+              "name": "維克・文森特",
               "pos": "C",
               "role": "STARTER",
               "ovr": 95,
@@ -9484,7 +9484,7 @@
             },
             {
               "num": 3,
-              "name": "克里斯・保羅",
+              "name": "賈馬爾・西蒙斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 83,
@@ -9508,7 +9508,7 @@
             },
             {
               "num": 40,
-              "name": "哈里森・巴恩斯",
+              "name": "賈馬爾・克萊頓",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 81,
@@ -9529,7 +9529,7 @@
             },
             {
               "num": 0,
-              "name": "凱爾登・強森",
+              "name": "賈馬爾・本森",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 81,
@@ -9550,7 +9550,7 @@
             },
             {
               "num": 30,
-              "name": "朱利安・尚帕尼",
+              "name": "達米安・史特林",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 80,
@@ -9571,7 +9571,7 @@
             },
             {
               "num": 14,
-              "name": "布萊克・韋斯利",
+              "name": "達米安・霍洛威",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 77,
@@ -9592,7 +9592,7 @@
             },
             {
               "num": 54,
-              "name": "桑德羅・馬穆凱拉什維利",
+              "name": "達米安・范斯",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 78,
@@ -9613,7 +9613,7 @@
             },
             {
               "num": 18,
-              "name": "俾斯麥・比永博",
+              "name": "達米安・考德威爾",
               "pos": "C",
               "role": "BENCH",
               "ovr": 78,
@@ -9636,14 +9636,14 @@
         },
         {
           "id": "mil",
-          "name": "密爾瓦基公鹿",
+          "name": "密城蒼翠雄鹿",
           "ovr": 90,
-          "ace": "揚尼斯・安戴托昆波",
-          "coach": "道格・瑞佛斯",
+          "ace": "揚尼斯・安德烈斯",
+          "coach": "道格拉斯・里維拉",
           "roster": [
             {
               "num": 0,
-              "name": "達米安・里拉德",
+              "name": "達米安・里德",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 91,
@@ -9667,7 +9667,7 @@
             },
             {
               "num": 5,
-              "name": "小蓋瑞・特倫特",
+              "name": "達米安・桑頓",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 81,
@@ -9688,7 +9688,7 @@
             },
             {
               "num": 18,
-              "name": "凱爾・庫茲馬",
+              "name": "達米安・蘭福德",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 83,
@@ -9709,7 +9709,7 @@
             },
             {
               "num": 34,
-              "name": "揚尼斯・安戴托昆波",
+              "name": "揚尼斯・安德烈斯",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 97,
@@ -9739,7 +9739,7 @@
             },
             {
               "num": 11,
-              "name": "布魯克・洛佩茲",
+              "name": "達米安・蒙羅",
               "pos": "C",
               "role": "STARTER",
               "ovr": 84,
@@ -9761,7 +9761,7 @@
             },
             {
               "num": 9,
-              "name": "鮑比・波提斯",
+              "name": "達米安・麥克斯韋",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 83,
@@ -9782,7 +9782,7 @@
             },
             {
               "num": 12,
-              "name": "陶里安・普林斯",
+              "name": "達米安・哈里斯",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 79,
@@ -9801,7 +9801,7 @@
             },
             {
               "num": 20,
-              "name": "AJ・格林",
+              "name": "達米安・沃克",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 79,
@@ -9820,7 +9820,7 @@
             },
             {
               "num": 3,
-              "name": "凱文・波特",
+              "name": "達米安・格里芬",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 81,
@@ -9841,7 +9841,7 @@
             },
             {
               "num": 44,
-              "name": "安德烈・傑克森",
+              "name": "達米安・羅素",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 78,
@@ -9862,7 +9862,7 @@
             },
             {
               "num": 24,
-              "name": "帕特・康諾頓",
+              "name": "達米安・華盛頓",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 78,
@@ -9883,7 +9883,7 @@
             },
             {
               "num": 1,
-              "name": "傑里科・西姆斯",
+              "name": "達米安・布里奇斯",
               "pos": "C",
               "role": "BENCH",
               "ovr": 78,
@@ -9906,14 +9906,14 @@
         },
         {
           "id": "min",
-          "name": "明尼蘇達灰狼",
+          "name": "明州極地銀狼",
           "ovr": 91,
-          "ace": "安東尼・愛德華茲",
-          "coach": "克里斯・芬奇",
+          "ace": "安東・愛德華",
+          "coach": "克里斯・芬利",
           "roster": [
             {
               "num": 10,
-              "name": "麥克・康利",
+              "name": "達米安・波特",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 83,
@@ -9936,7 +9936,7 @@
             },
             {
               "num": 5,
-              "name": "安東尼・愛德華茲",
+              "name": "安東・愛德華",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 94,
@@ -9963,7 +9963,7 @@
             },
             {
               "num": 3,
-              "name": "傑登・麥克丹尼爾斯",
+              "name": "達米安・西蒙斯",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 85,
@@ -9984,7 +9984,7 @@
             },
             {
               "num": 30,
-              "name": "朱利葉斯・蘭德爾",
+              "name": "達米安・克萊頓",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 87,
@@ -10006,7 +10006,7 @@
             },
             {
               "num": 27,
-              "name": "魯迪・戈貝爾",
+              "name": "魯迪・高登",
               "pos": "C",
               "role": "STARTER",
               "ovr": 88,
@@ -10030,7 +10030,7 @@
             },
             {
               "num": 11,
-              "name": "納茲・里德",
+              "name": "達米安・本森",
               "pos": "C",
               "role": "BENCH",
               "ovr": 86,
@@ -10052,7 +10052,7 @@
             },
             {
               "num": 0,
-              "name": "唐特・迪文岑佐",
+              "name": "布蘭登・史特林",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 84,
@@ -10073,7 +10073,7 @@
             },
             {
               "num": 9,
-              "name": "尼基爾・亞歷山大-沃克",
+              "name": "布蘭登・霍洛威",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 82,
@@ -10093,7 +10093,7 @@
             },
             {
               "num": 4,
-              "name": "羅伯・迪林厄姆",
+              "name": "布蘭登・范斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 80,
@@ -10115,7 +10115,7 @@
             },
             {
               "num": 1,
-              "name": "小特倫斯・香農",
+              "name": "布蘭登・考德威爾",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 79,
@@ -10136,7 +10136,7 @@
             },
             {
               "num": 7,
-              "name": "喬・英格爾斯",
+              "name": "布蘭登・桑頓",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 78,
@@ -10160,7 +10160,7 @@
             },
             {
               "num": 55,
-              "name": "盧卡・加爾扎",
+              "name": "布蘭登・蘭福德",
               "pos": "C",
               "role": "BENCH",
               "ovr": 78,
@@ -10184,9 +10184,9 @@
     },
     {
       "id": "fiba_world",
-      "name": "FIBA 世界盃男籃殿堂",
+      "name": "世界籃球國家隊冠軍盃（WBC）",
       "difficultyTier": 4,
-      "legendName": "保羅・蓋索",
+      "legendName": "湯姆・霍金斯",
       "quarterMinutes": 10,
       "otMinutes": 5,
       "foulOutLimit": 5,
@@ -10194,15 +10194,15 @@
       "teams": [
         {
           "id": "fiba_jpn",
-          "name": "日本國家隊",
+          "name": "櫻花赤紅代表隊",
           "ovr": 88,
-          "ace": "八村 壘",
-          "coach": "湯姆・霍瓦斯",
+          "ace": "八神 雷司",
+          "coach": "湯姆・霍金斯",
           "isUserTeam": true,
           "roster": [
             {
               "num": 5,
-              "name": "河村 勇輝",
+              "name": "川村 閃光",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 88,
@@ -10241,7 +10241,7 @@
             },
             {
               "num": 12,
-              "name": "渡邊 雄太",
+              "name": "渡部 雄飛",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 88,
@@ -10264,7 +10264,7 @@
             },
             {
               "num": 8,
-              "name": "八村 壘",
+              "name": "八神 雷司",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 90,
@@ -10287,7 +10287,7 @@
             },
             {
               "num": 24,
-              "name": "約什・霍金森",
+              "name": "馬特奧・席爾瓦",
               "pos": "C",
               "role": "STARTER",
               "ovr": 86,
@@ -10310,7 +10310,7 @@
             },
             {
               "num": 2,
-              "name": "富樫 勇樹",
+              "name": "富永 勇人",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 84,
@@ -10330,7 +10330,7 @@
             },
             {
               "num": 30,
-              "name": "富永 啟生",
+              "name": "馬特奧・費南德茲",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 83,
@@ -10350,7 +10350,7 @@
             },
             {
               "num": 18,
-              "name": "馬場 雄大",
+              "name": "馬特奧・迪亞洛",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 83,
@@ -10371,7 +10371,7 @@
             },
             {
               "num": 6,
-              "name": "比江島 慎",
+              "name": "馬特奧・博吉奇",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 84,
@@ -10393,7 +10393,7 @@
             },
             {
               "num": 91,
-              "name": "吉井 裕鷹",
+              "name": "馬特奧・門德斯",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 81,
@@ -10414,7 +10414,7 @@
             },
             {
               "num": 7,
-              "name": "泰福斯・海",
+              "name": "馬特奧・戈麥斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 80,
@@ -10435,7 +10435,7 @@
             },
             {
               "num": 34,
-              "name": "渡邊 飛勇",
+              "name": "馬特奧・科內",
               "pos": "C",
               "role": "BENCH",
               "ovr": 80,
@@ -10458,14 +10458,14 @@
         },
         {
           "id": "fiba_usa",
-          "name": "美國夢幻隊",
+          "name": "星條夢幻代表隊",
           "ovr": 97,
-          "ace": "史蒂芬・柯瑞",
-          "coach": "史蒂夫・科爾",
+          "ace": "史凱・柯林斯",
+          "coach": "史蒂文・柯爾森",
           "roster": [
             {
               "num": 4,
-              "name": "史蒂芬・柯瑞",
+              "name": "史凱・柯林斯",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 96,
@@ -10490,7 +10490,7 @@
             },
             {
               "num": 5,
-              "name": "安東尼・愛德華茲",
+              "name": "安東・愛德華",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 94,
@@ -10512,7 +10512,7 @@
             },
             {
               "num": 6,
-              "name": "勒布朗・詹姆斯",
+              "name": "雷歐・詹森",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 95,
@@ -10536,7 +10536,7 @@
             },
             {
               "num": 7,
-              "name": "凱文・杜蘭特",
+              "name": "凱文・杜蘭斯",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 95,
@@ -10559,7 +10559,7 @@
             },
             {
               "num": 10,
-              "name": "安東尼・戴維斯",
+              "name": "安東尼・戴爾",
               "pos": "C",
               "role": "STARTER",
               "ovr": 94,
@@ -10582,7 +10582,7 @@
             },
             {
               "num": 15,
-              "name": "德文・布克",
+              "name": "馬特奧・伊凡諾夫",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 93,
@@ -10603,7 +10603,7 @@
             },
             {
               "num": 12,
-              "name": "朱・霍勒迪",
+              "name": "札克・哈里斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 89,
@@ -10623,7 +10623,7 @@
             },
             {
               "num": 13,
-              "name": "巴姆・阿德巴約",
+              "name": "馬特奧・比安奇",
               "pos": "C",
               "role": "BENCH",
               "ovr": 90,
@@ -10645,7 +10645,7 @@
             },
             {
               "num": 11,
-              "name": "喬爾・恩比德",
+              "name": "馬特奧・阿爾瓦雷斯",
               "pos": "C",
               "role": "BENCH",
               "ovr": 95,
@@ -10668,7 +10668,7 @@
             },
             {
               "num": 14,
-              "name": "傑森・塔圖姆",
+              "name": "傑森・泰勒姆",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 94,
@@ -10690,7 +10690,7 @@
             },
             {
               "num": 8,
-              "name": "德里克・懷特",
+              "name": "札克・沃克",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 88,
@@ -10711,7 +10711,7 @@
             },
             {
               "num": 9,
-              "name": "泰瑞斯・哈利伯頓",
+              "name": "馬特奧・恩迪亞耶",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 90,
@@ -10736,14 +10736,14 @@
         },
         {
           "id": "fiba_srb",
-          "name": "塞爾維亞國家隊",
+          "name": "巴爾幹白鷹代表隊",
           "ovr": 94,
-          "ace": "尼古拉・約基奇",
-          "coach": "斯維蒂斯拉夫・佩西奇",
+          "ace": "尼古拉・約萬諾夫",
+          "coach": "斯維托・佩特羅夫",
           "roster": [
             {
               "num": 22,
-              "name": "瓦西里耶・米西奇",
+              "name": "馬特奧・科斯塔",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 88,
@@ -10764,7 +10764,7 @@
             },
             {
               "num": 7,
-              "name": "博格丹・博格達諾維奇",
+              "name": "馬特奧・馬丁",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 91,
@@ -10787,7 +10787,7 @@
             },
             {
               "num": 9,
-              "name": "瓦尼亞・馬林科維奇",
+              "name": "馬特奧・索薩",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 84,
@@ -10808,7 +10808,7 @@
             },
             {
               "num": 3,
-              "name": "菲利普・佩特魯謝夫",
+              "name": "馬特奧・卡瓦略",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 86,
@@ -10829,7 +10829,7 @@
             },
             {
               "num": 15,
-              "name": "尼古拉・約基奇",
+              "name": "尼古拉・約萬諾夫",
               "pos": "C",
               "role": "STARTER",
               "ovr": 97,
@@ -10857,7 +10857,7 @@
             },
             {
               "num": 30,
-              "name": "阿列克薩・阿夫拉莫維奇",
+              "name": "馬特奧・維拉",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 86,
@@ -10878,7 +10878,7 @@
             },
             {
               "num": 13,
-              "name": "奧格年・多布里奇",
+              "name": "拉斐爾・席爾瓦",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 83,
@@ -10897,7 +10897,7 @@
             },
             {
               "num": 33,
-              "name": "尼古拉・米盧蒂諾夫",
+              "name": "馬爾科・羅西",
               "pos": "C",
               "role": "BENCH",
               "ovr": 87,
@@ -10917,7 +10917,7 @@
             },
             {
               "num": 5,
-              "name": "尼古拉・約維奇",
+              "name": "拉斐爾・費南德茲",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 84,
@@ -10938,7 +10938,7 @@
             },
             {
               "num": 23,
-              "name": "馬爾科・古杜里奇",
+              "name": "斯特凡・席爾瓦",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 85,
@@ -10959,7 +10959,7 @@
             },
             {
               "num": 27,
-              "name": "德揚・達維多瓦茨",
+              "name": "拉斐爾・迪亞洛",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 81,
@@ -10980,7 +10980,7 @@
             },
             {
               "num": 0,
-              "name": "烏羅什・普拉夫希奇",
+              "name": "拉斐爾・博吉奇",
               "pos": "C",
               "role": "BENCH",
               "ovr": 80,
@@ -11002,14 +11002,14 @@
         },
         {
           "id": "fiba_fra",
-          "name": "法國國家隊",
+          "name": "三色鐵塔代表隊",
           "ovr": 94,
-          "ace": "維克托・文班亞馬",
-          "coach": "弗雷德里克・福圖",
+          "ace": "維克・文森特",
+          "coach": "弗雷德里克・福雷",
           "roster": [
             {
               "num": 1,
-              "name": "法蘭克・尼利基納",
+              "name": "拉斐爾・門德斯",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 82,
@@ -11028,7 +11028,7 @@
             },
             {
               "num": 10,
-              "name": "埃文・富尼耶",
+              "name": "馬爾科・米勒",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 88,
@@ -11049,7 +11049,7 @@
             },
             {
               "num": 5,
-              "name": "尼古拉斯・巴圖姆",
+              "name": "拉斐爾・戈麥斯",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 85,
@@ -11072,7 +11072,7 @@
             },
             {
               "num": 7,
-              "name": "蓋爾雄・亞布塞萊",
+              "name": "拉斐爾・科內",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 88,
@@ -11095,7 +11095,7 @@
             },
             {
               "num": 32,
-              "name": "維克托・文班亞馬",
+              "name": "維克・文森特",
               "pos": "C",
               "role": "STARTER",
               "ovr": 95,
@@ -11121,7 +11121,7 @@
             },
             {
               "num": 8,
-              "name": "以賽亞・科爾迪尼耶",
+              "name": "拉斐爾・伊凡諾夫",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 85,
@@ -11142,7 +11142,7 @@
             },
             {
               "num": 26,
-              "name": "馬蒂亞斯・萊索爾",
+              "name": "盧卡・費雷拉",
               "pos": "C",
               "role": "BENCH",
               "ovr": 88,
@@ -11163,7 +11163,7 @@
             },
             {
               "num": 27,
-              "name": "魯迪・戈貝爾",
+              "name": "魯迪・高登",
               "pos": "C",
               "role": "BENCH",
               "ovr": 89,
@@ -11184,7 +11184,7 @@
             },
             {
               "num": 12,
-              "name": "南多・德科洛",
+              "name": "拉斐爾・比安奇",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 84,
@@ -11207,7 +11207,7 @@
             },
             {
               "num": 85,
-              "name": "馬修・斯特拉澤爾",
+              "name": "尼古拉・米勒",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 82,
@@ -11228,7 +11228,7 @@
             },
             {
               "num": 99,
-              "name": "比拉爾・庫利巴利",
+              "name": "拉斐爾・阿爾瓦雷斯",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 83,
@@ -11249,7 +11249,7 @@
             },
             {
               "num": 6,
-              "name": "安德魯・阿爾比西",
+              "name": "拉斐爾・恩迪亞耶",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 80,
@@ -11272,14 +11272,14 @@
         },
         {
           "id": "fiba_can",
-          "name": "加拿大國家隊",
+          "name": "楓葉極光代表隊",
           "ovr": 93,
-          "ace": "謝伊・吉爾傑斯-亞歷山大",
-          "coach": "喬迪・費爾南德斯",
+          "ace": "謝伊・亞歷克斯",
+          "coach": "喬迪・費爾南多",
           "roster": [
             {
               "num": 2,
-              "name": "謝伊・吉爾傑斯-亞歷山大",
+              "name": "謝伊・亞歷克斯",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 96,
@@ -11304,7 +11304,7 @@
             },
             {
               "num": 27,
-              "name": "賈馬爾・莫瑞",
+              "name": "賈馬爾・摩根",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 89,
@@ -11325,7 +11325,7 @@
             },
             {
               "num": 9,
-              "name": "RJ・巴瑞特",
+              "name": "拉斐爾・科斯塔",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 87,
@@ -11346,7 +11346,7 @@
             },
             {
               "num": 24,
-              "name": "狄龍・布魯克斯",
+              "name": "拉斐爾・馬丁",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 85,
@@ -11368,7 +11368,7 @@
             },
             {
               "num": 7,
-              "name": "德懷特・鮑威爾",
+              "name": "拉斐爾・索薩",
               "pos": "C",
               "role": "STARTER",
               "ovr": 82,
@@ -11389,7 +11389,7 @@
             },
             {
               "num": 5,
-              "name": "呂根茨・多爾特",
+              "name": "凱文・格里芬",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 85,
@@ -11409,7 +11409,7 @@
             },
             {
               "num": 3,
-              "name": "安德魯・內姆布哈德",
+              "name": "拉斐爾・卡瓦略",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 84,
@@ -11430,7 +11430,7 @@
             },
             {
               "num": 13,
-              "name": "凱利・奧利尼克",
+              "name": "拉斐爾・維拉",
               "pos": "C",
               "role": "BENCH",
               "ovr": 82,
@@ -11451,7 +11451,7 @@
             },
             {
               "num": 6,
-              "name": "尼基爾・亞歷山大-沃克",
+              "name": "布蘭登・霍洛威",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 84,
@@ -11472,7 +11472,7 @@
             },
             {
               "num": 4,
-              "name": "梅爾文・埃吉姆",
+              "name": "安德烈・席爾瓦",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 80,
@@ -11493,7 +11493,7 @@
             },
             {
               "num": 92,
-              "name": "肯・伯奇",
+              "name": "斯特凡・揚科夫",
               "pos": "C",
               "role": "BENCH",
               "ovr": 82,
@@ -11514,7 +11514,7 @@
             },
             {
               "num": 0,
-              "name": "特雷・萊爾斯",
+              "name": "安德烈・費南德茲",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 82,
@@ -11537,14 +11537,14 @@
         },
         {
           "id": "fiba_aus",
-          "name": "澳洲袋鼠軍團",
+          "name": "南十字袋鼠代表隊",
           "ovr": 91,
-          "ace": "約什・吉迪",
-          "coach": "布萊恩・古爾吉安",
+          "ace": "喬許・吉爾伯",
+          "coach": "布萊恩・古德溫",
           "roster": [
             {
               "num": 3,
-              "name": "約什・吉迪",
+              "name": "喬許・吉爾伯",
               "pos": "PG",
               "role": "STARTER",
               "ovr": 89,
@@ -11569,7 +11569,7 @@
             },
             {
               "num": 5,
-              "name": "帕蒂・米爾斯",
+              "name": "帕特・米勒斯",
               "pos": "SG",
               "role": "STARTER",
               "ovr": 87,
@@ -11591,7 +11591,7 @@
             },
             {
               "num": 11,
-              "name": "戴森・丹尼爾斯",
+              "name": "安德烈・迪亞洛",
               "pos": "SF",
               "role": "STARTER",
               "ovr": 87,
@@ -11612,7 +11612,7 @@
             },
             {
               "num": 8,
-              "name": "傑克・麥克維",
+              "name": "安德烈・博吉奇",
               "pos": "PF",
               "role": "STARTER",
               "ovr": 83,
@@ -11632,7 +11632,7 @@
             },
             {
               "num": 13,
-              "name": "喬克・蘭代爾",
+              "name": "安德烈・門德斯",
               "pos": "C",
               "role": "STARTER",
               "ovr": 85,
@@ -11653,7 +11653,7 @@
             },
             {
               "num": 1,
-              "name": "丹特・艾克森",
+              "name": "安德烈・戈麥斯",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 84,
@@ -11674,7 +11674,7 @@
             },
             {
               "num": 6,
-              "name": "約什・格林",
+              "name": "安德烈・科內",
               "pos": "SG",
               "role": "BENCH",
               "ovr": 83,
@@ -11695,7 +11695,7 @@
             },
             {
               "num": 15,
-              "name": "杜普・里斯",
+              "name": "安德烈・伊凡諾夫",
               "pos": "C",
               "role": "BENCH",
               "ovr": 82,
@@ -11715,7 +11715,7 @@
             },
             {
               "num": 7,
-              "name": "喬・英格爾斯",
+              "name": "布蘭登・桑頓",
               "pos": "SF",
               "role": "BENCH",
               "ovr": 81,
@@ -11738,7 +11738,7 @@
             },
             {
               "num": 17,
-              "name": "馬修・德拉維多瓦",
+              "name": "高橋 柏翰",
               "pos": "PG",
               "role": "BENCH",
               "ovr": 81,
@@ -11759,7 +11759,7 @@
             },
             {
               "num": 0,
-              "name": "尼克・凱",
+              "name": "安德烈・比安奇",
               "pos": "PF",
               "role": "BENCH",
               "ovr": 82,
@@ -11780,7 +11780,7 @@
             },
             {
               "num": 22,
-              "name": "威爾・馬格奈",
+              "name": "安德烈・阿爾瓦雷斯",
               "pos": "C",
               "role": "BENCH",
               "ovr": 81,
@@ -11807,7 +11807,7 @@
   "defaultUserRoster": [
     {
       "num": 7,
-      "name": "宮城 良田",
+      "name": "白河 電光",
       "pos": "PG",
       "role": "STARTER",
       "ovr": 71,
@@ -11847,7 +11847,7 @@
     },
     {
       "num": 11,
-      "name": "流川 楓",
+      "name": "霧島 蒼楓",
       "pos": "SF",
       "role": "STARTER",
       "ovr": 74,
@@ -11873,7 +11873,7 @@
     },
     {
       "num": 10,
-      "name": "櫻木 花道",
+      "name": "紅林 烈火",
       "pos": "PF",
       "role": "STARTER",
       "ovr": 70,
@@ -11900,7 +11900,7 @@
     },
     {
       "num": 4,
-      "name": "赤木 剛憲",
+      "name": "黑木 鐵憲",
       "pos": "C",
       "role": "STARTER",
       "ovr": 72,
@@ -11925,7 +11925,7 @@
     },
     {
       "num": 14,
-      "name": "三井 壽",
+      "name": "南條 炎壽",
       "pos": "SG",
       "role": "STARTER",
       "ovr": 71,
@@ -11950,7 +11950,7 @@
     },
     {
       "num": 5,
-      "name": "木暮 公延",
+      "name": "青木 延平",
       "pos": "SF",
       "role": "BENCH",
       "ovr": 63,
@@ -11972,7 +11972,7 @@
     },
     {
       "num": 8,
-      "name": "安田 靖春",
+      "name": "安藤 晴也",
       "pos": "PG",
       "role": "BENCH",
       "ovr": 60,
@@ -11993,7 +11993,7 @@
     },
     {
       "num": 6,
-      "name": "潮崎 哲士",
+      "name": "汐見 哲也",
       "pos": "SG",
       "role": "BENCH",
       "ovr": 59,
@@ -12012,7 +12012,7 @@
     },
     {
       "num": 9,
-      "name": "角田 悟",
+      "name": "角谷 聰志",
       "pos": "C",
       "role": "BENCH",
       "ovr": 59,
@@ -12032,7 +12032,7 @@
     },
     {
       "num": 12,
-      "name": "石井 健太郎",
+      "name": "石橋 健一",
       "pos": "PF",
       "role": "BENCH",
       "ovr": 58,
@@ -12051,7 +12051,7 @@
     },
     {
       "num": 13,
-      "name": "佐佐岡 智",
+      "name": "佐倉 智樹",
       "pos": "SF",
       "role": "BENCH",
       "ovr": 58,

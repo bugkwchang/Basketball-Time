@@ -549,7 +549,7 @@
       "id": "evt_euro_scout",
       "stage": "ANY",
       "title": "🇪🇺 歐洲豪門球探現身看台！",
-      "desc": "今場熱身時，場邊出現了拎住戰術筆記本的歐洲 EuroLeague 首席球探，他正重點觀察你的無球跑位同防守紀律。",
+      "desc": "今場熱身時，場邊出現了拎住戰術筆記本的歐洲 歐洲冠軍聯賽 首席球探，他正重點觀察你的無球跑位同防守紀律。",
       "conditions": [
         {
           "field": "reputation",
@@ -2588,7 +2588,7 @@
       "stage": "PRO",
       "tone": "MIXED",
       "title": "🎓 三月瘋單敗淘汰前夕：全美直播的窒息壓力",
-      "desc": "NCAA 錦標賽鏡頭對準 {{teamName}} 更衣室，輸一場球季就即刻畫上句號，年輕隊友手心直冒冷汗。",
+      "desc": "全美大學聯賽 錦標賽鏡頭對準 {{teamName}} 更衣室，輸一場球季就即刻畫上句號，年輕隊友手心直冒冷汗。",
       "conditions": [
         {
           "field": "leagueId",
@@ -2724,8 +2724,8 @@
       "id": "evt_ncaa_scout_combine",
       "stage": "PRO",
       "tone": "POSITIVE",
-      "title": "🔭 NBA 球探團現身看台！選秀行情關鍵驗收",
-      "desc": "多位 NBA 總經理與首席球探悄悄坐在 {{teamName}} 訓練館二樓，專門評估你的爆發力與投籃抗壓。",
+      "title": "🔭 北美職籃 球探團現身看台！選秀行情關鍵驗收",
+      "desc": "多位 北美職籃 總經理與首席球探悄悄坐在 {{teamName}} 訓練館二樓，專門評估你的爆發力與投籃抗壓。",
       "conditions": [
         {
           "field": "leagueId",
@@ -3336,7 +3336,7 @@
       "stage": "PRO",
       "tone": "NEGATIVE",
       "title": "📋 歐洲名帥鐵血訓話：個人單打遭當眾喊停",
-      "desc": "訓練賽中你一次華麗單打進球，{{coachName}} 卻怒摔戰術板：「這裡是 EuroLeague！沒跑完三層掩護誰准你亂出手？」",
+      "desc": "訓練賽中你一次華麗單打進球，{{coachName}} 卻怒摔戰術板：「這裡是 歐洲冠軍聯賽！沒跑完三層掩護誰准你亂出手？」",
       "conditions": [
         {
           "field": "leagueId",
@@ -3405,8 +3405,8 @@
       "id": "evt_euro_buyout_clause",
       "stage": "PRO",
       "tone": "POSITIVE",
-      "title": "💼 歐陸豪門合約談判：NBA 買斷條款拉鋸",
-      "desc": "{{teamName}} 提出漲薪續約，但要求提高 NBA 買斷金額；經紀人提醒這攸關你明年能否順利赴美。",
+      "title": "💼 歐陸豪門合約談判：北美職籃 買斷條款拉鋸",
+      "desc": "{{teamName}} 提出漲薪續約，但要求提高 北美職籃 買斷金額；經紀人提醒這攸關你明年能否順利赴美。",
       "conditions": [
         {
           "field": "leagueId",
@@ -3421,7 +3421,7 @@
       ],
       "choices": [
         {
-          "label": "堅持保留下門檻 NBA 買斷條款，哪怕少拿一點薪水",
+          "label": "堅持保留下門檻 北美職籃 買斷條款，哪怕少拿一點薪水",
           "stat": "reputation",
           "base": 0.64,
           "w": 0.0038,
@@ -3603,7 +3603,7 @@
       "id": "evt_nba_max_extension_drama",
       "stage": "PRO",
       "tone": "POSITIVE",
-      "title": "💰 NBA 提前頂薪續約談判：管理層試探你的底線",
+      "title": "💰 北美職籃 提前頂薪續約談判：管理層試探你的底線",
       "desc": "{{teamName}} 總經理找上你的經紀人，想以低於頂薪 15% 的價格提前綁定四年合約，換取補強陣容空間。",
       "conditions": [
         {
@@ -3674,7 +3674,7 @@
       "id": "evt_nba_trade_deadline_rumor",
       "stage": "PRO",
       "tone": "NEGATIVE",
-      "title": "🚨 NBA 交易截止日風暴：你的名字登上流言頭條",
+      "title": "🚨 北美職籃 交易截止日風暴：你的名字登上流言頭條",
       "desc": "名記凌晨爆料 {{teamName}} 正考慮發動重磅交易，你的名字赫然在籌碼名單上，手機瞬間被訊息塞爆。",
       "conditions": [
         {
@@ -3815,7 +3815,7 @@
       "id": "evt_nba_rookie_wall_mental",
       "stage": "PRO",
       "tone": "NEGATIVE",
-      "title": "🧱 NBA 高強度撞牆期：雙腿像灌了鉛一樣沉重",
+      "title": "🧱 北美職籃 高強度撞牆期：雙腿像灌了鉛一樣沉重",
       "desc": "連續客場與世界最強身體天賦碰撞，你感覺投籃弧度發平、反應慢了半拍，深夜坐在飯店窗邊懷疑自己是否跟得上。",
       "conditions": [
         {
@@ -4092,7 +4092,7 @@
       "id": "evt_fiba_no_def3sec_wall",
       "stage": "PRO",
       "tone": "MIXED",
-      "title": "🧱 FIBA 無防守三秒！歐美雙塔禁區鐵幕",
+      "title": "🧱 世界盃 無防守三秒！歐美雙塔禁區鐵幕",
       "desc": "國際賽沒有防守三秒違例，對手 215 公分中鋒直接蹲守籃下，切入空間被壓縮到極致。",
       "conditions": [
         {
@@ -4108,7 +4108,7 @@
           "base": 0.66,
           "w": 0.0038,
           "ok": {
-            "text": "完美破解 FIBA 禁區鐵桶陣！中投 +3、三分 +2、球商 +2！",
+            "text": "完美破解 世界盃 禁區鐵桶陣！中投 +3、三分 +2、球商 +2！",
             "eff": {
               "midRange": 2,
               "threePt": 1
