@@ -819,7 +819,7 @@
       "cutinReq": null,
       "baseRate": 67,
       "pts": 2,
-      "statType": "PASS"
+      "statType": "ASSIST"
     },
     {
       "id": "act_stepback_mid",
@@ -849,7 +849,7 @@
       "cutinReq": "tomahawk_poster",
       "baseRate": 62,
       "pts": 2,
-      "statType": "SHOT"
+      "statType": "AND1"
     },
     {
       "id": "act_relocate_3",
@@ -878,7 +878,7 @@
       "cutinReq": null,
       "baseRate": 68,
       "pts": 2,
-      "statType": "PASS"
+      "statType": "ASSIST"
     },
     {
       "id": "act_reverse_dunk",

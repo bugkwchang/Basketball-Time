@@ -692,6 +692,11 @@
       "desc": "主場球迷吶喊令你腎上腺素飆升！出手命中率 +5%、高光張力累積 +15%。",
       "conditions": [
         {
+          "field": "isHome",
+          "op": "eq",
+          "value": true
+        },
+        {
           "field": "staminaPct",
           "op": "gte",
           "value": 25
@@ -715,9 +720,14 @@
       "name": "🔵 客場消音器",
       "category": "BLUE_TRAIT",
       "iqBonus": 3,
-      "triggerDesc": "第 3 節起焦灼戰",
+      "triggerDesc": "客場第 3 節起焦灼戰",
       "desc": "最鍾意在客場噓聲中入波令全場鴉雀無聲！下半場命中率 +6%、完美區 +12%。",
       "conditions": [
+        {
+          "field": "isHome",
+          "op": "eq",
+          "value": false
+        },
         {
           "field": "quarter",
           "op": "gte",
