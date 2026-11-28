@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#181614"/>
+  <circle cx="256" cy="256" r="178" fill="#E85D04" stroke="#FAF7F0" stroke-width="18"/>
+  <path d="M78 256 H434 M256 78 V434" stroke="#181614" stroke-width="16" fill="none"/>
+  <path d="M132 128 C210 206 210 306 132 384 M380 128 C302 206 302 306 380 384" stroke="#181614" stroke-width="16" fill="none"/>
+  <rect x="64" y="366" width="384" height="74" rx="14" fill="#FACC15" stroke="#181614" stroke-width="10"/>
+  <text x="256" y="416" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="40" font-weight="900" fill="#181614">BASKETBALL TIME</text>
+</svg>
