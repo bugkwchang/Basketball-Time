@@ -1770,7 +1770,7 @@ window.BTUI = (() => {
     match.homeScore = 18; match.awayScore = 16;
     match.qScoresHome = [6, 6, 6, 0]; match.qScoresAway = [6, 5, 5, 0];
     match.benchReason = ""; match.totalGameSec = 0; match.tension = 82;
-    match.cooldownSec = 0; match.userSubCooldownSec = 999; match.rivalHardTriggersThisQ = 0;
+    match.cooldownSec = 0; match.userSubCooldownSec = 999; match.rivalHardTriggersThisQ = 0; match.tutorialBulletCount = 0;
     match.makeStreak = 0; match.missStreak = 0; match.perfectStreak = 0; match.perfectsTotal = 0;
     match.isZone = false; match.zonePossessionsLeft = 0; match.isGrit = false;
     match.recentActionIds = []; match.commHistory = []; match.shotAnim = null;

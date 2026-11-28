@@ -514,7 +514,7 @@
     }
     .boot-error-box.hidden { display: none; }
   </style>
-  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s2c" />
+  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s3" />
 </head>
 <body>
   <!-- ==================== BOOT LOADING OVERLAY ==================== -->
@@ -957,9 +957,9 @@
   <!-- UNUSED AP REMINDER MODAL -->
   <div class="modal-backdrop hidden" id="apReminderModal">
     <div class="modal-sheet" style="max-width:440px;">
-      <div class="card-head">
+      <div class="card-head modal-header-sticky">
         <span class="stamp" style="background:var(--gold-bright); color:var(--ink);">⚠️ 場外養成提醒</span>
-        <span class="tag" id="apRemCountTag">尚餘 2 AP</span>
+        <span class="modal-head-right"><span class="tag" id="apRemCountTag">尚餘 2 AP</span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseApRem" aria-label="關閉">✕</button></span>
       </div>
       <div style="font-size:17px; font-weight:900; margin-bottom:6px;">本週仲未完成場外訓練！</div>
       <div id="apRemBody" style="font-size:13px; line-height:1.6; margin-bottom:14px; color:var(--ink-soft);">
@@ -1047,12 +1047,12 @@
   <!-- ===== PAUSE & POST-MATCH MODAL ===== -->
   <div class="modal-backdrop hidden" id="boxScoreModal">
     <div class="modal-sheet">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; border-bottom:2.5px solid var(--ink); padding-bottom:8px; margin-bottom:8px;">
+      <div class="modal-header-sticky" style="display:flex; justify-content:space-between; align-items:center; gap:10px; border-bottom:2.5px solid var(--ink); padding-bottom:8px; margin-bottom:8px;">
         <div>
           <div style="font-size:11.5px; font-weight:900; color:var(--crimson);" id="bsHeaderSub">⏸ 比賽暫停中</div>
           <div style="font-size:20px; font-weight:900;" id="bsHeaderScore">0 - 0</div>
         </div>
-        <div class="rank-stamp" id="bsRankStamp" style="display:none;">S</div>
+        <span class="modal-head-right"><div class="rank-stamp" id="bsRankStamp" style="display:none;">S</div><button type="button" class="manga-btn modal-top-close" id="btnTopCloseBoxScore" aria-label="關閉">✕</button></span>
       </div>
 
       <div id="bsMvpBanner" class="mvp-banner" style="display:none;"></div>
@@ -1091,9 +1091,9 @@
   <!-- ===== CAREER EVENT ENGINE MODAL ===== -->
   <div class="modal-backdrop hidden" id="eventModal">
     <div class="modal-sheet" style="max-width:560px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2.5px solid var(--ink); padding-bottom:8px; margin-bottom:10px;">
+      <div class="modal-header-sticky" style="display:flex; justify-content:space-between; align-items:center; border-bottom:2.5px solid var(--ink); padding-bottom:8px; margin-bottom:10px;">
         <span class="stamp" id="evtStageStamp">生涯隨機事件</span>
-        <span style="font-size:12px; font-weight:900; color:var(--ink-soft);" id="evtAgeStamp">15 歲</span>
+        <span class="modal-head-right"><span style="font-size:12px; font-weight:900; color:var(--ink-soft);" id="evtAgeStamp">15 歲</span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseEvent" aria-label="關閉" style="display:none;">✕</button></span>
       </div>
       <div style="font-size:19px; font-weight:900; margin-bottom:6px;" id="evtTitle">事件標題</div>
       <div style="font-size:13px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" id="evtDesc"></div>
@@ -1119,7 +1119,8 @@
 
   <!-- ===== GRADUATION CROSSROADS / TRANSFER / HOF MODAL ===== -->
   <div class="modal-backdrop hidden" id="crossroadsModal">
-    <div class="modal-sheet cr-editorial-modal" style="max-width:580px; padding:0; overflow:hidden;">
+    <div class="modal-sheet cr-editorial-modal" style="max-width:580px; padding:0; overflow-y:auto;">
+      <button type="button" class="modal-top-close-abs" id="btnTopCloseCrossroads" aria-label="關閉">✕</button>
       <div class="cr-hero-banner">
         <span class="stamp" style="background:var(--gold-bright); color:var(--ink);" id="crStamp">🎓 18 歲畢業選秀大會</span>
         <div class="cr-hero-title" id="crTitle">選擇你的下一個舞台</div>
@@ -1135,9 +1136,9 @@
   <!-- ===== ONE-PAGE HUB DRILL-DOWN MODAL ===== -->
   <div class="modal-backdrop hidden" id="hubDetailModal" style="z-index:92;">
     <div class="modal-sheet" style="max-width:680px;">
-      <div class="card-head">
+      <div class="card-head modal-header-sticky">
         <div class="card-title" id="hubDetailModalTitle">詳細資訊</div>
-        <span class="tag gold" id="hubDetailModalBadge">詳細</span>
+        <span class="modal-head-right"><span class="tag gold" id="hubDetailModalBadge">詳細</span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseHubDetail" aria-label="關閉">✕</button></span>
       </div>
       <div id="hubDetailModalBody"></div>
       <div style="margin-top:12px;">
@@ -1149,9 +1150,9 @@
   <!-- ===== FLOATING LIVE MATCH DETAILED STATS MODAL ===== -->
   <div class="modal-backdrop hidden" id="liveDetailStatsModal" style="z-index:96;">
     <div class="modal-sheet" style="max-width:500px;">
-      <div class="card-head">
+      <div class="card-head modal-header-sticky">
         <div class="card-title">📊 本場即時詳細數據</div>
-        <span class="tag gold" id="ldsSub">Q1 · 0 - 0</span>
+        <span class="modal-head-right"><span class="tag gold" id="ldsSub">Q1 · 0 - 0</span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseLiveDetail" aria-label="關閉">✕</button></span>
       </div>
       <div id="ldsPlayerName" style="font-size:15px; font-weight:900; margin-bottom:6px;"></div>
       <div id="ldsFocusBox" style="display:none; padding:8px 10px; border:2px solid var(--ink); background:#FEFCE8; margin-bottom:8px;"></div>
@@ -1188,7 +1189,8 @@
 
   <!-- ==================== INJURY NARRATIVE CHOICE MODAL ==================== -->
   <div class="modal-backdrop hidden" id="injuryChoiceModal" style="z-index:102;">
-    <div class="modal-sheet cr-editorial-modal" style="max-width:520px; padding:0; overflow:hidden;">
+    <div class="modal-sheet cr-editorial-modal" style="max-width:520px; padding:0; overflow-y:auto;">
+      <button type="button" class="modal-top-close-abs" id="btnTopCloseInjury" aria-label="關閉">✕</button>
       <div class="cr-hero-banner" style="background:linear-gradient(135deg, #181614 0%, #7F1D1D 100%);">
         <span class="stamp" style="background:#FCA5A5; color:#181614;" id="injChoiceStamp">🩹 賽前傷病臨場抉擇</span>
         <div class="cr-hero-title" id="injChoiceTitle">帶傷硬撐，還是乖乖休養？</div>
@@ -1253,6 +1255,7 @@
 
   <div class="modal-backdrop hidden" id="playerDetailModal" style="z-index:105;">
     <div class="modal-sheet pdetail-sheet">
+      <button type="button" class="manga-btn modal-top-close" id="btnTopClosePlayerDetail" aria-label="關閉" style="margin-bottom:6px;">✕</button>
       <div class="pdetail-hero">
         <div style="min-width:0;">
           <div class="pdetail-name" id="pdHeroName">#10 球員</div>
@@ -1275,9 +1278,9 @@
   <!-- ===== PRE-MATCH COACH DIRECTIVE & FOCUS (3-CHOICE) MODAL ===== -->
   <div class="modal-backdrop hidden" id="preMatchFocusModal">
     <div class="modal-sheet" style="max-width:540px;">
-      <div class="card-head">
+      <div class="card-head modal-header-sticky">
         <span class="stamp">📋 賽前更衣室戰術板</span>
-        <span class="tag gold" id="pmFocusModeTag">親自落場作戰</span>
+        <span class="modal-head-right"><span class="tag gold" id="pmFocusModeTag">親自落場作戰</span><button type="button" class="manga-btn modal-top-close" id="btnTopClosePreMatch" aria-label="關閉">✕</button></span>
       </div>
       <div style="font-size:17px; font-weight:900; margin-bottom:3px;">教練指令及本場專注（三選一）</div>
       <div id="pmFocusMatchup" style="font-size:12px; font-weight:800; color:var(--ink-soft);"></div>
@@ -1292,6 +1295,7 @@
   <!-- ===== END-OF-SEASON AWARDS CEREMONY MODAL ===== -->
   <div class="modal-backdrop hidden" id="seasonAwardsModal">
     <div class="modal-sheet" style="max-width:560px;">
+      <button type="button" class="manga-btn modal-top-close" id="btnTopCloseAwards" aria-label="關閉" style="margin-bottom:6px;">✕</button>
       <div class="awards-hero">
         <span class="stamp" style="background:var(--gold-bright); color:var(--ink);">🏆 SEASON AWARDS</span>
         <div style="font-size:19px; font-weight:900; margin-top:6px;" id="awardsHeroSub">年度頒獎典禮</div>
@@ -1309,9 +1313,9 @@
   <!-- ===== UNIFIED SETTLEMENT MODAL (POST-MATCH / TRAINING / EVENT) ===== -->
   <div class="modal-backdrop hidden" id="unifiedSettlementModal">
     <div class="modal-sheet settlement-sheet">
-      <div class="settlement-kicker">
+      <div class="settlement-kicker modal-header-sticky">
         <span class="stamp" id="settleKindStamp">🏆 賽後結算</span>
-        <span class="tag gold" id="settleSubTag"></span>
+        <span class="modal-head-right"><span class="tag gold" id="settleSubTag"></span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseSettlement" aria-label="關閉">✕</button></span>
       </div>
       <div class="mvp-moment-card">
         <div class="mvp-moment-badge" id="settleMvpBadge">🏆 MVP 時刻</div>
@@ -1434,7 +1438,7 @@
     </div>
   </div>
 
-  <script src="./ui-refactor.js?v=20261128s2c"></script>
+  <script src="./ui-refactor.js?v=20261128s3"></script>
   <script>
     /* =========================================================================
        《Basketball Time》 Phase 2 — Season Schedule, LOD Simulation, IndexedDB & Roster Import
@@ -5794,6 +5798,11 @@
         else if (rivalBig && Match.rivalHardTriggersThisQ < 1 && Match.cooldownSec <= 40) { Match.rivalHardTriggersThisQ += 1; hard = "🔥 以牙還牙"; }
         else if ((u.pts === 18 || u.pts === 19 || u.pts === 28 || u.pts === 29) && Match.cooldownSec <= 25) hard = "🏆 里程碑";
 
+        if (!hard && window.BTUI && BTUI.isTutorialActive()) {
+          const tutCnt = Match.tutorialBulletCount || 0;
+          if (tutCnt < 1 && Match.timeLeftSec <= 96) hard = "🎓 新秀首秀高光";
+          else if (tutCnt < 2 && Match.timeLeftSec <= 48 && Match.cooldownSec <= 12) hard = "🎓 關鍵決勝教學";
+        }
         if (hard || (Match.tension >= tc.triggerThreshold && Match.cooldownSec <= 0)) { enterBulletTime(hard || "⚡ HIGHLIGHT"); return; }
       }
       if (!Match.fastSimming) updateHUD();
@@ -5929,7 +5938,7 @@
     // ---------- BULLET TIME：情境動態選卡、風險／報酬、Grit 意志與教練信任 ----------
     function enterBulletTime(triggerTag) {
       const eqSet = new Set(Season.equippedTraits);
-      Match.phase = "BULLET"; Match.tension = 0;
+      Match.phase = "BULLET"; Match.tension = 0; Match.tutorialBulletCount = (Match.tutorialBulletCount || 0) + 1;
       const tc = DB.leagues.tensionConfig;
       const isCrunch = Match.quarter >= 4 && Match.timeLeftSec <= Math.max(120, tc.clutchWindowSec);
       Match.cooldownSec = isCrunch ? tc.clutchCooldownSec : tc.normalCooldownSec;
@@ -7352,8 +7361,17 @@
         if (doNewRoll) {
           if (createRerollsLeft <= 0) { showToast("命運模式 3 次重骰已用完！"); return; }
           createRerollsLeft -= 1;
+          let rolledRarity = rollWeightedRarity();
+          // 第 3 次重骰（最後一抽）保底至少 3★ 地區良才，避免新玩家全程鎖死凡人
+          if (createRerollsLeft === 0 && rolledRarity.stars < 3) {
+            const gem = DB.origins.rarities.find(r => r.stars === 3) || DB.origins.rarities[1];
+            if (gem) {
+              rolledRarity = gem;
+              showToast("✨ 命運保底發動！最後重骰至少獲得 3★【地區良才】！");
+            }
+          }
           lockedFateRoll = {
-            rarity: rollWeightedRarity(),
+            rarity: rolledRarity,
             bg: DB.origins.backgrounds[Math.floor(Math.random() * DB.origins.backgrounds.length)],
             heightTrait: rollWeightedHeightTrait()
           };
@@ -8011,6 +8029,8 @@
       document.getElementById("evtDesc").textContent = formatEventText(evt.desc, nctx);
       document.getElementById("evtResultBox").style.display = "none";
       document.getElementById("btnCloseEvent").style.display = "none";
+      const topCloseEvt = document.getElementById("btnTopCloseEvent");
+      if (topCloseEvt) topCloseEvt.style.display = "none";
 
       const box = document.getElementById("evtChoicesBox");
       box.style.display = "block";
@@ -8018,11 +8038,51 @@
         const statVal = ch.stat === "reputation" ? (typeof p.reputation === "number" ? p.reputation : 50) : (p.stats[ch.stat] || 65);
         const rate = Math.min(0.98, ch.base + statVal * ch.w) * 100;
         const feel = describeSuccessFeel(rate, Season.careerYear, new Set(Season.equippedTraits), p.condition);
-        return `<button type="button" class="choice-btn" data-ech="${i}"><span>▶ ${formatEventText(ch.label, nctx)}</span><span style="color:${feel.tone};">${feel.text}</span></button>`;
+        const okPills = formatEventEffPills(ch.ok && ch.ok.eff, true);
+        return `<button type="button" class="choice-btn" data-ech="${i}" style="flex-direction:column; align-items:stretch; gap:4px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; width:100%;">
+            <span>▶ ${formatEventText(ch.label, nctx)}</span>
+            <span style="color:${feel.tone}; flex-shrink:0;">${feel.text}</span>
+          </div>
+          ${okPills ? `<div class="eff-pills-row">${okPills}</div>` : ""}
+        </button>`;
       }).join("");
       box._evt = evt;
       box._nctx = nctx;
       document.getElementById("eventModal").classList.remove("hidden");
+    }
+
+    const EVENT_EFF_LABELS = {
+      threePt: "三分", midRange: "中投", inside: "內線", playmaking: "組織",
+      perimDef: "外防", intDef: "內防", rebound: "籃板", speed: "速度",
+      vertical: "彈跳", strength: "力量", iq: "球商", grit: "意志",
+      condition: "狀態", reputation: "名氣", coachTrust: "教練信任",
+      rivalHeat: "宿敵火藥味", heightCm: "身高"
+    };
+    function formatEventEffEntries(eff) {
+      if (!eff || typeof eff !== "object") return [];
+      const items = [];
+      for (const [k, v] of Object.entries(eff)) {
+        if (k === "setInjury" && v) { items.push({ text: "🩹 受傷風險", cls: "neg" }); continue; }
+        if (k === "clearInjury" && v) { items.push({ text: "💚 傷勢痊癒", cls: "pos" }); continue; }
+        if (k === "midTransfer" && v) { items.push({ text: "🔄 季中轉隊", cls: "neu" }); continue; }
+        if (typeof v !== "number" || v === 0) continue;
+        const lbl = EVENT_EFF_LABELS[k] || k;
+        const unit = k === "heightCm" ? "cm" : (k === "condition" ? "%" : "");
+        const sign = v > 0 ? "+" : "";
+        const cls = (k === "rivalHeat") ? "neu" : (v > 0 ? "pos" : "neg");
+        items.push({ text: `${lbl} ${sign}${v}${unit}`, cls });
+      }
+      return items;
+    }
+    function formatEventEffText(eff) {
+      return formatEventEffEntries(eff).map(x => x.text).join("、");
+    }
+    function formatEventEffPills(eff, isPreview = false) {
+      const items = formatEventEffEntries(eff);
+      if (!items.length) return "";
+      const prefix = isPreview ? `<span class="eff-pill neu">成功預計</span>` : "";
+      return prefix + items.map(x => `<span class="eff-pill ${x.cls}">${x.text}</span>`).join("");
     }
 
     function resolveEventChoice(idx) {
@@ -8093,7 +8153,9 @@
       if (!Array.isArray(p.eventLog)) p.eventLog = [];
       const nctx = document.getElementById("evtChoicesBox")._nctx || getEventNameContext();
       const fmtTitle = formatEventText(evt.title, nctx);
-      const fmtOut = formatEventText(out.text, nctx);
+      const effTextLine = formatEventEffText(out.eff);
+      const fmtOutNarrative = formatEventText(out.text, nctx);
+      const fmtOut = effTextLine ? `${fmtOutNarrative}（實際效果：${effTextLine}）` : fmtOutNarrative;
       p.eventLog.unshift({
         round: Math.min(Season.schedule.length, Season.currentRoundIdx + 1),
         title: fmtTitle,
@@ -8110,8 +8172,11 @@
         document.getElementById("evtChoicesBox").style.display = "none";
         const rb = document.getElementById("evtResultBox");
         rb.style.display = "block";
-        rb.innerHTML = `<div style="color:${ok ? "#15803D" : "#C81E1E"}; margin-bottom:4px;">${ok ? "✅ 經歷結果" : "⚠️ 意外波折"}</div><div>${fmtOut}</div>`;
+        const effPillsHtml = formatEventEffPills(out.eff, false);
+        rb.innerHTML = `<div style="color:${ok ? "#15803D" : "#C81E1E"}; margin-bottom:4px;">${ok ? "✅ 經歷結果" : "⚠️ 意外波折"}</div><div>${fmtOutNarrative}</div>${effPillsHtml ? `<div class="eff-pills-row">${effPillsHtml}</div>` : ""}`;
         document.getElementById("btnCloseEvent").style.display = "inline-flex";
+        const topCloseEvt2 = document.getElementById("btnTopCloseEvent");
+        if (topCloseEvt2) topCloseEvt2.style.display = "inline-flex";
       }
     }
 
@@ -8571,6 +8636,36 @@
         const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
         const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "basketball_time_roster.json"; a.click(); URL.revokeObjectURL(a.href);
         showToast("已匯出外部 Roster JSON 名單範本");
+      });
+
+      // Stage 3 UX: Universal top-right close (X) buttons on all popup modals
+      const bindTopClose = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener("click", fn); };
+      bindTopClose("btnTopCloseHubDetail", () => {
+        const b = document.getElementById("btnCloseHubDetailModal");
+        if (b) b.click(); else document.getElementById("hubDetailModal")?.classList.add("hidden");
+      });
+      bindTopClose("btnTopCloseBoxScore", () => {
+        if (Match && Match.phase === "ENDED") returnToHub();
+        else closePauseCenter();
+      });
+      bindTopClose("btnTopCloseLiveDetail", () => document.getElementById("liveDetailStatsModal")?.classList.add("hidden"));
+      bindTopClose("btnTopClosePlayerDetail", () => document.getElementById("playerDetailModal")?.classList.add("hidden"));
+      bindTopClose("btnTopCloseSettlement", () => {
+        const b = document.getElementById("btnSettlementContinue");
+        if (b) b.click(); else document.getElementById("unifiedSettlementModal")?.classList.add("hidden");
+      });
+      bindTopClose("btnTopCloseAwards", () => {
+        const b = document.getElementById("btnAwardsContinue");
+        if (b) b.click(); else document.getElementById("seasonAwardsModal")?.classList.add("hidden");
+      });
+      bindTopClose("btnTopCloseApRem", () => document.getElementById("apReminderModal")?.classList.add("hidden"));
+      bindTopClose("btnTopClosePreMatch", () => document.getElementById("preMatchFocusModal")?.classList.add("hidden"));
+      bindTopClose("btnTopCloseInjury", () => document.getElementById("injuryChoiceModal")?.classList.add("hidden"));
+      bindTopClose("btnTopCloseCrossroads", () => document.getElementById("crossroadsModal")?.classList.add("hidden"));
+      bindTopClose("btnTopCloseEvent", () => {
+        const b = document.getElementById("btnCloseEvent");
+        if (b && b.style.display !== "none") b.click();
+        else document.getElementById("eventModal")?.classList.add("hidden");
       });
 
       document.getElementById("btnImportRoster").addEventListener("click", () => document.getElementById("rosterFileInput").click());
