@@ -1022,6 +1022,51 @@
       "baseRate": 65,
       "pts": 0,
       "statType": "STEAL"
+    },
+    {
+      "id": "def_close_contest_hand",
+      "name": "高速撲防封眼干擾",
+      "scenarios": [
+        "DEF_CORNER_CLOSEOUT",
+        "DEF_LAST_SHOT"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "RING_TIMING",
+      "statType": "CONTEST",
+      "pts": 0,
+      "baseRate": 68,
+      "perfectBonus": 20,
+      "desc": "全力橫移撲防封死底角出手視線，逼出高難度打鐵！"
+    },
+    {
+      "id": "def_close_boxout_crash",
+      "name": "回縮卡位搶長籃板",
+      "scenarios": [
+        "DEF_CORNER_CLOSEOUT",
+        "DEF_OFFBALL_GLASS"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "MASH_CLASH",
+      "statType": "BOXOUT_DREB",
+      "pts": 0,
+      "baseRate": 72,
+      "perfectBonus": 18,
+      "desc": "干擾後迅速沉肩卡位，牢牢鎖死長籃板落點！"
+    },
+    {
+      "id": "def_close_jump_lane",
+      "name": "預判底角回傳截斷",
+      "scenarios": [
+        "DEF_CORNER_CLOSEOUT",
+        "DEF_ONBALL_ISO"
+      ],
+      "zone": "DEFENSE",
+      "qteType": "DUAL_SNAP",
+      "statType": "STEAL",
+      "pts": 2,
+      "baseRate": 54,
+      "perfectBonus": 26,
+      "desc": "假意撲防實則封鎖回傳路線，鬼手搶斷一條龍快攻！"
     }
   ]
 }

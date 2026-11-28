@@ -80,67 +80,67 @@
       "perimDef": 64,
       "intDef": 46,
       "rebound": 48,
-      "speed": 72,
+      "speed": 71,
       "vertical": 62,
       "strength": 54,
       "iq": 70,
       "grit": 64
     },
     "SG": {
-      "threePt": 69,
+      "threePt": 70,
       "midRange": 68,
-      "inside": 62,
-      "playmaking": 62,
-      "perimDef": 65,
+      "inside": 63,
+      "playmaking": 63,
+      "perimDef": 66,
       "intDef": 50,
       "rebound": 52,
-      "speed": 69,
+      "speed": 70,
       "vertical": 67,
       "strength": 58,
-      "iq": 64,
-      "grit": 65
+      "iq": 65,
+      "grit": 66
     },
     "SF": {
-      "threePt": 63,
-      "midRange": 65,
-      "inside": 66,
-      "playmaking": 60,
-      "perimDef": 66,
-      "intDef": 60,
-      "rebound": 62,
-      "speed": 67,
-      "vertical": 68,
-      "strength": 65,
-      "iq": 63,
-      "grit": 65
+      "threePt": 65,
+      "midRange": 67,
+      "inside": 68,
+      "playmaking": 62,
+      "perimDef": 67,
+      "intDef": 62,
+      "rebound": 64,
+      "speed": 68,
+      "vertical": 69,
+      "strength": 66,
+      "iq": 65,
+      "grit": 66
     },
     "PF": {
       "threePt": 54,
       "midRange": 60,
-      "inside": 70,
+      "inside": 69,
       "playmaking": 54,
       "perimDef": 58,
-      "intDef": 69,
-      "rebound": 70,
+      "intDef": 68,
+      "rebound": 69,
       "speed": 61,
-      "vertical": 68,
-      "strength": 72,
+      "vertical": 67,
+      "strength": 70,
       "iq": 62,
-      "grit": 67
+      "grit": 66
     },
     "C": {
       "threePt": 45,
       "midRange": 54,
-      "inside": 74,
+      "inside": 69,
       "playmaking": 50,
       "perimDef": 50,
-      "intDef": 74,
-      "rebound": 74,
+      "intDef": 69,
+      "rebound": 70,
       "speed": 54,
-      "vertical": 64,
-      "strength": 76,
-      "iq": 62,
-      "grit": 68
+      "vertical": 63,
+      "strength": 71,
+      "iq": 61,
+      "grit": 66
     }
   },
   "rarities": [
@@ -224,9 +224,9 @@
       "name": "籃球世家",
       "desc": "從小看錄影帶長大，球商、中投與組織遠超同齡人。",
       "bonus": {
-        "iq": 10,
-        "midRange": 6,
-        "playmaking": 5,
+        "iq": 7,
+        "midRange": 5,
+        "playmaking": 4,
         "threePt": 4
       },
       "skills": [
@@ -241,10 +241,10 @@
       "name": "街場傳說",
       "desc": "水泥場殺出重圍，三分與控球華麗但有時上頭。",
       "bonus": {
-        "threePt": 7,
-        "playmaking": 6,
+        "threePt": 6,
+        "playmaking": 5,
         "speed": 5,
-        "grit": 5
+        "grit": 4
       },
       "skills": [
         "microwave",
@@ -256,13 +256,13 @@
     },
     {
       "id": "bg_track_convert",
-      "name": "田徑轉行",
+      "name": "田徑跳高轉項生",
       "desc": "田徑冠軍半路出家，速度、彈跳與內線爆發勁爆但易犯規。",
       "bonus": {
-        "speed": 10,
-        "vertical": 12,
-        "inside": 6,
-        "threePt": -4
+        "speed": 9,
+        "vertical": 10,
+        "inside": 5,
+        "threePt": -3
       },
       "skills": [
         "foul_trouble"
@@ -276,9 +276,9 @@
       "name": "大器晚成",
       "desc": "高一身材單薄，發育期爆發力驚人，意志力與籃板拼勁極強。",
       "bonus": {
-        "grit": 12,
-        "rebound": 6,
-        "iq": 5,
+        "grit": 8,
+        "rebound": 5,
+        "iq": 4,
         "midRange": 4
       },
       "skills": [
@@ -293,10 +293,10 @@
       "name": "偏鄉孤狼",
       "desc": "小校唯一核心，內外線防守與力量對抗極度硬朗。",
       "bonus": {
-        "perimDef": 8,
-        "intDef": 6,
-        "strength": 7,
-        "grit": 8
+        "perimDef": 6,
+        "intDef": 5,
+        "strength": 5,
+        "grit": 5
       },
       "skills": [
         "perimeter_lockdown_t3"
@@ -306,29 +306,14 @@
       ]
     },
     {
-      "id": "track_star",
-      "name": "田徑跳高轉項生",
-      "desc": "原本是縣級跳高同百米冠軍，起步速度與彈跳天賦傲視同齡人。",
-      "bonus": {
-        "speed": 6,
-        "vertical": 7,
-        "threePt": -3
-      },
-      "skills": [
-        "fastbreak_king"
-      ],
-      "flags": [
-        "track_crossover"
-      ]
-    },
-    {
       "id": "bench_miracle",
       "name": "國中飲水機奇蹟",
       "desc": "國中坐足三年冷板凳，靠瘋狂苦練球商同防守企穩陣腳。",
       "bonus": {
-        "iq": 6,
-        "grit": 6,
-        "perimDef": 4
+        "iq": 7,
+        "grit": 7,
+        "perimDef": 5,
+        "playmaking": 1
       },
       "skills": [
         "iron_lungs",
@@ -343,9 +328,10 @@
       "name": "海外籃球學院歸國生",
       "desc": "從小在歐洲青訓營打磨基本功，擋拆視野與投射姿勢極為標準。",
       "bonus": {
-        "playmaking": 5,
-        "iq": 5,
-        "midRange": 4
+        "playmaking": 6,
+        "iq": 6,
+        "midRange": 5,
+        "threePt": 3
       },
       "skills": [
         "pnr_maestro_t3"
@@ -359,9 +345,10 @@
       "name": "退役名帥關門弟子",
       "desc": "每晚跟隨傳奇老教頭打磨古典中投與背打步法，基本功無懈可擊。",
       "bonus": {
-        "midRange": 6,
-        "inside": 4,
-        "iq": 4
+        "midRange": 7,
+        "inside": 5,
+        "iq": 5,
+        "grit": 3
       },
       "skills": [
         "midrange_maestro_t3"
@@ -375,9 +362,10 @@
       "name": "體校魔鬼梯隊出身",
       "desc": "日復一日萬次對抗訓練練就鋼鐵身軀，力量與護框意識遠超同齡。",
       "bonus": {
-        "strength": 6,
-        "intDef": 5,
-        "rebound": 4
+        "strength": 7,
+        "intDef": 6,
+        "rebound": 5,
+        "inside": 2
       },
       "skills": [
         "boxout_beast_t3"
@@ -391,9 +379,10 @@
       "name": "大傷復出的倔強天才",
       "desc": "國中曾因重傷休戰一年，雖背負體能隱患卻練出無比強大的關鍵心臟。",
       "bonus": {
-        "grit": 7,
-        "threePt": 5,
-        "iq": 4
+        "grit": 8,
+        "threePt": 6,
+        "iq": 4,
+        "midRange": 2
       },
       "skills": [
         "big_heart",
@@ -409,8 +398,9 @@
       "desc": "由細到大跟住老豆看遍全球比賽錄像，對防守輪轉與局勢判讀瞭如指掌。",
       "bonus": {
         "iq": 8,
-        "playmaking": 5,
-        "perimDef": 3
+        "playmaking": 6,
+        "perimDef": 4,
+        "threePt": 2
       },
       "skills": [
         "floor_iq",
@@ -425,9 +415,10 @@
       "name": "神秘轉校生王牌",
       "desc": "帶住全國街場不敗傳說轉學而來，打法華麗帶刺，極易點燃宿敵戰火。",
       "bonus": {
-        "threePt": 5,
-        "inside": 5,
-        "speed": 4
+        "threePt": 6,
+        "inside": 6,
+        "speed": 5,
+        "vertical": 3
       },
       "skills": [
         "ankle_breaker_t3",
@@ -442,7 +433,7 @@
     {
       "id": "height_petite",
       "name": "📏 靈巧小鋼炮 (-6cm)",
-      "weight": 18,
+      "weight": 16,
       "deltaCm": -6,
       "bonus": {
         "speed": 4,
@@ -453,14 +444,14 @@
     {
       "id": "height_standard",
       "name": "📏 標準黃金體型 (+0cm)",
-      "weight": 44,
+      "weight": 40,
       "deltaCm": 0,
       "bonus": {}
     },
     {
       "id": "height_wingspan",
       "name": "📏 鋼鐵長臂怪 (+3cm)",
-      "weight": 14,
+      "weight": 13,
       "deltaCm": 3,
       "bonus": {
         "perimDef": 4,
@@ -471,7 +462,7 @@
     {
       "id": "height_long",
       "name": "📏 長臂高個 (+5cm)",
-      "weight": 24,
+      "weight": 20,
       "deltaCm": 5,
       "bonus": {
         "intDef": 3,
@@ -482,7 +473,7 @@
     {
       "id": "height_tower",
       "name": "📏 錯位高塔 (+9cm)",
-      "weight": 11,
+      "weight": 8,
       "deltaCm": 9,
       "bonus": {
         "rebound": 5,
