@@ -1,0 +1,18 @@
+{
+  "locale": "zh-Hant",
+  "name": "繁體中文",
+  "ui": {
+    "appTitle": "BASKETBALL TIME",
+    "subtitle": "從 15 歲全國高校大賽起步，打出屬於你的熱血籃球傳奇",
+    "startNew": "🏀 開始遊戲",
+    "continueCareer": "🏀 繼續生涯",
+    "modTitle": "🧩 社群聯賽 Mod",
+    "modDefault": "原創熱血聯賽（預設）",
+    "settingsTitle": "⚙️ 遊戲設定中心",
+    "bgmLabel": "🎵 熱血 BGM 與球館環境音",
+    "sfxLabel": "🔊 比賽與介面音效",
+    "offensePillar": "🔥 進攻火力",
+    "defensePillar": "🛡️ 防守籃板",
+    "physicalPillar": "⚡ 體能心智"
+  }
+}
