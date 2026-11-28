@@ -1329,67 +1329,70 @@ html, body {
   white-space: nowrap;
 }
 
-/* ==================== STAGE 3: UNIVERSAL TOP-RIGHT CLOSE (X) & DATA-DRIVEN EVENT PILLS ==================== */
+/* ==================== STAGE 3: UNIVERSAL FIXED TOP-RIGHT CLOSE (X) & DATA-DRIVEN EVENT PILLS ==================== */
 .modal-sheet {
   position: relative;
 }
-.modal-top-close {
+/* Zero-height sticky anchor keeps X pinned at exact same top-right spot across ALL modals without pushing content */
+.modal-x-anchor {
   position: sticky;
   top: 0;
-  float: right;
-  z-index: 20;
-  min-width: 34px !important;
-  height: 34px !important;
-  padding: 0 9px !important;
-  font-size: 14px !important;
-  line-height: 1 !important;
+  height: 0;
+  width: 100%;
+  overflow: visible;
+  z-index: 45;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+.modal-x-btn {
+  pointer-events: auto;
+  position: relative;
+  top: -2px;
+  right: -2px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--ink, #111);
+  background: rgba(255, 253, 247, 0.96);
+  color: var(--ink, #111);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #FFFDF7;
-  color: var(--ink, #111);
-  border: 2px solid var(--ink, #111);
-  border-radius: 8px;
   box-shadow: 2px 2px 0 var(--ink, #111);
   cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.1s ease, background 0.15s ease;
 }
-.modal-top-close:active {
+.modal-x-btn:hover {
+  background: #FEF3C7;
+}
+.modal-x-btn:active {
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 var(--ink, #111);
 }
-.modal-header-sticky {
-  position: sticky;
-  top: -14px;
-  z-index: 15;
-  background: var(--paper, #FAF7F0);
-  padding-top: 6px;
-  margin-top: -6px;
-}
-.modal-head-right {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-.cr-editorial-modal .modal-top-close-abs {
-  position: absolute;
+/* Zero-padding editorial modals (crossroads, injuryChoice, skillCodex): match exact 10px inset */
+.cr-editorial-modal > .modal-x-anchor .modal-x-btn {
   top: 10px;
   right: 10px;
-  z-index: 25;
-  min-width: 34px;
-  height: 34px;
-  padding: 0 9px;
-  font-size: 14px;
-  font-weight: 900;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 253, 247, 0.94);
-  color: #111;
-  border: 2px solid #111;
-  border-radius: 8px;
-  box-shadow: 2px 2px 0 #111;
-  cursor: pointer;
+}
+/* Safe right padding on modal top headers so titles, tags, and OVR badges never collide with the fixed X */
+.modal-sheet > .card-head,
+.modal-sheet > .panel-head,
+.modal-sheet > .settlement-kicker,
+.modal-sheet > .pdetail-hero,
+.modal-sheet > .awards-hero,
+.modal-sheet > .cr-hero-banner,
+.modal-sheet > .modal-top-bar {
+  padding-right: 42px !important;
+}
+.cr-editorial-modal > .cr-hero-banner {
+  padding-right: 52px !important;
 }
 .eff-pills-row {
   display: flex;

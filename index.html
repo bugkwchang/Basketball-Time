@@ -514,7 +514,7 @@
     }
     .boot-error-box.hidden { display: none; }
   </style>
-  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s3" />
+  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s3b" />
 </head>
 <body>
   <!-- ==================== BOOT LOADING OVERLAY ==================== -->
@@ -957,9 +957,10 @@
   <!-- UNUSED AP REMINDER MODAL -->
   <div class="modal-backdrop hidden" id="apReminderModal">
     <div class="modal-sheet" style="max-width:440px;">
-      <div class="card-head modal-header-sticky">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnTopCloseApRem" aria-label="關閉">✕</button></div>
+      <div class="card-head">
         <span class="stamp" style="background:var(--gold-bright); color:var(--ink);">⚠️ 場外養成提醒</span>
-        <span class="modal-head-right"><span class="tag" id="apRemCountTag">尚餘 2 AP</span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseApRem" aria-label="關閉">✕</button></span>
+        <span class="tag" id="apRemCountTag">尚餘 2 AP</span>
       </div>
       <div style="font-size:17px; font-weight:900; margin-bottom:6px;">本週仲未完成場外訓練！</div>
       <div id="apRemBody" style="font-size:13px; line-height:1.6; margin-bottom:14px; color:var(--ink-soft);">
@@ -1047,12 +1048,13 @@
   <!-- ===== PAUSE & POST-MATCH MODAL ===== -->
   <div class="modal-backdrop hidden" id="boxScoreModal">
     <div class="modal-sheet">
-      <div class="modal-header-sticky" style="display:flex; justify-content:space-between; align-items:center; gap:10px; border-bottom:2.5px solid var(--ink); padding-bottom:8px; margin-bottom:8px;">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnTopCloseBoxScore" aria-label="關閉">✕</button></div>
+      <div class="modal-top-bar" style="display:flex; justify-content:space-between; align-items:center; gap:10px; border-bottom:2.5px solid var(--ink); padding-bottom:8px; margin-bottom:8px;">
         <div>
           <div style="font-size:11.5px; font-weight:900; color:var(--crimson);" id="bsHeaderSub">⏸ 比賽暫停中</div>
           <div style="font-size:20px; font-weight:900;" id="bsHeaderScore">0 - 0</div>
         </div>
-        <span class="modal-head-right"><div class="rank-stamp" id="bsRankStamp" style="display:none;">S</div><button type="button" class="manga-btn modal-top-close" id="btnTopCloseBoxScore" aria-label="關閉">✕</button></span>
+        <div class="rank-stamp" id="bsRankStamp" style="display:none;">S</div>
       </div>
 
       <div id="bsMvpBanner" class="mvp-banner" style="display:none;"></div>
@@ -1091,9 +1093,10 @@
   <!-- ===== CAREER EVENT ENGINE MODAL ===== -->
   <div class="modal-backdrop hidden" id="eventModal">
     <div class="modal-sheet" style="max-width:560px;">
-      <div class="modal-header-sticky" style="display:flex; justify-content:space-between; align-items:center; border-bottom:2.5px solid var(--ink); padding-bottom:8px; margin-bottom:10px;">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnTopCloseEvent" aria-label="關閉" style="display:none;">✕</button></div>
+      <div class="modal-top-bar" style="display:flex; justify-content:space-between; align-items:center; border-bottom:2.5px solid var(--ink); padding-bottom:8px; margin-bottom:10px;">
         <span class="stamp" id="evtStageStamp">生涯隨機事件</span>
-        <span class="modal-head-right"><span style="font-size:12px; font-weight:900; color:var(--ink-soft);" id="evtAgeStamp">15 歲</span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseEvent" aria-label="關閉" style="display:none;">✕</button></span>
+        <span style="font-size:12px; font-weight:900; color:var(--ink-soft);" id="evtAgeStamp">15 歲</span>
       </div>
       <div style="font-size:19px; font-weight:900; margin-bottom:6px;" id="evtTitle">事件標題</div>
       <div style="font-size:13px; color:var(--ink-soft); margin-bottom:12px; line-height:1.5;" id="evtDesc"></div>
@@ -1120,7 +1123,7 @@
   <!-- ===== GRADUATION CROSSROADS / TRANSFER / HOF MODAL ===== -->
   <div class="modal-backdrop hidden" id="crossroadsModal">
     <div class="modal-sheet cr-editorial-modal" style="max-width:580px; padding:0; overflow-y:auto;">
-      <button type="button" class="modal-top-close-abs" id="btnTopCloseCrossroads" aria-label="關閉">✕</button>
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnTopCloseCrossroads" aria-label="關閉">✕</button></div>
       <div class="cr-hero-banner">
         <span class="stamp" style="background:var(--gold-bright); color:var(--ink);" id="crStamp">🎓 18 歲畢業選秀大會</span>
         <div class="cr-hero-title" id="crTitle">選擇你的下一個舞台</div>
@@ -1136,30 +1139,29 @@
   <!-- ===== ONE-PAGE HUB DRILL-DOWN MODAL ===== -->
   <div class="modal-backdrop hidden" id="hubDetailModal" style="z-index:92;">
     <div class="modal-sheet" style="max-width:680px;">
-      <div class="card-head modal-header-sticky">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnCloseHubDetailModal" aria-label="關閉">✕</button></div>
+      <div class="card-head">
         <div class="card-title" id="hubDetailModalTitle">詳細資訊</div>
-        <span class="modal-head-right"><span class="tag gold" id="hubDetailModalBadge">詳細</span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseHubDetail" aria-label="關閉">✕</button></span>
+        <span class="tag gold" id="hubDetailModalBadge">詳細</span>
       </div>
       <div id="hubDetailModalBody"></div>
-      <div style="margin-top:12px;">
-        <button type="button" class="manga-btn primary" id="btnCloseHubDetailModal" style="width:100%; min-height:46px;">返回主頁</button>
-      </div>
     </div>
   </div>
 
   <!-- ===== FLOATING LIVE MATCH DETAILED STATS MODAL ===== -->
   <div class="modal-backdrop hidden" id="liveDetailStatsModal" style="z-index:96;">
     <div class="modal-sheet" style="max-width:500px;">
-      <div class="card-head modal-header-sticky">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnCloseLiveDetailStats" aria-label="關閉">✕</button></div>
+      <div class="card-head">
         <div class="card-title">📊 本場即時詳細數據</div>
-        <span class="modal-head-right"><span class="tag gold" id="ldsSub">Q1 · 0 - 0</span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseLiveDetail" aria-label="關閉">✕</button></span>
+        <span class="tag gold" id="ldsSub">Q1 · 0 - 0</span>
       </div>
       <div id="ldsPlayerName" style="font-size:15px; font-weight:900; margin-bottom:6px;"></div>
       <div id="ldsFocusBox" style="display:none; padding:8px 10px; border:2px solid var(--ink); background:#FEFCE8; margin-bottom:8px;"></div>
       <div id="ldsStatGrid" class="live-stat-grid"></div>
       <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
         <button type="button" class="manga-btn gold" id="btnLiveOpenFullBox" style="width:100%; min-height:46px;">📋 查看雙方 12 人完整 Box Score</button>
-        <button type="button" class="manga-btn primary" id="btnCloseLiveDetailStats" style="width:100%; min-height:46px;">▶ 繼續比賽</button>
+
       </div>
     </div>
   </div>
@@ -1167,11 +1169,11 @@
   <!-- ===== CLICKABLE PLAYER DETAIL CARD MODAL ===== -->
   <!-- ==================== SKILL CODEX, UNLOCK CHAINS & SYNERGY MODAL ==================== -->
   <div class="modal-backdrop hidden" id="skillCodexModal" style="z-index:101;">
-    <div class="modal-sheet cr-editorial-modal" style="max-width:580px; padding:0; overflow:hidden;">
+    <div class="modal-sheet cr-editorial-modal" style="max-width:580px; padding:0; overflow-y:auto;">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnCloseSkillCodex" aria-label="關閉">✕</button></div>
       <div class="cr-hero-banner" style="background:linear-gradient(135deg, #181614 0%, #1E293B 65%, #92400E 100%);">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
           <span class="stamp" style="background:var(--gold-bright); color:var(--ink);">📖 球員技能圖鑑殿堂</span>
-          <button type="button" class="manga-btn" id="btnCloseSkillCodex" style="padding:4px 10px; font-size:12px;">✕ 關閉</button>
         </div>
         <div class="cr-hero-title" id="codexHeaderTitle">實戰領悟・技能故事・A＋B 隱藏聯動</div>
         <div class="cr-hero-desc" id="codexHeaderSub">達成賽場傳奇條件解鎖稀有技能，同時裝備指定組合觸發隱藏加成！</div>
@@ -1190,7 +1192,7 @@
   <!-- ==================== INJURY NARRATIVE CHOICE MODAL ==================== -->
   <div class="modal-backdrop hidden" id="injuryChoiceModal" style="z-index:102;">
     <div class="modal-sheet cr-editorial-modal" style="max-width:520px; padding:0; overflow-y:auto;">
-      <button type="button" class="modal-top-close-abs" id="btnTopCloseInjury" aria-label="關閉">✕</button>
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnTopCloseInjury" aria-label="關閉">✕</button></div>
       <div class="cr-hero-banner" style="background:linear-gradient(135deg, #181614 0%, #7F1D1D 100%);">
         <span class="stamp" style="background:#FCA5A5; color:#181614;" id="injChoiceStamp">🩹 賽前傷病臨場抉擇</span>
         <div class="cr-hero-title" id="injChoiceTitle">帶傷硬撐，還是乖乖休養？</div>
@@ -1233,12 +1235,12 @@
   <!-- ==================== OFFSEASON LEAGUE REPORT MODAL ==================== -->
   <div class="modal-backdrop hidden" id="offseasonReportModal" style="z-index:98;">
     <div class="modal-sheet" style="max-width:560px; padding:14px;">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnCloseOffseasonReport" aria-label="關閉">✕</button></div>
       <div class="panel-head" style="margin-bottom:8px;">
         <div>
           <span class="stamp" id="osrSeasonStamp" style="background:var(--gold-bright); color:var(--ink);">新球季快報</span>
           <span style="font-size:16px; font-weight:900; margin-left:6px;" id="osrTitle">休賽季聯盟異動總結</span>
         </div>
-        <button type="button" class="manga-btn" id="btnCloseOffseasonReport" style="padding:5px 10px; font-size:12px;">✕ 關閉</button>
       </div>
       <div class="osr-tabs" id="osrTabBar">
         <button type="button" class="osr-tab active" data-osr-tab="myteam">本隊異動</button>
@@ -1255,7 +1257,7 @@
 
   <div class="modal-backdrop hidden" id="playerDetailModal" style="z-index:105;">
     <div class="modal-sheet pdetail-sheet">
-      <button type="button" class="manga-btn modal-top-close" id="btnTopClosePlayerDetail" aria-label="關閉" style="margin-bottom:6px;">✕</button>
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnClosePlayerDetail" aria-label="關閉">✕</button></div>
       <div class="pdetail-hero">
         <div style="min-width:0;">
           <div class="pdetail-name" id="pdHeroName">#10 球員</div>
@@ -1271,16 +1273,17 @@
       <div id="pdStatsGrid" class="pdetail-stat-grid"></div>
       <div style="font-size:11.5px; font-weight:900; margin-bottom:5px;">⚡ 持有技能與特質（點擊查看效果）</div>
       <div id="pdSkillsBox" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px;"></div>
-      <button type="button" class="manga-btn primary" id="btnClosePlayerDetail" style="width:100%; min-height:46px;">關閉球員檔案</button>
+
     </div>
   </div>
 
   <!-- ===== PRE-MATCH COACH DIRECTIVE & FOCUS (3-CHOICE) MODAL ===== -->
   <div class="modal-backdrop hidden" id="preMatchFocusModal">
     <div class="modal-sheet" style="max-width:540px;">
-      <div class="card-head modal-header-sticky">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnTopClosePreMatch" aria-label="關閉">✕</button></div>
+      <div class="card-head">
         <span class="stamp">📋 賽前更衣室戰術板</span>
-        <span class="modal-head-right"><span class="tag gold" id="pmFocusModeTag">親自落場作戰</span><button type="button" class="manga-btn modal-top-close" id="btnTopClosePreMatch" aria-label="關閉">✕</button></span>
+        <span class="tag gold" id="pmFocusModeTag">親自落場作戰</span>
       </div>
       <div style="font-size:17px; font-weight:900; margin-bottom:3px;">教練指令及本場專注（三選一）</div>
       <div id="pmFocusMatchup" style="font-size:12px; font-weight:800; color:var(--ink-soft);"></div>
@@ -1295,7 +1298,7 @@
   <!-- ===== END-OF-SEASON AWARDS CEREMONY MODAL ===== -->
   <div class="modal-backdrop hidden" id="seasonAwardsModal">
     <div class="modal-sheet" style="max-width:560px;">
-      <button type="button" class="manga-btn modal-top-close" id="btnTopCloseAwards" aria-label="關閉" style="margin-bottom:6px;">✕</button>
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnTopCloseAwards" aria-label="關閉">✕</button></div>
       <div class="awards-hero">
         <span class="stamp" style="background:var(--gold-bright); color:var(--ink);">🏆 SEASON AWARDS</span>
         <div style="font-size:19px; font-weight:900; margin-top:6px;" id="awardsHeroSub">年度頒獎典禮</div>
@@ -1313,9 +1316,10 @@
   <!-- ===== UNIFIED SETTLEMENT MODAL (POST-MATCH / TRAINING / EVENT) ===== -->
   <div class="modal-backdrop hidden" id="unifiedSettlementModal">
     <div class="modal-sheet settlement-sheet">
-      <div class="settlement-kicker modal-header-sticky">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnTopCloseSettlement" aria-label="關閉">✕</button></div>
+      <div class="settlement-kicker">
         <span class="stamp" id="settleKindStamp">🏆 賽後結算</span>
-        <span class="modal-head-right"><span class="tag gold" id="settleSubTag"></span><button type="button" class="manga-btn modal-top-close" id="btnTopCloseSettlement" aria-label="關閉">✕</button></span>
+        <span class="tag gold" id="settleSubTag"></span>
       </div>
       <div class="mvp-moment-card">
         <div class="mvp-moment-badge" id="settleMvpBadge">🏆 MVP 時刻</div>
@@ -1345,9 +1349,9 @@
   <!-- ===== PHASE 5: SETTINGS CENTER MODAL ===== -->
   <div id="settingsModal" class="modal-backdrop hidden">
     <div class="modal-sheet" style="max-width:460px;">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnCloseSettings" aria-label="關閉">✕</button></div>
       <div class="card-head" style="margin-bottom:10px; padding-bottom:8px;">
         <div class="card-title">⚙️ 遊戲設定中心</div>
-        <button type="button" class="manga-btn" id="btnCloseSettings" style="padding:4px 10px;">✕ 關閉</button>
       </div>
       <div class="settings-list">
         <div class="setting-row">
@@ -1402,9 +1406,9 @@
   <!-- ===== PHASE 5: LEAGUE HISTORICAL RECORD WALL MODAL ===== -->
   <div id="leagueRecordsModal" class="modal-backdrop hidden">
     <div class="modal-sheet" style="max-width:560px; max-height:88vh; display:flex; flex-direction:column;">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnCloseLeagueRecords" aria-label="關閉">✕</button></div>
       <div class="card-head" style="margin-bottom:8px; padding-bottom:8px;">
         <div class="card-title">🏛️ 聯賽歷史紀錄牆</div>
-        <button type="button" class="manga-btn" id="btnCloseLeagueRecords" style="padding:4px 10px;">✕ 關閉</button>
       </div>
       <div class="leaders-tab-row" id="leagueRecordsTabs" style="margin-bottom:10px;">
         <button type="button" class="leaders-tab-btn active" data-lrtab="champions">🏆 歷屆總冠軍與 FMVP</button>
@@ -1417,9 +1421,9 @@
   <!-- ===== PHASE 5: CAREER RETROSPECTIVE & SHAREABLE POSTER MODAL ===== -->
   <div id="careerRetroModal" class="modal-backdrop hidden">
     <div class="modal-sheet" style="max-width:580px; max-height:90vh; display:flex; flex-direction:column;">
+      <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnCloseCareerRetro" aria-label="關閉">✕</button></div>
       <div class="card-head" style="margin-bottom:8px; padding-bottom:8px;">
         <div class="card-title" id="careerRetroTitle">🎬 生涯傳奇回顧與海報</div>
-        <button type="button" class="manga-btn" id="btnCloseCareerRetro" style="padding:4px 10px;">✕ 關閉</button>
       </div>
       <div class="leaders-tab-row" id="careerRetroTabs" style="margin-bottom:10px;">
         <button type="button" class="leaders-tab-btn active" data-crtab="poster">🖼️ 傳奇分享海報</button>
@@ -1438,7 +1442,7 @@
     </div>
   </div>
 
-  <script src="./ui-refactor.js?v=20261128s3"></script>
+  <script src="./ui-refactor.js?v=20261128s3b"></script>
   <script>
     /* =========================================================================
        《Basketball Time》 Phase 2 — Season Schedule, LOD Simulation, IndexedDB & Roster Import
