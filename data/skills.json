@@ -127,7 +127,7 @@
       "category": "BLUE_TRAIT",
       "iqBonus": 0,
       "triggerDesc": "連續進球 ≥ 2 球",
-      "desc": "一入波就極速升溫！連續命中後出手命中率 +8%、高光張力累積速度提升 28%。",
+      "desc": "一進球就極速升溫！連續命中後出手命中率 +8%、高光張力累積速度提升 28%。",
       "conditions": [
         {
           "field": "makeStreak",
@@ -721,7 +721,7 @@
       "category": "BLUE_TRAIT",
       "iqBonus": 3,
       "triggerDesc": "客場第 3 節起焦灼戰",
-      "desc": "最鍾意在客場噓聲中入波令全場鴉雀無聲！下半場命中率 +6%、完美區 +12%。",
+      "desc": "最喜歡在客場噓聲中進球令全場鴉雀無聲！下半場命中率 +6%、完美區 +12%。",
       "conditions": [
         {
           "field": "isHome",
@@ -925,7 +925,7 @@
       "category": "BLUE_TRAIT",
       "iqBonus": 5,
       "triggerDesc": "全場常駐",
-      "desc": "完全唔受氣氛或連鐵影響心態！大幅提升選項判斷準確度與 QTE 穩定度。",
+      "desc": "完全不受氣氛或連鐵影響心態！大幅提升選項判斷準確度與 QTE 穩定度。",
       "conditions": [],
       "modifiers": [
         {
