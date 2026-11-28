@@ -611,9 +611,27 @@ html, body {
 /* ==================== CLEAN MODAL Z-INDEX HIERARCHY & QUARTER TABLE FIT ==================== */
 #boxScoreModal, #hubDetailModal { z-index: 92 !important; }
 #apReminderModal, #preMatchFocusModal { z-index: 95 !important; }
+#settingsModal { z-index: 96 !important; }
 #trainQteModal, #liveDetailStatsModal, #eventModal { z-index: 98 !important; }
+#leagueRecordsModal { z-index: 100 !important; }
 #unifiedSettlementModal, #crossroadsModal { z-index: 102 !important; }
+#careerRetroModal { z-index: 106 !important; }
 #playerDetailModal { z-index: 108 !important; }
+
+/* Stage 1 P0 Fix (BUG-01): 2-column tab rows & defensive .modal-card alias */
+#leagueRecordsTabs, #careerRetroTabs, .leaders-tab-row.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+.modal-card {
+  width: min(94vw, 560px);
+  max-height: 90dvh;
+  overflow-y: auto;
+  background: var(--paper, #FAF7F0);
+  border: 3px solid var(--ink, #111);
+  border-radius: 14px;
+  box-shadow: 6px 6px 0 var(--ink, #111);
+  padding: 14px;
+}
 #skillTipPopover { z-index: 9999 !important; }
 
 /* Quarter score table fits 390px cleanly without clipping 總分 */

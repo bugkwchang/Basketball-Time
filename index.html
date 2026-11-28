@@ -514,7 +514,7 @@
     }
     .boot-error-box.hidden { display: none; }
   </style>
-  <link rel="stylesheet" href="./ui-refactor.css?v=20261128d" />
+  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s1" />
 </head>
 <body>
   <!-- ==================== BOOT LOADING OVERLAY ==================== -->
@@ -1220,7 +1220,7 @@
 
   <!-- ==================== OFFSEASON LEAGUE REPORT MODAL ==================== -->
   <div class="modal-backdrop hidden" id="offseasonReportModal" style="z-index:98;">
-    <div class="modal-card" style="max-width:560px; padding:14px;">
+    <div class="modal-sheet" style="max-width:560px; padding:14px;">
       <div class="panel-head" style="margin-bottom:8px;">
         <div>
           <span class="stamp" id="osrSeasonStamp" style="background:var(--gold-bright); color:var(--ink);">新球季快報</span>
@@ -1330,7 +1330,7 @@
   
   <!-- ===== PHASE 5: SETTINGS CENTER MODAL ===== -->
   <div id="settingsModal" class="modal-backdrop hidden">
-    <div class="modal-card" style="max-width:460px;">
+    <div class="modal-sheet" style="max-width:460px;">
       <div class="card-head" style="margin-bottom:10px; padding-bottom:8px;">
         <div class="card-title">⚙️ 遊戲設定中心</div>
         <button type="button" class="manga-btn" id="btnCloseSettings" style="padding:4px 10px;">✕ 關閉</button>
@@ -1377,7 +1377,7 @@
 
   <!-- ===== PHASE 5: LEAGUE HISTORICAL RECORD WALL MODAL ===== -->
   <div id="leagueRecordsModal" class="modal-backdrop hidden">
-    <div class="modal-card" style="max-width:560px; max-height:88vh; display:flex; flex-direction:column;">
+    <div class="modal-sheet" style="max-width:560px; max-height:88vh; display:flex; flex-direction:column;">
       <div class="card-head" style="margin-bottom:8px; padding-bottom:8px;">
         <div class="card-title">🏛️ 聯賽歷史紀錄牆</div>
         <button type="button" class="manga-btn" id="btnCloseLeagueRecords" style="padding:4px 10px;">✕ 關閉</button>
@@ -1392,7 +1392,7 @@
 
   <!-- ===== PHASE 5: CAREER RETROSPECTIVE & SHAREABLE POSTER MODAL ===== -->
   <div id="careerRetroModal" class="modal-backdrop hidden">
-    <div class="modal-card" style="max-width:580px; max-height:90vh; display:flex; flex-direction:column;">
+    <div class="modal-sheet" style="max-width:580px; max-height:90vh; display:flex; flex-direction:column;">
       <div class="card-head" style="margin-bottom:8px; padding-bottom:8px;">
         <div class="card-title" id="careerRetroTitle">🎬 生涯傳奇回顧與海報</div>
         <button type="button" class="manga-btn" id="btnCloseCareerRetro" style="padding:4px 10px;">✕ 關閉</button>
@@ -1414,7 +1414,7 @@
     </div>
   </div>
 
-  <script src="./ui-refactor.js?v=20261128d"></script>
+  <script src="./ui-refactor.js?v=20261128s1"></script>
   <script>
     /* =========================================================================
        《Basketball Time》 Phase 2 — Season Schedule, LOD Simulation, IndexedDB & Roster Import
@@ -3104,7 +3104,12 @@
           return full;
         }
       }
-      const fallback = `${pool.surnames[0]} ${pool.givens[0]} II`;
+      const baseSn = (pool && Array.isArray(pool.surnames) && pool.surnames[0]) || "新秀";
+      const baseGn = (pool && Array.isArray(pool.givens) && pool.givens[0]) || "球員";
+      const baseFull = isAsianOrder ? `${baseSn} ${baseGn}` : `${baseGn}・${baseSn}`;
+      let suffix = 2;
+      let fallback = `${baseFull} #${suffix}`;
+      while (usedNamesSet.has(fallback) && suffix < 999) { suffix += 1; fallback = `${baseFull} #${suffix}`; }
       usedNamesSet.add(fallback);
       return fallback;
     }
@@ -4279,23 +4284,7 @@
       const skNameMap = Object.fromEntries(DB.skills.skills.map(s => [s.id, s.name]));
       const rTag = document.getElementById("hubTeamStrengthTag");
       if (rTag) rTag.textContent = `球隊綜合戰力 OVR ${teamOvr}`;
-      const rBody = document.getElementById("hubTeamRosterBody");
-      if (rBody) {
-        const rosterSorted = [...Season.userRoster].sort((a, b) => (a.role === "STARTER" ? 0 : 1) - (b.role === "STARTER" ? 0 : 1) || b.ovr - a.ovr);
-        rBody.innerHTML = rosterSorted.map(pl => {
-          const s = pl.stats || {};
-          const roleTxt = pl.isUser ? `${rotWin.label}${pl.role === "STARTER" ? "(先發)" : "(替補)"}` : (pl.role === "STARTER" ? "先發主力" : "替補輪換");
-          const skList = (pl.skills || []).map(id => renderSkillChip(id, "font-size:10px; padding:2px 5px; margin:1px;")).join("") || "無";
-          return `<tr class="${pl.isUser ? "hl-row" : (pl.role === "BENCH" ? "bench-row" : "")}">
-            <td class="left"><strong>#${pl.num} ${pl.name}</strong>${pl.isUser ? " ★" : ""}</td>
-            <td>${pl.pos}</td><td>${roleTxt}</td><td>${pl.heightCm || 185}cm</td>
-            <td><strong>${pl.ovr}</strong></td>
-            <td>${s.threePt||70} / ${s.midRange||70} / ${s.inside||70}</td>
-            <td>${s.perimDef||70} / ${s.intDef||70} / ${s.rebound||70}</td>
-            <td class="left" style="font-size:11px;">${skList}</td>
-          </tr>`;
-        }).join("");
-      }
+      // (已移除無效 #hubTeamRosterBody 查詢，名單由球隊管理分頁動態渲染)
 
       // Standings
       document.getElementById("standingsTitle").textContent = `🏆 ${league.name} 積分榜`;
@@ -4786,7 +4775,7 @@
     }
 
     const Match = {
-      phase: "IDLE", league: null, homeName: "", awayName: "",
+      phase: "IDLE", league: null, homeName: "", awayName: "", isHomeGame: true,
       quarter: 1, timeLeftSec: 480, homeScore: 0, awayScore: 0,
       qScoresHome: [0,0,0,0], qScoresAway: [0,0,0,0],
       homeTeam: [], awayTeam: [], userPlayer: null, rivalPlayer: null,
@@ -4805,13 +4794,33 @@
     const activeLineup = (list) => list.filter(p => p.onFloor);
     const pickWeighted = (players, f) => { let sum = players.reduce((a, p) => a + (p[f] || 0.2), 0), r = Math.random() * sum; for (const p of players) { r -= (p[f] || 0.2); if (r <= 0) return p; } return players[0]; };
 
+    function flushBroadcastLog() {
+      const head = document.getElementById("commHeadline");
+      const el = document.getElementById("pbpLog");
+      if (head && Match.commHistory.length) head.textContent = Match.commHistory[0].msg;
+      if (!el) return;
+      const frag = document.createDocumentFragment();
+      const slice = Match.commHistory.slice(0, 30);
+      for (const item of slice) {
+        const row = document.createElement("div");
+        row.className = "pbp-row";
+        row.innerHTML = `<span class="pbp-time">[${item.ts}]</span><span style="${item.hl ? "font-weight:900; color:#FEF08A;" : ""}">${item.msg}</span>`;
+        frag.appendChild(row);
+      }
+      el.innerHTML = "";
+      el.appendChild(frag);
+    }
+
     function broadcast(msg, hl = false) {
       const qLbl = Match.quarter > 4 ? `OT${Match.quarter - 4}` : `Q${Match.quarter}`;
       const ts = `${qLbl} ${formatClock(Match.timeLeftSec)}`;
       Match.commHistory.unshift({ ts, msg, hl });
       if (Match.commHistory.length > 200) Match.commHistory.pop();
-      document.getElementById("commHeadline").textContent = msg;
+      if (Match.fastSimming) return;
+      const head = document.getElementById("commHeadline");
+      if (head) head.textContent = msg;
       const el = document.getElementById("pbpLog");
+      if (!el) return;
       const row = document.createElement("div"); row.className = "pbp-row";
       row.innerHTML = `<span class="pbp-time">[${ts}]</span><span style="${hl ? "font-weight:900; color:#FEF08A;" : ""}">${msg}</span>`;
       el.prepend(row);
@@ -5129,6 +5138,7 @@
       Match.league = league;
       Match.homeName = userTeamObj.name;
       Match.awayName = oppTeamObj.name;
+      Match.isHomeGame = g ? (g.isHome !== false) : true;
       if (window.BTUI && typeof BTUI.resetTutorialFlag === "function") BTUI.resetTutorialFlag();
       Match._historyView = null;
       syncUserTeamRole(false);
@@ -5191,7 +5201,7 @@
         scoreDiffAbs: Math.abs(Match.homeScore - Match.awayScore),
         staminaPct: Math.round(u ? u.stamina : 100),
         makeStreak: Match.makeStreak, missStreak: Match.missStreak,
-        fouls: u ? u.pf : 0, shotZone, possession, isZone: Match.isZone
+        fouls: u ? u.pf : 0, shotZone, possession, isZone: Match.isZone, isHome: Match.isHomeGame !== false
       };
     }
 
@@ -5910,7 +5920,7 @@
         let assignedQte = a.qteType;
         if (a.qteType === "RING_TIMING" && (a.zone === "PAINT" || a.statType === "AND1" || a.statType === "OREB_PUTBACK")) {
           assignedQte = "DOUBLE_RING";
-        } else if (a.qteType === "DUAL_SNAP" || a.statType === "ASSIST" || a.statType === "STEAL" || a.statType === "CONTEST") {
+        } else if (a.qteType !== "DUAL_SNAP" && (a.statType === "ASSIST" || a.statType === "STEAL" || a.statType === "CONTEST")) {
           assignedQte = "DIRECTION_SNAP";
         }
 
@@ -6145,7 +6155,8 @@
       }
       else if (q.type === "MASH_CLASH") { q.power = Math.min(1.0, q.power + q.gainPerTap); SoundFX.tap(); }
       else if (q.type === "DUAL_SNAP") {
-        const node = q.nodes[q.step];
+        const node = Array.isArray(q.nodes) ? q.nodes[q.step] : null;
+        if (!node) { finishQTE(q.hits >= 2 ? "PERFECT" : (q.hits >= 1 ? "GOOD" : "MISS")); return; }
         const ok = (cx === null) || Math.hypot(cx - node.x, (cy - node.y) * 0.55) <= 0.24;
         if (ok) { q.hits += 1; SoundFX.tap(); if (q.step === 0) { q.step = 1; q.nodeTimer = q.maxNodeTime; document.getElementById("btnQteAction").textContent = "⚡ 鎖定 ② (SPACE)"; } else finishQTE(q.hits >= 2 ? "PERFECT" : "GOOD"); }
         else { SoundFX.clank(); finishQTE(q.hits >= 1 ? "GOOD" : "MISS"); }
@@ -6228,7 +6239,9 @@
         qCtx.textAlign = "center"; qCtx.textBaseline = "middle"; drawFittedText(qCtx, `${Math.round(q.power * 100)}% ｜ ${q.timeLeft.toFixed(2)}s`, w * 0.5, by - Math.max(14, h * 0.12), w - 32, 900, Math.max(13, h * 0.14), "#FAF7F0");
       } else if (q.type === "DUAL_SNAP") {
         q.nodeTimer -= dt; if (q.nodeTimer <= 0) { finishQTE(q.hits >= 1 ? "GOOD" : "MISS"); return; }
-        const node = q.nodes[q.step], nx = node.x * w, ny = node.y * h, ratio = Math.max(0, q.nodeTimer / q.maxNodeTime);
+        const node = Array.isArray(q.nodes) ? q.nodes[q.step] : null;
+        if (!node) { finishQTE(q.hits >= 2 ? "PERFECT" : (q.hits >= 1 ? "GOOD" : "MISS")); return; }
+        const nx = node.x * w, ny = node.y * h, ratio = Math.max(0, q.nodeTimer / q.maxNodeTime);
         qCtx.strokeStyle = "#FACC15"; qCtx.lineWidth = 4; qCtx.beginPath(); qCtx.arc(nx, ny, 20 + ratio * 30, 0, Math.PI * 2); qCtx.stroke();
         qCtx.fillStyle = "#C81E1E"; qCtx.strokeStyle = "#FFF"; qCtx.lineWidth = 3; qCtx.beginPath(); qCtx.arc(nx, ny, 20, 0, Math.PI * 2); qCtx.fill(); qCtx.stroke();
         qCtx.textAlign = "center"; qCtx.textBaseline = "middle"; drawFittedText(qCtx, q.step === 0 ? "①" : "②", nx, ny, 34, 900, Math.max(14, h * 0.15), "#FFF");
@@ -6355,7 +6368,7 @@
       let splash = { art: "result_swish", head: "結果結算", sub: "", good: success };
 
       if (card.side === "OFFENSE") {
-        if (card.statType === "ASSIST") {
+        if (card.statType === "ASSIST" || card.statType === "PASS") {
           const mate = pickWeighted(home5.filter(p => !p.isUser), "ovr"); mate.fga += 1;
           const pts = card.pts || 2;
           if (success) {
@@ -6576,6 +6589,7 @@
         handleQuarterEnd();
       }
       Match.fastSimming = false;
+      flushBroadcastLog();
     }
 
     function closePauseCenter() {

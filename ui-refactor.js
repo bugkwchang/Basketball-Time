@@ -869,13 +869,23 @@ window.BTUI = (() => {
     const rtBox = document.getElementById("hubRoleTrustBox");
     if (rtBox) {
       const trust = p.coachTrust || 35;
-      const nextGate = trust < 40 ? { lbl: "輪換門檻", v: 40 } : (trust < 60 ? { lbl: "先發門檻", v: 60 } : (trust < 80 ? { lbl: "王牌門檻", v: 80 } : { lbl: "絕對核心", v: 100 }));
+      const nextGate = trust < 26
+        ? { lbl: "輪換門檻(26)", v: 26, req: "" }
+        : (trust < 46
+          ? { lbl: "第六人門檻(46)", v: 46, req: "" }
+          : (trust < 65
+            ? { lbl: "先發門檻(65)", v: 65, req: "需達 OVR 與 3 場出賽" }
+            : (trust < 85
+              ? { lbl: "王牌門檻(85)", v: 85, req: "需達 OVR 與 6 場出賽" }
+              : { lbl: "絕對王牌(85+)", v: 85, req: "" })));
       const gap = Math.max(0, nextGate.v - trust);
+      const gateExtra = (gap === 0 && Season.rotationKey !== "STAR" && trust >= 65) ? " · 尚需 OVR／出賽場次達標" : (nextGate.req ? ` · ${nextGate.req}` : "");
       rtBox.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px; font-weight:900;">
           <span>🏅 地位：<strong style="color:var(--crimson);">${rotWin.label}</strong></span>
           <span>教練信任：<strong>${trust}/100</strong> <span class="cmp-badge ${gap === 0 ? "pos" : "gold"}">${gap > 0 ? `距${nextGate.lbl}差 ${gap}` : `已達${nextGate.lbl}`}</span></span>
         </div>
+        ${gateExtra ? `<div style="margin-top:2px; font-size:11px; color:var(--ink-soft);">📌 晉升條件：26 輪換 ／ 46 第六人 ／ 65 先發（3場+OVR） ／ 85 王牌（6場+OVR）${gateExtra}</div>` : ""}
         <div style="margin-top:4px; color:var(--ink-soft);">預估上場：<strong>${Math.round(rotWin.minPct * 100)}%–${Math.round(rotWin.maxPct * 100)}%</strong></div>
       `;
     }
@@ -1270,7 +1280,7 @@ window.BTUI = (() => {
         : `下一戰對決 ${g.oppName}（王牌：${g.oppAce}）· 尚餘 ${p.ap} AP，可先去【我】→ 場外養成提升能力！`;
     }
     const trust = (p && p.coachTrust) || 35;
-    const trustGoal = trust < 60 ? "並衝刺教練信任至 60 搶佔先發" : "穩固主力地位衝擊季後賽";
+    const trustGoal = trust < 65 ? "並衝刺教練信任至 65 搶佔先發" : "穩固主力地位衝擊季後賽";
     return `下一戰 ${g.isHome ? "主場" : "客場"} 迎戰 ${g.oppName}（王牌：${g.oppAce}）：鎖定勝利${trustGoal}！`;
   }
 
