@@ -1,0 +1,20 @@
+{
+  "name": "Basketball Time — 熱血籃球生涯模擬",
+  "short_name": "Basketball Time",
+  "description": "從 15 歲全國高校大賽起步，體驗子彈時間關鍵決策、活體跨季聯賽與 6 大舞台的熱血漫畫籃球養成遊戲。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF7F0",
+  "theme_color": "#181614",
+  "lang": "zh-Hant",
+  "icons": [
+    {
+      "src": "./assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

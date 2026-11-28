@@ -563,14 +563,33 @@ window.BTUI = (() => {
 
     const stats = pl.stats || {};
     const statDefs = (db.origins && db.origins.statDefs) || [];
-    document.getElementById("pdStatsGrid").innerHTML = statDefs.map(d => {
-      const v = stats[d.k] || 70;
-      const pct = Math.max(8, Math.min(100, v));
-      const barCls = v >= 85 ? "high" : (v >= 75 ? "good" : "");
+    const defMap = Object.fromEntries(statDefs.map(d => [d.k, d.l]));
+    const pillars = [
+      { title: "🔥 進攻火力", keys: ["threePt", "midRange", "inside", "playmaking"] },
+      { title: "🛡️ 防守籃板", keys: ["perimDef", "intDef", "rebound"] },
+      { title: "⚡ 體能心智", keys: ["speed", "vertical", "strength", "iq", "grit"] }
+    ];
+    const gradeOf = (v) => v >= 90 ? { g: "S", cls: "tier-s" } : (v >= 80 ? { g: "A", cls: "tier-a" } : (v >= 70 ? { g: "B", cls: "tier-b" } : { g: "C", cls: "tier-c" }));
+    document.getElementById("pdStatsGrid").innerHTML = pillars.map(pil => {
+      const avg = Math.round(pil.keys.reduce((s, k) => s + (stats[k] || 70), 0) / pil.keys.length);
+      const rows = pil.keys.map(k => {
+        const v = stats[k] || 70;
+        const pct = Math.max(8, Math.min(100, v));
+        const gr = gradeOf(v);
+        const barCls = v >= 90 ? "elite" : (v >= 80 ? "high" : (v >= 70 ? "good" : ""));
+        return `
+          <div class="pdetail-stat-row">
+            <div class="pdetail-stat-top">
+              <span class="pdetail-stat-lbl">${defMap[k] || k}</span>
+              <span class="pdetail-stat-val"><span class="stat-grade-pill ${gr.cls}">${gr.g}</span>${v}</span>
+            </div>
+            <div class="pdetail-bar-track"><div class="pdetail-bar-fill ${barCls}" style="width:${pct}%;"></div></div>
+          </div>`;
+      }).join("");
       return `
-        <div class="pdetail-stat-row">
-          <div class="pdetail-stat-top"><span>${d.l}</span><span style="color:${v >= 85 ? "#C81E1E" : "#111"};">${v}</span></div>
-          <div class="pdetail-bar-track"><div class="pdetail-bar-fill ${barCls}" style="width:${pct}%;"></div></div>
+        <div class="pdetail-pillar">
+          <div class="pdetail-pillar-head"><span>${pil.title}</span><span class="pdetail-pillar-avg">均 ${avg}</span></div>
+          <div class="pdetail-pillar-grid">${rows}</div>
         </div>`;
     }).join("");
 
@@ -2171,6 +2190,13 @@ window.BTUI = (() => {
       sfxBtn.textContent = cfg.sfx ? "開啟" : "靜音";
       sfxBtn.classList.toggle("on", cfg.sfx);
     }
+    const bgmBtn = document.getElementById("btnSettingBgm");
+    if (bgmBtn) {
+      const bgmOn = cfg.bgm !== false;
+      bgmBtn.dataset.on = bgmOn ? "1" : "0";
+      bgmBtn.textContent = bgmOn ? "開啟" : "關閉";
+      bgmBtn.classList.toggle("on", bgmOn);
+    }
     if (vibBtn) {
       vibBtn.dataset.on = cfg.vibration ? "1" : "0";
       vibBtn.textContent = cfg.vibration ? "開啟" : "關閉";
@@ -2862,6 +2888,14 @@ window.BTUI = (() => {
       window.GameSettings.set({ sfx: next });
       syncSettingsUi();
       if (next) SoundFX.tap();
+    });
+    const btnSettingBgm = document.getElementById("btnSettingBgm");
+    if (btnSettingBgm) btnSettingBgm.addEventListener("click", () => {
+      if (!window.GameSettings) return;
+      const next = !(window.GameSettings.get().bgm !== false);
+      window.GameSettings.set({ bgm: next });
+      syncSettingsUi();
+      if (typeof SoundFX !== "undefined") SoundFX.tap();
     });
     const btnSettingVib = document.getElementById("btnSettingVib");
     if (btnSettingVib) btnSettingVib.addEventListener("click", () => {

@@ -1413,3 +1413,197 @@ html, body {
 .eff-pill.pos { background: #DCFCE7; color: #166534; }
 .eff-pill.neg { background: #FEE2E2; color: #991B1B; }
 .eff-pill.neu { background: #FEF3C7; color: #92400E; }
+
+
+/* ==================== STAGE 4: PRO SPORTS EDITORIAL UI/UX POLISH ==================== */
+/* 1. Pro Scouting Player Detail Card (#playerDetailModal) */
+.pdetail-sheet {
+  background: linear-gradient(180deg, #FAF7F0 0%, #F4EFE4 100%) !important;
+}
+.pdetail-hero {
+  background: linear-gradient(135deg, #181614 0%, #292524 62%, #7F1D1D 100%) !important;
+  color: #FAF7F0 !important;
+  border: 2.5px solid #181614 !important;
+  border-radius: 12px !important;
+  padding: 14px 48px 14px 14px !important;
+  box-shadow: 4px 4px 0 #181614;
+  margin-bottom: 12px !important;
+}
+.pdetail-name {
+  font-size: 19px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.4px;
+  color: #FFFDF7 !important;
+}
+.pdetail-sub {
+  font-size: 11.5px !important;
+  color: #E7E5E4 !important;
+  margin-top: 3px;
+  line-height: 1.45;
+}
+.pdetail-ovr-pill {
+  background: linear-gradient(180deg, #FDE047 0%, #F59E0B 100%) !important;
+  color: #181614 !important;
+  border: 2.5px solid #181614 !important;
+  border-radius: 10px !important;
+  padding: 6px 12px !important;
+  min-width: 64px;
+  text-align: center;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+}
+#pdStatsGrid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+.pdetail-pillar {
+  background: #FFFDF8;
+  border: 2px solid var(--ink, #181614);
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-shadow: 3px 3px 0 rgba(24, 22, 20, 0.14);
+}
+.pdetail-pillar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--ink, #181614);
+  border-bottom: 1.5px dashed rgba(24, 22, 20, 0.2);
+  padding-bottom: 4px;
+  margin-bottom: 7px;
+}
+.pdetail-pillar-avg {
+  font-size: 11px;
+  background: #181614;
+  color: #FACC15;
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+.pdetail-pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 12px;
+}
+.pdetail-stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+.pdetail-stat-val {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+}
+.stat-grade-pill {
+  font-size: 9.5px;
+  font-weight: 900;
+  padding: 0 4px;
+  border-radius: 4px;
+  line-height: 1.4;
+  border: 1px solid #181614;
+}
+.stat-grade-pill.tier-s { background: #FACC15; color: #181614; }
+.stat-grade-pill.tier-a { background: #DC2626; color: #FFF; }
+.stat-grade-pill.tier-b { background: #16A34A; color: #FFF; }
+.stat-grade-pill.tier-c { background: #E7E5E4; color: #44403C; }
+.pdetail-bar-track {
+  height: 7px !important;
+  background: #E7E5E4 !important;
+  border-radius: 999px !important;
+  overflow: hidden;
+  border: 1px solid rgba(24, 22, 20, 0.25);
+}
+.pdetail-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #78716C;
+  transition: width 0.25s ease;
+}
+.pdetail-bar-fill.good  { background: linear-gradient(90deg, #16A34A, #22C55E); }
+.pdetail-bar-fill.high  { background: linear-gradient(90deg, #DC2626, #F97316); }
+.pdetail-bar-fill.elite { background: linear-gradient(90deg, #CA8A04, #FACC15); }
+
+/* 2. Pro Broadcast Match HUD & Scorebug (#viewMatch) */
+.match-hud-bar {
+  background: linear-gradient(180deg, #181614 0%, #26221F 100%) !important;
+  border-bottom: 3px solid #FACC15 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+}
+.team-score {
+  font-variant-numeric: tabular-nums;
+  border-radius: 8px !important;
+  border: 2px solid rgba(255, 255, 255, 0.22) !important;
+  padding: 4px 10px !important;
+}
+.team-score.home {
+  border-left: 4px solid #DC2626 !important;
+  background: rgba(220, 38, 38, 0.16) !important;
+}
+.team-score:not(.home) {
+  border-right: 4px solid #38BDF8 !important;
+  background: rgba(56, 189, 248, 0.14) !important;
+}
+.clock-pill {
+  background: #FACC15 !important;
+  color: #181614 !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.4px;
+  border: 2px solid #181614 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+.micro-ribbon {
+  background: #FFFDF7 !important;
+  border-bottom: 2px solid var(--ink, #181614) !important;
+}
+#hudBoxLine span {
+  background: #F5F1E6;
+  border: 1.5px solid rgba(24, 22, 20, 0.35);
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.commentary-box {
+  border: 2.5px solid var(--ink, #181614) !important;
+  border-radius: 10px !important;
+  box-shadow: 3px 3px 0 rgba(24, 22, 20, 0.15);
+}
+.command-dock .action-card {
+  border: 2.5px solid var(--ink, #181614) !important;
+  border-radius: 12px !important;
+  box-shadow: 4px 4px 0 var(--ink, #181614) !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.command-dock .action-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink, #181614) !important;
+}
+
+/* 3. Hub Editorial Polish & Subtle Event Choice Hints */
+.ovr-kpi-card {
+  border-top: 3px solid var(--ink, #181614);
+  background: #FFFDF8 !important;
+}
+.hub-drawer-btn {
+  border-radius: 10px !important;
+  box-shadow: 3px 3px 0 rgba(24, 22, 20, 0.14);
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+.hub-drawer-btn:active {
+  transform: translate(1px, 1px);
+}
+.eff-pill.subtle {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 1.5px 6px;
+  border-style: dashed;
+  opacity: 0.92;
+}

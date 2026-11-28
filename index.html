@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#181614" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Basketball Time" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./assets/icon.svg" />
   <title>《Basketball Time》熱血籃球傳奇 — 高校至職業名人堂生涯</title>
   <style>
     :root {
@@ -514,7 +520,7 @@
     }
     .boot-error-box.hidden { display: none; }
   </style>
-  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s3b" />
+  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s4" />
 </head>
 <body>
   <!-- ==================== BOOT LOADING OVERLAY ==================== -->
@@ -582,8 +588,8 @@
     </header>
     <div class="onboard-stepper">
       <div class="stepper-track">
-        <div class="step-pill active" id="onboardStepPill1">① 揀位置</div>
-        <div class="step-pill" id="onboardStepPill2">② 睇天賦</div>
+        <div class="step-pill active" id="onboardStepPill1">① 選位置</div>
+        <div class="step-pill" id="onboardStepPill2">② 看天賦</div>
         <div class="step-pill" id="onboardStepPill3">③ 打教學賽</div>
       </div>
     </div>
@@ -606,7 +612,7 @@
               <option value="SF">小前鋒 (SF)</option><option value="PF">大前鋒 (PF)</option><option value="C">中鋒 (C)</option>
             </select>
           </div>
-          <button type="button" class="manga-btn primary" id="btnStep1Next" style="width:100%; min-height:50px; font-size:15px;">下一步：睇天賦鑑定書 →</button>
+          <button type="button" class="manga-btn primary" id="btnStep1Next" style="width:100%; min-height:50px; font-size:15px;">下一步：看天賦鑑定書 →</button>
         </div>
       </div>
 
@@ -629,7 +635,7 @@
               </div>
               <button class="manga-btn gold" id="btnCreateRoll" type="button" style="width:100%; min-height:46px;">🎲 重骰命運天賦</button>
               <div style="display:flex; gap:8px;">
-                <button class="manga-btn" id="btnStep2Back" type="button" style="min-height:48px;">← 揀位置</button>
+                <button class="manga-btn" id="btnStep2Back" type="button" style="min-height:48px;">← 選位置</button>
                 <button class="manga-btn primary" id="btnConfirmCareer" type="button" style="flex:1; min-height:48px; font-size:14.5px;">🏀 下一步：打教學賽 →</button>
               </div>
             </div>
@@ -962,7 +968,7 @@
         <span class="stamp" style="background:var(--gold-bright); color:var(--ink);">⚠️ 場外養成提醒</span>
         <span class="tag" id="apRemCountTag">尚餘 2 AP</span>
       </div>
-      <div style="font-size:17px; font-weight:900; margin-bottom:6px;">本週仲未完成場外訓練！</div>
+      <div style="font-size:17px; font-weight:900; margin-bottom:6px;">本週尚未完成場外訓練！</div>
       <div id="apRemBody" style="font-size:13px; line-height:1.6; margin-bottom:14px; color:var(--ink-soft);">
         開賽後本週剩餘的場外行動力將會重置。建議先訓練提升能力或進行冰浴恢復狀態再出賽！
       </div>
@@ -1363,6 +1369,13 @@
         </div>
         <div class="setting-row">
           <div>
+            <div class="setting-title">🎵 熱血 BGM 與球館環境音</div>
+            <div class="setting-sub">大廳節拍、末節緊張變奏與現場歡呼氛圍</div>
+          </div>
+          <button type="button" class="toggle-pill on" id="btnSettingBgm" data-on="1">開啟</button>
+        </div>
+        <div class="setting-row">
+          <div>
             <div class="setting-title">📳 震動回饋</div>
             <div class="setting-sub">關鍵進球、ZONE 覺醒與打鐵觸覺震動</div>
           </div>
@@ -1442,7 +1455,7 @@
     </div>
   </div>
 
-  <script src="./ui-refactor.js?v=20261128s3b"></script>
+  <script src="./ui-refactor.js?v=20261128s4"></script>
   <script>
     /* =========================================================================
        《Basketball Time》 Phase 2 — Season Schedule, LOD Simulation, IndexedDB & Roster Import
@@ -4654,15 +4667,49 @@
       score2: (n, a) => a ? `漂亮配合！${a} 撕開防線妙傳，${n} 順勢放進兩分！` : `${n} 加速變向甩開防守，高難度上籃命中兩分！`,
       score3: (n, a) => a ? `手起刀落！${a} 吸引夾擊分出外線，${n} 三分冷箭穿心！` : `全場歡呼！${n} 三分線外迎面干拔——空心刷網！`,
       rivalBig: (n, p) => `全場驚呼！宿敵 ${n} 展現王牌氣場，頂住壓迫硬解命中關鍵 ${p} 分！`,
-      steal: (s, v) => `睇穿晒！${s} 鬼手一掏，生生從 ${v} 手中偷球斷下球權！`,
+      steal: (s, v) => `看穿晒！${s} 鬼手一掏，生生從 ${v} 手中偷球斷下球權！`,
       block: (b, v) => `遮天蔽日！${b} 迎面一巴掌將 ${v} 的投籃狠狠扇飛！`,
       oreb: (n) => `籃板王本色！${n} 在人群中躍起摘下前場進攻籃板！`,
       foulFT: (f, s, m) => `哨聲響起！${f} 被吹打手犯規，${s} 兩罰 ${m} 中。`
     };
 
+    // Stage 4: Lightweight i18n architecture (zh-Hant active, ready for zh-Hans / en / ja expansion)
+    window.BTI18n = (() => {
+      let locale = "zh-Hant";
+      let dict = {};
+      return {
+        SUPPORTED: ["zh-Hant"],
+        getLocale() { return locale; },
+        async load(loc = "zh-Hant") {
+          locale = loc;
+          try {
+            const res = await fetch(`./i18n/${loc}.json`, { cache: "no-cache" });
+            if (res.ok) { const j = await res.json(); dict = (j && j.ui) || {}; }
+          } catch (_) {}
+          return dict;
+        },
+        t(key, fallback = "") { return (dict && dict[key]) || fallback || key; }
+      };
+    })();
+
+    // Stage 4: Offline-safe anonymous funnel logger hook
+    window.BTAnalytics = (() => {
+      const KEY = "BT_FUNNEL_LOG_V1";
+      return {
+        track(eventName, meta = {}) {
+          try {
+            const list = JSON.parse(localStorage.getItem(KEY) || "[]");
+            list.push({ e: eventName, t: Date.now(), ...meta });
+            if (list.length > 80) list.splice(0, list.length - 80);
+            localStorage.setItem(KEY, JSON.stringify(list));
+          } catch (_) {}
+        }
+      };
+    })();
+
     const GameSettings = (() => {
       const KEY = "BT_SETTINGS_V1";
-      const defaults = { sfx: true, vibration: true, pace: 1.0 };
+      const defaults = { sfx: true, bgm: true, vibration: true, pace: 1.0 };
       let state = { ...defaults };
       try {
         const raw = localStorage.getItem(KEY);
@@ -4670,6 +4717,7 @@
           const parsed = JSON.parse(raw);
           state = {
             sfx: parsed.sfx !== false,
+            bgm: parsed.bgm !== false,
             vibration: parsed.vibration !== false,
             pace: [1, 1.3, 1.6].includes(Number(parsed.pace)) ? Number(parsed.pace) : 1.0
           };
@@ -4682,12 +4730,193 @@
         get() { return { ...state }; },
         set(patch) {
           if (typeof patch.sfx === "boolean") state.sfx = patch.sfx;
+          if (typeof patch.bgm === "boolean") state.bgm = patch.bgm;
           if (typeof patch.vibration === "boolean") state.vibration = patch.vibration;
           if (patch.pace !== undefined && [1, 1.3, 1.6].includes(Number(patch.pace))) state.pace = Number(patch.pace);
           save();
           if (typeof SoundFX !== "undefined" && SoundFX.setMuted) SoundFX.setMuted(!state.sfx);
+          if (window.BTAudioEngine) window.BTAudioEngine.setEnabled(state.bgm);
           return { ...state };
         }
+      };
+    })();
+
+    // Stage 4: Pure Web Audio API Procedural BGM + Stadium Ambience Engine (0 KB external audio, 100% offline)
+    window.BTAudioEngine = (() => {
+      let ctx = null, masterGain = null, crowdNode = null, crowdGain = null;
+      let timerId = null, step = 0, mode = "LOBBY", enabled = GameSettings.get().bgm !== false;
+      let unlocked = false;
+
+      function initCtx() {
+        if (!ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return null;
+          ctx = new AC();
+          masterGain = ctx.createGain();
+          masterGain.gain.value = enabled ? 0.24 : 0.0001;
+          masterGain.connect(ctx.destination);
+        }
+        if (ctx.state === "suspended") ctx.resume().catch(() => {});
+        return ctx;
+      }
+
+      function ensureCrowd() {
+        if (!ctx || crowdNode) return;
+        const sr = ctx.sampleRate;
+        const buf = ctx.createBuffer(1, sr * 2, sr);
+        const ch = buf.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0;
+        for (let i = 0; i < ch.length; i++) {
+          const w = Math.random() * 2 - 1;
+          b0 = 0.997 * b0 + w * 0.029;
+          b1 = 0.985 * b1 + w * 0.032;
+          b2 = 0.950 * b2 + w * 0.048;
+          ch[i] = (b0 + b1 + b2) * 0.45;
+        }
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.loop = true;
+        const flt = ctx.createBiquadFilter();
+        flt.type = "bandpass";
+        flt.frequency.value = 680;
+        flt.Q.value = 0.7;
+        crowdGain = ctx.createGain();
+        crowdGain.gain.value = 0.0001;
+        src.connect(flt);
+        flt.connect(crowdGain);
+        crowdGain.connect(masterGain);
+        src.start();
+        crowdNode = src;
+      }
+
+      function playKick(t, gain = 0.28) {
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(130, t);
+        osc.frequency.exponentialRampToValueAtTime(42, t + 0.11);
+        g.gain.setValueAtTime(gain, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+        osc.connect(g); g.connect(masterGain);
+        osc.start(t); osc.stop(t + 0.14);
+      }
+
+      function playSnare(t, gain = 0.10) {
+        const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.08), ctx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+        const src = ctx.createBufferSource(); src.buffer = buf;
+        const flt = ctx.createBiquadFilter(); flt.type = "highpass"; flt.frequency.value = 1400;
+        const g = ctx.createGain(); g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+        src.connect(flt); flt.connect(g); g.connect(masterGain);
+        src.start(t);
+      }
+
+      function playBass(t, freq, dur = 0.18, gain = 0.12) {
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, t);
+        g.gain.setValueAtTime(gain, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        osc.connect(g); g.connect(masterGain);
+        osc.start(t); osc.stop(t + dur + 0.02);
+      }
+
+      function playStab(t, freqs, dur = 0.16, gain = 0.045) {
+        freqs.forEach(f => {
+          const osc = ctx.createOscillator(), g = ctx.createGain();
+          osc.type = mode === "CLUTCH" ? "sawtooth" : "triangle";
+          osc.frequency.setValueAtTime(f, t);
+          g.gain.setValueAtTime(gain, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+          osc.connect(g); g.connect(masterGain);
+          osc.start(t); osc.stop(t + dur + 0.02);
+        });
+      }
+
+      function tick() {
+        if (!enabled || !ctx || ctx.state !== "running" || document.hidden) return;
+        const t = ctx.currentTime + 0.02;
+        const s16 = step % 16;
+        // Detect current game mode dynamically
+        const inMatch = typeof Match !== "undefined" && Match && Match.phase && Match.phase !== "IDLE" && Match.phase !== "ENDED";
+        const isClutch = inMatch && ((Match.quarter >= 4 && Match.timeLeftSec <= 120) || Match.quarter > 4);
+        const nextMode = isClutch ? "CLUTCH" : (inMatch ? "MATCH" : "LOBBY");
+        if (nextMode !== mode) { mode = nextMode; restartLoop(); return; }
+
+        if (crowdGain) {
+          const targetCrowd = mode === "CLUTCH" ? 0.14 : (mode === "MATCH" ? 0.075 : 0.0001);
+          crowdGain.gain.setTargetAtTime(targetCrowd, t, 0.35);
+        }
+
+        // Kick pattern
+        if (s16 === 0 || s16 === 6 || s16 === 8 || (mode === "CLUTCH" && s16 === 14)) playKick(t, mode === "LOBBY" ? 0.22 : 0.28);
+        // Snare on 4 & 12
+        if (s16 === 4 || s16 === 12) playSnare(t, mode === "CLUTCH" ? 0.12 : 0.08);
+        // Hi-hat pulse
+        if (s16 % 2 === 0) playSnare(t, 0.022);
+
+        // Passionate minor pentatonic bass groove (D minor: D2, F2, G2, A2, C3)
+        const bassSeq = mode === "CLUTCH"
+          ? [73.4, 73.4, 87.3, 98.0, 110.0, 98.0, 87.3, 65.4]
+          : [73.4, 0, 87.3, 73.4, 98.0, 0, 110.0, 87.3];
+        if (s16 % 2 === 0) {
+          const bf = bassSeq[(s16 / 2) % bassSeq.length];
+          if (bf > 0) playBass(t, bf, 0.16, mode === "LOBBY" ? 0.10 : 0.13);
+        }
+        // Chord stabs on beats 0 & 10
+        if (s16 === 0) playStab(t, [293.7, 349.2, 440.0], 0.22, 0.038);
+        if (s16 === 10) playStab(t, mode === "CLUTCH" ? [329.6, 392.0, 493.9] : [261.6, 329.6, 392.0], 0.18, 0.035);
+
+        step = (step + 1) % 64;
+      }
+
+      function restartLoop() {
+        if (timerId) { clearInterval(timerId); timerId = null; }
+        if (!enabled || !unlocked) return;
+        const bpm = mode === "CLUTCH" ? 132 : (mode === "MATCH" ? 118 : 104);
+        const stepMs = Math.round((60 / bpm / 4) * 1000);
+        timerId = setInterval(tick, stepMs);
+      }
+
+      function unlock() {
+        if (unlocked) return;
+        const c = initCtx();
+        if (!c) return;
+        unlocked = true;
+        ensureCrowd();
+        if (enabled) restartLoop();
+      }
+
+      if (typeof window !== "undefined") {
+        const onFirstGesture = () => { unlock(); };
+        window.addEventListener("pointerdown", onFirstGesture, { once: true, passive: true });
+        window.addEventListener("keydown", onFirstGesture, { once: true, passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (!masterGain || !ctx) return;
+          masterGain.gain.setTargetAtTime((!document.hidden && enabled) ? 0.24 : 0.0001, ctx.currentTime, 0.15);
+        });
+      }
+
+      return {
+        setEnabled(val) {
+          enabled = Boolean(val);
+          if (enabled) {
+            unlock();
+            if (masterGain && ctx) masterGain.gain.setTargetAtTime(0.24, ctx.currentTime, 0.15);
+            restartLoop();
+          } else {
+            if (masterGain && ctx) masterGain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.12);
+            if (timerId) { clearInterval(timerId); timerId = null; }
+          }
+        },
+        crowdRoar() {
+          if (!enabled || !crowdGain || !ctx) return;
+          const t = ctx.currentTime;
+          crowdGain.gain.cancelScheduledValues(t);
+          crowdGain.gain.setTargetAtTime(0.28, t, 0.08);
+          crowdGain.gain.setTargetAtTime(mode === "CLUTCH" ? 0.14 : 0.075, t + 0.7, 0.45);
+        },
+        isEnabled() { return enabled; }
       };
     })();
     window.GameSettings = GameSettings;
@@ -4727,9 +4956,9 @@
         tap() { tone("triangle", 480, 720, 0.05, 0.09); },
         whistle() { tone("sine", 2650, 2780, 0.20, 0.08); tone("sine", 2720, 2580, 0.14, 0.07, 0.18); },
         buzzer() { tone("sawtooth", 145, 138, 0.55, 0.15); },
-        swish() { noise(0.18, 3400, 2.2, 0.16); tone("triangle", 620, 920, 0.11, 0.09, 0.04); },
+        swish() { if (window.BTAudioEngine) window.BTAudioEngine.crowdRoar(); noise(0.18, 3400, 2.2, 0.16); tone("triangle", 620, 920, 0.11, 0.09, 0.04); },
         clank() { tone("square", 220, 95, 0.13, 0.13); noise(0.09, 1100, 1.4, 0.10); },
-        block() { tone("sawtooth", 190, 42, 0.20, 0.20); noise(0.16, 700, 1.0, 0.18); },
+        block() { if (window.BTAudioEngine) window.BTAudioEngine.crowdRoar(); tone("sawtooth", 190, 42, 0.20, 0.20); noise(0.16, 700, 1.0, 0.18); },
         highlight() { tone("triangle", 360, 740, 0.13, 0.12); tone("triangle", 540, 1080, 0.16, 0.10, 0.07); },
         cutin(sfx) {
           if (sfx === "RIM_SHATTER") { tone("sawtooth", 140, 36, 0.32, 0.22); noise(0.24, 900, 1.2, 0.20); }
@@ -6582,7 +6811,7 @@
             splash = { art: "result_assist", head: `ASSIST! 妙傳助攻 +${pts}`, sub: `${mate.name} 接球得分 ｜ #${u.num} ${u.name} AST +1 (${grade})`, good: true };
           } else {
             u.tov += 1; SoundFX.clank();
-            broadcast(`可惜！#${u.num} ${u.name} 傳球意圖被對方睇穿，記一次失誤！`);
+            broadcast(`可惜！#${u.num} ${u.name} 傳球意圖被對方看穿，記一次失誤！`);
             splash = { art: "result_steal", head: `TURNOVER! 傳球被斷`, sub: `#${u.num} ${u.name} TOV +1 ｜ 球權轉換 (${grade})`, good: false };
           }
         } else if (card.statType === "OREB_PUTBACK") {
@@ -7872,7 +8101,7 @@
         }
       } else {
         SoundFX.clank(); applyPlayerDelta({ grit: 1 }); p.condition = Math.max(0, (p.condition || 0) - 16);
-        showTrainBanner("FAIL", "⚠️ 極限特訓失敗！節奏完全跟唔上……", "高難度縮圈失手！僅獲意志 +1，疲勞加劇（狀態 -16）。");
+        showTrainBanner("FAIL", "⚠️ 極限特訓失敗！節奏完全跟不上……", "高難度縮圈失手！僅獲意志 +1，疲勞加劇（狀態 -16）。");
       }
       syncUserTeamRole(false);
       SaveManager.save(Season); renderHub();
@@ -8042,7 +8271,7 @@
         const statVal = ch.stat === "reputation" ? (typeof p.reputation === "number" ? p.reputation : 50) : (p.stats[ch.stat] || 65);
         const rate = Math.min(0.98, ch.base + statVal * ch.w) * 100;
         const feel = describeSuccessFeel(rate, Season.careerYear, new Set(Season.equippedTraits), p.condition);
-        const okPills = formatEventEffPills(ch.ok && ch.ok.eff, true);
+        const okPills = formatEventSubtleHints(ch.ok && ch.ok.eff);
         return `<button type="button" class="choice-btn" data-ech="${i}" style="flex-direction:column; align-items:stretch; gap:4px;">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; width:100%;">
             <span>▶ ${formatEventText(ch.label, nctx)}</span>
@@ -8081,6 +8310,29 @@
     }
     function formatEventEffText(eff) {
       return formatEventEffEntries(eff).map(x => x.text).join("、");
+    }
+    function formatEventSubtleHints(eff) {
+      if (!eff || typeof eff !== "object") return "";
+      const hints = [];
+      const addHint = (icon, label, cls) => {
+        if (!hints.some(h => h.label === label)) hints.push({ icon, label, cls });
+      };
+      for (const [k, v] of Object.entries(eff)) {
+        if (k === "setInjury" && v) { addHint("🩹", "傷病風險", "neg"); continue; }
+        if (k === "clearInjury" && v) { addHint("💚", "傷勢康復", "pos"); continue; }
+        if (k === "midTransfer" && v) { addHint("🔄", "轉隊契機", "neu"); continue; }
+        if (typeof v !== "number" || v === 0) continue;
+        if (["threePt", "midRange", "inside"].includes(k)) addHint("🎯", v > 0 ? "進攻手感" : "手感波動", v > 0 ? "pos" : "neg");
+        else if (["playmaking", "iq"].includes(k)) addHint("🧠", v > 0 ? "球商視野" : "決策風險", v > 0 ? "pos" : "neg");
+        else if (["perimDef", "intDef", "rebound"].includes(k)) addHint("🛡️", v > 0 ? "防守強度" : "防守負荷", v > 0 ? "pos" : "neg");
+        else if (["speed", "vertical", "strength", "heightCm"].includes(k)) addHint("⚡", v > 0 ? "身體素質" : "體格負荷", v > 0 ? "pos" : "neg");
+        else if (k === "grit") addHint("🔥", v > 0 ? "心志磨練" : "心態波動", v > 0 ? "pos" : "neg");
+        else if (k === "condition") addHint(v > 0 ? "💚" : "💦", v > 0 ? "狀態回復" : "體能消耗", v > 0 ? "pos" : "neg");
+        else if (k === "coachTrust") addHint("🤝", v > 0 ? "教練印象" : "信任考驗", v > 0 ? "pos" : "neg");
+        else if (k === "reputation") addHint("⭐", v > 0 ? "媒體聲望" : "輿論壓力", v > 0 ? "pos" : "neg");
+        else if (k === "rivalHeat") addHint("⚔️", "宿敵火藥味", "neu");
+      }
+      return hints.slice(0, 3).map(h => `<span class="eff-pill subtle ${h.cls}">${h.icon} ${h.label}</span>`).join("");
     }
     function formatEventEffPills(eff, isPreview = false) {
       const items = formatEventEffEntries(eff);
@@ -8934,6 +9186,11 @@
     window.loadCareerFromSlot = loadCareerFromSlot;
 
     window.addEventListener("load", () => {
+      if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      }
+      if (window.BTI18n) window.BTI18n.load("zh-Hant");
+      if (window.BTAnalytics) window.BTAnalytics.track("app_boot");
       document.getElementById("btnBootRetry").addEventListener("click", bootGame);
       bootGame();
     });
