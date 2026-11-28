@@ -1302,3 +1302,11 @@ html, body {
 .retro-body {
   flex: 1;
 }
+
+/* Prevent left-edge jersey number clipping on 390px mobile box-score tables */
+#boxScoreModal .data-table td.left,
+#boxScoreModal .data-table th:first-child {
+  padding-left: 10px !important;
+  text-align: left !important;
+  white-space: nowrap;
+}

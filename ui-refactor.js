@@ -213,9 +213,28 @@ window.BTUI = (() => {
       return;
     }
 
+    // 舊存檔歷史數據一致性校驗：若橫幅 MVP 數據與實際數據表不符，直接依勝方最高效球員同步校正
+    const won = bs.homeScore > bs.awayScore;
+    const winRows = won ? (bs.homeTeam || []) : (bs.awayTeam || []);
+    if (winRows.length) {
+      const mvpRow = bs.mvp ? winRows.find(r => r && r.name === bs.mvp.name) : null;
+      const expectedLine = mvpRow ? `${mvpRow.pts || 0}分 ${(mvpRow.oreb || 0) + (mvpRow.dreb || 0)}板 ${mvpRow.ast || 0}助` : "";
+      if (!mvpRow || (bs.mvp && bs.mvp.line !== expectedLine)) {
+        const gsOf = (r) => (r.pts || 0) + ((r.oreb || 0) + (r.dreb || 0)) + (r.ast || 0) * 1.3 + (r.stl || 0) * 2 + (r.blk || 0) * 2 - (r.tov || 0) * 0.8;
+        const best = [...winRows].sort((a, b) => gsOf(b) - gsOf(a))[0];
+        if (best) {
+          bs.mvp = {
+            name: best.name,
+            team: won ? bs.homeName : bs.awayName,
+            line: `${best.pts || 0}分 ${(best.oreb || 0) + (best.dreb || 0)}板 ${best.ast || 0}助`,
+            isUser: Boolean(won && best.isUser)
+          };
+          g.mvp = bs.mvp;
+        }
+      }
+    }
     match._historyView = bs;
     if (typeof activePauseTab !== "undefined") activePauseTab = "HOME";
-    const won = bs.homeScore > bs.awayScore;
     const stageLbl = g.stageLabel || `第 ${g.round} 輪`;
     document.getElementById("bsHeaderSub").textContent = `📜 歷史賽果回顧 · ${stageLbl}（${won ? "勝" : "負"}）`;
     document.getElementById("bsHeaderScore").textContent = `${bs.homeName} ${bs.homeScore} - ${bs.awayScore} ${bs.awayName}`;
