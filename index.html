@@ -514,7 +514,7 @@
     }
     .boot-error-box.hidden { display: none; }
   </style>
-  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s2b" />
+  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s2c" />
 </head>
 <body>
   <!-- ==================== BOOT LOADING OVERLAY ==================== -->
@@ -1434,7 +1434,7 @@
     </div>
   </div>
 
-  <script src="./ui-refactor.js?v=20261128s2b"></script>
+  <script src="./ui-refactor.js?v=20261128s2c"></script>
   <script>
     /* =========================================================================
        《Basketball Time》 Phase 2 — Season Schedule, LOD Simulation, IndexedDB & Roster Import
@@ -1610,6 +1610,31 @@
               }
             }
           }
+        }
+        // 同步「海外聯賽動態 (worldLod)」：聯賽名稱、各隊名稱、榜首、前 3 強與 MVP 領跑王牌
+        if (Array.isArray(targetSeason.worldLod)) {
+          targetSeason.worldLod.forEach(wl => {
+            const lgObj = leagueById[wl.id];
+            if (!lgObj) return;
+            wl.name = lgObj.name;
+            const tMap = Object.fromEntries(lgObj.teams.map(t => [t.id, t]));
+            if (Array.isArray(wl.teams) && wl.teams.length) {
+              wl.teams.forEach(t => {
+                const src = tMap[t.id];
+                if (src) { t.name = src.name; t.ace = src.ace; }
+              });
+              const ranked = [...wl.teams].sort((a, b) => (b.w - a.w) || ((b.pf - b.pa) - (a.pf - a.pa)) || (b.ovr - a.ovr));
+              if (ranked.length) {
+                wl.leader = ranked[0].name;
+                wl.top3 = ranked.slice(0, 3).map(t => ({ name: t.name, w: t.w, l: t.l, ace: t.ace }));
+                const mvpCand = ranked[0].ovr >= (ranked[1]?.ovr || 0) - 2 ? ranked[0] : ranked[1];
+                wl.mvpName = mvpCand.ace;
+              }
+            } else if (lgObj.teams.length) {
+              wl.leader = lgObj.teams[0].name;
+              wl.mvpName = lgObj.teams[0].ace;
+            }
+          });
         }
         if (persistAndRender && targetSeason === Season) {
           syncUserTeamRole(false);
