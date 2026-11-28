@@ -514,7 +514,7 @@
     }
     .boot-error-box.hidden { display: none; }
   </style>
-  <link rel="stylesheet" href="./ui-refactor.css" />
+  <link rel="stylesheet" href="./ui-refactor.css?v=20261128b" />
 </head>
 <body>
   <!-- ==================== BOOT LOADING OVERLAY ==================== -->
@@ -1318,7 +1318,7 @@
 
   <div class="toast" id="toastBox" role="status"></div>
 
-  <script src="./ui-refactor.js"></script>
+  <script src="./ui-refactor.js?v=20261128b"></script>
   <script>
     /* =========================================================================
        《Basketball Time》 Phase 2 — Season Schedule, LOD Simulation, IndexedDB & Roster Import
@@ -3590,8 +3590,10 @@
       if (userMatchResult.userScore > userMatchResult.oppScore) { userTeam.w += 1; oppTeam.l += 1; }
       else { userTeam.l += 1; oppTeam.w += 1; }
       if (window.BTUI && userMatchResult.boxScore) {
-        BTUI.recordMatchToLeagueTotals(userTeam.id, userTeam.name, userMatchResult.boxScore.homeTeam || []);
-        BTUI.recordMatchToLeagueTotals(oppTeam.id, oppTeam.name, userMatchResult.boxScore.awayTeam || []);
+        try {
+          BTUI.recordMatchToLeagueTotals(userTeam.id, userTeam.name, userMatchResult.boxScore.homeTeam || []);
+          BTUI.recordMatchToLeagueTotals(oppTeam.id, oppTeam.name, userMatchResult.boxScore.awayTeam || []);
+        } catch (err) { console.error("[LOD0 recordMatchToLeagueTotals]", err); }
       }
 
       // LOD 0: Simulate remaining pairs in user's league for this round
@@ -3605,8 +3607,10 @@
         a.pf += sa; a.pa += sb; b.pf += sb; b.pa += sa;
         if (sa > sb) { a.w += 1; b.l += 1; } else { b.w += 1; a.l += 1; }
         if (window.BTUI) {
-          BTUI.recordSimulatedTeamGame(a.id, a.name, sa, league);
-          BTUI.recordSimulatedTeamGame(b.id, b.name, sb, league);
+          try {
+            BTUI.recordSimulatedTeamGame(a.id, a.name, sa, league);
+            BTUI.recordSimulatedTeamGame(b.id, b.name, sb, league);
+          } catch (err) { console.error("[LOD0 recordSimulatedTeamGame]", err); }
         }
       }
 
