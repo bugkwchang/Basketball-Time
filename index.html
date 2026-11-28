@@ -520,7 +520,7 @@
     }
     .boot-error-box.hidden { display: none; }
   </style>
-  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s4" />
+  <link rel="stylesheet" href="./ui-refactor.css?v=20261129s4b" />
 </head>
 <body>
   <!-- ==================== BOOT LOADING OVERLAY ==================== -->
@@ -691,11 +691,8 @@
           <span class="top-cta-arrow">▶</span>
         </button>
       </div>
-      <div class="util-drawer" id="topUtilDrawer">
+      <div class="util-drawer" id="topUtilDrawer" style="display:none !important;">
         <button class="manga-btn gold" id="btnOpenSettings" type="button">⚙️ 遊戲設定</button>
-        <button class="manga-btn" id="btnSwitchSaveSlot" type="button" title="切換 3 槽位存檔或備份">💾 存檔管理</button>
-          <button class="manga-btn primary" id="btnNewCareerFlow" type="button">✨ 新建生涯</button>
-        <button class="manga-btn dark" id="btnExportRoster" type="button">⬇ 匯出球員名單</button>
         <button class="manga-btn gold" id="btnImportRoster" type="button">🧩 社群 Mod 匯入</button>
         <input class="hidden-file" id="rosterFileInput" type="file" accept=".json,application/json" />
       </div>
@@ -1265,15 +1262,15 @@
     <div class="modal-sheet pdetail-sheet">
       <div class="modal-x-anchor"><button type="button" class="modal-x-btn" id="btnClosePlayerDetail" aria-label="關閉">✕</button></div>
       <div class="pdetail-hero">
-        <div style="min-width:0;">
+        <div class="pdetail-hero-top">
           <div class="pdetail-name" id="pdHeroName">#10 球員</div>
-          <div class="pdetail-sub" id="pdHeroSub">球隊 · SG · 先發主力</div>
+          <div class="pdetail-ovr-pill">
+            <span class="pdetail-ovr-tag">OVR</span>
+            <span class="pdetail-ovr-num" id="pdOvrVal">80</span>
+            <span class="pdetail-ovr-cmp" id="pdOvrCmp">均75 (+5)</span>
+          </div>
         </div>
-        <div class="pdetail-ovr-pill">
-          <div style="font-size:10px; font-weight:900;">OVR</div>
-          <div style="font-size:22px; font-weight:900; line-height:1;" id="pdOvrVal">80</div>
-          <div style="font-size:9.5px; font-weight:900; margin-top:2px;" id="pdOvrCmp">均75 (+5)</div>
-        </div>
+        <div class="pdetail-meta-chips" id="pdHeroSub"></div>
       </div>
       <div style="font-size:11.5px; font-weight:900;">📊 12 項技術與身體能力</div>
       <div id="pdStatsGrid" class="pdetail-stat-grid"></div>
@@ -1412,6 +1409,14 @@
             <button type="button" class="manga-btn" id="btnSettingResetMod" style="flex:1;">↺ 還原原創預設</button>
           </div>
         </div>
+        <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:8px;">
+          <div style="font-weight:900;">📂 生涯與存檔工具</div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="manga-btn" id="btnSwitchSaveSlot" style="flex:1;">💾 存檔管理</button>
+            <button type="button" class="manga-btn primary" id="btnNewCareerFlow" style="flex:1;">✨ 新建生涯</button>
+            <button type="button" class="manga-btn dark" id="btnExportRoster" style="flex:1;">⬇ 匯出名單</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1455,7 +1460,7 @@
     </div>
   </div>
 
-  <script src="./ui-refactor.js?v=20261128s4"></script>
+  <script src="./ui-refactor.js?v=20261129s4b"></script>
   <script>
     /* =========================================================================
        《Basketball Time》 Phase 2 — Season Schedule, LOD Simulation, IndexedDB & Roster Import
@@ -4741,188 +4746,128 @@
       };
     })();
 
-    // Stage 4: Pure Web Audio API Procedural BGM + Stadium Ambience Engine (0 KB external audio, 100% offline)
+    // Stage 4B: Studio MP3 BGM (Court / Clutch) + Stadium Crowd Ambience Engine
     window.BTAudioEngine = (() => {
-      let ctx = null, masterGain = null, crowdNode = null, crowdGain = null;
-      let timerId = null, step = 0, mode = "LOBBY", enabled = GameSettings.get().bgm !== false;
+      let enabled = GameSettings.get().bgm !== false;
       let unlocked = false;
+      let currentTrack = null; // "COURT" | "CLUTCH"
+      let pollId = null;
 
-      function initCtx() {
-        if (!ctx) {
-          const AC = window.AudioContext || window.webkitAudioContext;
-          if (!AC) return null;
-          ctx = new AC();
-          masterGain = ctx.createGain();
-          masterGain.gain.value = enabled ? 0.24 : 0.0001;
-          masterGain.connect(ctx.destination);
+      function makeLoop(src, vol) {
+        const a = new Audio(src);
+        a.loop = true;
+        a.preload = "auto";
+        a.volume = vol;
+        return a;
+      }
+
+      const tracks = {
+        COURT: makeLoop("./assets/audio/bgm_court.mp3", 0.36),
+        CLUTCH: makeLoop("./assets/audio/bgm_clutch.mp3", 0.42),
+        CROWD: makeLoop("./assets/audio/crowd_ambience.mp3", 0.0)
+      };
+
+      function safePlay(a) {
+        if (!a) return;
+        const p = a.play();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      }
+
+      function syncState() {
+        if (!unlocked || !enabled || document.hidden) {
+          tracks.COURT.pause();
+          tracks.CLUTCH.pause();
+          tracks.CROWD.pause();
+          return;
         }
-        if (ctx.state === "suspended") ctx.resume().catch(() => {});
-        return ctx;
-      }
-
-      function ensureCrowd() {
-        if (!ctx || crowdNode) return;
-        const sr = ctx.sampleRate;
-        const buf = ctx.createBuffer(1, sr * 2, sr);
-        const ch = buf.getChannelData(0);
-        let b0 = 0, b1 = 0, b2 = 0;
-        for (let i = 0; i < ch.length; i++) {
-          const w = Math.random() * 2 - 1;
-          b0 = 0.997 * b0 + w * 0.029;
-          b1 = 0.985 * b1 + w * 0.032;
-          b2 = 0.950 * b2 + w * 0.048;
-          ch[i] = (b0 + b1 + b2) * 0.45;
-        }
-        const src = ctx.createBufferSource();
-        src.buffer = buf;
-        src.loop = true;
-        const flt = ctx.createBiquadFilter();
-        flt.type = "bandpass";
-        flt.frequency.value = 680;
-        flt.Q.value = 0.7;
-        crowdGain = ctx.createGain();
-        crowdGain.gain.value = 0.0001;
-        src.connect(flt);
-        flt.connect(crowdGain);
-        crowdGain.connect(masterGain);
-        src.start();
-        crowdNode = src;
-      }
-
-      function playKick(t, gain = 0.28) {
-        const osc = ctx.createOscillator(), g = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(130, t);
-        osc.frequency.exponentialRampToValueAtTime(42, t + 0.11);
-        g.gain.setValueAtTime(gain, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
-        osc.connect(g); g.connect(masterGain);
-        osc.start(t); osc.stop(t + 0.14);
-      }
-
-      function playSnare(t, gain = 0.10) {
-        const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.08), ctx.sampleRate);
-        const d = buf.getChannelData(0);
-        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
-        const src = ctx.createBufferSource(); src.buffer = buf;
-        const flt = ctx.createBiquadFilter(); flt.type = "highpass"; flt.frequency.value = 1400;
-        const g = ctx.createGain(); g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
-        src.connect(flt); flt.connect(g); g.connect(masterGain);
-        src.start(t);
-      }
-
-      function playBass(t, freq, dur = 0.18, gain = 0.12) {
-        const osc = ctx.createOscillator(), g = ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(freq, t);
-        g.gain.setValueAtTime(gain, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-        osc.connect(g); g.connect(masterGain);
-        osc.start(t); osc.stop(t + dur + 0.02);
-      }
-
-      function playStab(t, freqs, dur = 0.16, gain = 0.045) {
-        freqs.forEach(f => {
-          const osc = ctx.createOscillator(), g = ctx.createGain();
-          osc.type = mode === "CLUTCH" ? "sawtooth" : "triangle";
-          osc.frequency.setValueAtTime(f, t);
-          g.gain.setValueAtTime(gain, t);
-          g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-          osc.connect(g); g.connect(masterGain);
-          osc.start(t); osc.stop(t + dur + 0.02);
-        });
-      }
-
-      function tick() {
-        if (!enabled || !ctx || ctx.state !== "running" || document.hidden) return;
-        const t = ctx.currentTime + 0.02;
-        const s16 = step % 16;
-        // Detect current game mode dynamically
         const inMatch = typeof Match !== "undefined" && Match && Match.phase && Match.phase !== "IDLE" && Match.phase !== "ENDED";
-        const isClutch = inMatch && ((Match.quarter >= 4 && Match.timeLeftSec <= 120) || Match.quarter > 4);
-        const nextMode = isClutch ? "CLUTCH" : (inMatch ? "MATCH" : "LOBBY");
-        if (nextMode !== mode) { mode = nextMode; restartLoop(); return; }
+        const isClutch = inMatch && ((Match.quarter >= 4 && Match.timeLeftSec <= 120) || Match.quarter > 4 || Match.isZone);
+        const want = isClutch ? "CLUTCH" : "COURT";
 
-        if (crowdGain) {
-          const targetCrowd = mode === "CLUTCH" ? 0.14 : (mode === "MATCH" ? 0.075 : 0.0001);
-          crowdGain.gain.setTargetAtTime(targetCrowd, t, 0.35);
+        if (currentTrack !== want) {
+          currentTrack = want;
+          if (want === "CLUTCH") {
+            tracks.COURT.pause();
+            tracks.CLUTCH.volume = 0.42;
+            safePlay(tracks.CLUTCH);
+          } else {
+            tracks.CLUTCH.pause();
+            tracks.COURT.volume = inMatch ? 0.34 : 0.30;
+            safePlay(tracks.COURT);
+          }
+        } else {
+          const active = tracks[want];
+          active.volume = want === "CLUTCH" ? 0.42 : (inMatch ? 0.34 : 0.30);
+          if (active.paused) safePlay(active);
         }
 
-        // Kick pattern
-        if (s16 === 0 || s16 === 6 || s16 === 8 || (mode === "CLUTCH" && s16 === 14)) playKick(t, mode === "LOBBY" ? 0.22 : 0.28);
-        // Snare on 4 & 12
-        if (s16 === 4 || s16 === 12) playSnare(t, mode === "CLUTCH" ? 0.12 : 0.08);
-        // Hi-hat pulse
-        if (s16 % 2 === 0) playSnare(t, 0.022);
-
-        // Passionate minor pentatonic bass groove (D minor: D2, F2, G2, A2, C3)
-        const bassSeq = mode === "CLUTCH"
-          ? [73.4, 73.4, 87.3, 98.0, 110.0, 98.0, 87.3, 65.4]
-          : [73.4, 0, 87.3, 73.4, 98.0, 0, 110.0, 87.3];
-        if (s16 % 2 === 0) {
-          const bf = bassSeq[(s16 / 2) % bassSeq.length];
-          if (bf > 0) playBass(t, bf, 0.16, mode === "LOBBY" ? 0.10 : 0.13);
+        if (inMatch) {
+          tracks.CROWD.volume = isClutch ? 0.34 : 0.20;
+          if (tracks.CROWD.paused) safePlay(tracks.CROWD);
+        } else {
+          tracks.CROWD.pause();
         }
-        // Chord stabs on beats 0 & 10
-        if (s16 === 0) playStab(t, [293.7, 349.2, 440.0], 0.22, 0.038);
-        if (s16 === 10) playStab(t, mode === "CLUTCH" ? [329.6, 392.0, 493.9] : [261.6, 329.6, 392.0], 0.18, 0.035);
-
-        step = (step + 1) % 64;
-      }
-
-      function restartLoop() {
-        if (timerId) { clearInterval(timerId); timerId = null; }
-        if (!enabled || !unlocked) return;
-        const bpm = mode === "CLUTCH" ? 132 : (mode === "MATCH" ? 118 : 104);
-        const stepMs = Math.round((60 / bpm / 4) * 1000);
-        timerId = setInterval(tick, stepMs);
       }
 
       function unlock() {
         if (unlocked) return;
-        const c = initCtx();
-        if (!c) return;
         unlocked = true;
-        ensureCrowd();
-        if (enabled) restartLoop();
+        syncState();
+        if (!pollId) pollId = setInterval(syncState, 700);
       }
 
       if (typeof window !== "undefined") {
-        const onFirstGesture = () => { unlock(); };
-        window.addEventListener("pointerdown", onFirstGesture, { once: true, passive: true });
-        window.addEventListener("keydown", onFirstGesture, { once: true, passive: true });
-        document.addEventListener("visibilitychange", () => {
-          if (!masterGain || !ctx) return;
-          masterGain.gain.setTargetAtTime((!document.hidden && enabled) ? 0.24 : 0.0001, ctx.currentTime, 0.15);
-        });
+        window.addEventListener("pointerdown", unlock, { once: true, passive: true });
+        window.addEventListener("keydown", unlock, { once: true, passive: true });
+        document.addEventListener("visibilitychange", syncState);
       }
 
       return {
         setEnabled(val) {
           enabled = Boolean(val);
-          if (enabled) {
-            unlock();
-            if (masterGain && ctx) masterGain.gain.setTargetAtTime(0.24, ctx.currentTime, 0.15);
-            restartLoop();
-          } else {
-            if (masterGain && ctx) masterGain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.12);
-            if (timerId) { clearInterval(timerId); timerId = null; }
-          }
+          if (enabled) unlock();
+          syncState();
         },
         crowdRoar() {
-          if (!enabled || !crowdGain || !ctx) return;
-          const t = ctx.currentTime;
-          crowdGain.gain.cancelScheduledValues(t);
-          crowdGain.gain.setTargetAtTime(0.28, t, 0.08);
-          crowdGain.gain.setTargetAtTime(mode === "CLUTCH" ? 0.14 : 0.075, t + 0.7, 0.45);
+          if (!enabled || !unlocked) return;
+          if (typeof SoundFX !== "undefined" && SoundFX.cheer) SoundFX.cheer();
         },
         isEnabled() { return enabled; }
       };
     })();
-    window.GameSettings = GameSettings;
 
     const SoundFX = (() => {
       let ctx = null, muted = !GameSettings.get().sfx;
+      const SFX_FILES = {
+        swish: "./assets/audio/sfx_swish.mp3",
+        dunk: "./assets/audio/sfx_dunk.mp3",
+        clank: "./assets/audio/sfx_clank.mp3",
+        squeak: "./assets/audio/sfx_squeak.mp3",
+        whistle: "./assets/audio/sfx_whistle.mp3",
+        buzzer: "./assets/audio/sfx_buzzer.mp3",
+        cheer: "./assets/audio/sfx_cheer.mp3",
+        block: "./assets/audio/sfx_block.mp3"
+      };
+      const sfxCache = {};
+      for (const [k, url] of Object.entries(SFX_FILES)) {
+        const a = new Audio(url);
+        a.preload = "auto";
+        sfxCache[k] = a;
+      }
+
+      function playMp3(key, vol = 0.72) {
+        if (muted) return false;
+        try {
+          const base = sfxCache[key];
+          if (!base) return false;
+          const inst = base.cloneNode(true);
+          inst.volume = vol;
+          const p = inst.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+          return true;
+        } catch (_) { return false; }
+      }
+
       function ensure() {
         if (muted) return null;
         try {
@@ -4940,32 +4885,30 @@
         g.gain.setValueAtTime(gVal, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
         osc.connect(g); g.connect(c.destination); osc.start(t); osc.stop(t + dur);
       }
-      function noise(dur, freq, q, gVal) {
-        const c = ensure(); if (!c) return;
-        const len = Math.floor(c.sampleRate * dur), buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
-        for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-        const src = c.createBufferSource(); src.buffer = buf;
-        const flt = c.createBiquadFilter(); flt.type = "bandpass"; flt.frequency.value = freq; flt.Q.value = q;
-        const g = c.createGain(); g.gain.setValueAtTime(gVal, c.currentTime); g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
-        src.connect(flt); flt.connect(g); g.connect(c.destination); src.start();
-      }
       return {
-        toggle() { muted = !muted; return muted; },
+        toggle() {
+          muted = !muted;
+          if (window.BTAudioEngine) window.BTAudioEngine.setEnabled(!muted && GameSettings.get().bgm !== false);
+          return muted;
+        },
         setMuted(val) { muted = Boolean(val); return muted; },
         isMuted() { return muted; },
-        tap() { tone("triangle", 480, 720, 0.05, 0.09); },
-        whistle() { tone("sine", 2650, 2780, 0.20, 0.08); tone("sine", 2720, 2580, 0.14, 0.07, 0.18); },
-        buzzer() { tone("sawtooth", 145, 138, 0.55, 0.15); },
-        swish() { if (window.BTAudioEngine) window.BTAudioEngine.crowdRoar(); noise(0.18, 3400, 2.2, 0.16); tone("triangle", 620, 920, 0.11, 0.09, 0.04); },
-        clank() { tone("square", 220, 95, 0.13, 0.13); noise(0.09, 1100, 1.4, 0.10); },
-        block() { if (window.BTAudioEngine) window.BTAudioEngine.crowdRoar(); tone("sawtooth", 190, 42, 0.20, 0.20); noise(0.16, 700, 1.0, 0.18); },
-        highlight() { tone("triangle", 360, 740, 0.13, 0.12); tone("triangle", 540, 1080, 0.16, 0.10, 0.07); },
+        tap() { tone("triangle", 520, 760, 0.045, 0.08); },
+        whistle() { if (!playMp3("whistle", 0.62)) tone("sine", 2650, 2780, 0.20, 0.08); },
+        buzzer() { if (!playMp3("buzzer", 0.68)) tone("sawtooth", 145, 138, 0.55, 0.15); },
+        swish() { playMp3("swish", 0.78); playMp3("cheer", 0.28); },
+        clank() { if (!playMp3("clank", 0.65)) tone("square", 220, 95, 0.13, 0.13); },
+        block() { playMp3("block", 0.80); playMp3("cheer", 0.35); },
+        squeak() { playMp3("squeak", 0.52); },
+        cheer() { playMp3("cheer", 0.42); },
+        dunk() { playMp3("dunk", 0.84); },
+        highlight() { playMp3("squeak", 0.48); tone("triangle", 380, 780, 0.12, 0.10); },
         cutin(sfx) {
-          if (sfx === "RIM_SHATTER") { tone("sawtooth", 140, 36, 0.32, 0.22); noise(0.24, 900, 1.2, 0.20); }
-          else if (sfx === "ZONE_IGNITE") { tone("sawtooth", 220, 880, 0.24, 0.14); tone("sine", 110, 55, 0.36, 0.18, 0.06); }
-          else if (sfx === "SWISH_IMPACT") { noise(0.20, 3200, 2.4, 0.16); tone("triangle", 640, 180, 0.15, 0.12, 0.05); }
-          else if (sfx === "BLOCK_THUNDER") { tone("square", 180, 45, 0.20, 0.18); noise(0.16, 650, 1.0, 0.18); }
-          else { noise(0.15, 1800, 1.5, 0.16); tone("sawtooth", 260, 62, 0.20, 0.16, 0.04); }
+          if (sfx === "RIM_SHATTER") { playMp3("dunk", 0.88); }
+          else if (sfx === "ZONE_IGNITE") { playMp3("cheer", 0.55); tone("sawtooth", 220, 880, 0.24, 0.12); }
+          else if (sfx === "SWISH_IMPACT") { playMp3("swish", 0.85); playMp3("cheer", 0.48); }
+          else if (sfx === "BLOCK_THUNDER") { playMp3("block", 0.88); playMp3("cheer", 0.48); }
+          else { playMp3("dunk", 0.78); }
         }
       };
     })();
@@ -8901,6 +8844,7 @@
         if (b) b.click(); else document.getElementById("hubDetailModal")?.classList.add("hidden");
       });
       bindTopClose("btnTopCloseBoxScore", () => {
+        if (Match && Match._historyView) { Match._historyView = null; document.getElementById("boxScoreModal")?.classList.add("hidden"); return; }
         if (Match && Match.phase === "ENDED") returnToHub();
         else closePauseCenter();
       });

@@ -1,10 +1,10 @@
 /* Basketball Time Offline Service Worker (PWA Stage 4) */
-const CACHE_NAME = "bt-offline-v4-20261128";
+const CACHE_NAME = "bt-offline-v4b-20261129";
 const CORE_ASSETS = [
   "./",
   "./index.html",
-  "./ui-refactor.css?v=20261128s4",
-  "./ui-refactor.js?v=20261128s4",
+  "./ui-refactor.css?v=20261129s4b",
+  "./ui-refactor.js?v=20261129s4b",
   "./manifest.json",
   "./assets/icon.svg",
   "./i18n/zh-Hant.json",
@@ -26,7 +26,18 @@ const CORE_ASSETS = [
   "./assets/images/result_steal.webp",
   "./assets/images/result_swish.webp",
   "./assets/images/tomahawk_poster.webp",
-  "./assets/images/zone_awakening.webp"
+  "./assets/images/zone_awakening.webp",
+  "./assets/audio/bgm_court.mp3",
+  "./assets/audio/bgm_clutch.mp3",
+  "./assets/audio/crowd_ambience.mp3",
+  "./assets/audio/sfx_swish.mp3",
+  "./assets/audio/sfx_dunk.mp3",
+  "./assets/audio/sfx_clank.mp3",
+  "./assets/audio/sfx_squeak.mp3",
+  "./assets/audio/sfx_whistle.mp3",
+  "./assets/audio/sfx_buzzer.mp3",
+  "./assets/audio/sfx_cheer.mp3",
+  "./assets/audio/sfx_block.mp3"
 ];
 
 self.addEventListener("install", (event) => {

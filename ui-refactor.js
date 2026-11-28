@@ -191,8 +191,7 @@ window.BTUI = (() => {
     if (focusBox) focusBox.style.display = "none";
     const fullBtn = document.getElementById("btnLiveOpenFullBox");
     if (fullBtn) fullBtn.style.display = "none";
-    const closeBtn = document.getElementById("btnCloseLiveDetailStats");
-    if (closeBtn) closeBtn.textContent = "關閉單場詳盡數據";
+    // Top-right circular X (#btnCloseLiveDetailStats) keeps fixed "✕" glyph
     modal.classList.remove("hidden");
   }
 
@@ -274,11 +273,7 @@ window.BTUI = (() => {
 
     const footer = document.getElementById("bsFooterBtns");
     if (footer) {
-      footer.innerHTML = `<button type="button" class="manga-btn primary" id="btnClosePastBoxScore" style="width:100%;">關閉賽果回顧</button>`;
-      document.getElementById("btnClosePastBoxScore").addEventListener("click", () => {
-        match._historyView = null;
-        document.getElementById("boxScoreModal").classList.add("hidden");
-      });
+      footer.innerHTML = "";
     }
     document.getElementById("boxScoreModal").classList.remove("hidden");
   }
@@ -339,8 +334,7 @@ window.BTUI = (() => {
 
     const fullBtn = document.getElementById("btnLiveOpenFullBox");
     if (fullBtn) fullBtn.style.display = "inline-flex";
-    const closeBtn = document.getElementById("btnCloseLiveDetailStats");
-    if (closeBtn) closeBtn.textContent = "▶ 繼續比賽";
+    // Top-right circular X (#btnCloseLiveDetailStats) keeps fixed "✕" glyph
     modal.classList.remove("hidden");
   }
 
@@ -557,9 +551,21 @@ window.BTUI = (() => {
     const sDeltaStr = sDelta > 0 ? ` · 本季▲+${sDelta}` : (sDelta < 0 ? ` · 本季▼${sDelta}` : "");
     document.getElementById("pdHeroName").textContent = `#${pl.num !== undefined ? pl.num : "--"} ${pl.name}`;
     const displayAge = (pl.isUser && getSeason() && getSeason().player) ? getSeason().player.age : pl.age;
-    document.getElementById("pdHeroSub").textContent = `${teamName || "所屬球隊"} · ${pl.pos || "SG"} · ${roleTxt} · ${pl.heightCm || 185}cm${displayAge ? ` · ${displayAge}歲` : ""}${potStr}${gtStr}${sDeltaStr}`;
+    const metaChips = [
+      teamName || "所屬球隊",
+      `${pl.pos || "SG"} · ${roleTxt}`,
+      `${pl.heightCm || 185}cm${displayAge ? ` / ${displayAge}歲` : ""}`
+    ];
+    if (!pl.isUser && pl.potential) metaChips.push(`潛力${"★".repeat(pl.potential)}${gtStr}`);
+    if (sDelta > 0) metaChips.push(`本季▲+${sDelta}`);
+    else if (sDelta < 0) metaChips.push(`本季▼${sDelta}`);
+    if (rankStr) metaChips.push(rankStr);
+    const subEl = document.getElementById("pdHeroSub");
+    if (subEl) {
+      subEl.innerHTML = metaChips.map(t => `<span class="pd-meta-chip">${t}</span>`).join("");
+    }
     document.getElementById("pdOvrVal").textContent = ovr;
-    document.getElementById("pdOvrCmp").textContent = `均${avgOvr} (${diff >= 0 ? "+" : ""}${diff})${rankStr ? ` · ${rankStr}` : ""}`;
+    document.getElementById("pdOvrCmp").textContent = `均${avgOvr} (${diff >= 0 ? "+" : ""}${diff})`;
 
     const stats = pl.stats || {};
     const statDefs = (db.origins && db.origins.statDefs) || [];
@@ -2584,8 +2590,10 @@ window.BTUI = (() => {
     }
 
     const utilToggle = document.getElementById("btnToggleUtilDrawer");
-    const utilDrawer = document.getElementById("topUtilDrawer");
-    if (utilToggle && utilDrawer) utilToggle.addEventListener("click", () => utilDrawer.classList.toggle("open"));
+    if (utilToggle) utilToggle.addEventListener("click", () => {
+      if (typeof SoundFX !== "undefined") SoundFX.tap();
+      openSettingsModal();
+    });
 
     const benchBtn = document.getElementById("btnToggleBenchRoster");
     if (benchBtn) {

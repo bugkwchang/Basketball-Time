@@ -1367,6 +1367,8 @@ html, body {
   box-shadow: 2px 2px 0 var(--ink, #111);
   cursor: pointer;
   flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
   transition: transform 0.1s ease, background 0.15s ease;
 }
 .modal-x-btn:hover {
@@ -1421,35 +1423,65 @@ html, body {
   background: linear-gradient(180deg, #FAF7F0 0%, #F4EFE4 100%) !important;
 }
 .pdetail-hero {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
   background: linear-gradient(135deg, #181614 0%, #292524 62%, #7F1D1D 100%) !important;
   color: #FAF7F0 !important;
   border: 2.5px solid #181614 !important;
   border-radius: 12px !important;
-  padding: 14px 48px 14px 14px !important;
+  padding: 12px 14px !important;
   box-shadow: 4px 4px 0 #181614;
   margin-bottom: 12px !important;
+}
+.pdetail-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-right: 36px;
 }
 .pdetail-name {
   font-size: 19px !important;
   font-weight: 900 !important;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
   color: #FFFDF7 !important;
-}
-.pdetail-sub {
-  font-size: 11.5px !important;
-  color: #E7E5E4 !important;
-  margin-top: 3px;
-  line-height: 1.45;
+  line-height: 1.2;
 }
 .pdetail-ovr-pill {
+  display: inline-flex !important;
+  align-items: baseline !important;
+  gap: 5px !important;
   background: linear-gradient(180deg, #FDE047 0%, #F59E0B 100%) !important;
   color: #181614 !important;
-  border: 2.5px solid #181614 !important;
+  border: 2px solid #181614 !important;
   border-radius: 10px !important;
-  padding: 6px 12px !important;
-  min-width: 64px;
-  text-align: center;
+  padding: 4px 10px !important;
+  min-width: auto !important;
   box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+}
+.pdetail-ovr-tag { font-size: 10px; font-weight: 900; opacity: 0.85; }
+.pdetail-ovr-num { font-size: 21px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+.pdetail-ovr-cmp { font-size: 10px; font-weight: 900; opacity: 0.9; white-space: nowrap; }
+.pdetail-meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: 100%;
+}
+.pd-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #FAF7F0;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  padding: 2px 8px;
+  line-height: 1.4;
 }
 #pdStatsGrid {
   display: flex !important;
