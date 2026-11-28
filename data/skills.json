@@ -22,7 +22,7 @@
       "category": "PHYSICAL",
       "iqBonus": 0,
       "triggerDesc": "常駐身體天賦（開局隨機抽取）",
-      "desc": "符合該位置嘅標準身高比例 (+0cm)，攻守平衡無明顯身材短板，高中期仍有機會自然抽高。",
+      "desc": "符合該位置的標準身高比例 (+0cm)，攻守平衡無明顯身材短板，高中期仍有機會自然抽高。",
       "conditions": [],
       "modifiers": []
     },
@@ -48,7 +48,7 @@
       "category": "PHYSICAL",
       "iqBonus": 0,
       "triggerDesc": "常駐身體天賦（開局隨機抽取）",
-      "desc": "罕見嘅高大身材 (+9cm)！籃板 +5、護框 +4、內線 +3（速度 -2），對位同位置球員形成強烈高度錯位優勢。",
+      "desc": "罕見的高大身材 (+9cm)！籃板 +5、護框 +4、內線 +3（速度 -2），對位同位置球員形成強烈高度錯位優勢。",
       "conditions": [],
       "modifiers": [
         {
@@ -69,7 +69,7 @@
       "category": "PHYSICAL",
       "iqBonus": 2,
       "triggerDesc": "常駐超稀有身體天賦 (3%)",
-      "desc": "百年一遇嘅異次元靜態天賦 (+13cm)！護框 +6、籃板 +5、彈跳 +3、三分 +2，兼具高塔高度與靈活身手。",
+      "desc": "百年一遇的異次元靜態天賦 (+13cm)！護框 +6、籃板 +5、彈跳 +3、三分 +2，兼具高塔高度與靈活身手。",
       "conditions": [],
       "modifiers": [
         {
@@ -154,7 +154,7 @@
       "category": "BLUE_TRAIT",
       "iqBonus": 8,
       "triggerDesc": "體力 ≥ 20% 時常駐",
-      "desc": "閱讀比賽能力出眾！大幅降低選項成功率嘅誤判幅度，防守預判評分 +4。",
+      "desc": "閱讀比賽能力出眾！大幅降低選項成功率的誤判幅度，防守預判評分 +4。",
       "conditions": [
         {
           "field": "staminaPct",
@@ -176,7 +176,7 @@
       "category": "BLUE_TRAIT",
       "iqBonus": 0,
       "triggerDesc": "全場常駐",
-      "desc": "驚人嘅心肺耐力！實戰每回合體力消耗減少 22%，第四節依然保持充沛體能。",
+      "desc": "驚人的心肺耐力！實戰每回合體力消耗減少 22%，第四節依然保持充沛體能。",
       "conditions": [],
       "modifiers": [
         {
@@ -376,7 +376,7 @@
     },
     {
       "id": "deadeye_three_t4",
-      "name": "🏅 死神三分 IV",
+      "name": "👑 死神三分",
       "category": "BADGE",
       "iqBonus": 2,
       "triggerDesc": "三分區域進攻出手",
@@ -399,11 +399,12 @@
           "op": "UNLOCK_ACTION",
           "value": "corner_sniper"
         }
-      ]
+      ],
+      "badgeGrade": "LEGEND"
     },
     {
       "id": "paint_beast_t3",
-      "name": "🏅 禁區支配者 III",
+      "name": "🏅 禁區支配者",
       "category": "BADGE",
       "iqBonus": 1,
       "triggerDesc": "禁區終結進攻",
@@ -426,11 +427,12 @@
           "op": "UNLOCK_ACTION",
           "value": "tomahawk_poster"
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "perimeter_lockdown_t3",
-      "name": "🏅 外線大鎖 III",
+      "name": "🏅 外線大鎖",
       "category": "BADGE",
       "iqBonus": 2,
       "triggerDesc": "所有防守回合",
@@ -458,11 +460,12 @@
           "op": "UNLOCK_ACTION",
           "value": "perimeter_closeout"
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "midrange_maestro_t3",
-      "name": "🏅 中投殺手 III",
+      "name": "🏅 中投殺手",
       "category": "BADGE",
       "iqBonus": 2,
       "triggerDesc": "中距離跳投與翻身後仰",
@@ -490,11 +493,12 @@
           "op": "UNLOCK_ACTION",
           "value": "fadeaway_phantom"
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "dimer_general_t3",
-      "name": "🏅 球場指揮官 III",
+      "name": "🏅 球場指揮官",
       "category": "BADGE",
       "iqBonus": 5,
       "triggerDesc": "組織分球與擋拆傳導",
@@ -517,11 +521,12 @@
           "op": "MUL",
           "value": 1.15
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "rim_eraser_t4",
-      "name": "🏅 禁區禁飛區 IV",
+      "name": "👑 禁區禁飛區",
       "category": "BADGE",
       "iqBonus": 1,
       "triggerDesc": "防守回合護框封阻",
@@ -544,11 +549,12 @@
           "op": "UNLOCK_ACTION",
           "value": "chasedown_reject"
         }
-      ]
+      ],
+      "badgeGrade": "LEGEND"
     },
     {
       "id": "posterizer_t3",
-      "name": "🏅 隔扣狂魔 III",
+      "name": "🏅 隔扣狂魔",
       "category": "BADGE",
       "iqBonus": 0,
       "triggerDesc": "禁區突破與暴扣",
@@ -576,11 +582,12 @@
           "op": "UNLOCK_ACTION",
           "value": "tomahawk_poster"
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "glass_cleaner_t3",
-      "name": "🏅 籃板吸塵機 III",
+      "name": "🏅 籃板吸塵機",
       "category": "BADGE",
       "iqBonus": 2,
       "triggerDesc": "卡位籃板與補籃回合",
@@ -598,7 +605,8 @@
           "op": "ADD",
           "value": 9
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "zone_state_rule",
@@ -708,7 +716,7 @@
       "category": "BLUE_TRAIT",
       "iqBonus": 3,
       "triggerDesc": "第 3 節起焦灼戰",
-      "desc": "最鍾意喺客場噓聲中入波令全場鴉雀無聲！下半場命中率 +6%、完美區 +12%。",
+      "desc": "最鍾意在客場噓聲中入波令全場鴉雀無聲！下半場命中率 +6%、完美區 +12%。",
       "conditions": [
         {
           "field": "quarter",
@@ -772,7 +780,7 @@
       "category": "BLUE_TRAIT",
       "iqBonus": 2,
       "triggerDesc": "第 4 節或加時賽",
-      "desc": "打到最後一節先係真正戲肉！末節攻防判定雙雙 +6%，體力消耗減緩 12%。",
+      "desc": "打到最後一節才是真正戲肉！末節攻防判定雙雙 +6%，體力消耗減緩 12%。",
       "conditions": [
         {
           "field": "quarter",
@@ -880,7 +888,7 @@
       "category": "BLUE_TRAIT",
       "iqBonus": 3,
       "triggerDesc": "每節最後 45 秒",
-      "desc": "倒數計時器係你嘅節拍器！每節讀秒階段命中率 +14%、完美判定區 +22%。",
+      "desc": "倒數計時器是你的節拍器！每節讀秒階段命中率 +14%、完美判定區 +22%。",
       "conditions": [
         {
           "field": "timeLeftSec",
@@ -923,7 +931,7 @@
       "category": "BLUE_TRAIT",
       "iqBonus": 4,
       "triggerDesc": "所有防守回合",
-      "desc": "提早一步睇穿對手傳球同切入路線！防守判定 +7%、判讀誤差縮窄。",
+      "desc": "提早一步看穿對手傳球同切入路線！防守判定 +7%、判讀誤差縮窄。",
       "conditions": [
         {
           "field": "possession",
@@ -1036,7 +1044,7 @@
       "category": "RED_TRAIT",
       "iqBonus": -2,
       "triggerDesc": "所有防守回合（可極限特訓洗走）",
-      "desc": "橫移注意力唔集中容易俾人一步過！防守判定 -8%。",
+      "desc": "橫移注意力唔集中容易給人一步過！防守判定 -8%。",
       "conditions": [
         {
           "field": "possession",
@@ -1125,7 +1133,7 @@
     },
     {
       "id": "limitless_range_t4",
-      "name": "🏅 超遠射程 IV",
+      "name": "👑 超遠射程",
       "category": "BADGE",
       "iqBonus": 2,
       "triggerDesc": "三分區域出手",
@@ -1153,11 +1161,12 @@
           "op": "UNLOCK_ACTION",
           "value": "corner_sniper"
         }
-      ]
+      ],
+      "badgeGrade": "LEGEND"
     },
     {
       "id": "ankle_breaker_t3",
-      "name": "🏅 腳踝終結者 III",
+      "name": "🏅 腳踝終結者",
       "category": "BADGE",
       "iqBonus": 1,
       "triggerDesc": "中距離或禁區持球單打",
@@ -1183,11 +1192,12 @@
           "op": "MUL",
           "value": 1.18
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "floater_wizard_t3",
-      "name": "🏅 拋投魔術師 III",
+      "name": "🏅 拋投魔術師",
       "category": "BADGE",
       "iqBonus": 2,
       "triggerDesc": "禁區或中距離出手",
@@ -1208,11 +1218,12 @@
           "op": "ADD",
           "value": 9
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "eurostep_assassin_t3",
-      "name": "🏅 歐洲步刺客 III",
+      "name": "🏅 歐洲步刺客",
       "category": "BADGE",
       "iqBonus": 1,
       "triggerDesc": "禁區突破上籃",
@@ -1235,11 +1246,12 @@
           "op": "MUL",
           "value": 1.15
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "corner_specialist_t3",
-      "name": "🏅 零度角刺客 III",
+      "name": "🏅 零度角刺客",
       "category": "BADGE",
       "iqBonus": 1,
       "triggerDesc": "三分線出手",
@@ -1262,11 +1274,12 @@
           "op": "UNLOCK_ACTION",
           "value": "corner_sniper"
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "pnr_maestro_t3",
-      "name": "🏅 擋拆大師 III",
+      "name": "🏅 擋拆大師",
       "category": "BADGE",
       "iqBonus": 4,
       "triggerDesc": "組織傳導與中距離進攻",
@@ -1287,11 +1300,12 @@
           "op": "ADD",
           "value": 8
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "lob_city_passer_t3",
-      "name": "🏅 空接魔術師 III",
+      "name": "🏅 空接魔術師",
       "category": "BADGE",
       "iqBonus": 2,
       "triggerDesc": "組織分球回合",
@@ -1314,11 +1328,12 @@
           "op": "MUL",
           "value": 1.22
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "glove_steal_t4",
-      "name": "🏅 鬼手抄截王 IV",
+      "name": "👑 鬼手抄截王",
       "category": "BADGE",
       "iqBonus": 3,
       "triggerDesc": "所有防守回合",
@@ -1341,11 +1356,12 @@
           "op": "MUL",
           "value": 1.18
         }
-      ]
+      ],
+      "badgeGrade": "LEGEND"
     },
     {
       "id": "chasedown_artist_t4",
-      "name": "🏅 追魂火鍋王 IV",
+      "name": "👑 追魂火鍋王",
       "category": "BADGE",
       "iqBonus": 1,
       "triggerDesc": "防守回合",
@@ -1368,11 +1384,12 @@
           "op": "UNLOCK_ACTION",
           "value": "chasedown_reject"
         }
-      ]
+      ],
+      "badgeGrade": "LEGEND"
     },
     {
       "id": "charge_card_t2",
-      "name": "🏅 造犯規專家 II",
+      "name": "🏅 造犯規專家",
       "category": "BADGE",
       "iqBonus": 3,
       "triggerDesc": "防守回合",
@@ -1390,11 +1407,12 @@
           "op": "ADD",
           "value": 7
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "putback_boss_t3",
-      "name": "🏅 補籃狂人 III",
+      "name": "🏅 補籃狂人",
       "category": "BADGE",
       "iqBonus": 0,
       "triggerDesc": "禁區進攻回合",
@@ -1417,11 +1435,12 @@
           "op": "UNLOCK_ACTION",
           "value": "tomahawk_poster"
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "dream_shake_t4",
-      "name": "🏅 低位夢幻步 IV",
+      "name": "👑 低位夢幻步",
       "category": "BADGE",
       "iqBonus": 2,
       "triggerDesc": "中距離與低位背打",
@@ -1447,11 +1466,12 @@
           "op": "UNLOCK_ACTION",
           "value": "fadeaway_phantom"
         }
-      ]
+      ],
+      "badgeGrade": "LEGEND"
     },
     {
       "id": "pullup_shot_t3",
-      "name": "🏅 急停跳投大師 III",
+      "name": "🏅 急停跳投大師",
       "category": "BADGE",
       "iqBonus": 1,
       "triggerDesc": "中距離或三分急停跳投",
@@ -1477,11 +1497,12 @@
           "op": "ADD",
           "value": 5
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "transition_finisher_t3",
-      "name": "🏅 轉換快攻之王 III",
+      "name": "🏅 轉換快攻之王",
       "category": "BADGE",
       "iqBonus": 0,
       "triggerDesc": "體力 ≥ 55% 禁區進攻",
@@ -1509,11 +1530,12 @@
           "op": "UNLOCK_ACTION",
           "value": "tomahawk_poster"
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "pace_changer_t3",
-      "name": "🏅 節奏變速師 III",
+      "name": "🏅 節奏變速師",
       "category": "BADGE",
       "iqBonus": 3,
       "triggerDesc": "進攻回合",
@@ -1536,11 +1558,12 @@
           "op": "MUL",
           "value": 1.14
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     },
     {
       "id": "boxout_beast_t3",
-      "name": "🏅 鐵血卡位機器 III",
+      "name": "🏅 鐵血卡位機器",
       "category": "BADGE",
       "iqBonus": 1,
       "triggerDesc": "防守籃板卡位",
@@ -1563,7 +1586,8 @@
           "op": "MUL",
           "value": 0.92
         }
-      ]
+      ],
+      "badgeGrade": "SIGNATURE"
     }
   ]
 }

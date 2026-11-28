@@ -8,7 +8,7 @@
       "speedLinesDensity": 64,
       "hitstopMs": 140,
       "screenShake": 9,
-      "voiceLine": "「呢一球——冇人封得到！」",
+      "voiceLine": "「這一球——沒人能封蓋！」",
       "sfx": "SLASH_BOOM"
     },
     {
@@ -30,7 +30,7 @@
       "speedLinesDensity": 88,
       "hitstopMs": 185,
       "screenShake": 16,
-      "voiceLine": "「讓開！籃框係我嘅！」",
+      "voiceLine": "「讓開！籃框是我的！」",
       "sfx": "RIM_SHATTER"
     },
     {
@@ -41,7 +41,7 @@
       "speedLinesDensity": 74,
       "hitstopMs": 165,
       "screenShake": 13,
-      "voiceLine": "「想喺我頭頂得分？早十年啦！」",
+      "voiceLine": "「想在我頭頂得分？還早十年呢！」",
       "sfx": "BLOCK_THUNDER"
     },
     {
@@ -52,7 +52,7 @@
       "speedLinesDensity": 76,
       "hitstopMs": 145,
       "screenShake": 11,
-      "voiceLine": "「休想喺我面前輕鬆出手！」",
+      "voiceLine": "「休想在我面前輕鬆出手！」",
       "sfx": "BLOCK_THUNDER"
     },
     {
@@ -63,7 +63,7 @@
       "speedLinesDensity": 110,
       "hitstopMs": 210,
       "screenShake": 18,
-      "voiceLine": "「全場嘅時間——靜止啦！」",
+      "voiceLine": "「全場的時間——就此靜止吧！」",
       "sfx": "ZONE_IGNITE"
     }
   ]

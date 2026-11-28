@@ -3905,7 +3905,7 @@
               "age": 38
             },
             {
-              "num": 10,
+              "num": 0,
               "name": "田代 直希",
               "pos": "SF",
               "role": "BENCH",
@@ -7442,6 +7442,532 @@
               "age": 26
             }
           ]
+        },
+        {
+          "id": "eu_efe",
+          "name": "安納托利亞艾菲斯",
+          "ovr": 85,
+          "ace": "肖恩・拉金",
+          "coach": "盧卡・班奇",
+          "roster": [
+            {
+              "num": 0,
+              "name": "肖恩・拉金",
+              "pos": "PG",
+              "role": "STARTER",
+              "ovr": 87,
+              "heightCm": 182,
+              "skills": [
+                "deadeye_three_t4",
+                "big_heart",
+                "dimer_general_t3",
+                "alpha_dog"
+              ],
+              "statBias": {
+                "threePt": 11,
+                "speed": 10,
+                "playmaking": 9,
+                "iq": 9
+              },
+              "isRival": true,
+              "rebW": 0.12,
+              "astW": 0.38,
+              "stlW": 0.28,
+              "blkW": 0.04,
+              "age": 33
+            },
+            {
+              "num": 1,
+              "name": "羅德里格・博布瓦",
+              "pos": "SG",
+              "role": "STARTER",
+              "ovr": 82,
+              "heightCm": 188,
+              "skills": [
+                "microwave",
+                "midrange_maestro_t3"
+              ],
+              "statBias": {
+                "threePt": 8,
+                "midRange": 8,
+                "speed": 6
+              },
+              "rebW": 0.13,
+              "astW": 0.2,
+              "stlW": 0.22,
+              "blkW": 0.08,
+              "age": 38
+            },
+            {
+              "num": 6,
+              "name": "伊萊賈・布萊恩特",
+              "pos": "SF",
+              "role": "STARTER",
+              "ovr": 83,
+              "heightCm": 196,
+              "skills": [
+                "perimeter_lockdown_t3",
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "perimDef": 8,
+                "inside": 7,
+                "midRange": 7
+              },
+              "rebW": 0.2,
+              "astW": 0.22,
+              "stlW": 0.24,
+              "blkW": 0.14,
+              "age": 31
+            },
+            {
+              "num": 14,
+              "name": "羅蘭茲・史密茨",
+              "pos": "PF",
+              "role": "STARTER",
+              "ovr": 81,
+              "heightCm": 207,
+              "skills": [
+                "glass_cleaner_t3"
+              ],
+              "statBias": {
+                "rebound": 7,
+                "strength": 7,
+                "threePt": 6
+              },
+              "rebW": 0.24,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.22,
+              "age": 30
+            },
+            {
+              "num": 17,
+              "name": "文森・波里耶",
+              "pos": "C",
+              "role": "STARTER",
+              "ovr": 84,
+              "heightCm": 213,
+              "skills": [
+                "rim_eraser_t4",
+                "paint_beast_t3"
+              ],
+              "statBias": {
+                "intDef": 10,
+                "rebound": 9,
+                "inside": 8,
+                "strength": 8
+              },
+              "rebW": 0.28,
+              "astW": 0.08,
+              "stlW": 0.1,
+              "blkW": 0.42,
+              "age": 32
+            },
+            {
+              "num": 13,
+              "name": "達里烏斯・湯普森",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 81,
+              "heightCm": 193,
+              "skills": [
+                "floor_iq",
+                "clutch_stealer"
+              ],
+              "statBias": {
+                "playmaking": 8,
+                "perimDef": 7,
+                "iq": 7
+              },
+              "rebW": 0.14,
+              "astW": 0.34,
+              "stlW": 0.26,
+              "blkW": 0.06,
+              "age": 31
+            },
+            {
+              "num": 3,
+              "name": "喬丹・諾瓦拉",
+              "pos": "SF",
+              "role": "BENCH",
+              "ovr": 80,
+              "heightCm": 203,
+              "skills": [
+                "deadeye_three_t4"
+              ],
+              "statBias": {
+                "threePt": 9,
+                "inside": 5
+              },
+              "rebW": 0.18,
+              "astW": 0.14,
+              "stlW": 0.16,
+              "blkW": 0.12,
+              "age": 27
+            },
+            {
+              "num": 25,
+              "name": "丹尼爾・奧圖魯",
+              "pos": "C",
+              "role": "BENCH",
+              "ovr": 81,
+              "heightCm": 208,
+              "skills": [
+                "posterizer_t3",
+                "glass_cleaner_t3"
+              ],
+              "statBias": {
+                "inside": 9,
+                "vertical": 8,
+                "rebound": 7
+              },
+              "rebW": 0.26,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.34,
+              "age": 26
+            },
+            {
+              "num": 24,
+              "name": "埃爾坎・奧斯馬尼",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 78,
+              "heightCm": 213,
+              "skills": [],
+              "statBias": {
+                "rebound": 6,
+                "intDef": 6
+              },
+              "rebW": 0.24,
+              "astW": 0.08,
+              "stlW": 0.12,
+              "blkW": 0.22,
+              "age": 27
+            },
+            {
+              "num": 18,
+              "name": "多烏什・奧茲德米羅格魯",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 77,
+              "heightCm": 191,
+              "skills": [
+                "perimeter_lockdown_t3"
+              ],
+              "statBias": {
+                "perimDef": 8,
+                "speed": 6
+              },
+              "rebW": 0.12,
+              "astW": 0.26,
+              "stlW": 0.26,
+              "blkW": 0.05,
+              "age": 30
+            },
+            {
+              "num": 35,
+              "name": "德里克・威利斯",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 78,
+              "heightCm": 206,
+              "skills": [],
+              "statBias": {
+                "threePt": 7,
+                "rebound": 6
+              },
+              "rebW": 0.22,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.18,
+              "age": 31
+            },
+            {
+              "num": 23,
+              "name": "里德萬・翁切爾",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 76,
+              "heightCm": 191,
+              "skills": [],
+              "statBias": {
+                "speed": 6,
+                "perimDef": 6
+              },
+              "rebW": 0.14,
+              "astW": 0.18,
+              "stlW": 0.18,
+              "blkW": 0.06,
+              "age": 29
+            }
+          ]
+        },
+        {
+          "id": "eu_mil",
+          "name": "米蘭奧林匹亞",
+          "ovr": 85,
+          "ace": "尼古拉・米羅蒂奇",
+          "coach": "埃托雷・梅西納",
+          "roster": [
+            {
+              "num": 1,
+              "name": "內納德・迪米特里耶維奇",
+              "pos": "PG",
+              "role": "STARTER",
+              "ovr": 82,
+              "heightCm": 190,
+              "skills": [
+                "dimer_general_t3",
+                "floor_iq"
+              ],
+              "statBias": {
+                "playmaking": 9,
+                "midRange": 7,
+                "iq": 8
+              },
+              "rebW": 0.12,
+              "astW": 0.38,
+              "stlW": 0.24,
+              "blkW": 0.05,
+              "age": 28
+            },
+            {
+              "num": 31,
+              "name": "沙馮・希爾茲",
+              "pos": "SG",
+              "role": "STARTER",
+              "ovr": 85,
+              "heightCm": 201,
+              "skills": [
+                "midrange_maestro_t3",
+                "big_heart",
+                "perimeter_lockdown_t3"
+              ],
+              "statBias": {
+                "midRange": 9,
+                "threePt": 8,
+                "inside": 8,
+                "perimDef": 7
+              },
+              "rebW": 0.17,
+              "astW": 0.22,
+              "stlW": 0.22,
+              "blkW": 0.12,
+              "age": 31
+            },
+            {
+              "num": 10,
+              "name": "萊安德羅・博爾馬羅",
+              "pos": "SF",
+              "role": "STARTER",
+              "ovr": 81,
+              "heightCm": 198,
+              "skills": [
+                "perimeter_lockdown_t3",
+                "fastbreak_king"
+              ],
+              "statBias": {
+                "perimDef": 9,
+                "speed": 8,
+                "playmaking": 6
+              },
+              "rebW": 0.18,
+              "astW": 0.24,
+              "stlW": 0.26,
+              "blkW": 0.14,
+              "age": 25
+            },
+            {
+              "num": 33,
+              "name": "尼古拉・米羅蒂奇",
+              "pos": "PF",
+              "role": "STARTER",
+              "ovr": 87,
+              "heightCm": 208,
+              "skills": [
+                "deadeye_three_t4",
+                "midrange_maestro_t3",
+                "glass_cleaner_t3",
+                "alpha_dog"
+              ],
+              "statBias": {
+                "threePt": 11,
+                "midRange": 10,
+                "rebound": 9,
+                "iq": 9
+              },
+              "isRival": true,
+              "rebW": 0.26,
+              "astW": 0.14,
+              "stlW": 0.14,
+              "blkW": 0.2,
+              "age": 35
+            },
+            {
+              "num": 16,
+              "name": "扎克・勒代",
+              "pos": "C",
+              "role": "STARTER",
+              "ovr": 84,
+              "heightCm": 202,
+              "skills": [
+                "paint_beast_t3",
+                "big_heart"
+              ],
+              "statBias": {
+                "inside": 9,
+                "strength": 9,
+                "rebound": 8,
+                "grit": 9
+              },
+              "rebW": 0.26,
+              "astW": 0.1,
+              "stlW": 0.14,
+              "blkW": 0.28,
+              "age": 32
+            },
+            {
+              "num": 2,
+              "name": "尼科・曼尼恩",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 80,
+              "heightCm": 190,
+              "skills": [
+                "fastbreak_king",
+                "microwave"
+              ],
+              "statBias": {
+                "speed": 8,
+                "threePt": 7,
+                "playmaking": 7
+              },
+              "rebW": 0.12,
+              "astW": 0.32,
+              "stlW": 0.22,
+              "blkW": 0.04,
+              "age": 25
+            },
+            {
+              "num": 12,
+              "name": "阿爾莫尼・布魯克斯",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 79,
+              "heightCm": 191,
+              "skills": [
+                "deadeye_three_t4"
+              ],
+              "statBias": {
+                "threePt": 9,
+                "speed": 6
+              },
+              "rebW": 0.14,
+              "astW": 0.14,
+              "stlW": 0.16,
+              "blkW": 0.06,
+              "age": 28
+            },
+            {
+              "num": 7,
+              "name": "斯特凡諾・托努特",
+              "pos": "SG",
+              "role": "BENCH",
+              "ovr": 79,
+              "heightCm": 194,
+              "skills": [
+                "perimeter_lockdown_t3"
+              ],
+              "statBias": {
+                "perimDef": 8,
+                "inside": 6
+              },
+              "rebW": 0.16,
+              "astW": 0.18,
+              "stlW": 0.22,
+              "blkW": 0.08,
+              "age": 32
+            },
+            {
+              "num": 32,
+              "name": "喬什・尼博",
+              "pos": "C",
+              "role": "BENCH",
+              "ovr": 82,
+              "heightCm": 206,
+              "skills": [
+                "rim_eraser_t4",
+                "posterizer_t3"
+              ],
+              "statBias": {
+                "vertical": 10,
+                "rebound": 9,
+                "intDef": 8
+              },
+              "rebW": 0.28,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.4,
+              "age": 28
+            },
+            {
+              "num": 17,
+              "name": "吉安保羅・里奇",
+              "pos": "PF",
+              "role": "BENCH",
+              "ovr": 78,
+              "heightCm": 201,
+              "skills": [],
+              "statBias": {
+                "rebound": 6,
+                "iq": 7,
+                "threePt": 6
+              },
+              "rebW": 0.22,
+              "astW": 0.12,
+              "stlW": 0.14,
+              "blkW": 0.16,
+              "age": 34
+            },
+            {
+              "num": 21,
+              "name": "迭戈・弗拉卡多里",
+              "pos": "PG",
+              "role": "BENCH",
+              "ovr": 77,
+              "heightCm": 193,
+              "skills": [],
+              "statBias": {
+                "playmaking": 6,
+                "perimDef": 6
+              },
+              "rebW": 0.14,
+              "astW": 0.26,
+              "stlW": 0.2,
+              "blkW": 0.05,
+              "age": 30
+            },
+            {
+              "num": 25,
+              "name": "奧斯曼・迪奧普",
+              "pos": "C",
+              "role": "BENCH",
+              "ovr": 77,
+              "heightCm": 204,
+              "skills": [],
+              "statBias": {
+                "inside": 7,
+                "rebound": 7
+              },
+              "rebW": 0.25,
+              "astW": 0.06,
+              "stlW": 0.1,
+              "blkW": 0.26,
+              "age": 26
+            }
+          ]
         }
       ]
     },
@@ -8766,7 +9292,7 @@
               "age": 30
             },
             {
-              "num": 0,
+              "num": 1,
               "name": "小蓋瑞・裴頓",
               "pos": "PG",
               "role": "BENCH",
@@ -9356,7 +9882,7 @@
               "age": 32
             },
             {
-              "num": 0,
+              "num": 1,
               "name": "傑里科・西姆斯",
               "pos": "C",
               "role": "BENCH",
@@ -9588,7 +10114,7 @@
               "age": 30
             },
             {
-              "num": 0,
+              "num": 1,
               "name": "小特倫斯・香農",
               "pos": "SF",
               "role": "BENCH",
@@ -11232,7 +11758,7 @@
               "age": 35
             },
             {
-              "num": 15,
+              "num": 0,
               "name": "尼克・凱",
               "pos": "PF",
               "role": "BENCH",

@@ -43,7 +43,7 @@
           "base": 0.72,
           "w": 0.002,
           "ok": {
-            "text": "睇穿對手擋拆習慣！球商 +3、組織 +2、狀態 +12。",
+            "text": "看穿對手擋拆習慣！球商 +3、組織 +2、狀態 +12。",
             "eff": {
               "iq": 2,
               "playmaking": 1,
@@ -54,7 +54,7 @@
             ]
           },
           "fail": {
-            "text": "睇到一半訓著咗，不過精神好返啲。狀態 +8。",
+            "text": "看到一半睡著了，不過精神恢復了一些。狀態 +8。",
             "eff": {
               "condition": 8
             },
@@ -68,7 +68,7 @@
       "id": "evt_mentor_secret",
       "title": "退役傳奇 {{legendName}}的深夜點撥",
       "stage": "ANY",
-      "desc": "球場管理員認出你係每晚留低加練嘅苦練狂，竟然係退役傳奇 {{legendName}}！佢親自示範背身與急停步法。",
+      "desc": "球場管理員認出你是每晚留下加練的苦練狂，竟然是退役傳奇 {{legendName}}！他親自示範背身與急停步法。",
       "conditions": [
         {
           "field": "flags",
@@ -107,7 +107,7 @@
       "id": "evt_rival_hallway",
       "title": "宿敵 {{rivalName}}（{{rivalTeam}}）宣言：賽前走廊的火花",
       "stage": "ANY",
-      "desc": "{{rivalTeam}} 王牌 {{rivalName}}喺走廊攔住你：「睇完你上場表現，今年嘅舞台唔係你玩得起。」",
+      "desc": "{{rivalTeam}} 王牌 {{rivalName}}在走廊攔住你：「看完你上場表現，今年的舞台不是你玩得起。」",
       "conditions": [
         {
           "field": "flags",
@@ -174,7 +174,7 @@
       "id": "evt_rival_street1v1",
       "title": "宿敵 {{rivalName}}（{{rivalTeam}}）深夜街場 1v1 單挑邀約",
       "stage": "ANY",
-      "desc": "宿敵 {{rivalName}}（{{rivalTeam}}）傳來短訊，約你半夜喺海邊水泥場打一場唔計分嘅 1v1 單挑！",
+      "desc": "宿敵 {{rivalName}}（{{rivalTeam}}）傳來短訊，約你半夜在海邊水泥場打一場不計分的 1v1 單挑！",
       "conditions": [
         {
           "field": "flags",
@@ -184,7 +184,7 @@
       ],
       "choices": [
         {
-          "label": "應戰！硬碰硬打爆佢",
+          "label": "應戰！硬碰硬打爆他",
           "stat": "speed",
           "base": 0.56,
           "w": 0.004,
@@ -201,7 +201,7 @@
             ]
           },
           "fail": {
-            "text": "惜敗兩球，但摸透咗佢嘅突破習慣！球商 +2、意志 +3、狀態 -15。",
+            "text": "惜敗兩球，但摸透了他的突破習慣！球商 +2、意志 +3、狀態 -15。",
             "eff": {
               "iq": 2,
               "grit": 3,
@@ -304,7 +304,7 @@
       "id": "evt_midseason_transfer",
       "title": "季中豪門密會・重磅轉會挖角！",
       "stage": "PRO",
-      "desc": "聯盟勁旅領隊私下接觸你嘅經紀人／教練 {{coachName}}，開出主力核心地位，邀請你即刻轉會加盟衝擊總冠軍！",
+      "desc": "聯盟勁旅領隊私下接觸你的經紀人／教練 {{coachName}}，開出主力核心地位，邀請你即刻轉會加盟衝擊總冠軍！",
       "conditions": [
         {
           "field": "reputation",
@@ -397,7 +397,7 @@
           }
         },
         {
-          "label": "強硬回應：「關鍵時刻波一定要喺我手！」",
+          "label": "強硬回應：「關鍵時刻波一定要在我手！」",
           "stat": "grit",
           "base": 0.56,
           "w": 0.004,
@@ -426,7 +426,7 @@
       "id": "evt_brand_deal",
       "title": "運動品牌球鞋代言邀約",
       "stage": "PRO",
-      "desc": "知名日系運動品牌睇中你嘅熱血球風，邀請你拍攝週末宣傳廣告並送出定制戰靴。",
+      "desc": "知名日系運動品牌看中你的熱血球風，邀請你拍攝週末宣傳廣告並送出定制戰靴。",
       "conditions": [],
       "choices": [
         {
@@ -482,7 +482,7 @@
       "id": "evt_growth_spurt",
       "stage": "HIGH_SCHOOL",
       "title": "🧬 青春期抽高！校醫室骨齡體測",
-      "desc": "今早度高發現你又長高咗一截，膝蓋略微有生長痛！隊醫提醒要配合營養同伸展先可以轉化成實戰身體素質。",
+      "desc": "今早度高發現你又長高了一截，膝蓋略微有生長痛！隊醫提醒要配合營養同伸展先可以轉化成實戰身體素質。",
       "conditions": [
         {
           "field": "age",
@@ -549,7 +549,7 @@
       "id": "evt_euro_scout",
       "stage": "ANY",
       "title": "🇪🇺 歐洲豪門球探現身看台！",
-      "desc": "今場熱身時，場邊出現咗拎住戰術筆記本嘅歐洲 EuroLeague 首席球探，佢正重點觀察你嘅無球跑位同防守紀律。",
+      "desc": "今場熱身時，場邊出現了拎住戰術筆記本的歐洲 EuroLeague 首席球探，他正重點觀察你的無球跑位同防守紀律。",
       "conditions": [
         {
           "field": "reputation",
@@ -613,7 +613,7 @@
       "id": "evt_film_room",
       "stage": "ANY",
       "title": "📽️ 主教練 {{coachName}}深夜錄像室一對一覆盤",
-      "desc": "總教練 {{coachName}}叫你留低一齊逐格重溫{{rivalTeam}} 王牌 {{rivalName}}嘅進攻習慣，仲問你對下場防守策略有咩睇法。",
+      "desc": "總教練 {{coachName}}叫你留下一齊逐格重溫{{rivalTeam}} 王牌 {{rivalName}}的進攻習慣，仲問你對下場防守策略有咩看法。",
       "conditions": [],
       "choices": [
         {
@@ -667,7 +667,7 @@
       "id": "evt_fiba_camp",
       "stage": "ANY",
       "title": "🌏 國際青年／國家隊集訓營邀請",
-      "desc": "籃協發來短期高強度集訓邀請函，可以同各路頂尖國手同場對抗，但會消耗唔少體能。",
+      "desc": "籃協發來短期高強度集訓邀請函，可以同各路頂尖國手同場對抗，但會消耗不少體能。",
       "conditions": [
         {
           "field": "reputation",
@@ -729,8 +729,8 @@
     {
       "id": "evt_street_legend",
       "stage": "ANY",
-      "title": "🌃 傳奇前輩 {{legendName}} 嘅深夜運球與節奏課",
-      "desc": "返屋企途中經過燈火通明嘅室外球場，偶遇退役名宿 {{legendName}}！佢睇中你嘅腳步天賦，主動邀請你打一節半場節奏指導課。",
+      "title": "🌃 傳奇前輩 {{legendName}} 的深夜運球與節奏課",
+      "desc": "返屋企途中經過燈火通明的室外球場，偶遇退役名宿 {{legendName}}！他看中你的腳步天賦，主動邀請你打一節半場節奏指導課。",
       "conditions": [],
       "choices": [
         {
@@ -747,7 +747,7 @@
             "flags": []
           },
           "fail": {
-            "text": "街球假動作差點扭親自己，但學識咗點防變向：外防 +2、狀態 -6。",
+            "text": "街球假動作差點扭親自己，但學識了點防變向：外防 +2、狀態 -6。",
             "eff": {
               "perimDef": 2,
               "condition": -6
@@ -784,7 +784,7 @@
       "id": "evt_media_mvp_debate",
       "stage": "PRO",
       "title": "📺 體育節目熱議：你配唔配做{{teamName}} 球隊老大？",
-      "desc": "電視評論員喺節目度公開質疑你嘅帶隊能力，認為你只係刷數據嘅體系球員，訪問咪高峰即刻遞到你面前。",
+      "desc": "電視評論員在節目度公開質疑你的帶隊能力，認為你只是刷數據的體系球員，訪問咪高峰即刻遞到你面前。",
       "conditions": [],
       "choices": [
         {
@@ -839,7 +839,7 @@
       "id": "evt_vet_mentorship",
       "stage": "ANY",
       "title": "🤝 {{vetRoleLabel}} {{vetName}} 主動帶你加練防守站位",
-      "desc": "訓練結束後，隊中經驗最豐富嘅{{vetRoleLabel}} {{vetName}} 拉住你，親自講解點樣用最省力嘅方式卡位同封死對方第一拍。",
+      "desc": "訓練結束後，隊中經驗最豐富的{{vetRoleLabel}} {{vetName}} 拉住你，親自講解點樣用最省力的方式卡位同封死對方第一拍。",
       "conditions": [],
       "choices": [
         {
@@ -858,7 +858,7 @@
             "flags": []
           },
           "fail": {
-            "text": "掌握咗基本卡位要領：籃板 +2、狀態 -5。",
+            "text": "掌握了基本卡位要領：籃板 +2、狀態 -5。",
             "eff": {
               "rebound": 2,
               "condition": -5
@@ -895,7 +895,7 @@
       "id": "evt_playoff_hype",
       "stage": "ANY",
       "title": "🔥 關鍵衝刺戰前夕・全隊深夜聚餐立誓",
-      "desc": "距離決戰越嚟越近，全隊圍坐拉麵店立下必勝誓言，氣氛熱血沸騰！",
+      "desc": "距離決戰越來越近，全隊圍坐拉麵店立下必勝誓言，氣氛熱血沸騰！",
       "conditions": [],
       "choices": [
         {
@@ -951,11 +951,11 @@
       "id": "evt_hs_midterm",
       "stage": "HIGH_SCHOOL",
       "title": "📚 期中考紅字危機！唔合格即禁賽！",
-      "desc": "教練 {{coachName}}落咗死命令：今次期中考任何一科唔合格都要停練補課！",
+      "desc": "教練 {{coachName}}落了死命令：今次期中考任何一科唔合格都要停練補課！",
       "conditions": [],
       "choices": [
         {
-          "label": "通宵搵學霸隊友惡補數學與英文",
+          "label": "通宵找學霸隊友惡補數學與英文",
           "stat": "iq",
           "base": 0.65,
           "w": 0.004,
@@ -982,7 +982,7 @@
           "base": 0.48,
           "w": 0.004,
           "ok": {
-            "text": "奇蹟過關仲順便加練咗 100 球三分！三分 +3、意志 +2！",
+            "text": "奇蹟過關仲順便加練了 100 球三分！三分 +3、意志 +2！",
             "eff": {
               "threePt": 2,
               "grit": 1
@@ -1062,8 +1062,8 @@
     {
       "id": "evt_hs_shoes_worn",
       "stage": "HIGH_SCHOOL",
-      "title": "👟 戰靴鞋底磨平・波鞋店老闆嘅秘密藏品",
-      "desc": "你對主力戰靴已經磨到冇晒紋路，鞋店老闆拎出一對絕版復古高筒球鞋。",
+      "title": "👟 戰靴鞋底磨平・波鞋店老闆的秘密藏品",
+      "desc": "你對主力戰靴已經磨到沒有晒紋路，鞋店老闆拎出一對絕版復古高筒球鞋。",
       "conditions": [],
       "choices": [
         {
@@ -1089,7 +1089,7 @@
           }
         },
         {
-          "label": "用自己積蓄買更輕便嘅低筒後衛鞋",
+          "label": "用自己積蓄買更輕便的低筒後衛鞋",
           "stat": "iq",
           "base": 0.72,
           "w": 0.002,
@@ -1118,7 +1118,7 @@
       "id": "evt_rival_gym_crash",
       "stage": "ANY",
       "title": "⚡ 宿敵 {{rivalName}}（{{rivalTeam}}）突然闖入{{teamName}} 主場踩場！",
-      "desc": "{{rivalTeam}} 王牌 {{rivalName}}帶住兩名隊友喺賽前一日嚟到你嘅訓練館，冷笑住問你敢唔敢鬥射三分！",
+      "desc": "{{rivalTeam}} 王牌 {{rivalName}}帶住兩名隊友在賽前一日來到你的訓練館，冷笑住問你敢不敢鬥射三分！",
       "conditions": [],
       "choices": [
         {
@@ -1234,7 +1234,7 @@
     {
       "id": "evt_nutrition_chef",
       "stage": "ANY",
-      "title": "🥩 專屬運動營養師嘅增肌與體脂課",
+      "title": "🥩 專屬運動營養師的增肌與體脂課",
       "desc": "隊醫安排營養師幫你制定個人化高蛋白餐單，針對核心力量進行改造。",
       "conditions": [],
       "choices": [
@@ -1351,11 +1351,11 @@
       "id": "evt_teammate_slump",
       "stage": "ANY",
       "title": "🫂 王牌隊友 {{teammateName}}陷入低潮・更衣室深夜談心",
-      "desc": "先發隊友 {{teammateName}}連續三場打鐵，獨自坐喺球場邊懷疑自己。",
+      "desc": "先發隊友 {{teammateName}}連續三場打鐵，獨自坐在球場邊懷疑自己。",
       "conditions": [],
       "choices": [
         {
-          "label": "陪佢加練 200 球雙人擋拆餵球搵返節奏",
+          "label": "陪他加練 200 球雙人擋拆餵球找返節奏",
           "stat": "playmaking",
           "base": 0.72,
           "w": 0.003,
@@ -1378,7 +1378,7 @@
           }
         },
         {
-          "label": "用激將法約佢打一局 11 分鬥牛重燃鬥志",
+          "label": "用激將法約他打一局 11 分鬥牛重燃鬥志",
           "stat": "grit",
           "base": 0.6,
           "w": 0.004,
@@ -1515,7 +1515,7 @@
     {
       "id": "evt_yoga_mobility",
       "stage": "ANY",
-      "title": "🧘 頂尖物理治療師嘅柔韌性與落地保護課",
+      "title": "🧘 頂尖物理治療師的柔韌性與落地保護課",
       "desc": "現代籃球極度講求落地緩衝與髖關節靈活度，治療師邀你試堂。",
       "conditions": [],
       "choices": [
@@ -1571,11 +1571,11 @@
       "id": "evt_nba_agent_call",
       "stage": "PRO",
       "title": "💼 頂級經紀公司遞出簽約合約",
-      "desc": "北美知名經紀人睇中你嘅商業潛力同球風，提出幫你運作豪門轉會同代言！",
+      "desc": "北美知名經紀人看中你的商業潛力同球風，提出幫你運作豪門轉會同代言！",
       "conditions": [],
       "choices": [
         {
-          "label": "簽約並立即試探聯盟頂級強隊嘅轉會席位",
+          "label": "簽約並立即試探聯盟頂級強隊的轉會席位",
           "stat": "reputation",
           "base": 0.58,
           "w": 0.004,
@@ -1650,7 +1650,7 @@
           }
         },
         {
-          "label": "唔理流言，喺訓練場打爆所有對抗賽回應",
+          "label": "不理流言，在訓練場打爆所有對抗賽回應",
           "stat": "inside",
           "base": 0.62,
           "w": 0.004,
@@ -1740,7 +1740,7 @@
     {
       "id": "evt_dunk_contest_dare",
       "stage": "ANY",
-      "title": "🔥 {{teamName}} 隊內訓練賽後嘅罰球線起跳挑戰",
+      "title": "🔥 {{teamName}} 隊內訓練賽後的罰球線起跳挑戰",
       "desc": "隊友起哄話如果有人可以踩住罰球線入樽，全隊請食一個月燒肉！",
       "conditions": [],
       "choices": [
@@ -1759,7 +1759,7 @@
             "flags": []
           },
           "fail": {
-            "text": "差幾公分扣喺籃框前沿，惹來全場大笑：彈跳 +1、狀態 -5。",
+            "text": "差幾公分扣在籃框前沿，惹來全場大笑：彈跳 +1、狀態 -5。",
             "eff": {
               "vertical": 1,
               "condition": -5
@@ -1795,8 +1795,8 @@
     {
       "id": "evt_defensive_boot_camp",
       "stage": "ANY",
-      "title": "🛡️ {{teamName}} 防守助教嘅滑步與封阻地獄特訓",
-      "desc": "防守助教拎住大墊板模擬重型中鋒撞擊，問邊個夠膽企喺油漆區頂住佢！",
+      "title": "🛡️ {{teamName}} 防守助教的滑步與封阻地獄特訓",
+      "desc": "防守助教拎住大墊板模擬重型中鋒撞擊，問邊個夠膽企在油漆區頂住他！",
       "conditions": [],
       "choices": [
         {
@@ -1906,12 +1906,12 @@
     {
       "id": "evt_overseas_highlight_viral",
       "stage": "ANY",
-      "title": "📱 實戰隔扣精華片喺全球社交媒體破百萬點擊！",
-      "desc": "你上場比賽嘅精采鏡頭俾球迷剪成熱血短片瘋傳海外！",
+      "title": "📱 實戰隔扣精華片在全球社交媒體破百萬點擊！",
+      "desc": "你上場比賽的精采鏡頭給球迷剪成熱血短片瘋傳海外！",
       "conditions": [],
       "choices": [
         {
-          "label": "趁勢開直播分享自己嘅日常訓練菜單",
+          "label": "趁勢開直播分享自己的日常訓練菜單",
           "stat": "reputation",
           "base": 0.78,
           "w": 0.002,
@@ -1961,7 +1961,7 @@
       "id": "evt_cold_weather_run",
       "stage": "ANY",
       "title": "❄️ 寒流凌晨五點・海濱長廊耐力拉練",
-      "desc": "氣溫驟降至十度以下，天未光已經聽到海浪聲，係鍛鍊心肺嘅最佳時機。",
+      "desc": "氣溫驟降至十度以下，天未光已經聽到海浪聲，是鍛鍊心肺的最佳時機。",
       "conditions": [],
       "choices": [
         {
@@ -2014,12 +2014,12 @@
     {
       "id": "evt_rival_handshake",
       "stage": "ANY",
-      "title": "🤝 賽後走廊巧遇宿敵 {{rivalName}}（{{rivalTeam}}）・意外嘅惺惺相惜",
-      "desc": "{{rivalTeam}} 王牌 {{rivalName}}單獨企喺自動販賣機前，遞咗罐運動飲品畀你，話期待下一次正面交鋒。",
+      "title": "🤝 賽後走廊巧遇宿敵 {{rivalName}}（{{rivalTeam}}）・意外的惺惺相惜",
+      "desc": "{{rivalTeam}} 王牌 {{rivalName}}單獨企在自動販賣機前，遞了罐運動飲品畀你，話期待下一次正面交鋒。",
       "conditions": [],
       "choices": [
         {
-          "label": "接過飲品並探討彼此嘅投籃與防守習慣",
+          "label": "接過飲品並探討彼此的投籃與防守習慣",
           "stat": "iq",
           "base": 0.76,
           "w": 0.003,
@@ -2042,7 +2042,7 @@
           }
         },
         {
-          "label": "霸氣放話：「下次我會喺你頭上入絕殺！」",
+          "label": "霸氣放話：「下次我會在你頭上入絕殺！」",
           "stat": "grit",
           "base": 0.7,
           "w": 0.003,
@@ -2070,7 +2070,7 @@
     {
       "id": "evt_playmaking_chess",
       "stage": "ANY",
-      "title": "♟️ 控衛導師 {{pgMentorName}}嘅半場三對三「禁運球」特訓",
+      "title": "♟️ 控衛導師 {{pgMentorName}}的半場三對三「禁運球」特訓",
       "desc": "教練 {{coachName}}規定今節隊內賽每人只准運球兩下，逼大家靠無球切入同視野傳導得分！",
       "conditions": [],
       "choices": [
@@ -2089,7 +2089,7 @@
             "flags": []
           },
           "fail": {
-            "text": "失誤咗幾次但領悟更深：組織 +2、球商 +1。",
+            "text": "失誤了幾次但領悟更深：組織 +2、球商 +1。",
             "eff": {
               "playmaking": 2,
               "iq": 1
@@ -2124,8 +2124,8 @@
     {
       "id": "evt_rebound_rodman",
       "stage": "ANY",
-      "title": "🧲 籃板王 {{teammateName}} 嘅落點預判秘籍",
-      "desc": "老前輩喺籃板下擺滿標記點，教你點樣靠起手弧度提早一秒判斷打鐵落點。",
+      "title": "🧲 籃板王 {{teammateName}} 的落點預判秘籍",
+      "desc": "老前輩在籃板下擺滿標記點，教你點樣靠起手弧度提早一秒判斷打鐵落點。",
       "conditions": [],
       "choices": [
         {
@@ -2177,7 +2177,7 @@
     {
       "id": "evt_coach_tactic_trust",
       "stage": "ANY",
-      "title": "📋 關鍵暫停戰術板・教練 {{coachName}}徵詢你嘅意見",
+      "title": "📋 關鍵暫停戰術板・教練 {{coachName}}徵詢你的意見",
       "desc": "面對強敵前夕，總教練 {{coachName}}破例將戰術筆遞畀你，問最後一擊應該點設計！",
       "conditions": [],
       "choices": [
@@ -2231,7 +2231,7 @@
     {
       "id": "evt_growth_spurt_late",
       "stage": "HIGH_SCHOOL",
-      "title": "🧬 骨齡複查・驚喜嘅二次抽高窗口！",
+      "title": "🧬 骨齡複查・驚喜的二次抽高窗口！",
       "desc": "校醫複查骨骺線後驚喜表示你仲未閉合，只要睡眠同營養跟得上仲有抽高空間！",
       "conditions": [
         {
@@ -2297,8 +2297,8 @@
     {
       "id": "evt_nba_draft_whisper",
       "stage": "HIGH_SCHOOL",
-      "title": "🇺🇸 美國選秀網站模擬榜單出現你嘅名字！",
-      "desc": "海外選秀權威網站將你列入「值得關注嘅國際黑馬」，球館外突然擠滿球探。",
+      "title": "🇺🇸 美國選秀網站模擬榜單出現你的名字！",
+      "desc": "海外選秀權威網站將你列入「值得關注的國際黑馬」，球館外突然擠滿球探。",
       "conditions": [
         {
           "field": "reputation",
@@ -2308,7 +2308,7 @@
       ],
       "choices": [
         {
-          "label": "喺球探面前展示三分拉開與換防全能性",
+          "label": "在球探面前展示三分拉開與換防全能性",
           "stat": "threePt",
           "base": 0.62,
           "w": 0.004,
@@ -2336,7 +2336,7 @@
           "base": 0.68,
           "w": 0.002,
           "ok": {
-            "text": "球探高度評價你嘅成熟心態！球商 +3、教練 {{coachName}}信任 +8、名氣 +8！",
+            "text": "球探高度評價你的成熟心態！球商 +3、教練 {{coachName}}信任 +8、名氣 +8！",
             "eff": {
               "iq": 2,
               "coachTrust": 8,
@@ -2360,7 +2360,7 @@
       "id": "evt_pro_playoff_intensity",
       "stage": "PRO",
       "title": "🔥 聯賽強強對話・對手公開放話要鎖死你",
-      "desc": "強敵頭號防守悍將喺賽前記者會揚言今場要令你得分唔過雙位數！",
+      "desc": "強敵頭號防守悍將在賽前記者會揚言今場要令你得分唔過雙位數！",
       "conditions": [],
       "choices": [
         {
@@ -2369,7 +2369,7 @@
           "base": 0.66,
           "w": 0.003,
           "ok": {
-            "text": "徹底睇穿對手重心！中投 +4、球商 +2、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味 +12！",
+            "text": "徹底看穿對手重心！中投 +4、球商 +2、宿敵 {{rivalName}}（{{rivalTeam}}）火藥味 +12！",
             "eff": {
               "midRange": 2,
               "iq": 1,
@@ -2387,7 +2387,7 @@
           }
         },
         {
-          "label": "喺社媒回覆一個微笑表情並加練力量硬鑿",
+          "label": "在社媒回覆一個微笑表情並加練力量硬鑿",
           "stat": "strength",
           "base": 0.64,
           "w": 0.003,
@@ -3421,7 +3421,7 @@
       ],
       "choices": [
         {
-          "label": "堅持保留低門檻 NBA 買斷條款，哪怕少拿一點薪水",
+          "label": "堅持保留下門檻 NBA 買斷條款，哪怕少拿一點薪水",
           "stat": "reputation",
           "base": 0.64,
           "w": 0.0038,
