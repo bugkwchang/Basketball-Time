@@ -514,7 +514,7 @@
     }
     .boot-error-box.hidden { display: none; }
   </style>
-  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s2" />
+  <link rel="stylesheet" href="./ui-refactor.css?v=20261128s2b" />
 </head>
 <body>
   <!-- ==================== BOOT LOADING OVERLAY ==================== -->
@@ -555,6 +555,16 @@
         <div class="save-backup-bar">
           <button type="button" class="manga-btn" id="btnTitleImportSave" style="font-size:12px; padding:7px 12px; width:100%;">📥 匯入存檔備份 (.json)</button>
           <input type="file" id="saveImportFileInput" accept=".json,application/json" style="display:none;" />
+        </div>
+        <div class="title-mod-bar" id="titleModBar" style="background:#FFFDF7; border:2px solid var(--ink); border-radius:10px; padding:8px 10px; margin-top:6px; display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:12px; font-weight:900;">
+            <span>🧩 社群聯賽 Mod</span>
+            <span id="titleModStatus" style="font-size:11px; color:var(--crimson); text-align:right;">原創熱血聯賽（預設）</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="manga-btn gold" id="btnTitleImportMod" style="flex:1; font-size:12px; padding:6px 8px;">⬆ 匯入聯賽 Mod (.json)</button>
+            <button type="button" class="manga-btn" id="btnTitleResetMod" style="font-size:12px; padding:6px 10px; display:none;">↺ 還原預設</button>
+          </div>
         </div>
         <button type="button" class="manga-btn primary title-primary-btn" id="btnTitleContinue" style="display:none;">🏀 繼續生涯</button>
         <button type="button" class="manga-btn primary title-primary-btn" id="btnTitleStartNew" style="display:none;">🏀 開始遊戲</button>
@@ -1424,7 +1434,7 @@
     </div>
   </div>
 
-  <script src="./ui-refactor.js?v=20261128s2"></script>
+  <script src="./ui-refactor.js?v=20261128s2b"></script>
   <script>
     /* =========================================================================
        《Basketball Time》 Phase 2 — Season Schedule, LOD Simulation, IndexedDB & Roster Import
@@ -1537,10 +1547,13 @@
         } catch (_) { return null; }
       },
       updateStatusUI() {
-        const el = document.getElementById("settingModStatus");
-        if (!el) return;
         const active = this.getActiveModName();
-        el.textContent = active ? `目前資料庫：🧩 ${active}` : "目前資料庫：原創熱血聯賽（預設）";
+        const setEl = document.getElementById("settingModStatus");
+        if (setEl) setEl.textContent = active ? `目前資料庫：🧩 ${active}` : "目前資料庫：原創熱血聯賽（預設）";
+        const titleEl = document.getElementById("titleModStatus");
+        if (titleEl) titleEl.textContent = active ? `🧩 ${active}` : "原創熱血聯賽（預設）";
+        const titleReset = document.getElementById("btnTitleResetMod");
+        if (titleReset) titleReset.style.display = active ? "inline-flex" : "none";
       },
       applyToRuntime(modObj) {
         if (!DB || !DB._defaultLeagues) return;
@@ -1551,49 +1564,61 @@
         }
         DB.leagues = merged;
       },
-      syncCurrentSeasonNames() {
-        if (!Season || !DB || !DB.leagues) return;
-        const curLg = DB.leagues.leagues.find(l => l.id === Season.leagueId);
-        if (!curLg) return;
-        const teamById = Object.fromEntries(curLg.teams.map(t => [t.id, t]));
-        if (Array.isArray(Season.standings)) {
-          Season.standings.forEach(st => {
-            const t = teamById[st.id];
-            if (t) { st.name = t.name; st.ace = t.ace; }
-          });
+      syncSeasonWithActiveLeagues(targetSeason = Season, persistAndRender = true) {
+        if (!targetSeason || !DB || !DB.leagues || !Array.isArray(DB.leagues.leagues)) return;
+        const leagueById = Object.fromEntries(DB.leagues.leagues.map(l => [l.id, l]));
+        const curLg = leagueById[targetSeason.leagueId] || DB.leagues.leagues[0];
+        if (curLg) {
+          const teamById = Object.fromEntries(curLg.teams.map(t => [t.id, t]));
+          if (Array.isArray(targetSeason.standings)) {
+            targetSeason.standings.forEach(st => {
+              const t = teamById[st.id];
+              if (t) { st.name = t.name; st.ace = t.ace; if (t.coach) st.coach = t.coach; }
+            });
+          }
+          if (Array.isArray(targetSeason.schedule)) {
+            targetSeason.schedule.forEach(g => {
+              const t = teamById[g.oppId];
+              if (t) { g.oppName = t.name; g.oppAce = t.ace; }
+            });
+          }
+          const userTeamStand = (targetSeason.standings || []).find(t => t.isUserTeam);
+          const userTm = userTeamStand ? teamById[userTeamStand.id] : (curLg.teams.find(t => t.isUserTeam) || curLg.teams[0]);
+          if (userTm && Array.isArray(userTm.roster) && Array.isArray(targetSeason.userRoster)) {
+            const nonUserSrc = userTm.roster.filter(x => x && !x.isUser && !String(x.name || "").includes("主角"));
+            let idx = 0;
+            targetSeason.userRoster.forEach(pl => {
+              if (!pl.isUser && nonUserSrc[idx]) {
+                pl.name = nonUserSrc[idx].name;
+                idx++;
+              }
+            });
+          }
         }
-        if (Array.isArray(Season.schedule)) {
-          Season.schedule.forEach(g => {
-            const t = teamById[g.oppId];
-            if (t) { g.oppName = t.name; g.oppAce = t.ace; }
-          });
-        }
-        const userTeamStand = (Season.standings || []).find(t => t.isUserTeam);
-        const userTm = userTeamStand ? teamById[userTeamStand.id] : (curLg.teams.find(t => t.isUserTeam) || curLg.teams[0]);
-        if (userTm && Array.isArray(userTm.roster) && Array.isArray(Season.userRoster)) {
-          const nonUserSrc = userTm.roster.filter(x => x && !x.isUser && !String(x.name || "").includes("主角"));
-          let idx = 0;
-          Season.userRoster.forEach(pl => {
-            if (!pl.isUser && nonUserSrc[idx]) {
-              pl.name = nonUserSrc[idx].name;
-              idx++;
-            }
-          });
-        }
-        if (Season.leagueRosters && Season.leagueRosters[Season.leagueId]) {
-          const lr = Season.leagueRosters[Season.leagueId];
-          for (const [tid, rList] of Object.entries(lr)) {
-            const t = teamById[tid];
-            if (t && Array.isArray(t.roster) && Array.isArray(rList)) {
-              rList.forEach((pl, i) => {
-                if (!pl.isUser && t.roster[i]) pl.name = t.roster[i].name;
-              });
+        // 同步存檔內全部 6 大聯賽的持久化名單（切聯賽或讀檔皆立即套用新名單）
+        if (targetSeason.leagueRosters && typeof targetSeason.leagueRosters === "object") {
+          for (const [lid, lr] of Object.entries(targetSeason.leagueRosters)) {
+            const lgObj = leagueById[lid];
+            if (!lgObj || !lr || typeof lr !== "object") continue;
+            const tMap = Object.fromEntries(lgObj.teams.map(t => [t.id, t]));
+            for (const [tid, rList] of Object.entries(lr)) {
+              const t = tMap[tid];
+              if (t && Array.isArray(t.roster) && Array.isArray(rList)) {
+                rList.forEach((pl, i) => {
+                  if (!pl.isUser && t.roster[i]) pl.name = t.roster[i].name;
+                });
+              }
             }
           }
         }
-        syncUserTeamRole(false);
-        SaveManager.save(Season);
-        renderHub();
+        if (persistAndRender && targetSeason === Season) {
+          syncUserTeamRole(false);
+          SaveManager.save(Season);
+          renderHub();
+        }
+      },
+      syncCurrentSeasonNames() {
+        this.syncSeasonWithActiveLeagues(Season, true);
       },
       applyStoredModOnBoot() {
         try {
@@ -8528,6 +8553,10 @@
       if (btnSetMod) btnSetMod.addEventListener("click", () => document.getElementById("rosterFileInput").click());
       const btnResetMod = document.getElementById("btnSettingResetMod");
       if (btnResetMod) btnResetMod.addEventListener("click", () => window.LeagueModManager.resetToDefault());
+      const btnTitleMod = document.getElementById("btnTitleImportMod");
+      if (btnTitleMod) btnTitleMod.addEventListener("click", () => document.getElementById("rosterFileInput").click());
+      const btnTitleResetMod = document.getElementById("btnTitleResetMod");
+      if (btnTitleResetMod) btnTitleResetMod.addEventListener("click", () => window.LeagueModManager.resetToDefault());
       if (window.LeagueModManager) window.LeagueModManager.updateStatusUI();
 
       document.getElementById("rosterFileInput").addEventListener("change", (e) => {
@@ -8749,6 +8778,9 @@
       ensureCareerHistory(targetSeason);
       ensureTeamOps(targetSeason);
       ensureLeagueHistory(targetSeason);
+      if (window.LeagueModManager && typeof window.LeagueModManager.syncSeasonWithActiveLeagues === "function") {
+        window.LeagueModManager.syncSeasonWithActiveLeagues(targetSeason, false);
+      }
       return targetSeason;
     }
 
