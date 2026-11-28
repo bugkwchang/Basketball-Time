@@ -1819,7 +1819,7 @@ window.BTUI = (() => {
       if (!totals[key]) {
         totals[key] = {
           name: pl.name, teamId, teamName, pos: pl.pos || "SG",
-          age: (pl.isUser && season.player ? season.player.age : (pl.age || 17)), ovr: pl.ovr || 70, isUser: Boolean(pl.isUser),
+          age: (pl.isUser && s.player ? s.player.age : (pl.age || 17)), ovr: pl.ovr || 70, isUser: Boolean(pl.isUser),
           gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0
         };
       }
@@ -1827,7 +1827,7 @@ window.BTUI = (() => {
       rec.teamName = teamName;
       rec.isUser = Boolean(pl.isUser);
       if (pl.ovr) rec.ovr = pl.ovr;
-      const resolvedAge = (pl.isUser && season.player) ? season.player.age : pl.age;
+      const resolvedAge = (pl.isUser && s.player) ? s.player.age : pl.age;
       if (resolvedAge) rec.age = resolvedAge;
       rec.gp += 1;
       rec.pts += (pl.pts || 0);
