@@ -603,13 +603,13 @@ window.BTUI = (() => {
       const nextG = season.schedule[season.currentRoundIdx];
       const stageTxt = nextG.stageLabel || `第 ${nextG.round} 輪`;
       titleEl.textContent = "🏀 開始下一場比賽";
-      subEl.textContent = `${stageTxt} · ${userTeam.name} VS ${nextG.oppName}${apLeft > 0 ? `（尚餘 ${apLeft} AP 可訓練）` : ""}`;
+      subEl.textContent = `${stageTxt} · ${userTeam.name} VS ${nextG.oppName}${apLeft > 0 ? `（尚餘 ${apLeft} 行動力可訓練）` : ""}`;
       btn.dataset.ctaMode = "PLAY_NEXT";
     }
 
     const meApBadge = document.getElementById("navMeApBadge");
     if (meApBadge) {
-      meApBadge.textContent = `${apLeft} AP`;
+      meApBadge.textContent = `${apLeft} 行動`;
       meApBadge.style.display = apLeft > 0 ? "inline-flex" : "none";
     }
   }
@@ -826,11 +826,11 @@ window.BTUI = (() => {
     }
     const trainBtnTitle = document.getElementById("btnOpenTrainTitle");
     const trainBtnSub = document.getElementById("btnOpenTrainSub");
-    if (trainBtnTitle) trainBtnTitle.textContent = `🏋️ 場外養成（剩餘 ${p.ap} AP）`;
+    if (trainBtnTitle) trainBtnTitle.textContent = `🏋️ 場外養成（剩餘 ${p.ap} 行動力）`;
     if (trainBtnSub) {
       trainBtnSub.textContent = p.ap > 0
         ? (p.injured ? "⚠️ 輕微拉傷中，點擊理療或特訓" : "點開選擇特訓、恢復與極限 QTE")
-        : "本週 AP 已用完，下場賽後補滿";
+        : "本週行動力已用完，下場賽後補滿";
     }
 
     // Update detailed player summary inside drawer shelf too
@@ -1836,6 +1836,13 @@ window.BTUI = (() => {
       rec.ast += (pl.ast || 0);
       rec.stl += (pl.stl || 0);
       rec.blk += (pl.blk || 0);
+      if (season && typeof window.recordSingleGameHistory === "function") {
+        window.recordSingleGameHistory(season, {
+          name: pl.name, isUser: Boolean(pl.isUser),
+          pts: pl.pts || 0, reb: (pl.oreb || 0) + (pl.dreb || 0),
+          ast: pl.ast || 0, stl: pl.stl || 0, blk: pl.blk || 0
+        }, { teamName });
+      }
     }
   }
 
@@ -2121,6 +2128,395 @@ window.BTUI = (() => {
   }
 
   /* -------------------- BIND REFACTOR EVENTS -------------------- */
+
+  // ============================================================================
+  // PHASE 5: SETTINGS CENTER, LEAGUE HISTORICAL RECORD WALL & CAREER POSTER
+  // ============================================================================
+  function syncSettingsUi() {
+    if (!window.GameSettings) return;
+    const cfg = window.GameSettings.get();
+    const sfxBtn = document.getElementById("btnSettingSfx");
+    const vibBtn = document.getElementById("btnSettingVib");
+    if (sfxBtn) {
+      sfxBtn.dataset.on = cfg.sfx ? "1" : "0";
+      sfxBtn.textContent = cfg.sfx ? "開啟" : "靜音";
+      sfxBtn.classList.toggle("on", cfg.sfx);
+    }
+    if (vibBtn) {
+      vibBtn.dataset.on = cfg.vibration ? "1" : "0";
+      vibBtn.textContent = cfg.vibration ? "開啟" : "關閉";
+      vibBtn.classList.toggle("on", cfg.vibration);
+    }
+    const paceGroup = document.getElementById("settingPaceGroup");
+    if (paceGroup) {
+      paceGroup.querySelectorAll(".pace-seg-btn").forEach(b => {
+        b.classList.toggle("active", Number(b.dataset.pace) === Number(cfg.pace));
+      });
+    }
+  }
+
+  function openSettingsModal() {
+    syncSettingsUi();
+    const utilDrawer = document.getElementById("topUtilDrawer");
+    if (utilDrawer) utilDrawer.classList.remove("open");
+    const modal = document.getElementById("settingsModal");
+    if (modal) modal.classList.remove("hidden");
+  }
+
+  function closeSettingsModal() {
+    const modal = document.getElementById("settingsModal");
+    if (modal) modal.classList.add("hidden");
+  }
+
+  function renderLeagueRecordsModal(tab = "champions") {
+    const season = getSeason();
+    const body = document.getElementById("leagueRecordsBody");
+    const tabs = document.getElementById("leagueRecordsTabs");
+    if (!body) return;
+    if (tabs) {
+      tabs.querySelectorAll("[data-lrtab]").forEach(b => b.classList.toggle("active", b.dataset.lrtab === tab));
+    }
+    const lh = (typeof window.ensureLeagueHistory === "function" && season)
+      ? window.ensureLeagueHistory(season)
+      : { champions: [], singleGameRecords: {} };
+
+    if (tab === "champions") {
+      const champs = Array.isArray(lh.champions) ? [...lh.champions].reverse() : [];
+      if (!champs.length) {
+        body.innerHTML = `<div style="padding:18px; text-align:center; color:var(--ink-soft); font-size:13px; border:2px dashed var(--ink); background:#FFFDF7;">
+          🏆 尚未誕生首座聯賽總冠軍！完成本季季後賽與總決賽後，歷屆冠軍與 FMVP 將永久鐫刻於此。
+        </div>`;
+        return;
+      }
+      body.innerHTML = champs.map(c => `
+        <div class="champ-row ${c.userWon ? "user-champ" : ""}">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
+            <strong>第 ${c.seasonYear} 季 · ${c.leagueName || "聯賽"}</strong>
+            ${c.userWon ? '<span class="tag gold">💍 主角奪冠</span>' : '<span class="tag">聯盟紀錄</span>'}
+          </div>
+          <div style="font-size:14px; font-weight:900; margin-top:4px; color:var(--crimson);">🏆 總冠軍：${c.champion}</div>
+          <div style="font-size:12px; color:var(--ink-soft); margin-top:2px;">
+            🔥 總決賽 FMVP：<strong>${c.fmvp || "—"}</strong>${c.runnerUp ? ` ｜ 亞軍：${c.runnerUp}` : ""}
+          </div>
+        </div>
+      `).join("");
+    } else {
+      const recs = lh.singleGameRecords || {};
+      const defs = [
+        ["pts", "🔥 單場最高得分", "分"],
+        ["reb", "🛡️ 單場最高籃板", "板"],
+        ["ast", "🎯 單場最高助攻", "助"],
+        ["stl", "⚡ 單場最高抄截", "抄"],
+        ["blk", "🧱 單場最高封阻", "帽"]
+      ];
+      body.innerHTML = `<div class="record-grid">` + defs.map(([k, lbl, unit]) => {
+        const r = recs[k];
+        if (!r) {
+          return `<div class="record-card">
+            <div class="record-lbl">${lbl}</div>
+            <div class="record-val">--</div>
+            <div class="record-meta">尚待球員刷新紀錄</div>
+          </div>`;
+        }
+        return `<div class="record-card ${r.isUser ? "is-user" : ""}">
+          <div class="record-lbl">${lbl}</div>
+          <div class="record-val">${r.val} <span style="font-size:13px;">${unit}</span></div>
+          <div class="record-meta"><strong>${r.playerName}</strong>${r.isUser ? ' <span class="tag gold">主角</span>' : ""}</div>
+          <div class="record-meta" style="color:var(--ink-soft);">${r.teamName || ""} · 第 ${r.seasonYear || 1} 季</div>
+        </div>`;
+      }).join("") + `</div>`;
+    }
+  }
+
+  function openLeagueRecordsModal(tab = "champions") {
+    const modal = document.getElementById("leagueRecordsModal");
+    if (!modal) return;
+    renderLeagueRecordsModal(tab);
+    modal.classList.remove("hidden");
+  }
+
+  function getCareerSummaryStats(season) {
+    const p = season.player;
+    const arc = Array.isArray(season.archive) ? season.archive : [];
+    const st = season.seasonTotals || { gp: 0, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, mvps: 0 };
+    const rings = arc.reduce((s, a) => s + (a.ring || (a.honor && a.honor.includes("總冠軍") ? 1 : 0)), 0);
+    const fmvps = arc.reduce((s, a) => s + (a.fmvp || 0), 0);
+    const smvps = arc.reduce((s, a) => s + (a.seasonMvp || 0), 0);
+    const matchMvps = arc.reduce((s, a) => s + (a.mvps || 0), 0) + (st.mvps || 0);
+    const gp = arc.reduce((s, a) => s + (a.gp || 0), 0) + (st.gp || 0);
+    const pts = arc.reduce((s, a) => s + (a.ptsTotal || Math.round(Number(a.ppg || 0) * (a.gp || 0))), 0) + (st.pts || 0);
+    const reb = arc.reduce((s, a) => s + (a.rebTotal || Math.round(Number(a.rpg || 0) * (a.gp || 0))), 0) + (st.reb || 0);
+    const ast = arc.reduce((s, a) => s + (a.astTotal || Math.round(Number(a.apg || 0) * (a.gp || 0))), 0) + (st.ast || 0);
+    const stl = arc.reduce((s, a) => s + (a.stlTotal || Math.round(Number(a.spg || 0) * (a.gp || 0))), 0) + (st.stl || 0);
+    const blk = arc.reduce((s, a) => s + (a.blkTotal || Math.round(Number(a.bpg || 0) * (a.gp || 0))), 0) + (st.blk || 0);
+    const curOvr = typeof calcOVR === "function" ? calcOVR(p.stats, p.pos, season.equippedTraits) : 75;
+    const peakOvr = Math.max(curOvr, ...arc.map(a => Number(a.ovr || 0)));
+    const natCaps = Array.isArray(season.nationalTeamHistory) ? season.nationalTeamHistory.length : 0;
+    const hofPts = Math.min(100, rings * 24 + fmvps * 18 + smvps * 18 + matchMvps * 2 + Math.floor(pts / 120) + natCaps * 5);
+    const hofTier = hofPts >= 90 ? "🐐 歷史傳奇 GOAT" : (hofPts >= 70 ? "🏛️ 名人堂一票入選" : (hofPts >= 45 ? "⭐ 全明星級名將" : (hofPts >= 20 ? "🏀 職業主力悍將" : "🌱 崛起新星")));
+    const denom = Math.max(1, gp);
+    return {
+      rings, fmvps, smvps, matchMvps, natCaps, gp, pts, reb, ast, stl, blk,
+      ppg: (pts / denom).toFixed(1), rpg: (reb / denom).toFixed(1), apg: (ast / denom).toFixed(1),
+      spg: (stl / denom).toFixed(1), bpg: (blk / denom).toFixed(1),
+      curOvr, peakOvr, hofPts, hofTier
+    };
+  }
+
+  function renderCareerPosterCanvas(canvasEl) {
+    const season = getSeason();
+    const db = getDB();
+    const canvas = canvasEl || document.getElementById("careerPosterCanvas");
+    if (!season || !season.player || !canvas || !canvas.getContext) return false;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return false;
+    const W = canvas.width || 800;
+    const H = canvas.height || 1200;
+    const p = season.player;
+    const s = getCareerSummaryStats(season);
+    const uTeam = (season.standings || []).find(t => t.isUserTeam);
+    const lgObj = db && db.leagues ? db.leagues.leagues.find(l => l.id === season.leagueId) : null;
+
+    // 1. Warm manga paper background + halftone dots
+    ctx.fillStyle = "#F6F1E3";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(18,18,18,0.06)";
+    for (let y = 24; y < H; y += 22) {
+      for (let x = 24; x < W; x += 22) {
+        ctx.beginPath();
+        ctx.arc(x, y, 2.1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // 2. Outer double manga frame
+    ctx.strokeStyle = "#111111";
+    ctx.lineWidth = 10;
+    ctx.strokeRect(24, 24, W - 48, H - 48);
+    ctx.lineWidth = 3;
+    ctx.strokeRect(38, 38, W - 76, H - 76);
+
+    // 3. Top editorial header banner
+    ctx.fillStyle = "#111111";
+    ctx.fillRect(46, 46, W - 92, 118);
+    ctx.fillStyle = "#FACC15";
+    ctx.fillRect(46, 152, W - 92, 12);
+
+    ctx.fillStyle = "#FACC15";
+    ctx.font = "900 22px sans-serif";
+    ctx.fillText("BASKETBALL TIME  ·  HALL OF FAME EDITION", 72, 86);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "900 40px sans-serif";
+    ctx.fillText(season.retired ? "傳奇謝幕・名人堂生涯紀念號" : "熱血籃球傳奇・生涯戰績特刊", 72, 136);
+
+    // 4. Hero nameplate block
+    ctx.fillStyle = "#C81E1E";
+    ctx.fillRect(62, 192, W - 124, 196);
+    ctx.strokeStyle = "#111111";
+    ctx.lineWidth = 5;
+    ctx.strokeRect(62, 192, W - 124, 196);
+
+    // Jersey number watermark
+    ctx.fillStyle = "rgba(255,255,255,0.16)";
+    ctx.font = "900 175px sans-serif";
+    ctx.fillText(`#${p.num || 10}`, W - 295, 360);
+
+    ctx.fillStyle = "#FACC15";
+    ctx.font = "900 22px sans-serif";
+    ctx.fillText(`${p.pos}  ·  ${p.heightCm || 185}cm  ·  ${p.age} 歲  ·  征戰 ${season.careerYear} 季`, 88, 238);
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "900 58px sans-serif";
+    ctx.fillText(p.name || "主角", 88, 308);
+
+    ctx.fillStyle = "#FEF3C7";
+    ctx.font = "700 22px sans-serif";
+    ctx.fillText(`${uTeam ? uTeam.name : "校隊"}（${lgObj ? lgObj.name : ""}） ｜ 巔峰評級 ${s.peakOvr}`, 88, 358);
+
+    // 5. HOF Tier ribbon
+    ctx.fillStyle = "#111111";
+    ctx.fillRect(62, 410, W - 124, 68);
+    ctx.fillStyle = "#FACC15";
+    ctx.font = "900 28px sans-serif";
+    ctx.fillText(`${s.hofTier}    ｜    名人堂指數 ${s.hofPts}%`, 88, 454);
+
+    // 6. Trophy grid (4 boxes)
+    const trophies = [
+      ["💍 總冠軍戒", `${s.rings}`],
+      ["🔥 總決賽 FMVP", `${s.fmvps}`],
+      ["👑 例行賽 MVP", `${s.smvps}`],
+      ["🏅 國家隊徵召", `${s.natCaps}`]
+    ];
+    const boxW = (W - 124 - 36) / 4;
+    trophies.forEach(([lbl, val], idx) => {
+      const bx = 62 + idx * (boxW + 12);
+      const by = 502;
+      ctx.fillStyle = "#FFFDF7";
+      ctx.fillRect(bx, by, boxW, 126);
+      ctx.strokeStyle = "#111111";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(bx, by, boxW, 126);
+      ctx.fillStyle = "#C81E1E";
+      ctx.font = "900 46px sans-serif";
+      ctx.fillText(val, bx + 20, by + 68);
+      ctx.fillStyle = "#222222";
+      ctx.font = "800 18px sans-serif";
+      ctx.fillText(lbl, bx + 16, by + 106);
+    });
+
+    // 7. Career Stats Panel
+    ctx.fillStyle = "#FFFDF7";
+    ctx.fillRect(62, 652, W - 124, 198);
+    ctx.strokeStyle = "#111111";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(62, 652, W - 124, 198);
+
+    ctx.fillStyle = "#111111";
+    ctx.font = "900 24px sans-serif";
+    ctx.fillText(`📊 生涯累計數據（共出賽 ${s.gp} 場 ｜ 單場 MVP ${s.matchMvps} 次）`, 86, 694);
+
+    const statCols = [
+      ["場均得分", s.ppg, `總分 ${s.pts}`],
+      ["場均籃板", s.rpg, `總板 ${s.reb}`],
+      ["場均助攻", s.apg, `總助 ${s.ast}`],
+      ["場均抄截", s.spg, `總抄 ${s.stl}`],
+      ["場均封阻", s.bpg, `總帽 ${s.blk}`]
+    ];
+    const colW = (W - 172) / 5;
+    statCols.forEach(([lbl, avg, tot], idx) => {
+      const cx = 86 + idx * colW;
+      ctx.fillStyle = "#555555";
+      ctx.font = "700 17px sans-serif";
+      ctx.fillText(lbl, cx, 738);
+      ctx.fillStyle = "#C81E1E";
+      ctx.font = "900 36px sans-serif";
+      ctx.fillText(avg, cx, 784);
+      ctx.fillStyle = "#333333";
+      ctx.font = "700 16px sans-serif";
+      ctx.fillText(tot, cx, 818);
+    });
+
+    // 8. Signature Badges & Career Highlights
+    ctx.fillStyle = "#FFFDF7";
+    ctx.fillRect(62, 874, W - 124, 214);
+    ctx.strokeStyle = "#111111";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(62, 874, W - 124, 214);
+
+    ctx.fillStyle = "#111111";
+    ctx.font = "900 22px sans-serif";
+    ctx.fillText("🏅 招牌技能與經典里程碑", 86, 914);
+
+    const skillNames = (season.equippedTraits || []).slice(0, 6).map(id => {
+      const sk = db && db.skills ? db.skills.skills.find(x => x.id === id) : null;
+      return sk ? sk.name : id;
+    });
+    ctx.fillStyle = "#B45309";
+    ctx.font = "800 19px sans-serif";
+    ctx.fillText(skillNames.length ? skillNames.join("  ·  ").slice(0, 44) : "熱血初心・蓄勢待發", 86, 954);
+
+    const hist = season.careerHistory && Array.isArray(season.careerHistory.classicMoments) ? season.careerHistory.classicMoments : [];
+    const lines = hist.slice(-3).map(m => `• ${typeof m === "string" ? m : (m.title || m.desc || "")}`);
+    if (!lines.length && Array.isArray(season.archive) && season.archive.length) {
+      season.archive.slice(-3).forEach(a => {
+        lines.push(`• 第 ${a.year} 季 ${a.teamName}（${a.wl || ""}）場均 ${a.ppg}分 ${a.rpg}板 ${a.apg}助`);
+      });
+    }
+    if (!lines.length) lines.push("• 傳奇才剛起步，下一場比賽將寫下嶄新篇章！");
+
+    ctx.fillStyle = "#222222";
+    ctx.font = "700 18px sans-serif";
+    lines.forEach((ln, idx) => {
+      ctx.fillText(ln.slice(0, 46), 86, 996 + idx * 32);
+    });
+
+    // 9. Footer stamp
+    ctx.fillStyle = "#111111";
+    ctx.font = "900 18px sans-serif";
+    ctx.fillText("BASKETBALL TIME  ·  熱血籃球傳奇", 62, 1132);
+    ctx.fillStyle = "#666666";
+    ctx.font = "700 16px sans-serif";
+    ctx.fillText(`GENERATED ${new Date().toISOString().slice(0, 10)}`, W - 268, 1132);
+    return true;
+  }
+
+  function renderCareerRetroTimeline() {
+    const season = getSeason();
+    const pane = document.getElementById("careerRetroTimelinePane");
+    if (!pane || !season || !season.player) return;
+    const arc = Array.isArray(season.archive) ? season.archive : [];
+    const nat = Array.isArray(season.nationalTeamHistory) ? season.nationalTeamHistory : [];
+    const items = [];
+    arc.forEach(a => {
+      const badges = [];
+      if (a.ring || (a.honor && a.honor.includes("總冠軍"))) badges.push('<span class="tag gold">💍 總冠軍</span>');
+      if (a.fmvp) badges.push('<span class="tag gold">🔥 FMVP</span>');
+      if (a.seasonMvp) badges.push('<span class="tag gold">👑 例行賽 MVP</span>');
+      items.push(`
+        <div class="retro-item">
+          <div class="retro-year">第 ${a.year} 季</div>
+          <div class="retro-body">
+            <div style="font-weight:900; font-size:13.5px;">${a.teamName} <span style="font-weight:700; color:var(--ink-soft);">(${a.leagueName})</span></div>
+            <div style="font-size:12px; margin-top:3px;">戰績 <strong>${a.wl || "--"}</strong> ｜ 場均 <strong>${a.ppg}</strong> 分 / <strong>${a.rpg}</strong> 板 / <strong>${a.apg}</strong> 助</div>
+            ${badges.length ? `<div style="margin-top:5px; display:flex; gap:5px; flex-wrap:wrap;">${badges.join("")}</div>` : ""}
+          </div>
+        </div>
+      `);
+    });
+    if (!season.retired) {
+      const st = season.seasonTotals || { gp: 0, pts: 0, reb: 0, ast: 0 };
+      const uTeam = (season.standings || []).find(t => t.isUserTeam);
+      const gp = Math.max(1, st.gp || 0);
+      items.push(`
+        <div class="retro-item current">
+          <div class="retro-year">第 ${season.careerYear} 季</div>
+          <div class="retro-body">
+            <div style="font-weight:900; font-size:13.5px;">${uTeam ? uTeam.name : "本隊"} <span class="tag gold">進行中</span></div>
+            <div style="font-size:12px; margin-top:3px;">出賽 ${st.gp || 0} 場 ｜ 場均 <strong>${(st.pts / gp).toFixed(1)}</strong> 分 / <strong>${(st.reb / gp).toFixed(1)}</strong> 板 / <strong>${(st.ast / gp).toFixed(1)}</strong> 助</div>
+          </div>
+        </div>
+      `);
+    }
+    const natHtml = nat.length
+      ? `<div style="margin-top:10px; border:2px solid var(--ink); background:#FEFCE8; padding:8px 10px;">
+          <div style="font-weight:900; font-size:12.5px; margin-bottom:4px;">🏅 國家隊國際賽徵召紀錄（共 ${nat.length} 次）</div>
+          ${nat.map(n => `<div style="font-size:11.5px; margin-top:2px;">• ${typeof n === "string" ? n : (n.summary || `第 ${n.year} 年 ${n.medal || "代表國家隊出征"}`)}</div>`).join("")}
+        </div>`
+      : "";
+    pane.innerHTML = `<div class="retro-timeline">${items.join("")}</div>${natHtml}`;
+  }
+
+  function openCareerRetroModal(tab = "poster") {
+    const modal = document.getElementById("careerRetroModal");
+    if (!modal) return;
+    const posterPane = document.getElementById("careerRetroPosterPane");
+    const tlPane = document.getElementById("careerRetroTimelinePane");
+    const tabs = document.getElementById("careerRetroTabs");
+    if (tabs) tabs.querySelectorAll("[data-crtab]").forEach(b => b.classList.toggle("active", b.dataset.crtab === tab));
+    if (posterPane) posterPane.style.display = tab === "poster" ? "block" : "none";
+    if (tlPane) tlPane.style.display = tab === "timeline" ? "block" : "none";
+    renderCareerPosterCanvas();
+    renderCareerRetroTimeline();
+    modal.classList.remove("hidden");
+  }
+
+  function downloadCareerPosterPng() {
+    const canvas = document.getElementById("careerPosterCanvas");
+    const season = getSeason();
+    if (!canvas || typeof canvas.toDataURL !== "function") return false;
+    renderCareerPosterCanvas(canvas);
+    const dataUrl = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    const pname = (season && season.player && season.player.name) ? season.player.name : "BasketballTime";
+    a.href = dataUrl;
+    a.download = `BasketballTime_${pname}_CareerPoster.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    if (typeof showToast === "function") showToast("📥 已匯出 PNG 傳奇生涯海報！");
+    return true;
+  }
+
   function bindRefactorEvents() {
     const bigCta = document.getElementById("btnTopBigCta");
     if (bigCta) {
@@ -2146,14 +2542,14 @@ window.BTUI = (() => {
 
     // One-Page Hub Drill-Down Modal Launchers
     const drawerBindings = [
-      ["btnOpenTrainModal", "🏋️ 本週場外養成", "每輪補滿 2 AP", "drawerSecTrain"],
+      ["btnOpenTrainModal", "🏋️ 本週場外養成", "每輪 2 點行動力", "drawerSecTrain"],
       ["btnOpenStatsModal", "📊 12 項能力與技能徽章", "附聯盟對比", "drawerSecStats"],
       ["btnOpenRivalModal", "🔥 宿敵檔案與人生經歷", "自動時間軸", "drawerSecRival"],
-      ["btnOpenCareerModal", "🏛️ 生涯履歷與名人堂", "IndexedDB 存檔", "drawerSecCareer"],
-      ["btnOpenFullSched", "📅 本季完整賽程表", "LOD 0 逐場", "drawerSecSched"],
+      ["btnOpenCareerModal", "🏛️ 生涯履歷與名人堂", "獎盃、海報與履歷", "drawerSecCareer"],
+      ["btnOpenFullSched", "📅 本季完整賽程表", "本季逐場戰果", "drawerSecSched"],
       ["btnOpenStandings", "🏆 本聯賽積分榜", "即時排名", "drawerSecStandings"],
       ["btnOpenLeaders", "📊 賽季各項數據榜", "五大數據領跑", "drawerSecLeaders"],
-      ["btnOpenWorldLod", "🌏 海外聯賽動態", "LOD 1 背景演算", "drawerSecWorld"],
+      ["btnOpenWorldLod", "🌏 海外聯賽動態", "海外五大聯賽", "drawerSecWorld"],
       ["btnOpenTeamOps", "🧠 教練戰術與陣容異動／補強", "化學反應與輪換", "drawerSecTeamOps"]
     ];
     for (const [btnId, title, badge, secId] of drawerBindings) {
@@ -2421,6 +2817,80 @@ window.BTUI = (() => {
         renderHub();
       });
     }
+
+    // Phase 5: Settings Center, League Records Wall & Career Poster bindings
+    const btnOpenSettings = document.getElementById("btnOpenSettings");
+    if (btnOpenSettings) btnOpenSettings.addEventListener("click", () => { SoundFX.tap(); openSettingsModal(); });
+    const btnCloseSettings = document.getElementById("btnCloseSettings");
+    const settingsModal = document.getElementById("settingsModal");
+    if (btnCloseSettings) btnCloseSettings.addEventListener("click", closeSettingsModal);
+    if (settingsModal) settingsModal.addEventListener("click", (e) => { if (e.target.id === "settingsModal") closeSettingsModal(); });
+
+    const btnSettingSfx = document.getElementById("btnSettingSfx");
+    if (btnSettingSfx) btnSettingSfx.addEventListener("click", () => {
+      if (!window.GameSettings) return;
+      const next = !window.GameSettings.get().sfx;
+      window.GameSettings.set({ sfx: next });
+      syncSettingsUi();
+      if (next) SoundFX.tap();
+    });
+    const btnSettingVib = document.getElementById("btnSettingVib");
+    if (btnSettingVib) btnSettingVib.addEventListener("click", () => {
+      if (!window.GameSettings) return;
+      const next = !window.GameSettings.get().vibration;
+      window.GameSettings.set({ vibration: next });
+      syncSettingsUi();
+      SoundFX.tap();
+    });
+    const paceGroup = document.getElementById("settingPaceGroup");
+    if (paceGroup) paceGroup.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-pace]");
+      if (!b || !window.GameSettings) return;
+      window.GameSettings.set({ pace: Number(b.dataset.pace) });
+      syncSettingsUi();
+      SoundFX.tap();
+    });
+    const btnSettingOpenSaves = document.getElementById("btnSettingOpenSaves");
+    if (btnSettingOpenSaves) btnSettingOpenSaves.addEventListener("click", () => {
+      closeSettingsModal();
+      showTitleScreen(true);
+    });
+    const btnSettingOpenRetro = document.getElementById("btnSettingOpenRetro");
+    if (btnSettingOpenRetro) btnSettingOpenRetro.addEventListener("click", () => {
+      closeSettingsModal();
+      openCareerRetroModal("poster");
+    });
+
+    const openLr = () => { SoundFX.tap(); openLeagueRecordsModal("champions"); };
+    const btnLr1 = document.getElementById("btnOpenLeagueRecords");
+    const btnLr2 = document.getElementById("btnOpenLeagueRecords2");
+    if (btnLr1) btnLr1.addEventListener("click", openLr);
+    if (btnLr2) btnLr2.addEventListener("click", () => { closeSectionModal(); openLr(); });
+    const btnCloseLr = document.getElementById("btnCloseLeagueRecords");
+    const lrModal = document.getElementById("leagueRecordsModal");
+    if (btnCloseLr && lrModal) btnCloseLr.addEventListener("click", () => lrModal.classList.add("hidden"));
+    if (lrModal) lrModal.addEventListener("click", (e) => { if (e.target.id === "leagueRecordsModal") lrModal.classList.add("hidden"); });
+    const lrTabs = document.getElementById("leagueRecordsTabs");
+    if (lrTabs) lrTabs.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-lrtab]");
+      if (b) { SoundFX.tap(); renderLeagueRecordsModal(b.dataset.lrtab); }
+    });
+
+    const btnRetro = document.getElementById("btnOpenCareerRetro");
+    if (btnRetro) btnRetro.addEventListener("click", () => { SoundFX.tap(); closeSectionModal(); openCareerRetroModal("poster"); });
+    const btnCloseRetro = document.getElementById("btnCloseCareerRetro");
+    const retroModal = document.getElementById("careerRetroModal");
+    if (btnCloseRetro && retroModal) btnCloseRetro.addEventListener("click", () => retroModal.classList.add("hidden"));
+    if (retroModal) retroModal.addEventListener("click", (e) => { if (e.target.id === "careerRetroModal") retroModal.classList.add("hidden"); });
+    const retroTabs = document.getElementById("careerRetroTabs");
+    if (retroTabs) retroTabs.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-crtab]");
+      if (b) { SoundFX.tap(); openCareerRetroModal(b.dataset.crtab); }
+    });
+    const btnDlPoster = document.getElementById("btnDownloadPosterPng");
+    if (btnDlPoster) btnDlPoster.addEventListener("click", () => { SoundFX.tap(); downloadCareerPosterPng(); });
+    const btnRefPoster = document.getElementById("btnRefreshPoster");
+    if (btnRefPoster) btnRefPoster.addEventListener("click", () => { SoundFX.tap(); renderCareerPosterCanvas(); });
   }
 
   return {
@@ -2460,6 +2930,14 @@ window.BTUI = (() => {
     handleTutorialMatchEnd,
     isTutorialActive: () => isTutorialMatch,
     resetTutorialFlag: () => { isTutorialMatch = false; },
+    openSettingsModal,
+    closeSettingsModal,
+    syncSettingsUi,
+    openLeagueRecordsModal,
+    renderLeagueRecordsModal,
+    openCareerRetroModal,
+    renderCareerPosterCanvas,
+    downloadCareerPosterPng,
     bindRefactorEvents
   };
 })();

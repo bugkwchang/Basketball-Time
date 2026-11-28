@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>《Basketball Time》Phase 5 — 能力分級・季後賽總決賽・選秀順位・名人堂殿堂</title>
+  <title>《Basketball Time》熱血籃球傳奇 — 高校至職業名人堂生涯</title>
   <style>
     :root {
       --paper: #F4EFE4;
@@ -514,7 +514,7 @@
     }
     .boot-error-box.hidden { display: none; }
   </style>
-  <link rel="stylesheet" href="./ui-refactor.css?v=20261128b" />
+  <link rel="stylesheet" href="./ui-refactor.css?v=20261128c" />
 </head>
 <body>
   <!-- ==================== BOOT LOADING OVERLAY ==================== -->
@@ -541,7 +541,7 @@
         <div class="title-hero-content">
           <span class="stamp" style="background:var(--gold-bright); color:var(--ink);">HIGH SCHOOL → PRO LEGEND</span>
           <div class="title-logo-main">BASKETBALL TIME</div>
-          <div class="title-logo-sub">由 15 歲全國高校大賽起步，打出屬於你嘅熱血籃球傳奇</div>
+          <div class="title-logo-sub">由 15 歲全國高校大賽起步，打出屬於你的熱血籃球傳奇</div>
         </div>
       </div>
       <div class="title-body">
@@ -589,7 +589,7 @@
             <input id="inpPlayerName" class="field-sel" style="width:100%; margin-top:4px; font-size:14px;" value="新秀主角" maxlength="12" />
           </label>
           <div>
-            <div>點選你嘅主打位置（決定初始能力分佈與場上定位）</div>
+            <div>點選你的主打位置（決定初始能力分佈與場上定位）</div>
             <div id="posPickGrid" class="pos-pick-grid"></div>
             <select id="inpPlayerPos" class="field-sel" style="display:none;">
               <option value="PG">控球後衛 (PG)</option><option value="SG" selected>得分後衛 (SG)</option>
@@ -640,8 +640,8 @@
         <div id="step3PlayerSummary" class="title-save-pill" style="margin-bottom:10px;"></div>
         <div class="tutorial-tip-list">
           <div class="tutorial-tip-item">1️⃣ <strong>比賽自動推進</strong>：雙隊 5v5 實時攻防，當張力條儲滿會進入「⚡ 子彈時間」。</div>
-          <div class="tutorial-tip-item">2️⃣ <strong>子彈時間決策</strong>：喺 3 張動作卡揀出最佳出手／傳球／防守策略，高風險高回報。</div>
-          <div class="tutorial-tip-item">3️⃣ <strong>QTE 精準鎖定</strong>：喺黃金區間按螢幕或空白鍵鎖定，連續完美可覺醒【🔥 ZONE 領域】！</div>
+          <div class="tutorial-tip-item">2️⃣ <strong>子彈時間決策</strong>：在 3 張動作卡中選出最佳出手／傳球／防守策略，高風險高回報。</div>
+          <div class="tutorial-tip-item">3️⃣ <strong>QTE 精準鎖定</strong>：在黃金區間點擊螢幕或空白鍵鎖定，連續完美即可覺醒【🔥 ZONE 領域】！</div>
         </div>
         <div style="display:flex; flex-direction:column; gap:8px;">
           <button type="button" class="manga-btn primary" id="btnStartTutorialMatch" style="width:100%; min-height:52px; font-size:15.5px;">🔥 開始 2 分鐘教學賽</button>
@@ -670,16 +670,17 @@
         <button type="button" class="top-big-cta" id="btnTopBigCta" data-cta-mode="PLAY_NEXT">
           <span class="top-cta-main">
             <span class="top-cta-title" id="topCtaTitle">🏀 開始下一場比賽</span>
-            <span class="top-cta-sub" id="topCtaSub">例行賽 第 1 輪 · 準備開波</span>
+            <span class="top-cta-sub" id="topCtaSub">例行賽 第 1 輪 · 準備開賽</span>
           </span>
           <span class="top-cta-arrow">▶</span>
         </button>
       </div>
       <div class="util-drawer" id="topUtilDrawer">
-        <button class="manga-btn" id="btnSwitchSaveSlot" type="button" title="切換 3 槽位存檔或備份">💾 存檔</button>
+        <button class="manga-btn gold" id="btnOpenSettings" type="button">⚙️ 遊戲設定</button>
+        <button class="manga-btn" id="btnSwitchSaveSlot" type="button" title="切換 3 槽位存檔或備份">💾 存檔管理</button>
           <button class="manga-btn primary" id="btnNewCareerFlow" type="button">✨ 新建生涯</button>
-        <button class="manga-btn dark" id="btnExportRoster" type="button">⬇ 匯出名單 JSON</button>
-        <button class="manga-btn gold" id="btnImportRoster" type="button">⬆ 匯入 Roster</button>
+        <button class="manga-btn dark" id="btnExportRoster" type="button">⬇ 匯出球員名單</button>
+        <button class="manga-btn gold" id="btnImportRoster" type="button">⬆ 匯入球員名單</button>
         <input class="hidden-file" id="rosterFileInput" type="file" accept=".json,application/json" />
       </div>
     </header>
@@ -687,7 +688,7 @@
     <nav class="hub-nav three-tabs">
       <div class="hub-nav-inner" id="hubNavTabs">
         <button class="nav-tab active" data-htab="htab-match" type="button">🏀 比賽</button>
-        <button class="nav-tab" data-htab="htab-me" type="button">👤 我 <span id="navMeApBadge" class="tab-badge">2 AP</span><span id="navApCount" style="display:none;">2</span></button>
+        <button class="nav-tab" data-htab="htab-me" type="button">👤 我 <span id="navMeApBadge" class="tab-badge">2 行動</span><span id="navApCount" style="display:none;">2</span></button>
         <button class="nav-tab" data-htab="htab-team" type="button">👥 球隊</button>
       </div>
     </nav>
@@ -705,9 +706,9 @@
               <div id="nmScoutCompareBox" style="margin-top:4px;"></div>
             </div>
             <div class="btn-row" style="width:100%;">
-              <button class="manga-btn primary" id="btnPlayNextMatch" type="button" style="display:none !important;">🏀 親自落場打今場</button>
+              <button class="manga-btn primary" id="btnPlayNextMatch" type="button" style="display:none !important;">🏀 親自出戰本場</button>
               <button class="manga-btn gold" id="btnSimRound" type="button" style="flex:1;">⏩ 快速模擬本輪</button>
-              <button class="manga-btn gold" id="btnNextSeason" type="button" style="display:none; width:100%;">🏆 壓縮賽季進入下一年</button>
+              <button class="manga-btn gold" id="btnNextSeason" type="button" style="display:none; width:100%;">🏆 結束本季・邁入新球季</button>
             </div>
           </div>
         </div>
@@ -739,6 +740,10 @@
                 <span class="hub-drawer-btn-sub">五大戰況</span>
               </button>
             </div>
+            <button type="button" class="hub-drawer-btn" id="btnOpenLeagueRecords">
+              <span>🏛️ 聯賽歷史紀錄牆<span class="hub-drawer-btn-sub">歷屆總冠軍、FMVP 與單場最高紀錄</span></span>
+              <span class="hub-drawer-arrow">›</span>
+            </button>
           </div>
         </div>
       </section>
@@ -751,8 +756,8 @@
         <div class="hub-action-stack" style="margin-top:0;">
           <button type="button" class="hub-drawer-btn accent-gold" id="btnOpenTrainModal">
             <span>
-              <span id="btnOpenTrainTitle">🏋️ 場外養成（剩餘 2 AP）</span>
-              <span class="hub-drawer-btn-sub" id="btnOpenTrainSub">點擊展開特訓、冰浴恢復與 2 AP 極限特訓 QTE</span>
+              <span id="btnOpenTrainTitle">🏋️ 場外養成（剩餘 2 行動力）</span>
+              <span class="hub-drawer-btn-sub" id="btnOpenTrainSub">點擊展開特訓、冰浴恢復與極限特訓判定</span>
             </span>
             <span class="hub-drawer-arrow">▶</span>
           </button>
@@ -810,7 +815,7 @@
         <div id="drawerSecTrain">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; font-size:12px; font-weight:900; margin-bottom:8px;">
             <span>每打完 1 輪比賽補滿 2 AP</span>
-            <span>剩餘 AP：<span id="apPipsBox" style="display:inline-flex; gap:4px;"></span></span>
+            <span>剩餘行動力：<span id="apPipsBox" style="display:inline-flex; gap:4px;"></span></span>
           </div>
           <div id="trainOutcomeBanner" style="display:none; margin-bottom:10px; padding:10px 12px; border:2.5px solid var(--ink); background:#FFF; box-shadow:var(--shadow-sm); font-size:12.5px; font-weight:800;"></div>
           <div style="margin-bottom:8px; font-size:12px; font-weight:900;" id="trainRiskBanner">狀態極佳 (100%)</div>
@@ -884,8 +889,12 @@
 
         <div id="drawerSecCareer">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
-            <span class="tag" id="idbStatusTag">IndexedDB 就緒</span>
-            <button class="manga-btn primary" id="btnResetCareer" type="button">🗑 重置存檔</button>
+            <span class="tag" id="idbStatusTag">本地存檔已就緒</span>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="manga-btn gold" id="btnOpenCareerRetro" type="button">🎬 生涯回顧與海報</button>
+              <button class="manga-btn" id="btnOpenLeagueRecords2" type="button">🏛️ 歷史紀錄牆</button>
+              <button class="manga-btn primary" id="btnResetCareer" type="button">🗑 重置存檔</button>
+            </div>
           </div>
           <div id="careerTrophyCase"></div>
           <div id="careerGrowthStoryBox" style="margin-bottom:12px;"></div>
@@ -944,7 +953,7 @@
       </div>
       <div style="font-size:17px; font-weight:900; margin-bottom:6px;">本週仲未完成場外訓練！</div>
       <div id="apRemBody" style="font-size:13px; line-height:1.6; margin-bottom:14px; color:var(--ink-soft);">
-        開賽後本週剩餘嘅場外行動點 (AP) 將會重置。建議先去訓練提升能力或做冰浴恢復狀態再出賽！
+        開賽後本週剩餘的場外行動力將會重置。建議先訓練提升能力或進行冰浴恢復狀態再出賽！
       </div>
       <div class="btn-row" style="justify-content:flex-end;">
         <button type="button" class="manga-btn" id="btnApRemCancel">取消</button>
@@ -1318,7 +1327,94 @@
 
   <div class="toast" id="toastBox" role="status"></div>
 
-  <script src="./ui-refactor.js?v=20261128b"></script>
+  
+  <!-- ===== PHASE 5: SETTINGS CENTER MODAL ===== -->
+  <div id="settingsModal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width:460px;">
+      <div class="card-head" style="margin-bottom:10px; padding-bottom:8px;">
+        <div class="card-title">⚙️ 遊戲設定中心</div>
+        <button type="button" class="manga-btn" id="btnCloseSettings" style="padding:4px 10px;">✕ 關閉</button>
+      </div>
+      <div class="settings-list">
+        <div class="setting-row">
+          <div>
+            <div class="setting-title">🔊 比賽與介面音效</div>
+            <div class="setting-sub">進球刷網、哨音、必殺特寫與按鈕反饋</div>
+          </div>
+          <button type="button" class="toggle-pill on" id="btnSettingSfx" data-on="1">開啟</button>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-title">📳 震動回饋</div>
+            <div class="setting-sub">關鍵進球、ZONE 覺醒與打鐵觸覺震動</div>
+          </div>
+          <button type="button" class="toggle-pill on" id="btnSettingVib" data-on="1">開啟</button>
+        </div>
+        <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:8px;">
+          <div>
+            <div class="setting-title">⚡ 比賽節奏速度</div>
+            <div class="setting-sub">調整實戰回合推進與結果快報停留時間（不影響判定公平性）</div>
+          </div>
+          <div class="pace-seg-group" id="settingPaceGroup">
+            <button type="button" class="pace-seg-btn active" data-pace="1">標準 1.0x</button>
+            <button type="button" class="pace-seg-btn" data-pace="1.3">明快 1.3x</button>
+            <button type="button" class="pace-seg-btn" data-pace="1.6">疾走 1.6x</button>
+          </div>
+        </div>
+        <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:8px;">
+          <div>
+            <div class="setting-title">💾 存檔與備份管理</div>
+            <div class="setting-sub">切換 3 組生涯存檔槽，或匯出／匯入本機備份檔</div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="manga-btn gold" id="btnSettingOpenSaves" style="flex:1;">💾 開啟存檔槽管理</button>
+            <button type="button" class="manga-btn" id="btnSettingOpenRetro" style="flex:1;">🎬 生涯回顧海報</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE 5: LEAGUE HISTORICAL RECORD WALL MODAL ===== -->
+  <div id="leagueRecordsModal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width:560px; max-height:88vh; display:flex; flex-direction:column;">
+      <div class="card-head" style="margin-bottom:8px; padding-bottom:8px;">
+        <div class="card-title">🏛️ 聯賽歷史紀錄牆</div>
+        <button type="button" class="manga-btn" id="btnCloseLeagueRecords" style="padding:4px 10px;">✕ 關閉</button>
+      </div>
+      <div class="leaders-tab-row" id="leagueRecordsTabs" style="margin-bottom:10px;">
+        <button type="button" class="leaders-tab-btn active" data-lrtab="champions">🏆 歷屆總冠軍與 FMVP</button>
+        <button type="button" class="leaders-tab-btn" data-lrtab="single">🔥 聯盟單場最高紀錄</button>
+      </div>
+      <div id="leagueRecordsBody" style="overflow-y:auto; flex:1; padding-right:2px;"></div>
+    </div>
+  </div>
+
+  <!-- ===== PHASE 5: CAREER RETROSPECTIVE & SHAREABLE POSTER MODAL ===== -->
+  <div id="careerRetroModal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width:580px; max-height:90vh; display:flex; flex-direction:column;">
+      <div class="card-head" style="margin-bottom:8px; padding-bottom:8px;">
+        <div class="card-title" id="careerRetroTitle">🎬 生涯傳奇回顧與海報</div>
+        <button type="button" class="manga-btn" id="btnCloseCareerRetro" style="padding:4px 10px;">✕ 關閉</button>
+      </div>
+      <div class="leaders-tab-row" id="careerRetroTabs" style="margin-bottom:10px;">
+        <button type="button" class="leaders-tab-btn active" data-crtab="poster">🖼️ 傳奇分享海報</button>
+        <button type="button" class="leaders-tab-btn" data-crtab="timeline">📖 生涯漫畫時間軸</button>
+      </div>
+      <div id="careerRetroPosterPane" style="overflow-y:auto; flex:1; text-align:center;">
+        <div class="poster-preview-wrap">
+          <canvas id="careerPosterCanvas" width="800" height="1200" class="poster-canvas-preview"></canvas>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:10px; justify-content:center; flex-wrap:wrap;">
+          <button type="button" class="manga-btn primary" id="btnDownloadPosterPng">📥 下載 PNG 傳奇海報</button>
+          <button type="button" class="manga-btn gold" id="btnRefreshPoster">🔄 重新繪製海報</button>
+        </div>
+      </div>
+      <div id="careerRetroTimelinePane" style="display:none; overflow-y:auto; flex:1; padding-right:2px;"></div>
+    </div>
+  </div>
+
+  <script src="./ui-refactor.js?v=20261128c"></script>
   <script>
     /* =========================================================================
        《Basketball Time》 Phase 2 — Season Schedule, LOD Simulation, IndexedDB & Roster Import
@@ -1600,9 +1696,11 @@
     function renderSkillChip(id, extraStyle = "font-size:11px; padding:3px 7px;") {
       const sk = DB.skills.skills.find(s => s.id === id);
       if (!sk) return `<span class="s-badge" style="${extraStyle}">${id}</span>`;
+      const isLegendBadge = sk.category === "BADGE" && (sk.badgeGrade === "LEGEND" || /_t4$/.test(sk.id));
       const cls = sk.category === "RED_TRAIT" ? "trait-red"
         : (sk.category === "BLUE_TRAIT" ? "trait-blue"
-        : (sk.category === "PHYSICAL" ? (sk.id === "height_unicorn" ? "zone" : "trait-blue") : "zone"));
+        : (sk.category === "PHYSICAL" ? (sk.id === "height_unicorn" ? "zone" : "trait-blue")
+        : (isLegendBadge ? "zone badge-legend" : "zone")));
       return `<button type="button" class="s-badge ${cls} skill-clickable" data-skill-id="${sk.id}" style="${extraStyle} border:1.5px solid var(--ink);">${sk.name}</button>`;
     }
 
@@ -1610,8 +1708,9 @@
       const sk = DB.skills.skills.find(s => s.id === skillId);
       const pop = document.getElementById("skillTipPopover");
       if (!sk || !pop) return;
-      const catMap = { PHYSICAL: "身體天賦", BLUE_TRAIT: "正面藍特", RED_TRAIT: "負面紅特", BADGE: "專屬徽章", SYSTEM: "系統狀態" };
-      const catColor = sk.category === "RED_TRAIT" ? "#C81E1E" : (sk.category === "BADGE" ? "#B45309" : "#1D4ED8");
+      const isLegendBadge = sk.category === "BADGE" && (sk.badgeGrade === "LEGEND" || /_t4$/.test(sk.id));
+      const catMap = { PHYSICAL: "身體天賦", BLUE_TRAIT: "正面藍特", RED_TRAIT: "負面紅特", BADGE: isLegendBadge ? "👑 傳說徽章・固定強度" : "🏅 專屬徽章・固定強度", SYSTEM: "系統狀態" };
+      const catColor = sk.category === "RED_TRAIT" ? "#C81E1E" : (isLegendBadge ? "#92400E" : (sk.category === "BADGE" ? "#B45309" : "#1D4ED8"));
       pop.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:5px; border-bottom:2px solid var(--ink); padding-bottom:4px;">
           <strong style="font-size:13.5px;">${sk.name}</strong>
@@ -2017,6 +2116,75 @@
       if (!Array.isArray(targetSeason.careerHistory.classicMoments)) targetSeason.careerHistory.classicMoments = [];
       return targetSeason.careerHistory;
     }
+
+    function ensureLeagueHistory(targetSeason = Season) {
+      if (!targetSeason) return { champions: [], singleGameRecords: { pts: null, reb: null, ast: null, stl: null, blk: null } };
+      if (!targetSeason.leagueHistory || typeof targetSeason.leagueHistory !== "object") {
+        targetSeason.leagueHistory = { champions: [], singleGameRecords: { pts: null, reb: null, ast: null, stl: null, blk: null } };
+      }
+      if (!Array.isArray(targetSeason.leagueHistory.champions)) targetSeason.leagueHistory.champions = [];
+      if (!targetSeason.leagueHistory.singleGameRecords || typeof targetSeason.leagueHistory.singleGameRecords !== "object") {
+        targetSeason.leagueHistory.singleGameRecords = { pts: null, reb: null, ast: null, stl: null, blk: null };
+      }
+      if (targetSeason.leagueHistory.champions.length === 0 && Array.isArray(targetSeason.archive) && targetSeason.archive.length > 0) {
+        targetSeason.archive.forEach(a => {
+          if (a.ring || (a.honor && a.honor.includes("總冠軍"))) {
+            targetSeason.leagueHistory.champions.push({
+              seasonYear: a.year || 1,
+              leagueName: a.leagueName || "",
+              champion: a.teamName || "",
+              fmvp: a.fmvp ? (targetSeason.player ? targetSeason.player.name : "主角") : `${a.teamName || ""}王牌`,
+              userWon: true
+            });
+          }
+        });
+      }
+      return targetSeason.leagueHistory;
+    }
+    window.ensureLeagueHistory = ensureLeagueHistory;
+
+    function recordSingleGameHistory(targetSeason, line, meta = {}) {
+      if (!targetSeason || !line) return;
+      const lh = ensureLeagueHistory(targetSeason);
+      const recs = lh.singleGameRecords;
+      const keys = ["pts", "reb", "ast", "stl", "blk"];
+      for (const k of keys) {
+        const val = Number(line[k] || 0);
+        if (val <= 0) continue;
+        if (!recs[k] || val > Number(recs[k].val || 0)) {
+          recs[k] = {
+            val,
+            playerName: line.name || meta.playerName || "球員",
+            teamName: meta.teamName || "",
+            oppName: meta.oppName || "",
+            seasonYear: targetSeason.careerYear || 1,
+            leagueName: meta.leagueName || (DB && DB.leagues ? (DB.leagues.leagues.find(l => l.id === targetSeason.leagueId)?.name || "") : ""),
+            isUser: Boolean(line.isUser)
+          };
+        }
+      }
+    }
+    window.recordSingleGameHistory = recordSingleGameHistory;
+
+    function recordSeasonChampionHistory(targetSeason, champTeamName, fmvpName, runnerUpName, userWon) {
+      if (!targetSeason || !champTeamName) return;
+      const lh = ensureLeagueHistory(targetSeason);
+      const yr = targetSeason.careerYear || 1;
+      const lgName = DB && DB.leagues ? (DB.leagues.leagues.find(l => l.id === targetSeason.leagueId)?.name || targetSeason.leagueId) : targetSeason.leagueId;
+      const exists = lh.champions.some(c => c.seasonYear === yr && c.leagueName === lgName);
+      if (!exists) {
+        lh.champions.push({
+          seasonYear: yr,
+          leagueId: targetSeason.leagueId,
+          leagueName: lgName,
+          champion: champTeamName,
+          fmvp: fmvpName || "—",
+          runnerUp: runnerUpName || "",
+          userWon: Boolean(userWon)
+        });
+      }
+    }
+    window.recordSeasonChampionHistory = recordSeasonChampionHistory;
 
     function generateProFreeAgents(leagueId, baseOvr) {
       const names = FA_NAME_POOLS[leagueId] || FA_NAME_POOLS.nba_prime;
@@ -3963,7 +4131,7 @@
       };
       const nextArchive = [record, ...Season.archive];
       createNewCareer(Season.leagueId, nextArchive, Season.careerYear + 1, Season.userRoster);
-      showToast(`已完成跨季數據壓縮！邁入第 ${Season.careerYear} 年（臨場判斷更精準）`);
+      showToast(`本季戰績已封存！邁入第 ${Season.careerYear} 年（臨場判斷更精準）`);
     }
 
     function renderHub() {
@@ -3998,7 +4166,7 @@
       } else {
         document.getElementById("nmStageTag").textContent = `${league.name} · 本季賽程已全部完成！`;
         document.getElementById("nmMatchupText").textContent = `最終戰績：${userTeam.w} 勝 ${userTeam.l} 負`;
-        document.getElementById("nmMetaText").textContent = `點擊右側按鈕進行「跨季數據壓縮」，球齡 +1 年並開啟新球季！`;
+        document.getElementById("nmMetaText").textContent = `點擊按鈕封存本季戰績，球齡 +1 年並展開全新球季！`;
         document.getElementById("btnPlayNextMatch").style.display = "none";
         document.getElementById("btnSimRound").style.display = "none";
         document.getElementById("btnNextSeason").style.display = "inline-flex";
@@ -4052,7 +4220,7 @@
       if (pObj) {
         if (!Season.retired) {
           document.getElementById("nmMetaText").textContent = seasonDone
-            ? `點擊右側按鈕進行「跨季數據壓縮」，球齡 +1 年並開啟新球季！`
+            ? `點擊按鈕封存本季戰績，球齡 +1 年並展開全新球季！`
             : `球隊戰力 OVR ${teamOvr} ｜ 隊內地位：${rotWin.label}（預估上場 ${Math.round(rotWin.minPct*100)}–${Math.round(rotWin.maxPct*100)}%）｜ 狀態 ${pObj.condition}%`;
         }
         const rtBox = document.getElementById("hubRoleTrustBox");
@@ -4269,13 +4437,45 @@
       score3: (n, a) => a ? `手起刀落！${a} 吸引夾擊分出外線，${n} 三分冷箭穿心！` : `全場歡呼！${n} 三分線外迎面干拔——空心刷網！`,
       rivalBig: (n, p) => `全場驚呼！宿敵 ${n} 展現王牌氣場，頂住壓迫硬解命中關鍵 ${p} 分！`,
       steal: (s, v) => `睇穿晒！${s} 鬼手一掏，生生從 ${v} 手中偷球斷下球權！`,
-      block: (b, v) => `遮天蔽日！${b} 迎面一巴掌將 ${v} 嘅投籃狠狠扇飛！`,
-      oreb: (n) => `籃板王本色！${n} 喺人群中躍起摘下前場進攻籃板！`,
+      block: (b, v) => `遮天蔽日！${b} 迎面一巴掌將 ${v} 的投籃狠狠扇飛！`,
+      oreb: (n) => `籃板王本色！${n} 在人群中躍起摘下前場進攻籃板！`,
       foulFT: (f, s, m) => `哨聲響起！${f} 被吹打手犯規，${s} 兩罰 ${m} 中。`
     };
 
+    const GameSettings = (() => {
+      const KEY = "BT_SETTINGS_V1";
+      const defaults = { sfx: true, vibration: true, pace: 1.0 };
+      let state = { ...defaults };
+      try {
+        const raw = localStorage.getItem(KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          state = {
+            sfx: parsed.sfx !== false,
+            vibration: parsed.vibration !== false,
+            pace: [1, 1.3, 1.6].includes(Number(parsed.pace)) ? Number(parsed.pace) : 1.0
+          };
+        }
+      } catch (_) {}
+      function save() {
+        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (_) {}
+      }
+      return {
+        get() { return { ...state }; },
+        set(patch) {
+          if (typeof patch.sfx === "boolean") state.sfx = patch.sfx;
+          if (typeof patch.vibration === "boolean") state.vibration = patch.vibration;
+          if (patch.pace !== undefined && [1, 1.3, 1.6].includes(Number(patch.pace))) state.pace = Number(patch.pace);
+          save();
+          if (typeof SoundFX !== "undefined" && SoundFX.setMuted) SoundFX.setMuted(!state.sfx);
+          return { ...state };
+        }
+      };
+    })();
+    window.GameSettings = GameSettings;
+
     const SoundFX = (() => {
-      let ctx = null, muted = false;
+      let ctx = null, muted = !GameSettings.get().sfx;
       function ensure() {
         if (muted) return null;
         try {
@@ -4304,6 +4504,8 @@
       }
       return {
         toggle() { muted = !muted; return muted; },
+        setMuted(val) { muted = Boolean(val); return muted; },
+        isMuted() { return muted; },
         tap() { tone("triangle", 480, 720, 0.05, 0.09); },
         whistle() { tone("sine", 2650, 2780, 0.20, 0.08); tone("sine", 2720, 2580, 0.14, 0.07, 0.18); },
         buzzer() { tone("sawtooth", 145, 138, 0.55, 0.15); },
@@ -4777,7 +4979,7 @@
 
     function triggerMatchJuice(type = "SCORE") {
       try {
-        if (navigator && typeof navigator.vibrate === "function") {
+        if (GameSettings.get().vibration && navigator && typeof navigator.vibrate === "function") {
           if (type === "ZONE" || type === "BIG") navigator.vibrate([25, 30, 45]);
           else if (type === "MISS") navigator.vibrate(35);
           else navigator.vibrate(16);
@@ -6073,7 +6275,9 @@
     }
 
     function showResultSplash(artKey, headline, subline, tier, tierLabel, durMs = 1150) {
-      Match.resultSplash = { artKey, headline, subline, tier, tierLabel, startMs: performance.now(), durMs };
+      const pace = (window.GameSettings ? GameSettings.get().pace : 1.0) || 1.0;
+      const scaledDur = Math.max(550, Math.round(durMs / pace));
+      Match.resultSplash = { artKey, headline, subline, tier, tierLabel, startMs: performance.now(), durMs: scaledDur };
       Match.phase = "RESULT_SPLASH";
     }
 
@@ -6151,12 +6355,12 @@
             u.fgm += 1; if (card.pts === 3) u.tpm += 1; u.pts += card.pts; addScore("HOME", card.pts); Match.makeStreak += 1; Match.missStreak = 0;
             let and1 = false; if (card.statType === "AND1" && grade === "PERFECT") { u.fta += 1; u.ftm += 1; u.pts += 1; addScore("HOME", 1); and1 = true; }
             SoundFX.swish(); Match.shotAnim = { sx: u.x, sy: u.y, ex: hoopX, ey: 0.5, t: 0, dur: 0.55, made: true };
-            broadcast(and1 ? `全場炸裂！#${u.num} ${u.name} 施展【${card.name}】打成 2+1！` : `入咗！#${u.num} ${u.name} 施展【${card.name}】空心刷網拿下 ${card.pts} 分！`, true);
+            broadcast(and1 ? `全場炸裂！#${u.num} ${u.name} 施展【${card.name}】打成 2+1！` : `進了！#${u.num} ${u.name} 施展【${card.name}】空心刷網拿下 ${card.pts} 分！`, true);
             splash = { art: "result_swish", head: and1 ? `AND-1! 打成 2+1 (+3)` : `SWISH! 空心入網 +${card.pts}`, sub: `#${u.num} ${u.name} PTS +${and1 ? 3 : card.pts} ｜ 累計 ${u.pts} 分 (${grade})`, good: true };
           } else {
             Match.makeStreak = 0; Match.missStreak += 1; pickWeighted(away5, "rebW").dreb += 1; SoundFX.clank();
             Match.shotAnim = { sx: u.x, sy: u.y, ex: hoopX, ey: 0.5, t: 0, dur: 0.52, made: false };
-            broadcast(`差少少！#${u.num} ${u.name} 嘅【${card.name}】彈框而出！`);
+            broadcast(`差一點！#${u.num} ${u.name} 的【${card.name}】彈框而出！`);
             splash = { art: "result_clank", head: `CLANK! 彈框而出`, sub: `對手收下防守籃板 (${grade})`, good: false };
           }
         }
@@ -7260,7 +7464,7 @@
         const res = evalTrainingOutcome(p.condition, p.stats.grit, true);
         if (res === "GREAT") {
           p.reputation = Math.min(100, p.reputation + 14); p.rivalHeat = Math.min(100, p.rivalHeat + 8);
-          SoundFX.swish(); showTrainBanner("GREAT", "✨ 大成功！全城熱搜訪談！", "你嘅熱血宣言登上頭條！名氣 +14、球探關注度急升！");
+          SoundFX.swish(); showTrainBanner("GREAT", "✨ 大成功！全城熱搜訪談！", "你的熱血宣言登上頭條！名氣 +14、球探關注度急升！");
         } else {
           p.reputation = Math.min(100, p.reputation + 8);
           SoundFX.tap(); showTrainBanner("SUCCESS", "✅ 媒體與球迷互動順利", "形象與口碑穩步上升！名氣 +8。");
@@ -7384,7 +7588,7 @@
         if (redTrait && Math.random() < 0.22) {
           Season.equippedTraits = Season.equippedTraits.filter(x => x !== redTrait);
           const sk = DB.skills.skills.find(s => s.id === redTrait);
-          showTrainBanner("GREAT", `🌟 奇蹟頓悟！徹底洗掉負面紅特【${sk.name}】！`, "萬中無一嘅魔鬼特訓頓悟，你終於克服心理與技術枷鎖！（狀態 -12）");
+          showTrainBanner("GREAT", `🌟 奇蹟頓悟！徹底洗掉負面紅特【${sk.name}】！`, "萬中無一的魔鬼特訓頓悟，你終於克服心理與技術枷鎖！（狀態 -12）");
         } else {
           const lockedPool = DB.skills.skills.filter(s => (s.category === "BADGE" || s.category === "BLUE_TRAIT") && !Season.equippedTraits.includes(s.id));
           if (lockedPool.length && Math.random() < 0.11) {
@@ -7473,6 +7677,15 @@
       const uStandForEvt = Season.standings && Season.standings.find(t => t.isUserTeam);
       const teamGp = uStandForEvt ? ((uStandForEvt.w || 0) + (uStandForEvt.l || 0)) : 0;
       const winPct = teamGp > 0 ? Math.round(((uStandForEvt.w || 0) / teamGp) * 100) : 50;
+      try {
+        const uStC = (Season.standings || []).find(t => t.isUserTeam);
+        const sortedSt = [...(Season.standings || [])].sort((a, b) => (b.w - a.w) || ((b.pf - b.pa) - (a.pf - a.pa)));
+        const champName = isChamp ? (uStC ? uStC.name : "本隊") : (Season.playoffs && Season.playoffs.championName ? Season.playoffs.championName : (sortedSt[0] ? sortedSt[0].name : "聯賽冠軍"));
+        const champTeamObj = (Season.standings || []).find(t => t.name === champName) || sortedSt[0];
+        const fmvpWinner = (isChamp && isFmvp) ? p.name : (champTeamObj && champTeamObj.ace ? champTeamObj.ace : `${champName} 王牌`);
+        const runnerUp = isChamp ? (Season.playoffs && Season.playoffs.finalOppName ? Season.playoffs.finalOppName : (sortedSt[1] ? sortedSt[1].name : "")) : (uStC ? uStC.name : "");
+        recordSeasonChampionHistory(Season, champName, fmvpWinner, runnerUp, isChamp);
+      } catch (_) {}
       const curOvr = calcOVR(p.stats, p.pos, Season.equippedTraits);
       const ctx = {
         age: p.age,
@@ -7980,6 +8193,9 @@
           document.querySelectorAll(".hub-panel").forEach(panel => panel.style.display = "none");
           if (window.BTUI) BTUI.switchHubTab("htab-me");
           showToast(`🏛️ 傳奇謝幕！共征戰 ${Season.careerYear} 季，已永久記入名人堂履歷！`);
+          if (window.BTUI && typeof BTUI.openCareerRetroModal === "function") {
+            setTimeout(() => BTUI.openCareerRetroModal(), 180);
+          }
           return;
         }
 
@@ -7999,6 +8215,7 @@
         };
         const savedTraits = [...Season.equippedTraits];
         const prevHist = ensureCareerHistory(Season);
+        const prevLeagueHist = JSON.parse(JSON.stringify(ensureLeagueHistory(Season)));
         const prevNatHist = Array.isArray(Season.nationalTeamHistory) ? [...Season.nationalTeamHistory] : [];
         const prevSkillProg = Season.skillProgress ? JSON.parse(JSON.stringify(Season.skillProgress)) : ensureSkillProgress(Season);
         const prevSkillLog = Array.isArray(Season.skillUnlockLog) ? [...Season.skillUnlockLog] : [];
@@ -8036,6 +8253,7 @@
         const osReport = evolveAllLeagueTeams(tempSeasonCtx, target, targetUserTeam, growthLogs);
         createNewCareer(target, nextArc, Season.careerYear + 1, nextRoster, savedP, savedTraits, prevHist, nextOps, tempSeasonCtx.leagueRosters, osReport, targetUserTeam);
         Season.nationalTeamHistory = prevNatHist;
+        Season.leagueHistory = prevLeagueHist;
         Season.skillProgress = prevSkillProg;
         Season.skillUnlockLog = prevSkillLog;
         SaveManager.save(Season);
@@ -8335,6 +8553,7 @@
       ensureLeagueRosters(targetSeason, targetSeason.leagueId);
       ensureCareerHistory(targetSeason);
       ensureTeamOps(targetSeason);
+      ensureLeagueHistory(targetSeason);
       return targetSeason;
     }
 
@@ -8350,7 +8569,7 @@
         Match.fastSimming = false;
         Match._historyView = null;
       }
-      ["crossroadsModal", "eventModal", "offseasonReportModal", "playerDetailModal", "sectionDrawerModal", "boxScoreModal", "unifiedSettlementModal", "preMatchFocusModal", "apReminderModal", "injuryChoiceModal"].forEach(id => {
+      ["crossroadsModal", "eventModal", "offseasonReportModal", "playerDetailModal", "sectionDrawerModal", "boxScoreModal", "unifiedSettlementModal", "preMatchFocusModal", "apReminderModal", "injuryChoiceModal", "settingsModal", "leagueRecordsModal", "careerRetroModal"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add("hidden");
       });
